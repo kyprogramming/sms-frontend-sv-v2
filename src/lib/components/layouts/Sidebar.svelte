@@ -1,10 +1,10 @@
 <script lang="ts">
   const menuItems = [
-    { label: 'Dashboard', link: '/dashboard' },
-    { label: 'Students', link: '/students' },
-    { label: 'Teachers', link: '/teachers' },
-    { label: 'Classes', link: '/classes' },
-    { label: 'Settings', link: '/settings' }
+    { label: "Dashboard", link: "/dashboard" },
+    { label: "Students", link: "/students" },
+    { label: "Teachers", link: "/teachers" },
+    { label: "Classes", link: "/classes" },
+    { label: "Settings", link: "/settings" },
   ];
 </script>
 
@@ -12,7 +12,10 @@
   <ul class="space-y-2">
     {#each menuItems as item}
       <li>
-        <a href={item.link} class="block py-2 px-3 rounded hover:bg-gray-700 transition">
+        <a
+          href={item.link}
+          class="block py-2 px-3 rounded hover:bg-gray-700 transition"
+        >
           {item.label}
         </a>
       </li>

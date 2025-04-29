@@ -1,8 +1,10 @@
 <script lang="ts">
-  import { page } from '$app/stores';
+  import { page } from "$app/stores";
 </script>
 
-<div class="flex flex-col items-center justify-center min-h-screen bg-red-50 text-red-900 p-4">
+<div
+  class="flex flex-col items-center justify-center min-h-screen bg-red-50 text-red-900 p-4"
+>
   <h1 class="text-6xl font-bold mb-4">Oops!</h1>
   <p class="text-xl mb-6">Something went wrong.</p>
 
