@@ -80,3 +80,9 @@ touch static/{logo.png,favicon.ico}
 
 # Root config files
 touch .env svelte.config.js tsconfig.json package.json README.md
+
+
+# How to RUN 
+# =========================================
+# chmod +x create-structure.sh
+# ./create-structure.sh
