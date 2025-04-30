@@ -1,5 +1,6 @@
 import { redirect, fail } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
+import { authStore } from "$lib/stores/authStore";
 
 export const load: PageServerLoad = async ({ cookies }) => {
   const token = cookies.get("token");
@@ -34,10 +35,11 @@ export const actions = {
       path: "/",
       httpOnly: true,
       sameSite: "lax",
-      secure: false, // Set to true in production
-      maxAge: 60 * 60 * 24, // 1 day
+      secure: false,
+      maxAge: 60 * 60 * 24,
     });
-
+    console.log({ "data::": data });
+    authStore.login(data.data.token, data.user);
     // Redirect to the admin dashboard after successful login
     throw redirect(302, "/dashboard/admin");
   },

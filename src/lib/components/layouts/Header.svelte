@@ -1,30 +1,61 @@
+<!-- src/lib/components/Header.svelte -->
 <script lang="ts">
-  let title = "School Management System";
-</script>
+  import { isAuthenticated, isLoading, authStore } from "$lib/stores/authStore";
+  import { goto } from "$app/navigation";
 
-<!-- <header class="bg-blue-600 text-white shadow-md p-4 flex justify-between items-center">
-  <h1 class="text-xl font-bold">{title}</h1>
-  <nav class="space-x-4">
-    <a href="/home" class="hover:underline">Home</a>
-    <a href="/about-us" class="hover:underline">About Us</a>
-    <a href="/faculty" class="hover:underline">Faculty</a>
-    <a href="/gallery" class="hover:underline">Gallery</a>
-    <a href="/contact-us" class="hover:underline">Contact Us</a>
-    <a href="/login" class="hover:underline">Login</a>
-  </nav>
-</header> -->
+  // Reactive store values
+  $: loggedIn = $isAuthenticated;
+  $: loading = $isLoading;
+
+  // Debugging (remove in production)
+  $: console.log("Auth state:", {
+    loggedIn,
+    loading,
+    user: $authStore.user
+  });
+
+  async function handleLogout() {
+    authStore.logout();
+    goto("/");
+  }
+</script>
 
 <header class="header">
   <div class="header_logo">
     <a href="/">SCHOOL MANAGEMENT</a>
   </div>
+  
   <div class="menu_list">
-    <a href="/" class="active hover:underline">HOME</a>
+    <a href="/" class="hover:underline">HOME</a>
     <a href="/about-us" class="hover:underline">ABOUT US</a>
     <a href="/faculty" class="hover:underline">FACULTY</a>
     <a href="/gallery" class="hover:underline">GALLERY</a>
     <a href="/contact-us" class="hover:underline">CONTACT US</a>
-    <a href="/login" class="hover:underline">LOGIN</a>
+      <a href="/login" class="hover:underline">LOGIN</a>
+        <button 
+          on:click={handleLogout}
+          class="hover:underline"
+        >
+          LOGOUT
+        </button>
+
+    {#if loading}
+      <span class="text-gray-500">Loading...</span>
+    {:else if loggedIn}
+      <div class="flex items-center gap-2">
+        {#if $authStore.user}
+          <span class="text-sm">Hi, {$authStore.user.email}</span>
+        {/if}
+        <button 
+          on:click={handleLogout}
+          class="hover:underline"
+        >
+          LOGOUT
+        </button>
+      </div>
+    {:else}
+      <a href="/login" class="hover:underline">LOGIN</a>
+    {/if}
   </div>
 </header>
 
