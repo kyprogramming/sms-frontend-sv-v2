@@ -1,5 +1,5 @@
 node_modules
-.well-known
+/.well-known
 # Output
 .output
 .vercel
@@ -7,7 +7,7 @@ node_modules
 .wrangler
 /.svelte-kit
 
-/_docs
+/_docs/
 /build
 
 # OS
