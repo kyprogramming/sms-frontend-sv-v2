@@ -1,6 +1,12 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
   import type { User } from "$lib/types/types";
+    import { createEventDispatcher } from 'svelte';
+    export let sidebarOpen: boolean;
+  const dispatch = createEventDispatcher();
+
+    import { Menu , Logs } from '@lucide/svelte';
+
   export let user: User | null;
   function handleLogout() {
     window.location.href = "/logout";
@@ -30,9 +36,18 @@
   <!-- <div class="header_logo">
     <a href="/">SCHOOL MANAGEMENT</a>
   </div> -->
+  
   <div class="logo">
+     <button on:click={() => dispatch('toggleSidebar')} style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; margin-right: 20px;">
+    {#if sidebarOpen}
+      <Menu size="24" color="red" />
+    {:else}
+       <Logs size="24" color="red" />
+    {/if}
+  </button>
 		<h1>School<span>Management System</span></h1>
 	</div>
+   
   {#if user?.authenticated}
     <div class="user-profile">
       <div class="profile-img">{user.name?.charAt(0).toUpperCase()}</div>
@@ -139,7 +154,8 @@
   }
 
   .logo {
-		padding: 24px 20px;
+	display: flex;	
+    padding: 24px 20px;
 		text-align: center;
 		border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 		margin-bottom: 10px;

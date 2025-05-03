@@ -1,9 +1,58 @@
 <script lang="ts">
-    import AdminHeader from "$lib/components/layouts/AdminHeader.svelte";
-    import Sidebar from "$lib/components/Sidebar.svelte";
- export let data;
-</script>
-<AdminHeader user={data.user}/>
-<Sidebar/>
-<slot/>
+	import AdminHeader from "$lib/components/layouts/AdminHeader.svelte";
+	import Sidebar from "$lib/components/Sidebar.svelte";
+	export let data;
 
+	let isSidebarOpen = true;
+
+	function toggleSidebar() {
+		isSidebarOpen = !isSidebarOpen;
+	}
+</script>
+
+<!-- <AdminHeader user={data.user}/>
+<slot/> -->
+
+<div class="layout">
+	<AdminHeader
+		user={data.user}
+		on:toggleSidebar={toggleSidebar}
+		sidebarOpen={isSidebarOpen}
+	/>
+	<div class="main-container">
+		<Sidebar cls={isSidebarOpen ? "" : "collapsed"} />
+		<div class="content">
+			<slot />
+		</div>
+	</div>
+</div>
+
+<style>
+	.layout {
+		display: flex;
+		flex-direction: column;
+		height: 100vh;
+	}
+
+	.main-container {
+		display: flex;
+		flex: 1;
+		overflow: hidden;
+	}
+
+	
+
+	.content {
+		flex: 1;
+		padding: 1rem;
+		overflow-y: auto;
+	}
+
+	button.toggle-btn {
+		background: none;
+		border: none;
+		color: white;
+		font-size: 1.5rem;
+		cursor: pointer;
+	}
+</style>

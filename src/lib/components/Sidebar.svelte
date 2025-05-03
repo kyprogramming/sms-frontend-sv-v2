@@ -1,4 +1,8 @@
-<div class="sidebar">
+<script lang="ts">
+ export let cls = '';
+</script>
+
+<nav class={`sidebar ${cls}`}>
 	<!-- <div class="logo">
 		<h1>Admin<span>Panel</span></h1>
 	</div> -->
@@ -45,7 +49,7 @@
 			<span>Security</span>
 		</div>
 	</div>
-</div>
+</nav>
 
 <style>
 	/* Sidebar */
@@ -59,6 +63,10 @@
 		z-index: 1000;
 		position: relative;
 		width: 18%;
+	}
+
+	.sidebar.collapsed {
+		width: 0px;
 	}
 
 	.sidebar::before {
