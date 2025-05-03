@@ -50,17 +50,17 @@
 			<div class="menu-item"><UserCog size="22" />Profile</div>
 			<div class="divider"></div>
 			<div class="menu-item">
-				<div class="logout-container">
-					<Power size="22" color="red" />
-					<button
-						class="logout-button"
-						type="button"
-						disabled={$isLoading}
-						on:click|stopPropagation={onSubmit}
-					>
-						Logout
-					</button>
-				</div>
+				<button
+					class="logout-button"
+					type="button"
+					disabled={$isLoading}
+					on:click|stopPropagation={onSubmit}
+				>
+					<div class="logout-container">
+						<Power size="22" color="red" />
+						Log out
+					</div>
+				</button>
 			</div>
 		</div>
 	{/if}
@@ -142,7 +142,7 @@
 	.dropdown {
 		position: absolute;
 		right: 0;
-		margin-top: 13rem;
+		margin-top: 13.5rem;
 		margin-right: 1rem;
 		background: white;
 		border-radius: 0.5rem;

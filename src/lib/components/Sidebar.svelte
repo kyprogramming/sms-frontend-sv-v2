@@ -65,6 +65,7 @@
 		z-index: 1000;
 		position: relative;
 		width: 18%;
+   
 	}
 
 	.sidebar.collapsed {

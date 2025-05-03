@@ -42,7 +42,7 @@
 		align-items: center;
 		height: 60px;
 		padding: 15px;
-		box-shadow: var(--shadow-sm);
+
 	}
 
 	

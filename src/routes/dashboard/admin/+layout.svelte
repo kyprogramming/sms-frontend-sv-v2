@@ -35,15 +35,12 @@
 
 	.content {
 		flex: 1;
-		padding: 1rem;
+		padding: 10px;
 		overflow-y: auto;
+		border: 2px;
+		background-color: #f8f8f8;
+		margin: 0 10px 10px 10px;
+		border-radius: 10px;
+		box-shadow: inset 0 6px 8px -8px rgba(0, 0, 0, 0.3);
 	}
-/* 
-	button.toggle-btn {
-		background: none;
-		border: none;
-		color: white;
-		font-size: 1.5rem;
-		cursor: pointer;
-	} */
 </style>
