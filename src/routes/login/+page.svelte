@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Header from "$lib/components/layouts/Header.svelte";
   import { z } from "zod";
   import { onMount } from "svelte";
   import { get, writable } from "svelte/store";
@@ -34,10 +35,10 @@
       },
     });
 
-    console.log("response:", res);
+    // console.log("response:", res);
 
     const data = await res.json();
-    console.log(data);
+    // console.log(data);
 
     if (!data.success) {
       error = data.message || "Login failed";
@@ -60,7 +61,7 @@
       try {
         // const frmData = Object.fromEntries(formData);
         // const json = JSON.stringify(frmData);
-        const data:any = {
+        const data: any = {
           email: $formData.email,
           password: $formData.password,
         };
@@ -71,14 +72,14 @@
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include",
         });
         const response = await res.json();
-        console.log("REsponse:",response);
+        // console.log("REsponse:", response);
         if (response.success) {
-
-          const {  data } = response;
-           console.log("USER+:",data);
-        //   authStore.login(token, user);
+          const { data } = response;
+        //   console.log("USER:", data);
+            // authStore.login(token, user);
           goto(`/dashboard/${data.role}`);
         }
       } catch (err: any) {
@@ -127,6 +128,7 @@
   }
 </script>
 
+<Header />
 <div class="main-card">
   <div class="login-card">
     <!-- <img src="https://via.placeholder.com/40" alt="School Logo" /> -->

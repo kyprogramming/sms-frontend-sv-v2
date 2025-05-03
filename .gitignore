@@ -6,6 +6,8 @@ node_modules
 .netlify
 .wrangler
 /.svelte-kit
+.well-known
+/_docs
 /build
 
 # OS

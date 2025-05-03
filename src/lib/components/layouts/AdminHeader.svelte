@@ -1,6 +1,6 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
-  import type { User } from "$lib/types";
+  import type { User } from "$lib/types/types";
   export let user: User | null;
   function handleLogout() {
     window.location.href = "/logout";
@@ -16,7 +16,7 @@
         credentials: "include",
       });
       const response = await res.json();
-      console.log("REsponse:", response);
+    //   console.log("REsponse:", response);
       if (response.success) {
         goto('/');
       }
@@ -69,35 +69,7 @@
     text-decoration: none;
     text-transform: uppercase;
   }
-  .menu_list a {
-    margin: 2rem;
-    font-weight: 500;
-    color: rgb(87, 86, 86);
-    text-decoration: none;
-  }
-  .active {
-    color: #000 !important;
-    font-weight: 700 !important;
-  }
-  .profile {
-    width: 170px;
-    display: flex;
-    cursor: pointer;
-    align-items: center;
-    border-radius: 120px;
-    border: 1px solid rgb(209, 209, 209);
-  }
-  .profile img {
-    width: 40px;
-    position: relative;
-    left: 8px;
-    border-radius: 50%;
-  }
-  .profile h3 {
-    margin: 0 15px;
-    color: #b9068c;
-  }
-
+ 
   .user-profile {
     display: flex;
     align-items: center;
@@ -163,3 +135,33 @@
     box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.5); /* red-500/50 */
   }
 </style>
+
+<!-- 
+ .menu_list a {
+    margin: 2rem;
+    font-weight: 500;
+    color: rgb(87, 86, 86);
+    text-decoration: none;
+  }
+  .active {
+    color: #000 !important;
+    font-weight: 700 !important;
+  }
+  .profile {
+    width: 170px;
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    border-radius: 120px;
+    border: 1px solid rgb(209, 209, 209);
+  }
+  .profile img {
+    width: 40px;
+    position: relative;
+    left: 8px;
+    border-radius: 50%;
+  }
+  .profile h3 {
+    margin: 0 15px;
+    color: #b9068c;
+  } -->

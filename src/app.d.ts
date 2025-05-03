@@ -1,10 +1,13 @@
-import type { User } from "$lib/types/index";
+import type { User } from "$lib/types/types";
 declare global {
   namespace App {
-    // Interface for data added to event.locals (server side)
-    interface Locals {
-      user: User | null;
-    }
+   interface Locals {
+     user?: User | null;
+   }
+
+    // You can also add other custom types here like:
+    // interface Session {}
+    // interface Platform {}
   }
 }
 

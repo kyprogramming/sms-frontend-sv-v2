@@ -3,8 +3,6 @@ import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-  // Consult https://svelte.dev/docs/kit/integrations
-  // for more information about preprocessors
   preprocess: vitePreprocess(),
 
   kit: {
@@ -14,17 +12,17 @@ const config = {
     adapter: adapter(),
   },
   // Add this block to enable proxying
-  vite: {
-    server: {
-      proxy: {
-        "/api": {
-          target: "http://localhost:5000",
-          secure: false,
-          changeOrigin: false,
-        },
-      },
-    },
-  },
+//   vite: {
+//     server: {
+//       proxy: {
+//         "/api": {
+//           target: "http://localhost:5000",
+//           secure: false,
+//           changeOrigin: false,
+//         },
+//       },
+//     },
+//   },
 };
 
 export default config;

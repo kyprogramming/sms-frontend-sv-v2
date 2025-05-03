@@ -1,6 +1,6 @@
-// Define the User type
+// src/lib/types.ts
 export type User = {
-  id: number;
+  id: string;
   name: string;
   email: string;
   role: string;
