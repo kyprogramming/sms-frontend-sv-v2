@@ -1,4 +1,4 @@
-import { authStore, isAuthenticated } from "$lib/stores/authStore";
+// import { authStore, isAuthenticated } from "$lib/stores/authStore";
 
 // Check if token exists in cookies
 // export const checkAuth = (): boolean => {

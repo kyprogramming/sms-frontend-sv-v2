@@ -1,8 +1,14 @@
 <script lang="ts">
-  // let { children } = $props();
-  // import Footer from "$lib/components/layouts/Footer.svelte";
-  import Header from "$lib/components/layouts/Header.svelte";
-  import Sidebar from "$lib/components/layouts/Sidebar.svelte";
+    import AdminHeader from "$lib/components/layouts/AdminHeader.svelte";
+    import Sidebar from "$lib/components/Sidebar.svelte";
+ export let data;
 </script>
-
+<AdminHeader user={data.user}/>
+<Sidebar/>
+<!-- {#if data.user}
+  <div style="padding: 1rem; background: #f0f0f0;">
+    Welcome, {data.user.name}!
+  </div>
+{/if} -->
+<slot/>
 <!-- {@render children()} -->

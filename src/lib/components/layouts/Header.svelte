@@ -1,21 +1,29 @@
 <!-- src/lib/components/Header.svelte -->
 <script lang="ts">
-  import { isAuthenticated, isLoading, authStore } from "$lib/stores/authStore";
   import { goto } from "$app/navigation";
+    import { onMount } from "svelte";
+    // export let data;
 
+ onMount(() => {
+    // if (data?.user && data?.token) {
+    // //   authStore.login(data.user, data.token);
+    // }
+  });
+  
   // Reactive store values
-  $: loggedIn = $isAuthenticated;
-  $: loading = $isLoading;
+//   $: loggedIn = $isAuthenticated;
+  //   $: loading = $isLoading;
 
   // Debugging (remove in production)
-  $: console.log("Auth state:", {
-    loggedIn,
-    loading,
-    user: $authStore.user
-  });
+//   $: console.log("Auth state Client:", {
+//     loggedIn,
+   
+//     // loading,
+//     // user: $authStore.user,
+//   });
 
   async function handleLogout() {
-    authStore.logout();
+    // authStore.logout();
     goto("/");
   }
 </script>
@@ -24,38 +32,49 @@
   <div class="header_logo">
     <a href="/">SCHOOL MANAGEMENT</a>
   </div>
-  
+<!-- {#if $isAuthenticated} -->
+  <!-- svelte-ignore a11y_click_events_have_key_events -->
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div on:click={handleLogout} class="hover:underline">
+          LOGOUT
+        </div>
+<!-- {:else} -->
+      <a href="/login" class="hover:underline">LOGIN</a>
+<!-- {/if} -->
   <div class="menu_list">
-    <a href="/" class="hover:underline">HOME</a>
-    <a href="/about-us" class="hover:underline">ABOUT US</a>
+    <!-- <a href="/" class="hover:underline">HOME</a> 
+     <a href="/about-us" class="hover:underline">ABOUT US</a>
     <a href="/faculty" class="hover:underline">FACULTY</a>
     <a href="/gallery" class="hover:underline">GALLERY</a>
     <a href="/contact-us" class="hover:underline">CONTACT US</a>
-      <a href="/login" class="hover:underline">LOGIN</a>
-        <button 
-          on:click={handleLogout}
-          class="hover:underline"
-        >
+    <a href="/login" class="hover:underline">LOGIN</a>
+    <button on:click={handleLogout} class="hover:underline"> LOGOUT </button> -->
+    <a href="/login" class="hover:underline">LOGIN</a>
+    <!-- {#if isAuthenticated} -->
+      <div>
+        <button on:click={handleLogout} class="hover:underline">
           LOGOUT
         </button>
+      </div>
+    <!-- {:else} -->
+      <a href="/login" class="hover:underline">LOGIN</a>
+    <!-- {/if} -->
 
-    {#if loading}
+    <!-- <button on:click={handleLogout} class="hover:underline"> LOGOUT </button>  -->
+    <!-- {#if loading}
       <span class="text-gray-500">Loading...</span>
     {:else if loggedIn}
       <div class="flex items-center gap-2">
         {#if $authStore.user}
           <span class="text-sm">Hi, {$authStore.user.email}</span>
         {/if}
-        <button 
-          on:click={handleLogout}
-          class="hover:underline"
-        >
+        <button on:click={handleLogout} class="hover:underline">
           LOGOUT
         </button>
       </div>
     {:else}
       <a href="/login" class="hover:underline">LOGIN</a>
-    {/if}
+    {/if} -->
   </div>
 </header>
 

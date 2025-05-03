@@ -13,6 +13,18 @@ const config = {
     // See https://svelte.dev/docs/kit/adapters for more information about adapters.
     adapter: adapter(),
   },
+  // Add this block to enable proxying
+  vite: {
+    server: {
+      proxy: {
+        "/api": {
+          target: "http://localhost:5000",
+          secure: false,
+          changeOrigin: false,
+        },
+      },
+    },
+  },
 };
 
 export default config;

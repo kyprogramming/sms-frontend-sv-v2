@@ -3,10 +3,7 @@
   import { onMount } from "svelte";
   import { get, writable } from "svelte/store";
   export let form: any;
-
   import { goto } from "$app/navigation";
-  import { login } from "$lib/api/auth";
-  import { authStore } from "$lib/stores/authStore";
 
   const loginSchema = z.object({
     email: z.string().email({ message: "Invalid email address" }),
@@ -14,7 +11,8 @@
       .string()
       .min(6, { message: "Password must be at least 6 characters" }),
   });
-
+  let error = "";
+  let success = "";
   const formData = writable({
     email: "username1@xyz.com",
     password: "password1",
@@ -23,6 +21,78 @@
   });
 
   const formErrors = writable<{ email?: string; password?: string }>({});
+
+  async function handleLogin(formData: any) {
+    const frmData = Object.fromEntries(formData);
+    const json = JSON.stringify(frmData);
+
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      body: json,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    console.log("response:", res);
+
+    const data = await res.json();
+    console.log(data);
+
+    if (!data.success) {
+      error = data.message || "Login failed";
+      return;
+    }
+
+    // authActions.login(data.user);
+    success = "Login successful! Redirecting...";
+    setTimeout(() => {
+      goto("/post");
+    }, 1000);
+  }
+
+  async function onSubmit(event: Event) {
+    event.preventDefault();
+    const $formData = get(formData);
+    formData.update((f) => ({ ...f, isLoading: true, error: "" }));
+    const isValid = await validate();
+    if (isValid) {
+      try {
+        // const frmData = Object.fromEntries(formData);
+        // const json = JSON.stringify(frmData);
+        const data:any = {
+          email: $formData.email,
+          password: $formData.password,
+        };
+
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const response = await res.json();
+        console.log("REsponse:",response);
+        if (response.success) {
+
+          const {  data } = response;
+           console.log("USER+:",data);
+        //   authStore.login(token, user);
+          goto(`/dashboard/${data.role}`);
+        }
+      } catch (err: any) {
+        formData.update((f) => ({
+          ...f,
+          error: err.message || "Invalid credentials",
+        }));
+      } finally {
+        formData.update((f) => ({ ...f, isLoading: false }));
+      }
+    } else {
+      formData.update((f) => ({ ...f, isLoading: false }));
+    }
+  }
 
   async function validate(): Promise<boolean> {
     const $formData = get(formData);
@@ -42,38 +112,6 @@
       return true;
     }
   }
-
-  //   async function handleSubmit(event: Event) {
-  //     event.preventDefault();
-
-  //     // Get current form data
-  //     const $formData = get(formData);
-  //     formData.update((f) => ({ ...f, isLoading: true, error: "" }));
-
-  //     const isValid = await validate();
-  //     if (isValid) {
-  //       try {
-  //         const data: any = await login({
-  //           email: $formData.email,
-  //           password: $formData.password,
-  //         });
-  //         if (data.success) {
-  //           const { token, user } = data.data;
-  //           authStore.login(token, user);
-  //           goto(`/dashboard/${user.role}`);
-  //         }
-  //       } catch (err: any) {
-  //         formData.update((f) => ({
-  //           ...f,
-  //           error: err.message || "Invalid credentials",
-  //         }));
-  //       } finally {
-  //         formData.update((f) => ({ ...f, isLoading: false }));
-  //       }
-  //     } else {
-  //       formData.update((f) => ({ ...f, isLoading: false }));
-  //     }
-  //   }
 
   function handleBlur(field: keyof typeof $formData) {
     // Optional: track touched fields for validation UX
@@ -95,16 +133,20 @@
     <h2>School Logo</h2>
     <h3>Login to Your Account</h3>
     <p>Enter your credentials below</p>
-    <form method="POST">
+    <!-- <form method="POST"> -->
+    <form on:submit={onSubmit}>
       <div class="input-wrapper">
-        <input name="email"
+        <input
+          name="email"
           type="email"
           value="username1@xyz.com"
           placeholder="Enter your email"
         />
       </div>
+
       <div class="input-wrapper">
-        <input name="password"
+        <input
+          name="password"
           id="password"
           type="password"
           value="password1"

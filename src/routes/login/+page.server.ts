@@ -1,6 +1,7 @@
 import { redirect, fail } from "@sveltejs/kit";
-import type { PageServerLoad } from "./$types";
-import { authStore } from "$lib/stores/authStore";
+import type { PageServerLoad, Actions } from "./$types";
+// import { authStore } from "$lib/stores/authStore";
+
 
 export const load: PageServerLoad = async ({ cookies }) => {
   const token = cookies.get("token");
@@ -9,7 +10,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
   }
 };
 
-export const actions = {
+export const actions: Actions = {
   default: async ({ request, cookies }) => {
     const formData = await request.formData();
     const email = formData.get("email")?.toString();
@@ -31,6 +32,7 @@ export const actions = {
     }
 
     const data = await res.json();
+    // console.log({ "data::": data });
     cookies.set("token", data.data.token, {
       path: "/",
       httpOnly: true,
@@ -38,9 +40,17 @@ export const actions = {
       secure: false,
       maxAge: 60 * 60 * 24,
     });
-    console.log({ "data::": data });
-    authStore.login(data.data.token, data.user);
-    // Redirect to the admin dashboard after successful login
+    // authStore.login(data.data.user, data.data.token);
     throw redirect(302, "/dashboard/admin");
   },
 };
+
+//   logout: async ({ cookies }) => {
+//     // await fetch("http://localhost:5000/api/auth/logout", {
+//     //   method: "POST",
+//     //   credentials: "include",
+//     // });
+
+//     cookies.delete("token", { path: "/" });
+//     throw redirect(302, "/login");
+//   },
