@@ -1,172 +1,172 @@
 <div class="sidebar">
-  <div class="logo">
-    <h1>Admin<span>Panel</span></h1>
-  </div>
-  <div class="nav-menu">
-    <div class="menu-heading">Main</div>
-    <div class="nav-item active">
-      <i class="fas fa-chart-pie"></i>
-      <span>Dashboard</span>
-    </div>
-    <div class="nav-item">
-      <i class="fas fa-users"></i>
-      <span>Users</span>
-    </div>
-    <div class="nav-item">
-      <i class="fas fa-box"></i>
-      <span>Products</span>
-    </div>
-    <div class="nav-item">
-      <i class="fas fa-shopping-cart"></i>
-      <span>Orders</span>
-    </div>
+	<!-- <div class="logo">
+		<h1>Admin<span>Panel</span></h1>
+	</div> -->
+	<div class="nav-menu">
+		<div class="menu-heading">Main</div>
+		<div class="nav-item active">
+			<i class="fas fa-chart-pie"></i>
+			<span>Dashboard</span>
+		</div>
+		<div class="nav-item">
+			<i class="fas fa-users"></i>
+			<span>Users</span>
+		</div>
+		<div class="nav-item">
+			<i class="fas fa-box"></i>
+			<span>Products</span>
+		</div>
+		<div class="nav-item">
+			<i class="fas fa-shopping-cart"></i>
+			<span>Orders</span>
+		</div>
 
-    <div class="menu-heading">Reports</div>
-    <div class="nav-item">
-      <i class="fas fa-chart-line"></i>
-      <span>Analytics</span>
-    </div>
-    <div class="nav-item">
-      <i class="fas fa-coins"></i>
-      <span>Sales</span>
-    </div>
+		<div class="menu-heading">Reports</div>
+		<div class="nav-item">
+			<i class="fas fa-chart-line"></i>
+			<span>Analytics</span>
+		</div>
+		<div class="nav-item">
+			<i class="fas fa-coins"></i>
+			<span>Sales</span>
+		</div>
 
-    <div class="menu-heading">Admin</div>
-    <div class="nav-item">
-      <i class="fas fa-cog"></i>
-      <span>Settings</span>
-    </div>
-    <div class="nav-item">
-      <i class="fas fa-bell"></i>
-      <span>Notifications</span>
-    </div>
-    <div class="nav-item">
-      <i class="fas fa-shield-alt"></i>
-      <span>Security</span>
-    </div>
-  </div>
+		<div class="menu-heading">Admin</div>
+		<div class="nav-item">
+			<i class="fas fa-cog"></i>
+			<span>Settings</span>
+		</div>
+		<div class="nav-item">
+			<i class="fas fa-bell"></i>
+			<span>Notifications</span>
+		</div>
+		<div class="nav-item">
+			<i class="fas fa-shield-alt"></i>
+			<span>Security</span>
+		</div>
+	</div>
 </div>
 
 <style>
-  /* Sidebar */
-  .sidebar {
-    grid-row: 1 / 3;
-    background: linear-gradient(180deg, var(--dark) 0%, #16213e 100%);
-    color: white;
-    overflow-y: auto;
-    transition: var(--transition);
-    box-shadow: var(--shadow);
-    z-index: 1000;
-    position: relative;
-    width:18%
-  }
+	/* Sidebar */
+	.sidebar {
+		grid-row: 1 / 3;
+		background: linear-gradient(180deg, var(--dark) 0%, #4f586e 100%);
+		color: white;
+		overflow-y: auto;
+		transition: var(--transition);
+		box-shadow: var(--shadow);
+		z-index: 1000;
+		position: relative;
+		width: 18%;
+	}
 
-  .sidebar::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 100%;
-    width: 1px;
-    background: linear-gradient(
-      to bottom,
-      rgba(255, 255, 255, 0.1),
-      transparent
-    );
-  }
+	.sidebar::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		right: 0;
+		height: 100%;
+		width: 1px;
+		background: linear-gradient(
+			to bottom,
+			rgba(255, 255, 255, 0.1),
+			transparent
+		);
+	}
 
-  .logo {
-    padding: 24px 20px;
-    text-align: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    margin-bottom: 10px;
-  }
+	.logo {
+		padding: 24px 20px;
+		text-align: center;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+		margin-bottom: 10px;
+	}
 
-  .logo h1 {
-    font-size: 26px;
-    font-weight: 700;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    letter-spacing: 0.5px;
-  }
+	.logo h1 {
+		font-size: 26px;
+		font-weight: 700;
+		color: white;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		letter-spacing: 0.5px;
+	}
 
-  .logo span {
-    color: var(--primary-light);
-    background: linear-gradient(45deg, var(--primary-light), var(--success));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-left: 4px;
-  }
+	.logo span {
+		color: var(--primary-light);
+		background: linear-gradient(45deg, var(--primary-light), var(--success));
+		-webkit-background-clip: text;
+		background-clip: text;
+		-webkit-text-fill-color: transparent;
+		margin-left: 4px;
+	}
 
-  .nav-menu {
-    padding: 10px 0;
-  }
+	.nav-menu {
+		padding: 10px 0;
+	}
 
-  .menu-heading {
-    padding: 16px 25px 8px;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    color: rgba(255, 255, 255, 0.5);
-    font-weight: 500;
-  }
+	.menu-heading {
+		padding: 16px 25px 8px;
+		font-size: 11px;
+		text-transform: uppercase;
+		letter-spacing: 1.2px;
+		color: rgba(255, 255, 255, 0.5);
+		font-weight: 500;
+	}
 
-  .nav-item {
-    padding: 12px 25px;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    transition: var(--transition);
-    border-left: 4px solid transparent;
-    margin: 4px 0;
-    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-    position: relative;
-    overflow: hidden;
-  }
+	.nav-item {
+		padding: 12px 25px;
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+		transition: var(--transition);
+		border-left: 4px solid transparent;
+		margin: 4px 0;
+		border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+		position: relative;
+		overflow: hidden;
+	}
 
-  .nav-item::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 1px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.2),
-      transparent
-    );
-    transition: var(--transition);
-  }
+	.nav-item::after {
+		content: "";
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		width: 0;
+		height: 1px;
+		background: linear-gradient(
+			90deg,
+			transparent,
+			rgba(255, 255, 255, 0.2),
+			transparent
+		);
+		transition: var(--transition);
+	}
 
-  .nav-item:hover::after {
-    width: 100%;
-  }
+	.nav-item:hover::after {
+		width: 100%;
+	}
 
-  .nav-item:hover,
-  .nav-item.active {
-    background-color: rgba(255, 255, 255, 0.07);
-    border-left-color: var(--primary-light);
-  }
+	.nav-item:hover,
+	.nav-item.active {
+		background-color: rgba(255, 255, 255, 0.07);
+		border-left-color: var(--primary-light);
+	}
 
-  .nav-item.active {
-    background: linear-gradient(90deg, rgba(67, 97, 238, 0.2), transparent);
-    font-weight: 500;
-  }
+	.nav-item.active {
+		background: linear-gradient(90deg, rgba(67, 97, 238, 0.2), transparent);
+		font-weight: 500;
+	}
 
-  .nav-item i {
-    width: 24px;
-    margin-right: 12px;
-    font-size: 18px;
-    text-align: center;
-    transition: var(--transition);
-  }
+	.nav-item i {
+		width: 24px;
+		margin-right: 12px;
+		font-size: 18px;
+		text-align: center;
+		transition: var(--transition);
+	}
 
-  .nav-item:hover i {
-    transform: translateY(-2px);
-  }
+	.nav-item:hover i {
+		transform: translateY(-2px);
+	}
 </style>

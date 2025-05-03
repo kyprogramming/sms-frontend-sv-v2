@@ -27,9 +27,12 @@
 </script>
 
 <header class="header">
-  <div class="header_logo">
+  <!-- <div class="header_logo">
     <a href="/">SCHOOL MANAGEMENT</a>
-  </div>
+  </div> -->
+  <div class="logo">
+		<h1>School<span>Management System</span></h1>
+	</div>
   {#if user?.authenticated}
     <div class="user-profile">
       <div class="profile-img">{user.name?.charAt(0).toUpperCase()}</div>
@@ -53,7 +56,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 70px;
+    height: 60px;
     padding: 15px;
     box-shadow: var(--shadow-sm);
   }
@@ -134,6 +137,32 @@
     outline: none;
     box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.5); /* red-500/50 */
   }
+
+  .logo {
+		padding: 24px 20px;
+		text-align: center;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+		margin-bottom: 10px;
+	}
+
+	.logo h1 {
+		font-size: 26px;
+		font-weight: 700;
+		color: var(--primary-light);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		letter-spacing: 0.5px;
+	}
+
+	.logo span {
+		color: var(--primary-light);
+		background: linear-gradient(45deg, var(--primary-light), var(--success));
+		-webkit-background-clip: text;
+		background-clip: text;
+		-webkit-text-fill-color: transparent;
+		margin-left: 4px;
+	}
 </style>
 
 <!-- 

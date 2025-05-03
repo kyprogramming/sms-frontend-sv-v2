@@ -1,12 +1,12 @@
 node_modules
-
+.well-known
 # Output
 .output
 .vercel
 .netlify
 .wrangler
 /.svelte-kit
-.well-known
+
 /_docs
 /build
 
