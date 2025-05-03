@@ -43,7 +43,11 @@
     color: rgb(87, 86, 86);
     text-decoration: none;
   }
-  .active {
+ 
+</style>
+<!-- 
+
+ .active {
     color: #000 !important;
     font-weight: 700 !important;
   }
@@ -64,5 +68,4 @@
   .profile h3 {
     margin: 0 15px;
     color: #b9068c;
-  }
-</style>
+  } -->

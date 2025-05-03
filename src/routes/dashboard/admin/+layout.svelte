@@ -3,24 +3,17 @@
 	import Sidebar from "$lib/components/Sidebar.svelte";
 	export let data;
 
-	let isSidebarOpen = true;
-
-	function toggleSidebar() {
-		isSidebarOpen = !isSidebarOpen;
-	}
+	let sidebarOpen = true;
 </script>
-
-<!-- <AdminHeader user={data.user}/>
-<slot/> -->
 
 <div class="layout">
 	<AdminHeader
 		user={data.user}
-		on:toggleSidebar={toggleSidebar}
-		sidebarOpen={isSidebarOpen}
+		{sidebarOpen}
+		onToggleSidebar={() => (sidebarOpen = !sidebarOpen)}
 	/>
 	<div class="main-container">
-		<Sidebar cls={isSidebarOpen ? "" : "collapsed"} />
+		<Sidebar cls={sidebarOpen ? "" : "collapsed"} />
 		<div class="content">
 			<slot />
 		</div>
@@ -40,19 +33,17 @@
 		overflow: hidden;
 	}
 
-	
-
 	.content {
 		flex: 1;
 		padding: 1rem;
 		overflow-y: auto;
 	}
-
+/* 
 	button.toggle-btn {
 		background: none;
 		border: none;
 		color: white;
 		font-size: 1.5rem;
 		cursor: pointer;
-	}
+	} */
 </style>

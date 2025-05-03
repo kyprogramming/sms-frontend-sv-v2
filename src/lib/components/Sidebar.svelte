@@ -3,50 +3,52 @@
 </script>
 
 <nav class={`sidebar ${cls}`}>
-	<!-- <div class="logo">
+	<div class="logo">
 		<h1>Admin<span>Panel</span></h1>
-	</div> -->
+	</div>
 	<div class="nav-menu">
 		<div class="menu-heading">Main</div>
 		<div class="nav-item active">
 			<i class="fas fa-chart-pie"></i>
 			<span>Dashboard</span>
 		</div>
-		<div class="nav-item">
-			<i class="fas fa-users"></i>
-			<span>Users</span>
-		</div>
-		<div class="nav-item">
-			<i class="fas fa-box"></i>
-			<span>Products</span>
-		</div>
-		<div class="nav-item">
-			<i class="fas fa-shopping-cart"></i>
-			<span>Orders</span>
-		</div>
-
+		
+        
+	
 		<div class="menu-heading">Reports</div>
 		<div class="nav-item">
 			<i class="fas fa-chart-line"></i>
 			<span>Analytics</span>
 		</div>
-		<div class="nav-item">
-			<i class="fas fa-coins"></i>
-			<span>Sales</span>
-		</div>
 
 		<div class="menu-heading">Admin</div>
+        <div class="nav-item">
+			<i class="fas fa-users"></i>
+            <a href="/dashboard/admin/class"> Classes</a>
+		</div>
+        <div class="nav-item">
+			<i class="fas fa-users"></i>
+             <a href="/dashboard/admin/section"> Sections</a>
+		</div>
+        <div class="nav-item">
+			<i class="fas fa-users"></i>
+             <a href="/dashboard/admin/subject"> Subjects</a>
+		</div>
+        <div class="nav-item">
+			<i class="fas fa-users"></i>
+			<span>Users</span>
+		</div>
+        <div class="nav-item">
+			<i class="fas fa-users"></i>
+			<span>Students</span>
+		</div>
+         <div class="nav-item">
+			<i class="fas fa-users"></i>
+			<span>Students</span>
+		</div>
 		<div class="nav-item">
 			<i class="fas fa-cog"></i>
 			<span>Settings</span>
-		</div>
-		<div class="nav-item">
-			<i class="fas fa-bell"></i>
-			<span>Notifications</span>
-		</div>
-		<div class="nav-item">
-			<i class="fas fa-shield-alt"></i>
-			<span>Security</span>
 		</div>
 	</div>
 </nav>
@@ -173,6 +175,17 @@
 		text-align: center;
 		transition: var(--transition);
 	}
+
+    .nav-item a {
+		width: 24px;
+		margin-right: 12px;
+		font-size: 18px;
+		text-align: center;
+        color: rgba(255, 255, 255, 1);
+		transition: var(--transition);
+        text-decoration: none;
+	}
+
 
 	.nav-item:hover i {
 		transform: translateY(-2px);
