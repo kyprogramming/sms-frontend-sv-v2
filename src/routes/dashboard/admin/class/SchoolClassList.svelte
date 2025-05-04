@@ -52,9 +52,9 @@
 	}
 </script>
 
+<ClassHeader {totalClasses} {totalLevels} {totalAcademicYears} />
 <div class="class-container">
-	<!-- <ClassHeader {totalClasses} {totalLevels} {totalAcademicYears} />
-  <ClassFilters bind:rowsPerPage bind:levelFilter bind:academicYearFilter /> -->
+	<ClassFilters bind:levelFilter bind:academicYearFilter />
 	<ClassTable {classes} {rowsPerPage} />
 	<Pagination {totalItems} bind:rowsPerPage bind:currentPage />
 </div>

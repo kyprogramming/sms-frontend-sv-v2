@@ -1,60 +1,53 @@
 <script>
-  export let totalClasses;
-  export let totalLevels;
-  export let totalAcademicYears;
+	export let totalClasses;
+	export let totalLevels;
+	export let totalAcademicYears;
 </script>
 
-<div class="header">
-  <h1>School Class List</h1>
-  <div class="stats">
-    <div class="stat blue">{totalClasses} <span>Total Classes</span></div>
-    <div class="stat green">{totalLevels} <span>Total Levels</span></div>
-    <div class="stat purple">{totalAcademicYears} <span>Total Academic Years</span></div>
-  </div>
-
+<div class="stats">
+	<div class="stat blue">Total Classes<span>{totalClasses}</span></div>
+	<div class="stat green">Total Levels <span>{totalLevels}</span></div>
+	<div class="stat purple">
+		Total Academic Years <span>{totalAcademicYears}</span>
+	</div>
 </div>
 
 <style>
-  .header {
-    margin-bottom: 1rem;
-    width: 100%;
-  }
-  h1 {
-    margin: 0;
-    font-size: 1.5rem;
-    color: #333;
-  }
-  .stats {
-    display: flex;
-    justify-content: space-between;
-    margin: 1rem 0;
-  }
-  .stat {
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    color: white;
-    font-weight: bold;
-  }
-  .blue { background-color: #007bff; }
-  .green { background-color: #28a745; }
-  .purple { background-color: #9b59b6; }
-  .stat span {
-    display: block;
-    font-size: 0.8rem;
-    font-weight: normal;
-  }
-  .breadcrumb {
-    font-size: 0.9rem;
-    color: #666;
-  }
-  .breadcrumb a {
-    color: #1e90ff;
-    text-decoration: none;
-  }
-  .breadcrumb a:hover {
-    text-decoration: underline;
-  }
-  .breadcrumb span {
-    color: #333;
-  }
+	.stats {
+		display: flex;
+		gap: 2rem;
+		margin: 1rem 0;
+		width: 100%;
+        font-size: 20px;
+	}
+
+	.stat {
+		flex: 1;
+		padding: 1.5rem;
+		border-radius: 8px;
+		gap: 0.5rem;
+		color: white;
+		font-weight: bold;
+		text-align: center;
+		height: 90px;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		transition: font-size 0.3s ease;
+	}
+
+	.stat:hover {
+		font-size: 25px;
+	}
+
+	/* Combined gradient backgrounds in one line */
+	.blue {
+		background: linear-gradient(135deg, #007bff 0%, #00b7eb 100%);
+	}
+	.green {
+		background: linear-gradient(135deg, #28a745 0%, #2ecc71 100%);
+	}
+	.purple {
+		background: linear-gradient(135deg, #9b59b6 0%, #e056fd 100%);
+	}
 </style>
