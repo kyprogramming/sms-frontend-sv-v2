@@ -2,7 +2,6 @@
 	import ClassHeader from "./ClassHeader.svelte";
 	import ClassFilters from "./ClassFilters.svelte";
 	import ClassTable from "./ClassTable.svelte";
-	import Pagination from "./Pagination.svelte";
 
 	let totalClasses = 120;
 	let totalLevels = 5;
@@ -56,7 +55,6 @@
 <div class="class-container">
 	<ClassFilters bind:levelFilter bind:academicYearFilter />
 	<ClassTable {classes} {rowsPerPage} />
-	
 </div>
 
 <style>
