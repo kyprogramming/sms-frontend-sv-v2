@@ -16,7 +16,7 @@
 	let formData: ClassFormData = {
 		name: "",
 		level: 1,
-		academicYear: ""
+		academicYear: "",
 	};
 
 	const formErrors = writable<Partial<Record<keyof ClassFormData, string>>>({});
@@ -51,16 +51,25 @@
 
 			<div class="form-group">
 				<label for="level">Level</label>
-				<input id="level" type="number" placeholder="type here" bind:value={formData.level} />
+				<input
+					id="level"
+					type="number"
+					placeholder="type here"
+					bind:value={formData.level}
+				/>
 			</div>
 
 			<div class="form-group">
 				<label for="academicYear">Academic Year</label>
-				<input id="academicYear" placeholder="e.g. 2024-2025" bind:value={formData.academicYear} />
+				<input
+					id="academicYear"
+					placeholder="e.g. 2024-2025"
+					bind:value={formData.academicYear}
+				/>
 			</div>
 		</div>
 
-		<button type="submit" disabled={$isLoading}>
+		<button class="btn ripple" type="submit" disabled={$isLoading}>
 			{#if $isLoading}Saving...{:else}Create Class{/if}
 		</button>
 		{#if error}<p class="error-text">{error}</p>{/if}
@@ -101,38 +110,10 @@
 		gap: 0.3rem;
 	}
 
-	label {
-		font-size: 0.85rem;
-		color: #34495e;
-		font-weight: 500;
-	}
-
-	input {
-		padding: 0.6rem;
-		border: 1px solid #ccc;
-		border-radius: 6px;
-		background-color: #f4f4f4;
-		font-size: 1rem;
-	}
-
-	button {
-		background-color: #2c3e50;
-		color: white;
-		padding: 0.8rem 1.5rem;
-		border: none;
-		border-radius: 6px;
-		font-size: 1rem;
-		cursor: pointer;
-		align-self: flex-end;
-	}
 
 	button:disabled {
 		opacity: 0.6;
 		cursor: not-allowed;
 	}
 
-	.error-text {
-		color: red;
-		font-size: 0.9rem;
-	}
 </style>

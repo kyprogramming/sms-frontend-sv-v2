@@ -1,7 +1,6 @@
 import { ZodSchema } from "zod";
 import type { Writable } from "svelte/store";
 
-
 export async function validateForm<T>(
 	schema: ZodSchema,
 	data: T,

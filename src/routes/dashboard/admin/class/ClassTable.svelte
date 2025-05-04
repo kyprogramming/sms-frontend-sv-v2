@@ -86,7 +86,7 @@
 		<tfoot>
 			<tr>
 				<td colspan="6" style="padding:3px;">
-						<Pagination {totalItems} bind:rowsPerPage bind:currentPage />
+					<Pagination {totalItems} bind:rowsPerPage bind:currentPage />
 				</td>
 			</tr>
 		</tfoot>
@@ -127,7 +127,7 @@
 	th:hover {
 		background: linear-gradient(to bottom, #1e40af 0%, #2563eb 100%);
 	}
-	th:last-child {
+	 th:first-child ,th:last-child,th:nth-child(2)   {
 		text-align: center;
 	}
 	th span {
@@ -141,7 +141,7 @@
 		color: #2d3748;
 	}
 
-	td:last-child {
+	td:first-child, td:last-child,td:nth-child(2) {
 		text-align: center;
 	}
 

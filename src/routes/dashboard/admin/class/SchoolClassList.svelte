@@ -57,6 +57,8 @@
 	<ClassTable {classes} {rowsPerPage} />
 </div>
 
+
+
 <style>
 	.class-container {
 		display: flex;
@@ -69,4 +71,8 @@
 		box-shadow: var(--shadow-sm);
 		margin-top: 15px;
 	}
+
+
+
+   
 </style>

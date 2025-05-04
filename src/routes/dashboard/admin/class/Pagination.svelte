@@ -34,15 +34,17 @@
 
 <div class="pagination">
 	<div class="rows-per-page">
-		<label for="rowsPerPage">Rows per page:</label>
-		<select bind:value={rowsPerPage} id="rowsPerPage">
+		<span>Rows per page:</span>
+		<select id="rowsPerPage" style="padding: 4px;" bind:value={rowsPerPage} >
 			<option value="10">10</option>
 			<option value="30">30</option>
 			<option value="50">50</option>
 		</select>
 	</div>
 	<div class="range">
-        <div class="footer">Showing {startRange}-{endRange} of  {totalItems} records</div>
+		<div class="footer">
+			Showing {startRange}-{endRange} of {totalItems} records
+		</div>
 	</div>
 	<div class="nav-buttons">
 		<button
@@ -72,7 +74,6 @@
 <style>
 .pagination { display: flex; align-items: center; justify-content: end; font-family: Arial, sans-serif; font-size: 0.9rem; color: #333; padding: 0.5rem 0; }
 .rows-per-page { display: flex; align-items: center; gap: 0.5rem; }
-label { font-weight: normal; color: #666; }
 .range { margin: 0 1rem; color: #555; }
 .nav-buttons { display: flex; gap: 0.5rem; }
 .nav-button { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: none; border-radius: 50%; background-color: var(--gray2); color: var(--gray5); cursor: pointer; font-size: 1rem; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.05); box-shadow: var(--shadow-sm); }

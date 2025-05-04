@@ -1,5 +1,5 @@
 <script lang="ts">
- export let cls = '';
+	export let cls = "";
 </script>
 
 <nav class={`sidebar ${cls}`}>
@@ -12,9 +12,7 @@
 			<i class="fas fa-chart-pie"></i>
 			<span>Dashboard</span>
 		</div>
-		
-        
-	
+
 		<div class="menu-heading">Reports</div>
 		<div class="nav-item">
 			<i class="fas fa-chart-line"></i>
@@ -22,27 +20,27 @@
 		</div>
 
 		<div class="menu-heading">Admin</div>
-        <div class="nav-item">
+		<div class="nav-item">
 			<i class="fas fa-users"></i>
-            <a href="/dashboard/admin/class"> Classes</a>
+			<a href="/dashboard/admin/class"> Classes</a>
 		</div>
-        <div class="nav-item">
+		<div class="nav-item">
 			<i class="fas fa-users"></i>
-             <a href="/dashboard/admin/section"> Sections</a>
+			<a href="/dashboard/admin/section"> Sections</a>
 		</div>
-        <div class="nav-item">
+		<div class="nav-item">
 			<i class="fas fa-users"></i>
-             <a href="/dashboard/admin/subject"> Subjects</a>
+			<a href="/dashboard/admin/subject"> Subjects</a>
 		</div>
-        <div class="nav-item">
+		<div class="nav-item">
 			<i class="fas fa-users"></i>
 			<span>Users</span>
 		</div>
-        <div class="nav-item">
+		<div class="nav-item">
 			<i class="fas fa-users"></i>
 			<span>Students</span>
 		</div>
-         <div class="nav-item">
+		<div class="nav-item">
 			<i class="fas fa-users"></i>
 			<span>Students</span>
 		</div>
@@ -65,7 +63,6 @@
 		z-index: 1000;
 		position: relative;
 		width: 18%;
-   
 	}
 
 	.sidebar.collapsed {
@@ -177,16 +174,15 @@
 		transition: var(--transition);
 	}
 
-    .nav-item a {
+	.nav-item a {
 		width: 24px;
 		margin-right: 12px;
 		font-size: 18px;
 		text-align: center;
-        color: rgba(255, 255, 255, 1);
+		color: rgba(255, 255, 255, 1);
 		transition: var(--transition);
-        text-decoration: none;
+		text-decoration: none;
 	}
-
 
 	.nav-item:hover i {
 		transform: translateY(-2px);

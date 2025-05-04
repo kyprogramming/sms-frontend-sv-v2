@@ -12,5 +12,5 @@
 
 <Breadcrumb title="Class List" items={breadcrumbItems} />
 <!-- <Breadcrumb title="Class List" items={breadcrumbItems} /> -->
-<SchoolClassList/>
+<SchoolClassList />
 <!-- <ClassForm /> -->

@@ -22,7 +22,8 @@
 			<!-- Close Button -->
 			<button
 				class="close-btn"
-				on:click={() => snackbars.update(n => n.filter(s => s.id !== snackbar.id))}
+				on:click={() =>
+					snackbars.update((n) => n.filter((s) => s.id !== snackbar.id))}
 				aria-label="Close"
 			>
 				&times;
@@ -65,10 +66,18 @@
 		overflow: hidden;
 	}
 
-	.snackbar.success { background: #16a34a; } /* green */
-	.snackbar.error { background: #dc2626; }   /* red */
-	.snackbar.info { background: #2563eb; }    /* blue */
-	.snackbar.warning { background: #f59e0b; } /* yellow */
+	.snackbar.success {
+		background: #16a34a;
+	} /* green */
+	.snackbar.error {
+		background: #dc2626;
+	} /* red */
+	.snackbar.info {
+		background: #2563eb;
+	} /* blue */
+	.snackbar.warning {
+		background: #f59e0b;
+	} /* yellow */
 
 	.progress-bar {
 		position: absolute;
@@ -81,8 +90,12 @@
 	}
 
 	@keyframes growRight {
-		from { width: 0%; }
-		to { width: 100%; }
+		from {
+			width: 0%;
+		}
+		to {
+			width: 100%;
+		}
 	}
 
 	.close-btn {

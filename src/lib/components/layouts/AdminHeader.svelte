@@ -11,8 +11,6 @@
 	export let user: User | null;
 	export let sidebarOpen: boolean;
 	export let onToggleSidebar: () => void;
-
-	
 </script>
 
 <header class="header">
@@ -31,7 +29,7 @@
 	</div>
 
 	{#if user?.authenticated}
-		<SessionMenu user={user}/>
+		<SessionMenu {user} />
 	{/if}
 </header>
 
@@ -42,10 +40,8 @@
 		align-items: center;
 		height: 60px;
 		padding: 15px;
-
 	}
 
-	
 	.logo {
 		display: flex;
 		padding: 24px 20px;
