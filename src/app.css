@@ -1,12 +1,15 @@
-/* @import "tailwindcss"; */
-/* 
-html {
-    color: #333;
-    font-family: system-ui, sans-serif;
-    background-color: #f9f9f9;
+/* prettier-ignore */
+* {
     margin: 0;
     padding: 0;
-} */
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    color: var(--text);
+    overflow-x: hidden;
+}
 
 :root {
     --primary: #3a0ca3;
@@ -31,21 +34,15 @@ html {
     --sidebar-width: 260px;
     --header-height: 70px;
     --transition: all 0.3s ease;
+    --gray1: #E8E8E8;
+    --gray2: #D8D8D8;
+    --gray3: #C0C0C0;
+    --gray4: #A9A9A9;
+    --gray5: #808080;
+    --gray6: #101010;
 }
 
-/* prettier-ignore */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Poppins", sans-serif;
-}
 
-body {
-    /* background-color: #f5f7fb; */
-    color: var(--text);
-    overflow-x: hidden;
-}
 
 ::-webkit-scrollbar {
     width: 6px;
@@ -103,6 +100,36 @@ body {
     background: linear-gradient(90deg, var(--primary), var(--primary-light));
     border-radius: 10px;
 }
+
+ input {
+     width: 100%;
+     padding: 0.75rem;
+     border: 1px solid #ccc;
+     border-radius: 0.5rem;
+     font-size: 1rem;
+     transition: border 0.2s;
+ }
+
+ input:focus {
+     outline: none;
+     border-color: #3b82f6;
+     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+ }
+
+   select {
+        padding: 0.3rem;
+        border: 1px solid #ccc;
+        border-radius: 0.3rem;
+        font-size: 1rem;
+       transition: border-color 0.2s ease, box-shadow 0.2s ease;
+   }
+
+
+ select:focus {
+     outline: none;
+     border-color: #3b82f6;
+     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+ }
 
 .action-buttons .btn {
     margin-left: 12px;

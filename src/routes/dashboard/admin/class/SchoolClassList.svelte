@@ -17,18 +17,18 @@
 		{ id: 3, name: "History 101", level: 1, academicYear: "2024-2025" },
 		{ id: 4, name: "Literature 301", level: 3, academicYear: "2022-2023" },
 		{ id: 5, name: "Physics 201", level: 2, academicYear: "2023-2024" },
-		{ id: 6, name: "Chemistry 301", level: 3, academicYear: "2024-2025" },
-		{ id: 7, name: "Geography 101", level: 1, academicYear: "2022-2023" },
-		{ id: 8, name: "Biology 201", level: 2, academicYear: "2023-2024" },
-		{ id: 9, name: "Art 301", level: 3, academicYear: "2024-2025" },
-		{ id: 10, name: "Music 101", level: 1, academicYear: "2022-2023" },
+		// { id: 6, name: "Chemistry 301", level: 3, academicYear: "2024-2025" },
+		// { id: 7, name: "Geography 101", level: 1, academicYear: "2022-2023" },
+		// { id: 8, name: "Biology 201", level: 2, academicYear: "2023-2024" },
+		// { id: 9, name: "Art 301", level: 3, academicYear: "2024-2025" },
+		// { id: 10, name: "Music 101", level: 1, academicYear: "2022-2023" },
 		// Simulate more data for pagination
-		...Array.from({ length: 50 }, (_, i) => ({
-			id: i + 11,
-			name: `Class ${i + 11}`,
-			level: (i % 3) + 1,
-			academicYear: ["2022-2023", "2023-2024", "2024-2025"][i % 3],
-		})),
+		// ...Array.from({ length: 50 }, (_, i) => ({
+		// 	id: i + 11,
+		// 	name: `Class ${i + 11}`,
+		// 	level: (i % 3) + 1,
+		// 	academicYear: ["2022-2023", "2023-2024", "2024-2025"][i % 3],
+		// })),
 	];
 
 	// Filter and paginate classes
@@ -56,7 +56,7 @@
 <div class="class-container">
 	<ClassFilters bind:levelFilter bind:academicYearFilter />
 	<ClassTable {classes} {rowsPerPage} />
-	<Pagination {totalItems} bind:rowsPerPage bind:currentPage />
+	
 </div>
 
 <style>
@@ -65,7 +65,7 @@
 		flex-direction: column;
 		justify-content: space-between;
 		align-items: center;
-		padding: 10px;
+		padding: 10px 10px 0px 10px;
 		background-color: #ffffff;
 		border-radius: 10px;
 		box-shadow: var(--shadow-sm);

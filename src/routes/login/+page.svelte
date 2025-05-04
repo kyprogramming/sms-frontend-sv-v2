@@ -137,6 +137,7 @@
   .input-wrapper { margin-bottom: 1rem; text-align: left; }
   input { width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 0.5rem; font-size: 1rem; transition: border 0.2s; }
   input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+  select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
   .input-error { border-color: #ef4444; }
   .error-text { font-size: 0.75rem; color: #ef4444; margin-top: 0.25rem; }
   .server-error { margin-top: 1rem; color: #ef4444; font-weight: 600; }
