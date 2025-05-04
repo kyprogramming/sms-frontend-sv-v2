@@ -60,18 +60,6 @@
 
 
 <style>
-	.class-container {
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		align-items: center;
-		padding: 10px 10px 0px 10px;
-		background-color: #ffffff;
-		border-radius: 10px;
-		box-shadow: var(--shadow-sm);
-		margin-top: 15px;
-	}
-
 
 
    

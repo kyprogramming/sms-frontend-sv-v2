@@ -87,7 +87,7 @@
 	}
 
 	h2 {
-		font-size: 1.2rem;
+		/* font-size: 1.2rem; */
 		margin-bottom: 1.5rem;
 		color: #2c3e50;
 	}

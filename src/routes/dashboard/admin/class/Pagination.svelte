@@ -72,11 +72,11 @@
 
 <!-- prettier-ignore -->
 <style>
-.pagination { display: flex; align-items: center; justify-content: end; font-family: Arial, sans-serif; font-size: 0.9rem; color: #333; padding: 0.5rem 0; }
+.pagination { display: flex; align-items: center; justify-content: end; color: #333; padding: 0.5rem 0; }
 .rows-per-page { display: flex; align-items: center; gap: 0.5rem; }
 .range { margin: 0 1rem; color: #555; }
 .nav-buttons { display: flex; gap: 0.5rem; }
-.nav-button { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: none; border-radius: 50%; background-color: var(--gray2); color: var(--gray5); cursor: pointer; font-size: 1rem; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.05); box-shadow: var(--shadow-sm); }
+.nav-button { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: none; border-radius: 50%; background-color: var(--gray2); color: var(--gray5); cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.05); box-shadow: var(--shadow-sm); }
 
 .nav-button:hover:not(:disabled) { background-color: #e0e0e0; transform: translateY(-1px); box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
 .nav-button:active:not(:disabled) { transform: translateY(0); box-shadow: 0 1px 2px rgba(0,0,0,0.1); }

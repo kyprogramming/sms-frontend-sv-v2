@@ -105,7 +105,7 @@
 		background: transparent;
 		border: none;
 		color: white;
-		font-size: 1.25rem;
+		/* font-size: 1.25rem; */
 		cursor: pointer;
 		padding: 0;
 		line-height: 1;

@@ -1,190 +1,295 @@
 <script lang="ts">
 	export let cls = "";
+	import { slide } from "svelte/transition";
+
+	import {
+		Home,
+		Users,
+		IndianRupee,
+		MonitorPlay,
+		GitBranch,
+		Video,
+		AlertCircle,
+		ArrowDownCircle,
+		CreditCard,
+		ClipboardList,
+		ClipboardCheck,
+		CalendarCheck,
+		QrCode,
+		MonitorCheck,
+		GraduationCap,
+		Calendar,
+		ListChecks,
+		Megaphone,
+		Download,
+		BookOpen,
+		Library,
+		Package,
+		FileText,
+		Bus,
+		FileBadge,
+		LayoutPanelLeft,
+		UserSquare,
+		LineChart,
+		Settings,
+		ChevronDown,
+		ChevronRight,
+		ChevronRightSquare as ChevronRightDouble,
+	} from "@lucide/svelte";
+
+	const iconComponents: any = {
+		Home,
+		Users,
+		IndianRupee,
+		MonitorPlay,
+		GitBranch,
+		Video,
+		AlertCircle,
+		ArrowDownCircle,
+		CreditCard,
+		ClipboardList,
+		ClipboardCheck,
+		CalendarCheck,
+		QrCode,
+		MonitorCheck,
+		GraduationCap,
+		Calendar,
+		ListChecks,
+		Megaphone,
+		Download,
+		BookOpen,
+		Library,
+		Package,
+		FileText,
+		Bus,
+		FileBadge,
+		LayoutPanelLeft,
+		UserSquare,
+		LineChart,
+		Settings,
+	};
+
+	let activeGroup: string | null = null;
+	let sidebarCollapsed = false;
+	// All menu groups and their items
+	const menuGroups = [
+		{
+			title: "Front Office",
+			icon: "Home",
+			items: [
+				{ title: "Admission Enquiry", link: "/admin/enquiry" },
+				{ title: "Visitor Book", link: "/admin/visitors" },
+				{ title: "Phone Call Log", link: "/admin/generalcall" },
+				{ title: "Postal Dispatch", link: "/admin/dispatch" },
+				{ title: "Postal Receive", link: "/admin/receive" },
+				{ title: "Complain", link: "/admin/complaint" },
+				{ title: "Setup Front Office", link: "/admin/visitorspurpose" },
+			],
+		},
+		{
+			title: "Student Information",
+			icon: "Users",
+			items: [
+				{ title: "Student Details", link: "/student/search" },
+				{ title: "Student Admission", link: "/student/create" },
+				{ title: "Online Admission", link: "/admin/onlinestudent" },
+				{ title: "Disabled Students", link: "/student/disablestudentslist" },
+				{ title: "Multi Class Student", link: "/student/multiclass" },
+				{ title: "Bulk Delete", link: "/student/bulkdelete" },
+				{ title: "Student Categories", link: "/category" },
+				{ title: "Student House", link: "/admin/schoolhouse" },
+				{ title: "Disable Reason", link: "/admin/disable_reason" },
+			],
+		},
+		{
+			title: "Fees Collection",
+			icon: "IndianRupee",
+			items: [
+				{ title: "Collect Fees", link: "/studentfee" },
+				{ title: "Offline Bank Payments", link: "/admin/offlinepayment" },
+				{ title: "Search Fees Payment", link: "/studentfee/searchpayment" },
+				{ title: "Search Due Fees", link: "/studentfee/feesearch" },
+				{ title: "Fees Master", link: "/admin/feemaster" },
+				{ title: "Quick Fees", link: "/admin/customfeesmaster/index" },
+				{ title: "Fees Group", link: "/admin/feegroup" },
+				{ title: "Fees Type", link: "/admin/feetype" },
+				{ title: "Fees Discount", link: "/admin/feediscount" },
+				{ title: "Fees Carry Forward", link: "/admin/feesforward" },
+				{ title: "Fees Reminder", link: "/admin/feereminder/setting" },
+			],
+		},
+	];
+
+	function toggleGroup(groupTitle: string) {
+		activeGroup = activeGroup === groupTitle ? null : groupTitle;
+	}
 </script>
 
 <nav class={`sidebar ${cls}`}>
-	<div class="logo">
-		<h1>Admin<span>Panel</span></h1>
-	</div>
-	<div class="nav-menu">
-		<div class="menu-heading">Main</div>
-		<div class="nav-item active">
-			<i class="fas fa-chart-pie"></i>
-			<span>Dashboard</span>
-		</div>
+	<!-- <span class="current-session">Current Session: 2025-26</span> -->
 
-		<div class="menu-heading">Reports</div>
-		<div class="nav-item">
-			<i class="fas fa-chart-line"></i>
-			<span>Analytics</span>
-		</div>
-
-		<div class="menu-heading">Admin</div>
-		<div class="nav-item">
-			<i class="fas fa-users"></i>
-			<a href="/dashboard/admin/class"> Classes</a>
-		</div>
-		<div class="nav-item">
-			<i class="fas fa-users"></i>
-			<a href="/dashboard/admin/section"> Sections</a>
-		</div>
-		<div class="nav-item">
-			<i class="fas fa-users"></i>
-			<a href="/dashboard/admin/subject"> Subjects</a>
-		</div>
-		<div class="nav-item">
-			<i class="fas fa-users"></i>
-			<span>Users</span>
-		</div>
-		<div class="nav-item">
-			<i class="fas fa-users"></i>
-			<span>Students</span>
-		</div>
-		<div class="nav-item">
-			<i class="fas fa-users"></i>
-			<span>Students</span>
-		</div>
-		<div class="nav-item">
-			<i class="fas fa-cog"></i>
-			<span>Settings</span>
-		</div>
+	<div class="sidebar-menu">
+		{#each menuGroups as group}
+			<div class="menu-group">
+				<!-- svelte-ignore a11y_click_events_have_key_events -->
+				<!-- svelte-ignore a11y_no_static_element_interactions -->
+				<div
+					class="group-header {activeGroup === group.title ? 'active' : ''}"
+					on:click={() => toggleGroup(group.title)}
+				>
+					<svelte:component
+						this={iconComponents[group.icon]}
+						size={18}
+						class="lucide-icon"
+					/>
+					{#if !sidebarCollapsed}
+						<div class="header-content">
+							<span>{group.title}</span>
+							<svelte:component
+								this={activeGroup === group.title ? ChevronDown : ChevronRight}
+								size={16}
+								class="pull-right"
+							/>
+						</div>
+					{/if}
+				</div>
+				{#if activeGroup === group.title && !sidebarCollapsed}
+					<div class="group-items" transition:slide>
+						{#each group.items as item}
+							<a href={item.link} class="menu-item">
+								<svelte:component
+									this={ChevronRightDouble}
+									size={14}
+									class="menu-icon"
+								/>
+								<span>{item.title}</span>
+							</a>
+						{/each}
+					</div>
+				{/if}
+			</div>
+		{/each}
 	</div>
 </nav>
 
 <style>
-	/* Sidebar */
 	.sidebar {
-		grid-row: 1 / 3;
-		background: linear-gradient(180deg, var(--dark) 0%, #4f586e 100%);
-		color: white;
+		width: 300px;
+		max-width: 300px;
+		min-height: 90vh;
+		background: #fff;
+		color: var(--gray5);
+		transition: max-width 0.3s ease;
 		overflow-y: auto;
-		transition: var(--transition);
-		box-shadow: var(--shadow);
-		z-index: 1000;
-		position: relative;
-		width: 18%;
+		border-right: 1px solid #e2e8f0;
+		font-family: Roboto, sans-serif;
+		font-size: 14px;
 	}
 
 	.sidebar.collapsed {
-		width: 0px;
+		max-width: 0;
 	}
 
-	.sidebar::before {
-		content: "";
-		position: absolute;
-		top: 0;
-		right: 0;
-		height: 100%;
-		width: 1px;
-		background: linear-gradient(
-			to bottom,
-			rgba(255, 255, 255, 0.1),
-			transparent
-		);
+	.current-session {
+		font-size: 13px;
+		font-weight: 500;
+		color: #1e293b;
+		margin-left: 10px;
+		padding: 20px 15px;
+		display: block;
 	}
 
-	.logo {
-		padding: 24px 20px;
-		text-align: center;
-		border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-		margin-bottom: 10px;
-	}
-
-	.logo h1 {
-		font-size: 26px;
-		font-weight: 700;
-		color: white;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		letter-spacing: 0.5px;
-	}
-
-	.logo span {
-		color: var(--primary-light);
-		background: linear-gradient(45deg, var(--primary-light), var(--success));
-		-webkit-background-clip: text;
-		background-clip: text;
-		-webkit-text-fill-color: transparent;
-		margin-left: 4px;
-	}
-
-	.nav-menu {
+	.sidebar-menu {
 		padding: 10px 0;
 	}
 
-	.menu-heading {
-		padding: 16px 25px 8px;
-		font-size: 11px;
-		text-transform: uppercase;
-		letter-spacing: 1.2px;
-		color: rgba(255, 255, 255, 0.5);
-		font-weight: 500;
+	.menu-group {
+		margin-bottom: 2px;
 	}
 
-	.nav-item {
-		padding: 12px 25px;
+	.group-header {
 		display: flex;
 		align-items: center;
+		padding: 10px 15px;
 		cursor: pointer;
-		transition: var(--transition);
-		border-left: 4px solid transparent;
-		margin: 4px 0;
-		border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-		position: relative;
-		overflow: hidden;
+		color: #5a6a85;
+		transition: background 0.2s;
+		gap: 0.5rem;
+		margin: 0 3px 0 10px;
+		border-radius: 8px;
 	}
 
-	.nav-item::after {
-		content: "";
-		position: absolute;
-		bottom: 0;
-		left: 0;
-		width: 0;
-		height: 1px;
-		background: linear-gradient(
-			90deg,
-			transparent,
-			rgba(255, 255, 255, 0.2),
-			transparent
-		);
-		transition: var(--transition);
-	}
-
-	.nav-item:hover::after {
+	.header-content {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 		width: 100%;
 	}
 
-	.nav-item:hover,
-	.nav-item.active {
-		background-color: rgba(255, 255, 255, 0.07);
-		border-left-color: var(--primary-light);
+	/* .group-header:hover {
+		background: #f5f8fa;
+	} */
+
+	.group-header.active {
+		background: #f5f8fa;
+		color: #1e293b;
 	}
 
-	.nav-item.active {
-		background: linear-gradient(90deg, rgba(67, 97, 238, 0.2), transparent);
-		font-weight: 500;
+	.lucide-icon,
+	.menu-icon {
+		margin-right: 10px;
+		color: #64748b;
+		flex-shrink: 0;
 	}
 
-	.nav-item i {
-		width: 24px;
-		margin-right: 12px;
-		font-size: 18px;
-		text-align: center;
-		transition: var(--transition);
+	.pull-right {
+		margin-left: auto;
+		color: #64748b;
+		transition: transform 0.3s ease;
 	}
 
-	.nav-item a {
-		width: 24px;
-		margin-right: 12px;
-		font-size: 18px;
-		text-align: center;
-		color: rgba(255, 255, 255, 1);
-		transition: var(--transition);
+	.group-header.active .pull-right {
+		transform: rotate(180deg);
+	}
+
+	.group-items {
+		border-radius: 8px;
+	}
+	.menu-item {
+		padding: 0.75rem 1rem;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+        border-left: 2px solid var(--gray2);
+	}
+	.menu-item {
+		display: flex;
+		align-items: center;
+		padding: 8px 15px 8px 5px;
+		color: #5a6a85;
 		text-decoration: none;
+		transition: all 0.2s;
+        margin-left: 35px;
+	}
+    .menu-item:hover {   border-left: 2px solid blue; }
+	/*    
+	.menu-item:hover {
+		background: #f5f8fa;
+		color: #1e293b;
+	} */
+
+	.sidebar.collapsed .group-header,
+	.sidebar.collapsed .menu-item {
+		justify-content: center;
+		padding: 12px;
 	}
 
-	.nav-item:hover i {
-		transform: translateY(-2px);
+	.sidebar.collapsed .group-header span,
+	.sidebar.collapsed .pull-right,
+	.sidebar.collapsed .menu-item span {
+		display: none;
 	}
+
+	
 </style>

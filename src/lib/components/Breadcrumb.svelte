@@ -33,13 +33,13 @@
 
 	.heading {
 		margin: 0;
-		font-size: 1.5rem;
+		/* font-size: 1.5rem; */
 		font-weight: bold;
 		color: #333;
 	}
 
 	.breadcrumb {
-		font-size: 0.9rem;
+		/* font-size: 0.9rem; */
 		display: flex;
 		align-items: center;
 		gap: 0.4rem;

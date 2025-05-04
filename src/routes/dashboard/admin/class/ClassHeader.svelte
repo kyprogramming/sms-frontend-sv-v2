@@ -6,7 +6,7 @@
 	export let totalAcademicYears;
 </script>
 
-<div class="stats">
+<div class="stats-cards">
 	<StatsCard
 		className="blue"
 		title="Classes"
@@ -20,15 +20,3 @@
 		change={-12}
 	/>
 </div>
-
-<style>
-	.stats {
-		display: flex;
-		gap: 2rem;
-		margin: 1rem 0;
-		width: 100%;
-		font-size: 20px;
-	}
-
-	
-</style>
