@@ -27,8 +27,8 @@
 		padding: 10px;
 		background-color: #ffffff;
 		border-radius: 10px;
-        box-shadow: var(--shadow-sm);
-        margin-bottom: 10px;
+		box-shadow: var(--shadow-sm);
+		margin-bottom: 10px;
 	}
 
 	.heading {

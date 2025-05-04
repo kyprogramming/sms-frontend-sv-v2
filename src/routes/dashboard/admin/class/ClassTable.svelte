@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Eye, CheckCircle, XCircle } from '@lucide/svelte';
+  import { Eye, Edit, Trash2 } from '@lucide/svelte'; // Updated to use Edit for pencil and Trash2 for trash can
 
   interface Class {
     id: number;
@@ -72,9 +72,9 @@
           <td>{cls.academicYear}</td>
           <td>
             <span class="action-icons">
-              <Eye size={20} />
-              <CheckCircle size={20} />
-              <XCircle size={20} />
+              <span class="icon-wrapper"><Eye size={20} /></span>
+              <span class="icon-wrapper"><Edit size={20} /></span>
+              <span class="icon-wrapper"><Trash2 size={20} /></span>
             </span>
           </td>
         </tr>
@@ -91,7 +91,6 @@
   background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
 }
 
 table {
@@ -110,12 +109,16 @@ th {
   cursor: pointer;
   transition: background 0.2s ease;
   border-right: 0.5px solid white;
+
+}
+
+th:last-child {
+  text-align: center;
 }
 
 th:hover {
   background: linear-gradient(to bottom, #1e40af 0%, #2563eb 100%);
 }
-
 th:last-child {
   text-align: center;
 }
@@ -148,18 +151,65 @@ tr:nth-child(even) {
 
 .action-icons {
   display: flex;
-  gap: 0.75rem;
+  gap: 1rem; /* Increased gap for better spacing */
   align-items: center;
   justify-content: center;
+  border-radius: 20px;
 }
 
-.action-icons > * {
-  cursor: pointer;
-  transition: transform 0.2s ease;
+.icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px; 
+  height: 32px;
+  border-radius: 50%; 
+  transition: all 0.3s ease;
 }
 
-.action-icons > *:hover {
-  transform: scale(1.1);
+/* More vibrant gradient colors with deeper contrast */
+.icon-wrapper:nth-child(1) {
+  background: linear-gradient(145deg, #5da8ff 0%, #a8d8f8 100%);
+  box-shadow: 
+    0 4px 8px rgba(93, 168, 255, 0.4),
+    inset 0 -2px 2px rgba(255, 255, 255, 0.3),
+    inset 0 2px 2px rgba(0, 0, 0, 0.1);
+}
+
+.icon-wrapper:nth-child(2) {
+  background: linear-gradient(145deg, #4cd964 0%, #a0f5b4 100%);
+  box-shadow: 
+    0 4px 8px rgba(76, 217, 100, 0.4),
+    inset 0 -2px 2px rgba(255, 255, 255, 0.3),
+    inset 0 2px 2px rgba(0, 0, 0, 0.1);
+}
+
+.icon-wrapper:nth-child(3) {
+  background: linear-gradient(145deg, #ff5e7d 0%, #ffb8c6 100%);
+  box-shadow: 
+    0 4px 8px rgba(255, 94, 125, 0.4),
+    inset 0 -2px 2px rgba(255, 255, 255, 0.3),
+    inset 0 2px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover effects with more depth */
+.icon-wrapper:hover {
+  transform: translateY(-3px) scale(1);
+  box-shadow: 
+    0 6px 12px rgba(0, 0, 0, 0.25),
+    inset 0 -2px 2px rgba(255, 255, 255, 0.3),
+    inset 0 2px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Optional: Add a subtle pulse animation on hover */
+@keyframes pulse {
+  0% { transform: translateY(-3px) scale(1.2); }
+  50% { transform: translateY(-3px) scale(1.25); }
+  100% { transform: translateY(-3px) scale(1.2); }
+}
+
+.icon-wrapper:hover {
+  animation: pulse 1.5s infinite;
 }
 
 .footer {
