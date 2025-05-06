@@ -51,7 +51,7 @@
 	}
 </script>
 
-<ClassHeader {totalClasses} {totalLevels} {totalAcademicYears} />
+<!-- <ClassHeader {totalClasses} {totalLevels} {totalAcademicYears} /> -->
 <div class="class-container">
 	<ClassFilters bind:levelFilter bind:academicYearFilter />
 	<ClassTable {classes} {rowsPerPage} />

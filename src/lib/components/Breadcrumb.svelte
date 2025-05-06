@@ -1,10 +1,14 @@
 <script lang="ts">
 	export let title: string = "";
 	export let items: { label: string; href?: string }[] = [];
+    	import { Menu, Logs, PlusCircle } from "@lucide/svelte";
 </script>
 
 <div class="container-breadcrumb">
-	<h1 class="heading">{title}</h1>
+    <div class="flex-items-center">
+        <h1 class="heading">{title}</h1>
+    	<!-- <PlusCircle class="lucide-icon" color="green" /> -->
+    </div>
 	<nav class="breadcrumb">
 		{#each items as item, i}
 			{#if item.href}

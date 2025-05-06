@@ -14,10 +14,10 @@
 </script>
 
 <header class="header">
-	<div class="logo">
+	<div class="flex-container">
 		<button
 			on:click={onToggleSidebar}
-			style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; margin-right: 20px;"
+			style="background: none; border: none; cursor: pointer;"
 		>
 			{#if sidebarOpen}
 				<Menu size="24" color="red" />
@@ -25,10 +25,16 @@
 				<Logs size="24" color="red" />
 			{/if}
 		</button>
-		<h1>School<span>Management System</span></h1>
+		<h1>School Management System</h1>
 	</div>
 
 	{#if user?.authenticated}
 		<SessionMenu {user} />
 	{/if}
 </header>
+
+<style>
+    .flex-container h1{
+        margin: 0px; padding: 0px; font-size:20px;
+    }
+</style>

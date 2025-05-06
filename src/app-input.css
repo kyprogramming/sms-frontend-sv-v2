@@ -1,5 +1,5 @@
 /* prettier-ignore */
-label { font-weight: 600; color: var(--text); text-transform: uppercase; }
+label { font-weight: 600; color: var(--text); }
 
 /* Style all text-based inputs together */
 input[type='text'], input[type='email'], input[type='password'], input[type='tel'], input[type='url'], input[type='search'], select {

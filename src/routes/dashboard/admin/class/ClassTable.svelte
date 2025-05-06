@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Eye, Edit, Trash2 } from "@lucide/svelte"; // Updated to use Edit for pencil and Trash2 for trash can
+	import { Eye, Edit, Trash2 } from "@lucide/svelte";
 	import Pagination from "./Pagination.svelte";
 
 	interface Class {
