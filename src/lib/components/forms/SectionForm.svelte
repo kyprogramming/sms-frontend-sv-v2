@@ -5,6 +5,8 @@
 	import { validateForm } from "$lib/utils/validate";
 	import { showSnackbar } from "$lib/components/snackbar/store";
 	import { closeModal } from "$lib/stores/modalStore";
+	import { createSection } from "$lib/api/section";
+	import { invalidate } from "$app/navigation";
 
 	const sectionSchema = z.object({
 		name: z.string().min(1, "Section name is required"),
@@ -16,9 +18,7 @@
 	};
 
 	let error = "";
-	const formErrors = writable<Partial<Record<keyof SectionFormData, string>>>(
-		{},
-	);
+	const formErrors = writable<Partial<Record<keyof SectionFormData, string>>>({});
 	const touched = writable<Partial<Record<keyof SectionFormData, boolean>>>({
 		name: false,
 	});
@@ -31,9 +31,11 @@
 		if (!isValid) return;
 		isLoading.set(true);
 		try {
-            console.log("formData:",formData);
-			await new Promise((res) => setTimeout(res, 1000));
-          closeModal();
+			console.log("formData:", formData);
+			const res = await createSection(formData);
+            console.log("SAVE SECTION RESPONSE", res)
+			closeModal();
+            // invalidate('/dashboard/admin/section');
 			showSnackbar({ message: "Class created successfully", type: "success" });
 		} catch (err: any) {
 			error = err.message || "Failed to create class";
@@ -51,10 +53,7 @@
 
 		formErrors.update(() => {
 			if (!result.success) {
-				const fieldErrors = result.error.flatten().fieldErrors as Record<
-					string,
-					string[] | undefined
-				>;
+				const fieldErrors = result.error.flatten().fieldErrors as Record<string, string[] | undefined>;
 				const errorMap: Record<string, string | undefined> = {};
 
 				for (const key in fieldErrors) {
@@ -66,42 +65,35 @@
 			return {};
 		});
 	}
+
 </script>
 
 <!-- <div class="form-wrapper"> -->
-	<form on:submit={onSubmit}>
-		<div class="input-wrapper">
-			<label for="name">Name *</label>
-			<input
-				type="text"
-				name="name"
-				placeholder="Section name"
-				bind:value={formData.name}
-				class={`w-full ${$formErrors.name && ($touched.name || $submitAttempted) ? "input-error" : ""}`}
-				on:input={(e) =>
-					handleChange("name", (e.target as HTMLInputElement).value)}
-				on:blur={() => touched.update((t) => ({ ...t, name: true }))}
-			/>
-			{#if $formErrors.name && ($touched.name || $submitAttempted)}
-				<p class="error-text">{$formErrors.name}</p>
-			{/if}
-            
-		</div>
+<form on:submit={onSubmit}>
+	<div class="input-wrapper">
+		<label for="name">Name *</label>
+		<input
+			type="text"
+			name="name"
+			placeholder="Section name"
+			bind:value={formData.name}
+			class={`w-full ${$formErrors.name && ($touched.name || $submitAttempted) ? "input-error" : ""}`}
+			on:input={(e) => handleChange("name", (e.target as HTMLInputElement).value)}
+			on:blur={() => touched.update((t) => ({ ...t, name: true }))}
+		/>
+		{#if $formErrors.name && ($touched.name || $submitAttempted)}
+			<p class="error-text">{$formErrors.name}</p>
+		{/if}
+	</div>
 
-		<div class="flex-items-center" style="justify-content:end;">
-			<button
-				class="btn ripple"
-				style="background-color: var(--primary-light); align-self: right;"
-				type="reset"
-				disabled={$isLoading}
-			>
-				Clear
-			</button>
-			<button class="btn ripple" type="submit" disabled={$isLoading}>
-				{#if $isLoading}Saving...{:else}Save{/if}
-			</button>
-		</div>
-	</form>
+	<div class="flex-items-center" style="justify-content:end;">
+		<button class="btn ripple" style="background-color: var(--primary-light); align-self: right;" type="reset" disabled={$isLoading}> Clear </button>
+		<button class="btn ripple" type="submit" disabled={$isLoading}>
+			{#if $isLoading}Saving...{:else}Save{/if}
+		</button>
+	</div>
+</form>
+
 <!-- </div> -->
 
 <style>

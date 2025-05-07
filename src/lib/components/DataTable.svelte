@@ -1,4 +1,3 @@
-<!-- ✅ Correct: module context -->
 <script context="module" lang="ts">
 	export interface ColumnConfig {
 		key: string;
@@ -6,7 +5,9 @@
 		sortable?: boolean;
 		type?: "text" | "number" | "date";
 		format?: (value: any) => string;
-        width?: string;
+		width?: string;
+		align?: "left" | "center" | "right";
+		visible?: boolean;
 	}
 
 	export interface ActionIconConfig {
@@ -24,6 +25,7 @@
 		show?: boolean;
 		icons?: ActionIconConfig;
 		customActions?: CustomAction[];
+		deleteAction?: (item: any) => void;
 	}
 </script>
 
@@ -31,17 +33,17 @@
 	import { Eye, Edit, Trash2 } from "@lucide/svelte";
 	import Pagination from "../../routes/dashboard/admin/class/Pagination.svelte";
 
-	// PROPS
-	export let data: any[] = [];
+    export let data: any
+
 	export let columns: ColumnConfig[] = [];
 	export let actions: ActionConfig = {
 		show: false,
 		icons: {
 			show: false,
 			edit: false,
-			delete: false
+			delete: false,
 		},
-		customActions: []
+		customActions: [],
 	};
 	export let totalItems: number = 0;
 	export let rowsPerPage: number = 10;
@@ -74,12 +76,12 @@
 	<table>
 		<thead>
 			<tr>
-				<th><input type="checkbox" /></th>
+				<!-- <th><input type="checkbox" /></th> -->
 				{#each columns as column}
 					<th
 						on:click={() => column.sortable && sortBy(column.key)}
 						class:sortable={column.sortable}
-                        style={column.width ? `width: ${column.width}` : ""}
+						style={`width: ${column.width || "auto"}; text-align: ${column.align || "left"}; display: ${column.visible === false ? "none" : "table-cell"};`}
 					>
 						{column.label}
 						{#if column.sortable && sortColumn === column.key}
@@ -96,9 +98,9 @@
 		<tbody>
 			{#each visibleData as item}
 				<tr>
-					<td><input type="checkbox" /></td>
+					<!-- <td><input type="checkbox" /></td> -->
 					{#each columns as column}
-						<td style={column.width ? `width: ${column.width}` : ""}>
+						<td style={`width: ${column.width || "auto"}; text-align: ${column.align || "left"}; display: ${column?.visible === false ? "none" : "table-cell"};`}>
 							{#if column.format}
 								{column.format(item[column.key])}
 							{:else}
@@ -108,25 +110,13 @@
 					{/each}
 
 					{#if actions?.show}
-						<td>
+						<td style="width:250px">
 							<span class="action-icons">
-								{#if actions.icons?.show}
-									<span class="icon-wrapper"><Eye size={15} /></span>
-								{/if}
-								{#if actions.icons?.edit}
-									<span class="icon-wrapper"><Edit size={15} /></span>
-								{/if}
-								{#if actions.icons?.delete}
-									<span class="icon-wrapper"><Trash2 size={15} /></span>
-								{/if}
 								{#if actions.customActions}
 									{#each actions.customActions as action}
 										<!-- svelte-ignore a11y_click_events_have_key_events -->
 										<!-- svelte-ignore a11y_no_static_element_interactions -->
-										<span
-											class="icon-wrapper"
-											on:click={() => action.action(item)}
-										>
+										<span class="icon-wrapper" on:click={() => action?.action(item)}>
 											<svelte:component this={action.icon} size={15} />
 										</span>
 									{/each}
@@ -140,15 +130,8 @@
 
 		<tfoot>
 			<tr>
-				<td
-					colspan={columns.length + (actions?.show ? 2 : 1)}
-					style="padding: 3px;"
-				>
-					<Pagination
-						{totalItems}
-						{rowsPerPage}
-						{currentPage}
-					/>
+				<td colspan={columns.length + (actions?.show ? 2 : 1)} style="padding: 3px;">
+					<Pagination {totalItems} {rowsPerPage} {currentPage} />
 				</td>
 			</tr>
 		</tfoot>

@@ -1,18 +1,20 @@
 <script lang="ts">
 	import DataTable from "$lib/components/DataTable.svelte";
+	import DeleteConfirmModal from "$lib/components/DeleteConfirmModal.svelte";
 	import SectionForm from "$lib/components/forms/SectionForm.svelte";
 	import Modal from "$lib/components/Modal.svelte";
-	import { openModal } from "$lib/stores/modalStore";
+	import { isDeleteModalOpen, isModalOpen, openDeleteModal, openModal } from "$lib/stores/modalStore";
 	import { Pencil, Eye, Trash2, Plus } from "@lucide/svelte";
 
 	const columns = [
-		{ key: "name", label: "Name", sortable: true },
-		{ key: "createdAt", label: "Created At", sortable: true, format: (val: string | number | Date) => new Date(val).toLocaleDateString() },
+		{ key: "id", label: "Id", sortable: true, align: "center", visible: false },
+		{ key: "name", label: "Name", sortable: true, align: "center" },
+		{ key: "createdAt", label: "Created At", sortable: true, format: (val: string | number | Date) => new Date(val).toLocaleDateString(), width: "250px", align: "center" },
 	];
 
 	const data = [
-		{ id: 1, name: "Alice", email: "alice@example.com", createdAt: "2024-12-01T10:00:00Z" },
-		{ id: 2, name: "Bob", email: "bob@example.com", createdAt: "2024-12-02T11:00:00Z" },
+		{ id: 1, name: "Alice", createdAt: "2024-12-01T10:00:00Z" },
+		{ id: 2, name: "Bob", createdAt: "2024-12-02T11:00:00Z" },
 	];
 
 	const actions = {
@@ -24,9 +26,21 @@
 		},
 		customActions: [
 			{
+				icon: Eye,
+				action: (item: { id: any }) => {
+					alert(`View ${item.id}`);
+				},
+			},
+			{
 				icon: Pencil,
-				action: (item: { name: any }) => {
-					alert(`Edit ${item.name}`);
+				action: (item: { id: any }) => {
+					alert(`Edit ${item.id}`);
+				},
+			},
+			{
+				icon: Trash2,
+				action: (item: { id: any }) => {
+					handleDeleteClick(item.id);
 				},
 			},
 		],
@@ -34,6 +48,16 @@
 
 	let currentPage = 1;
 	let rowsPerPage = 10;
+
+	function handleDeleteClick(itemId: string) {
+		openDeleteModal({ id: itemId });
+	}
+
+	function deleteItem() {
+		// Perform deletion using the ID
+		console.log("Deleting item with ID:");
+		// your actual delete logic here (API call, store update, etc.)
+	}
 </script>
 
 <div class="class-container">
@@ -52,12 +76,44 @@
 	</div>
 </div>
 <DataTable {data} {columns} {actions} {currentPage} {rowsPerPage} totalItems={data.length} />
-<Modal title="Add Section" size="md">
-	<SectionForm />
-</Modal>
+
+{#if isModalOpen}
+	<Modal title="Add Section" size="md">
+		<SectionForm />
+	</Modal>
+{/if}
+
+{#if isDeleteModalOpen}
+	<DeleteConfirmModal
+		title="Delete Section"
+		size="sm"
+		onDelete={() => {
+			// alert("Deleted"); 
+            // TODO: implement delete functionality 
+		}}
+		onCancel={() => {
+			// alert("Cancelled");
+            // TODO: implement delete functionality 
+		}}
+	/>
+{/if}
 
 <style>
-.search-container { position: relative; width: 300px }
-.search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); pointer-events: none; z-index: 1 }
-input[name="search"] { width: 100%; padding-left: 30px; box-sizing: border-box }
+	.search-container {
+		position: relative;
+		width: 300px;
+	}
+	.search-icon {
+		position: absolute;
+		left: 10px;
+		top: 50%;
+		transform: translateY(-50%);
+		pointer-events: none;
+		z-index: 1;
+	}
+	input[name="search"] {
+		width: 100%;
+		padding-left: 30px;
+		box-sizing: border-box;
+	}
 </style>

@@ -123,22 +123,4 @@
 	.close-button:active {
 		transform: scale(0.95);
 	}
-
-	.modal-footer .btn {
-		padding: 0.5rem 1rem;
-		border: none;
-		cursor: pointer;
-		border-radius: 4px;
-		font-weight: 500;
-	}
-
-	.btn-clear {
-		background-color: #f3f4f6;
-		color: #111827;
-	}
-
-	.btn-save {
-		background-color: #2563eb;
-		color: white;
-	}
 </style>
