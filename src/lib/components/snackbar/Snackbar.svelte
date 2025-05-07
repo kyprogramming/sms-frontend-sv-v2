@@ -36,7 +36,7 @@
 			<!-- Progress Bar -->
 			<div
 				class="progress-bar"
-				style="animation-duration: {snackbar.duration || 4000}ms"
+				style="animation-duration: {snackbar.duration || 4000}ms;"
 			></div>
 		</div>
 	{/each}

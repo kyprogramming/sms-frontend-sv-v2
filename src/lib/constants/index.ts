@@ -52,8 +52,8 @@ export const MENU_GROUPS = [
 		items: [
 			{ title: "Admission Enquiry", link: "/dashboard/admin" },
 			{ title: "Class", link: "/dashboard/admin/class" },
-			{ title: "Sections", link: "/dashboard/admin/section" },
-			{ title: "Reports", link: "/dashboard/admin/report" },
+			{ title: "Sections Test", link: "/dashboard/admin/section" },
+			{ title: "Sections", link: "/dashboard/admin/report" },
 		],
 	},
 

@@ -6,6 +6,7 @@
 		sortable?: boolean;
 		type?: "text" | "number" | "date";
 		format?: (value: any) => string;
+        width?: string;
 	}
 
 	export interface ActionIconConfig {
@@ -78,6 +79,7 @@
 					<th
 						on:click={() => column.sortable && sortBy(column.key)}
 						class:sortable={column.sortable}
+                        style={column.width ? `width: ${column.width}` : ""}
 					>
 						{column.label}
 						{#if column.sortable && sortColumn === column.key}
@@ -96,7 +98,7 @@
 				<tr>
 					<td><input type="checkbox" /></td>
 					{#each columns as column}
-						<td>
+						<td style={column.width ? `width: ${column.width}` : ""}>
 							{#if column.format}
 								{column.format(item[column.key])}
 							{:else}
@@ -120,6 +122,7 @@
 								{#if actions.customActions}
 									{#each actions.customActions as action}
 										<!-- svelte-ignore a11y_click_events_have_key_events -->
+										<!-- svelte-ignore a11y_no_static_element_interactions -->
 										<span
 											class="icon-wrapper"
 											on:click={() => action.action(item)}
