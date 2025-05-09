@@ -16,6 +16,7 @@
 	export let onRefreshPage: () => void;
 	export let onSearchChange: () => void;
 
+
 	let localSearch = get(searchText);
 	$: searchText.set(localSearch);
 
@@ -38,25 +39,28 @@
 	const actions = {
 		show: true,
 		icons: {
-			show: true,
+			show: false,
 			edit: true,
 			delete: true,
 		},
 		customActions: [
 			{
 				icon: Eye,
+                show: false,
 				action: (item: { _id: any }) => {
 					alert(`View ${item._id}`);
 				},
 			},
 			{
 				icon: Pencil,
+                show: true,
 				action: (item: { _id: any }) => {
 					alert(`Edit ${item._id}`);
 				},
 			},
 			{
 				icon: Trash2,
+                show: true,
 				action: (item: { _id: any }) => {
 					handleDeleteClick(item._id);
 				},
@@ -79,6 +83,7 @@
 	}
 
 	function handleSearchClick() {
+        currentPage.set(1);
 		onSearchChange?.();
 	}
 
@@ -88,9 +93,15 @@
 		onSearchChange?.();
 	}
 
-	function handlePageChange() {
+	function handlePaginationChange() {
+        // searchText.set('');	
 		onRefreshPage();
 	}
+
+    function handlePageLimitChange() {
+		onRefreshPage();
+	}
+
 
 	function setDefaultPagination() {
 		$currentPage = get(currentPage);
@@ -119,7 +130,7 @@
 		</button>
 	</div>
 </div>
-<DataTable {response} {columns} {actions} onPageChange={handlePageChange} />
+<DataTable {response} {columns} {actions} onPaginationChange={handlePaginationChange} onPageLimitChange={handlePageLimitChange}/>
 
 <!-- {#if isModalOpen} -->
 <Modal title="Add Section" size="md">
@@ -164,4 +175,7 @@
 		display: flex;
 		align-items: center;
 	}
+    input[name='search'] {
+        width:300px;
+    }
 </style>

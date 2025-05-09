@@ -21,6 +21,7 @@
 	}
 
 	export interface CustomAction {
+        show:boolean;
 		icon: any;
 		action: (item: any) => void;
 	}
@@ -40,7 +41,8 @@
 	console.log("RESPONSE on TABLE", response);
 	let { success, message } = response;
 	let { sections, pagination } = response.data;
-    export let onPageChange: () => void;
+    export let onPaginationChange: () => void;
+    export let onPageLimitChange: () => void;
 
 	export let columns: ColumnConfig[] = [];
 	export let actions: ActionConfig = {
@@ -127,9 +129,12 @@
 									{#each actions.customActions as action}
 										<!-- svelte-ignore a11y_click_events_have_key_events -->
 										<!-- svelte-ignore a11y_no_static_element_interactions -->
-										<span class="icon-wrapper" on:click={() => action?.action(item)}>
+                                        {#if action.show}
+                                        <span class="icon-wrapper" on:click={() => action?.action(item)}>
 											<svelte:component this={action.icon} size={15} />
 										</span>
+                                        {/if}
+									
 									{/each}
 								{/if}
 							</span>
@@ -143,10 +148,10 @@
 				<td colspan={columns.length + (actions?.show ? 2 : 1)} style="padding: 3px;">
 					{#if $totalItems > 0}
 						<div style="display: flex; justify-content: space-between; align-items: center; margin: 5px;">
-							<p style="font-weight: bold;">Total records: {$totalItems}</p>
-							{#if $totalPages > 1}
-								<Pagination {onPageChange}/>
-							{/if}
+							<p style="font-weight: bold;"><b style="font-size: larger; color: blue;">{$totalItems}</b> record(s) found on {$totalPages} page(s)</p>
+							<!-- {#if $totalPages > 1} -->
+								<Pagination {onPaginationChange} {onPageLimitChange}/>
+							<!-- {/if} -->
 						</div>
 					{:else}
 						<p style="text-align: center; font-weight: bold; margin: 5px; font-weight: bold;">{message}.</p>
