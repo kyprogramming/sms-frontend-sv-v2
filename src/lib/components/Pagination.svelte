@@ -104,11 +104,11 @@
 .rows-per-page { display: flex; align-items: center; gap: 0.5rem; }
 .range { margin: 0 1rem; color: #555; }
 .nav-buttons { display: flex; gap: 0.5rem; }
-.nav-button { width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border: none; border-radius: 50%; background-color: var(--gray2); color: var(--gray5); cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.05); box-shadow: var(--shadow-sm); }
+.nav-button { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: none; border-radius: 50%; background-color: var(--gray2); color: var(--gray5); cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.05); box-shadow: var(--shadow-sm); }
 .nav-button:hover:not(:disabled) { background-color: #e0e0e0; transform: translateY(-1px); box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
 .nav-button:active:not(:disabled) { transform: translateY(0); box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
 .nav-button:disabled { color: #ccc; background-color: #f8f8f8; cursor: not-allowed; box-shadow: none; }
 .first:hover:not(:disabled), .last:hover:not(:disabled) { background-color: #94bffa; color: #0066ff; }
 .prev:hover:not(:disabled), .next:hover:not(:disabled) { background-color: #94bffa; color: #0066ff; }
-.page-icon-wrapper { width: 35px; height: 35px; display: flex; pointer-events: none; margin-top: 16px; margin-left: 1px;}
+.page-icon-wrapper { width: 35px; height: 35px; display: flex; pointer-events: none; margin-top: 17px; margin-left: 2px;}
 </style>
