@@ -9,7 +9,7 @@
 	import { Pencil, Eye, Trash2, Plus } from "@lucide/svelte";
 
     export let response: any;
-    export let onSectionAddedPage: () => void;
+    export let onRefreshPage: () => void;
 	const columns: ColumnConfig[] = [
 		{ key: "_id", label: "Id", visible: false },
 		{ key: "serialNo", label: "Sr No", width: "100px", sortable: true, align: "center" },
@@ -65,22 +65,8 @@
 		// your actual delete logic here (API call, store update, etc.)
 	}
 
-	async function handleSectionAdded() {
-        onSectionAddedPage();
-		// isModalOpen.set(false);
-		// console.log("handleSectionAdded called");
-		// const res = await fetch("http://localhost:5000/api/section", {
-		// 	method: "GET",
-		// 	credentials: "include",
-		// });
-		// response = await res.json();
-		// console.log("Server Response - API: ", response);
-		// response = data;
-		// await goto("/dashboard/admin/section", { replaceState: true });
-		// await invalidate("/dashboard/admin/section");
-		// await invalidate("**");
-
-		// return response;
+	async function handleRefreshPage() {
+        onRefreshPage();
 	}
 
 
@@ -105,7 +91,7 @@
 
 <!-- {#if isModalOpen} -->
 	<Modal title="Add Section" size="md">
-		<SectionForm onSectionAdded={handleSectionAdded} />
+		<SectionForm onRefreshPage={handleRefreshPage} />
 	</Modal>
 <!-- {/if} -->
 

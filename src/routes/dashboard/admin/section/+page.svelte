@@ -10,7 +10,7 @@
 	const breadcrumbItems = [{ label: "Home", href: "/" }, { label: "Dashboard", href: "/dashboard/admin" }, { label: "Sections" }];
 	console.log("server data on svelte page:", response);
 
-	async function handleSectionAdded() {
+	async function handleRefreshPage() {
 		isModalOpen.set(false);
 		console.log("handleSectionAdded called on page.svelte");
 		const res = await fetch("http://localhost:5000/api/section", {
@@ -27,5 +27,5 @@
 
 <Breadcrumb title="Sections" items={breadcrumbItems} />
 {#key response}
-	<SectionList {response} onSectionAddedPage={handleSectionAdded} />
+	<SectionList {response}  onRefreshPage={handleRefreshPage} />
 {/key}

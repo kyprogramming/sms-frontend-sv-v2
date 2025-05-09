@@ -8,7 +8,7 @@
 	import { createSection } from "$lib/api/section";
 	import { goto, invalidate } from "$app/navigation";
 
-	export let onSectionAdded: () => void;
+	export let onRefreshPage: () => void;
 
 	const sectionSchema = z.object({
 		name: z.string().min(1, "Section name is required"),
@@ -37,7 +37,7 @@
 			const res = await createSection(formData);
 			// console.log("SAVE SECTION RESPONSE", res)
 			closeModal();
-			onSectionAdded();
+			onRefreshPage();
 			showSnackbar({ message: "Class created successfully", type: "success" });
 			// await goto('/dashboard/admin/section', { invalidateAll: true });
 		} catch (err: any) {
