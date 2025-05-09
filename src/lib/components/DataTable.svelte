@@ -1,7 +1,6 @@
 <script context="module" lang="ts">
 	import { currentPage, rowsPerPage, totalPages, totalItems } from "$lib/stores/paginationStore";
 	import { get } from "svelte/store";
-   
 
 	export interface ColumnConfig {
 		key: string;
@@ -21,7 +20,7 @@
 	}
 
 	export interface CustomAction {
-        show:boolean;
+		show: boolean;
 		icon: any;
 		action: (item: any) => void;
 	}
@@ -41,8 +40,8 @@
 	console.log("RESPONSE on TABLE", response);
 	let { success, message } = response;
 	let { sections, pagination } = response.data;
-    export let onPaginationChange: () => void;
-    export let onPageLimitChange: () => void;
+	export let onPaginationChange: () => void;
+	export let onPageLimitChange: () => void;
 
 	export let columns: ColumnConfig[] = [];
 	export let actions: ActionConfig = {
@@ -60,7 +59,7 @@
 	currentPage.set(pagination.page);
 	totalPages.set(pagination.totalPages);
 
-    $currentPage = get(currentPage);
+	$currentPage = get(currentPage);
 	$rowsPerPage = get(rowsPerPage);
 	$totalPages = get(totalPages);
 	$totalItems = get(totalItems);
@@ -91,7 +90,6 @@
 	<table>
 		<thead>
 			<tr>
-				<!-- <th><input type="checkbox" /></th> -->
 				{#each columns as column}
 					<th
 						on:click={() => column.sortable && sortBy(column.key)}
@@ -109,52 +107,58 @@
 				{/if}
 			</tr>
 		</thead>
-		<tbody>
-			{#each visibleData as item}
-				<tr>
-					<!-- <td><input type="checkbox" /></td> -->
-					{#each columns as column}
-						<td style={`width: ${column.width || "auto"}; text-align: ${column.align || "left"}; display: ${column?.visible === false ? "none" : "table-cell"};`}>
-							{#if column.format}
-								{column.format(item[column.key])}
-							{:else}
-								{item[column.key]}
-							{/if}
-						</td>
-					{/each}
-					{#if actions?.show}
-						<td style="width:250px">
-							<span class="action-icons">
-								{#if actions.customActions}
-									{#each actions.customActions as action}
-										<!-- svelte-ignore a11y_click_events_have_key_events -->
-										<!-- svelte-ignore a11y_no_static_element_interactions -->
-                                        {#if action.show}
-                                        <span class="icon-wrapper" on:click={() => action?.action(item)}>
-											<svelte:component this={action.icon} size={15} />
-										</span>
-                                        {/if}
-									
-									{/each}
+	</table>
+
+	<!-- Scrollable body table -->
+	<div class="table-body-scroll">
+		<table>
+			<tbody>
+				{#each visibleData as item}
+					<tr>
+						{#each columns as column}
+							<td style={`width: ${column.width || "auto"}; text-align: ${column.align || "left"}; display: ${column?.visible === false ? "none" : "table-cell"};`}>
+								{#if column.format}
+									{column.format(item[column.key])}
+								{:else}
+									{item[column.key]}
 								{/if}
-							</span>
-						</td>
-					{/if}
-				</tr>
-			{/each}
-		</tbody>
+							</td>
+						{/each}
+						{#if actions?.show}
+							<td style="width:250px">
+								<span class="action-icons">
+									{#if actions.customActions}
+										{#each actions.customActions as action}
+											<!-- svelte-ignore a11y_click_events_have_key_events -->
+											<!-- svelte-ignore a11y_no_static_element_interactions -->
+											{#if action.show}
+												<span class="icon-wrapper" on:click={() => action?.action(item)}>
+													<svelte:component this={action.icon} size={15} />
+												</span>
+											{/if}
+										{/each}
+									{/if}
+								</span>
+							</td>
+						{/if}
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+	</div>
+
+	<!-- Footer below scrollable body -->
+	<table>
 		<tfoot>
 			<tr>
 				<td colspan={columns.length + (actions?.show ? 2 : 1)} style="padding: 3px;">
 					{#if $totalItems > 0}
 						<div style="display: flex; justify-content: space-between; align-items: center; margin: 5px;">
 							<p style="font-weight: bold;"><b style="font-size: larger; color: blue;">{$totalItems}</b> record(s) found on {$totalPages} page(s)</p>
-							<!-- {#if $totalPages > 1} -->
-								<Pagination {onPaginationChange} {onPageLimitChange}/>
-							<!-- {/if} -->
+							<Pagination {onPaginationChange} {onPageLimitChange} />
 						</div>
 					{:else}
-						<p style="text-align: center; font-weight: bold; margin: 5px; font-weight: bold;">{message}.</p>
+						<p style="text-align: center; font-weight: bold; margin: 5px;">{message}.</p>
 					{/if}
 				</td>
 			</tr>
@@ -184,4 +188,33 @@
 	.icon-wrapper:hover {
 		background-color: #f0f0f0;
 	}
+
+	.table-container {
+		display: flex;
+		flex-direction: column;
+		max-height: 800px;
+		overflow: hidden;
+		border: 1px solid #ddd;
+	}
+
+	.table-container table {
+		width: 100%;
+		border-collapse: collapse;
+	}
+
+	.table-body-scroll {
+		overflow-y: auto;
+		max-height: 600px; /* Adjust as needed */
+	}
+
+	.table-body-scroll table {
+		width: 100%;
+		table-layout: fixed;
+	}
+
+	/* .table-body-scroll td,
+	th {
+		padding: 8px;
+		 border: 1px solid #ddd;
+	} */
 </style>
