@@ -38,7 +38,7 @@
 			// console.log("SAVE SECTION RESPONSE", res)
 			closeModal();
 			onRefreshPage();
-			showSnackbar({ message: "Class created successfully", type: "success" });
+			showSnackbar({ message: "Section created successfully", type: "success" });
 			// await goto('/dashboard/admin/section', { invalidateAll: true });
 		} catch (err: any) {
 			error = err.message || "Failed to create class";

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Eye, Edit, Trash2 } from "@lucide/svelte";
-	import Pagination from "./Pagination.svelte";
+	import Pagination from "../../../../lib/components/Pagination.svelte";
 
 	interface Class {
 		id: number;
@@ -86,7 +86,7 @@
 		<tfoot>
 			<tr>
 				<td colspan="6" style="padding:3px;">
-					<Pagination {totalItems} bind:rowsPerPage bind:currentPage />
+					<Pagination />
 				</td>
 			</tr>
 		</tfoot>

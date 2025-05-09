@@ -1,4 +1,7 @@
 <script context="module" lang="ts">
+	import { currentPage, rowsPerPage, totalPages, totalItems } from "$lib/stores/paginationStore";
+	import { get } from "svelte/store";
+
 	export interface ColumnConfig {
 		key: string;
 		label: string;
@@ -30,7 +33,7 @@
 </script>
 
 <script lang="ts">
-	import Pagination from "../../routes/dashboard/admin/class/Pagination.svelte";
+	import Pagination from "./Pagination.svelte";
 
 	export let response: any;
 	console.log("RESPONSE on TABLE", response);
@@ -48,11 +51,15 @@
 		customActions: [],
 	};
 
-	// console.log("data object received", response);
-	let totalItems: number = pagination.total;
-	let rowsPerPage: number = pagination.limit;
-	let currentPage: number = pagination.page;
-	let totalPages: number = pagination.totalPages;
+	totalItems.set(pagination.total);
+	rowsPerPage.set(pagination.limit);
+	currentPage.set(pagination.page);
+	totalPages.set(pagination.totalPages);
+
+    $currentPage = get(currentPage);
+	$rowsPerPage = get(rowsPerPage);
+	$totalPages = get(totalPages);
+	$totalItems = get(totalItems);
 
 	// STATE
 	let sortColumn = "";
@@ -132,13 +139,15 @@
 		<tfoot>
 			<tr>
 				<td colspan={columns.length + (actions?.show ? 2 : 1)} style="padding: 3px;">
-					{#if totalItems > 0}
-						<p style="text-align: left; font-weight:bold; margin-top:10px; margin-left:auto">Total records: {totalItems}</p>
-						{#if totalPages > 1}
-							<Pagination {totalItems} {rowsPerPage} {currentPage} />
-						{/if}
+					{#if $totalItems > 0}
+						<div style="display: flex; justify-content: space-between; align-items: center; margin: 5px;">
+							<p style="font-weight: bold;">Total records: {$totalItems}</p>
+							{#if $totalPages > 1}
+								<Pagination />
+							{/if}
+						</div>
 					{:else}
-						<p style="text-align: center; font-weight:bold; margin-top:10px;">{message}.</p>
+						<p style="text-align: center; font-weight: bold; margin: 5px; font-weight: bold;">{message}.</p>
 					{/if}
 				</td>
 			</tr>

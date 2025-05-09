@@ -5,11 +5,14 @@
 	import SectionForm from "$lib/components/forms/SectionForm.svelte";
 	import Modal from "$lib/components/Modal.svelte";
 	import { isDeleteModalOpen, isModalOpen, modalData, openDeleteModal, openModal } from "$lib/stores/modalStore";
+	import { searchText } from "$lib/stores/paginationStore";
 	import { formatDate } from "$lib/utils/formatDate";
 	import { Pencil, Eye, Trash2, Plus } from "@lucide/svelte";
 
     export let response: any;
     export let onRefreshPage: () => void;
+    export let onSearchChange: () => void;
+    // export let onSearchChange: (value: string) => void = () => {};
 	const columns: ColumnConfig[] = [
 		{ key: "_id", label: "Id", visible: false },
 		{ key: "serialNo", label: "Sr No", width: "100px", sortable: true, align: "center" },
@@ -78,7 +81,11 @@
 			<circle cx="11" cy="11" r="8"></circle>
 			<line x1="21" y1="21" x2="16.65" y2="16.65"></line>
 		</svg>
-		<input name="search" type="text" placeholder="Search..." />
+		<input name="search" type="text" placeholder="Search..."  bind:value={$searchText}   on:input={(e) => {
+            const value = (e.target as HTMLInputElement)?.value || '';
+            searchText.set(value);
+            onSearchChange(); // safe call
+          }}/>
 	</div>
 	<div class="action-buttons">
 		<button type="button" class="btn ripple" on:click={openModal}>
