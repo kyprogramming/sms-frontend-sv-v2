@@ -2,6 +2,8 @@
 	import { currentPage, rowsPerPage ,totalPages,totalItems } from "$lib/stores/paginationStore";
 	import { get } from "svelte/store";
 
+    export let onPageChange: () => void;
+
 	$currentPage = get(currentPage);
 	$rowsPerPage = get(rowsPerPage);
 	$totalPages = get(totalPages);
@@ -14,19 +16,29 @@
 	// Navigation handlers
 	function goToFirstPage() {
         currentPage.set(1);
+        onPageChange();
 	}
 
 	function goToPreviousPage() {
 		if ($currentPage > 1)  currentPage.set($currentPage - 1);
+        onPageChange();
 	}
 
 	function goToNextPage() {
 		if ($currentPage < $totalPages) currentPage.set($currentPage +=1);
+        onPageChange();
 	}
 
 	function goToLastPage() {
 		currentPage.set($totalPages);
+        onPageChange();
 	}
+
+    // function changeRowsPerPage(newLimit: number) {
+	// 	rowsPerPage.set(newLimit);
+	// 	onPageChange?.(get(currentPage), newLimit);
+	// }
+
 </script>
 
 <div class="pagination">

@@ -1,6 +1,7 @@
 <script context="module" lang="ts">
 	import { currentPage, rowsPerPage, totalPages, totalItems } from "$lib/stores/paginationStore";
 	import { get } from "svelte/store";
+   
 
 	export interface ColumnConfig {
 		key: string;
@@ -39,6 +40,7 @@
 	console.log("RESPONSE on TABLE", response);
 	let { success, message } = response;
 	let { sections, pagination } = response.data;
+    export let onPageChange: () => void;
 
 	export let columns: ColumnConfig[] = [];
 	export let actions: ActionConfig = {
@@ -143,7 +145,7 @@
 						<div style="display: flex; justify-content: space-between; align-items: center; margin: 5px;">
 							<p style="font-weight: bold;">Total records: {$totalItems}</p>
 							{#if $totalPages > 1}
-								<Pagination />
+								<Pagination {onPageChange}/>
 							{/if}
 						</div>
 					{:else}

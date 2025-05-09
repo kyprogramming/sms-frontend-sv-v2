@@ -5,14 +5,20 @@
 	import SectionForm from "$lib/components/forms/SectionForm.svelte";
 	import Modal from "$lib/components/Modal.svelte";
 	import { isDeleteModalOpen, isModalOpen, modalData, openDeleteModal, openModal } from "$lib/stores/modalStore";
-	import { searchText } from "$lib/stores/paginationStore";
+
 	import { formatDate } from "$lib/utils/formatDate";
 	import { Pencil, Eye, Trash2, Plus } from "@lucide/svelte";
+	import { get } from "svelte/store";
+	import { RefreshCw, Search } from "@lucide/svelte";
+	import { searchText, currentPage, rowsPerPage, totalPages, totalItems } from "$lib/stores/paginationStore";
 
-    export let response: any;
-    export let onRefreshPage: () => void;
-    export let onSearchChange: () => void;
-    // export let onSearchChange: (value: string) => void = () => {};
+	export let response: any;
+	export let onRefreshPage: () => void;
+	export let onSearchChange: () => void;
+
+	let localSearch = get(searchText);
+	$: searchText.set(localSearch);
+
 	const columns: ColumnConfig[] = [
 		{ key: "_id", label: "Id", visible: false },
 		{ key: "serialNo", label: "Sr No", width: "100px", sortable: true, align: "center" },
@@ -69,23 +75,42 @@
 	}
 
 	async function handleRefreshPage() {
-        onRefreshPage();
+		onRefreshPage();
 	}
 
+	function handleSearchClick() {
+		onSearchChange?.();
+	}
 
+	function handleRefreshButtonClick() {
+		searchText.set('');
+		currentPage.set(1);		
+		onSearchChange?.();
+	}
+
+	function handlePageChange() {
+		onRefreshPage();
+	}
+
+	function setDefaultPagination() {
+		$currentPage = get(currentPage);
+		$rowsPerPage = get(rowsPerPage);
+		$totalPages = get(totalPages);
+		$totalItems = get(totalItems);
+	}
 </script>
 
 <div class="class-container">
 	<div class="search-container">
-		<svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-			<circle cx="11" cy="11" r="8"></circle>
-			<line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-		</svg>
-		<input name="search" type="text" placeholder="Search..."  bind:value={$searchText}   on:input={(e) => {
-            const value = (e.target as HTMLInputElement)?.value || '';
-            searchText.set(value);
-            onSearchChange(); // safe call
-          }}/>
+		<input name="search" type="text" placeholder="Search..." bind:value={$searchText} />
+
+		<button class="icon-button" on:click={handleSearchClick} aria-label="Search">
+			<Search size={20} />
+		</button>
+
+		<button class="icon-button" on:click={handleRefreshButtonClick} aria-label="Refresh">
+			<RefreshCw size={20} />
+		</button>
 	</div>
 	<div class="action-buttons">
 		<button type="button" class="btn ripple" on:click={openModal}>
@@ -94,12 +119,12 @@
 		</button>
 	</div>
 </div>
-<DataTable {response} {columns} {actions} />
+<DataTable {response} {columns} {actions} onPageChange={handlePageChange} />
 
 <!-- {#if isModalOpen} -->
-	<Modal title="Add Section" size="md">
-		<SectionForm onRefreshPage={handleRefreshPage} />
-	</Modal>
+<Modal title="Add Section" size="md">
+	<SectionForm onRefreshPage={handleRefreshPage} />
+</Modal>
 <!-- {/if} -->
 
 {#if isDeleteModalOpen}
@@ -120,20 +145,23 @@
 
 <style>
 	.search-container {
-		position: relative;
-		width: 300px;
+		display: flex;
+		align-items: center;
+		gap: 8px;
 	}
-	.search-icon {
-		position: absolute;
-		left: 10px;
-		top: 50%;
-		transform: translateY(-50%);
-		pointer-events: none;
-		z-index: 1;
+
+	.search-container input {
+		padding: 6px 10px;
+		font-size: 14px;
+		flex: 1;
 	}
-	input[name="search"] {
-		width: 100%;
-		padding-left: 30px;
-		box-sizing: border-box;
+
+	.icon-button {
+		background: none;
+		border: none;
+		cursor: pointer;
+		padding: 4px;
+		display: flex;
+		align-items: center;
 	}
 </style>

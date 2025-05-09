@@ -75,12 +75,12 @@
 		</button>
 	</div>
 </div>
-<DataTable {data} {columns} {actions} {currentPage} {rowsPerPage} totalItems={data.length} />
+<!-- <DataTable {data} {columns} {actions} {currentPage} {rowsPerPage} totalItems={data.length} /> -->
 
 {#if isModalOpen}
-	<Modal title="Add Section" size="md">
+	<!-- <Modal title="Add Section" size="md">
 		<SectionForm />
-	</Modal>
+	</Modal> -->
 {/if}
 
 {#if isDeleteModalOpen}
