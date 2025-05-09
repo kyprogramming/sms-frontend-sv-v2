@@ -8,9 +8,9 @@ export const load: PageLoad = async ({ fetch }) => {
 	});
 	if (!res.ok) {
 		console.error('Failed to fetch sections');
-		return { sections: [] };
+		return { data: [] };
 	}
-
-	const sections = await res.json();
-	return { sections };
+    const data = await res.json();
+    console.log("Data from Server:", data);
+	return {data};
 };

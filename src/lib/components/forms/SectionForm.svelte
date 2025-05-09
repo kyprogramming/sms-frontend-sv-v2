@@ -6,7 +6,9 @@
 	import { showSnackbar } from "$lib/components/snackbar/store";
 	import { closeModal } from "$lib/stores/modalStore";
 	import { createSection } from "$lib/api/section";
-	import { invalidate } from "$app/navigation";
+	import { goto, invalidate } from "$app/navigation";
+
+	export let onSectionAdded: () => void;
 
 	const sectionSchema = z.object({
 		name: z.string().min(1, "Section name is required"),
@@ -31,12 +33,13 @@
 		if (!isValid) return;
 		isLoading.set(true);
 		try {
-			console.log("formData:", formData);
+			// console.log("formData:", formData);
 			const res = await createSection(formData);
-            console.log("SAVE SECTION RESPONSE", res)
+			// console.log("SAVE SECTION RESPONSE", res)
 			closeModal();
-            // invalidate('/dashboard/admin/section');
+			onSectionAdded();
 			showSnackbar({ message: "Class created successfully", type: "success" });
+			// await goto('/dashboard/admin/section', { invalidateAll: true });
 		} catch (err: any) {
 			error = err.message || "Failed to create class";
 		} finally {
@@ -65,7 +68,6 @@
 			return {};
 		});
 	}
-
 </script>
 
 <!-- <div class="form-wrapper"> -->

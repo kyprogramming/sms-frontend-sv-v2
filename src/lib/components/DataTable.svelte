@@ -30,10 +30,12 @@
 </script>
 
 <script lang="ts">
-	import { Eye, Edit, Trash2 } from "@lucide/svelte";
 	import Pagination from "../../routes/dashboard/admin/class/Pagination.svelte";
 
-    export let data: any
+	export let response: any;
+	console.log("RESPONSE on TABLE", response);
+	let { success, message } = response;
+	let { sections, pagination } = response.data;
 
 	export let columns: ColumnConfig[] = [];
 	export let actions: ActionConfig = {
@@ -45,9 +47,12 @@
 		},
 		customActions: [],
 	};
-	export let totalItems: number = 0;
-	export let rowsPerPage: number = 10;
-	export let currentPage: number = 1;
+
+	// console.log("data object received", response);
+	let totalItems: number = pagination.total;
+	let rowsPerPage: number = pagination.limit;
+	let currentPage: number = pagination.page;
+	let totalPages: number = pagination.totalPages;
 
 	// STATE
 	let sortColumn = "";
@@ -62,8 +67,7 @@
 		}
 	}
 
-	// REACTIVE SORTING
-	$: visibleData = [...data].sort((a, b) => {
+	$: visibleData = [...sections].sort((a, b) => {
 		if (!sortColumn) return 0;
 		const valA = a[sortColumn]?.toString().toLowerCase() || "";
 		const valB = b[sortColumn]?.toString().toLowerCase() || "";
@@ -94,7 +98,6 @@
 				{/if}
 			</tr>
 		</thead>
-
 		<tbody>
 			{#each visibleData as item}
 				<tr>
@@ -108,7 +111,6 @@
 							{/if}
 						</td>
 					{/each}
-
 					{#if actions?.show}
 						<td style="width:250px">
 							<span class="action-icons">
@@ -127,11 +129,17 @@
 				</tr>
 			{/each}
 		</tbody>
-
 		<tfoot>
 			<tr>
 				<td colspan={columns.length + (actions?.show ? 2 : 1)} style="padding: 3px;">
-					<Pagination {totalItems} {rowsPerPage} {currentPage} />
+					{#if totalItems > 0}
+						<p style="text-align: left; font-weight:bold; margin-top:10px; margin-left:auto">Total records: {totalItems}</p>
+						{#if totalPages > 1}
+							<Pagination {totalItems} {rowsPerPage} {currentPage} />
+						{/if}
+					{:else}
+						<p style="text-align: center; font-weight:bold; margin-top:10px;">{message}.</p>
+					{/if}
 				</td>
 			</tr>
 		</tfoot>

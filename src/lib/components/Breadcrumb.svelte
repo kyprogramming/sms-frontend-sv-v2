@@ -1,7 +1,6 @@
 <script lang="ts">
 	export let title: string = "";
 	export let items: { label: string; href?: string }[] = [];
-    	import { Menu, Logs, PlusCircle } from "@lucide/svelte";
 </script>
 
 <div class="container-breadcrumb">

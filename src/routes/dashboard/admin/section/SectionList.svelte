@@ -1,20 +1,30 @@
 <script lang="ts">
-	import { createSection, type ISection } from "$lib/api/section";
-	import DataTable from "$lib/components/DataTable.svelte";
+	import { goto, invalidate } from "$app/navigation";
+	import DataTable, { type ColumnConfig } from "$lib/components/DataTable.svelte";
 	import DeleteConfirmModal from "$lib/components/DeleteConfirmModal.svelte";
 	import SectionForm from "$lib/components/forms/SectionForm.svelte";
 	import Modal from "$lib/components/Modal.svelte";
 	import { isDeleteModalOpen, isModalOpen, modalData, openDeleteModal, openModal } from "$lib/stores/modalStore";
+	import { formatDate } from "$lib/utils/formatDate";
 	import { Pencil, Eye, Trash2, Plus } from "@lucide/svelte";
 
-	const columns = [
-		{ key: "_id", label: "Id", sortable: true, align: "center", visible: false },
+    export let response: any;
+    export let onSectionAddedPage: () => void;
+	const columns: ColumnConfig[] = [
+		{ key: "_id", label: "Id", visible: false },
+		{ key: "serialNo", label: "Sr No", width: "100px", sortable: true, align: "center" },
 		{ key: "name", label: "Name", sortable: true, align: "center" },
-		{ key: "createdAt", label: "Created At", sortable: true, format: (val: string | number | Date) => new Date(val).toLocaleDateString(), width: "250px", align: "center" },
+		{
+			key: "createdAt",
+			label: "Created At",
+			sortable: true,
+			format: formatDate,
+			width: "250px",
+			align: "center",
+		},
 	];
 
-	export let sections: any;
-    let { data } = sections;
+	console.log("Response at sectionList:", response);
 
 	const actions = {
 		show: true,
@@ -26,49 +36,53 @@
 		customActions: [
 			{
 				icon: Eye,
-				action: (item: { id: any }) => {
-					alert(`View ${item.id}`);
+				action: (item: { _id: any }) => {
+					alert(`View ${item._id}`);
 				},
 			},
 			{
 				icon: Pencil,
-				action: (item: { id: any }) => {
-					alert(`Edit ${item.id}`);
+				action: (item: { _id: any }) => {
+					alert(`Edit ${item._id}`);
 				},
 			},
 			{
 				icon: Trash2,
-				action: (item: { id: any }) => {
-					handleDeleteClick(item.id);
+				action: (item: { _id: any }) => {
+					handleDeleteClick(item._id);
 				},
 			},
 		],
 	};
 
-	let currentPage = 1;
-	let rowsPerPage = 10;
-
 	function handleDeleteClick(itemId: string) {
-		openDeleteModal({ id: itemId });
+		openDeleteModal({ _id: itemId });
 	}
 
 	function deleteItem() {
 		// Perform deletion using the ID
-		console.log("Deleting item with ID:");
+		// console.log("Deleting item with ID:");
 		// your actual delete logic here (API call, store update, etc.)
 	}
 
-    // async function saveSection() {
-	// 	try {
-    //         const data: any = {name:"Section A"};
-	// 		await createSection(data);
-	// 		alert('Section saved successfully!');
-	// 	} catch (err) {
-	// 		alert('Failed to save section');
-	// 	} finally {
-	// 		// loading = false;
-	// 	}
-	// }
+	async function handleSectionAdded() {
+        onSectionAddedPage();
+		// isModalOpen.set(false);
+		// console.log("handleSectionAdded called");
+		// const res = await fetch("http://localhost:5000/api/section", {
+		// 	method: "GET",
+		// 	credentials: "include",
+		// });
+		// response = await res.json();
+		// console.log("Server Response - API: ", response);
+		// response = data;
+		// await goto("/dashboard/admin/section", { replaceState: true });
+		// await invalidate("/dashboard/admin/section");
+		// await invalidate("**");
+
+		// return response;
+	}
+
 
 </script>
 
@@ -87,26 +101,26 @@
 		</button>
 	</div>
 </div>
-<DataTable {data} {columns} {actions} {currentPage} {rowsPerPage} totalItems={sections.length} />
+<DataTable {response} {columns} {actions} />
 
-{#if isModalOpen}
+<!-- {#if isModalOpen} -->
 	<Modal title="Add Section" size="md">
-		<SectionForm />
+		<SectionForm onSectionAdded={handleSectionAdded} />
 	</Modal>
-{/if}
+<!-- {/if} -->
 
 {#if isDeleteModalOpen}
 	<DeleteConfirmModal
 		title="Delete Section"
 		size="sm"
 		onDelete={() => {
-			alert(JSON.stringify($modalData)); 
-            // TODO: implement delete functionality 
+			alert(JSON.stringify($modalData));
+			// TODO: implement delete functionality
 		}}
 		onCancel={() => {
-            modalData.set(null);
+			modalData.set(null);
 			// alert("Cancelled");
-            // TODO: implement delete functionality 
+			// TODO: implement delete functionality
 		}}
 	/>
 {/if}

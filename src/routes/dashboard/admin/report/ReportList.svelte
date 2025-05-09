@@ -55,7 +55,7 @@
 
 	function deleteItem() {
 		// Perform deletion using the ID
-		console.log("Deleting item with ID:");
+		// console.log("Deleting item with ID:");
 		// your actual delete logic here (API call, store update, etc.)
 	}
 </script>
