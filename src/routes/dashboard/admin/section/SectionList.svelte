@@ -1,18 +1,18 @@
 <script lang="ts">
-	import { goto, invalidate } from "$app/navigation";
-	import DataTable, { type ColumnConfig } from "$lib/components/DataTable.svelte";
+	import DataTable from "$lib/components/DataTable.svelte";
 	import DeleteConfirmModal from "$lib/components/DeleteConfirmModal.svelte";
 	import SectionForm from "$lib/components/forms/SectionForm.svelte";
 	import Modal from "$lib/components/Modal.svelte";
-	import { isDeleteModalOpen, isModalOpen, modalData, openDeleteModal, openModal ,isUpdate } from "$lib/stores/modalStore";
-
+	import { isDeleteModalOpen, isModalOpen, modalData, openDeleteModal, openModal, isUpdate, openEditModal } from "$lib/stores/modalStore";
 	import { formatDate } from "$lib/utils/formatDate";
 	import { Pencil, Eye, Trash2, Plus } from "@lucide/svelte";
 	import { get } from "svelte/store";
 	import { RefreshCw, Search } from "@lucide/svelte";
-	import { searchText, currentPage, rowsPerPage, totalPages, totalItems } from "$lib/stores/paginationStore";
+	import { searchText, currentPage } from "$lib/stores/paginationStore";
+	import type { ColumnConfig } from "$lib/interfaces/table.interface";
 
 	export let response: any;
+	export let dataToUpdate: any;
 	export let onRefreshPage: () => void;
 	export let onSearchChange: () => void;
 	export let onDelete: (id: string) => void;
@@ -20,6 +20,8 @@
 
 	let localSearch = get(searchText);
 	$: searchText.set(localSearch);
+
+	// console.log("dataToUpdate: SectionList", dataToUpdate);
 
 	const columns: ColumnConfig[] = [
 		{ key: "_id", label: "Id", visible: false },
@@ -35,18 +37,12 @@
 		},
 	];
 
-	console.log("Response at sectionList:", response);
-
 	const actions = {
 		show: true,
-		icons: {
-			show: false,
-			edit: true,
-			delete: true,
-		},
-		customActions: [
+		iconActions: [
 			{
 				icon: Eye,
+                class: 'view',
 				show: false,
 				action: (item: { _id: any }) => {
 					alert(`View ${item._id}`);
@@ -54,14 +50,15 @@
 			},
 			{
 				icon: Pencil,
+                class: 'edit',
 				show: true,
 				action: (item: { _id: any }) => {
-					// alert(`Edit ${item._id}`);
 					handleUpdate(item._id);
 				},
 			},
 			{
 				icon: Trash2,
+                class: 'delete',
 				show: true,
 				action: (item: { _id: any }) => {
 					handleDelete(item._id);
@@ -82,11 +79,10 @@
 	function handleRefreshButtonClick() {
 		searchText.set("");
 		currentPage.set(1);
-		onSearchChange?.();
+		onRefreshPage?.();
 	}
 
 	function handlePaginationChange() {
-		// searchText.set('');
 		onRefreshPage();
 	}
 
@@ -97,9 +93,13 @@
 	function handleDelete(itemId: string) {
 		openDeleteModal({ _id: itemId });
 	}
+	function handleAdd() {
+		openModal();
+		dataToUpdate = null;
+	}
 
-	function handleUpdate(itemId: string) {
-		onUpdate(itemId);
+	async function handleUpdate(id: string) {
+		onUpdate(id);
 	}
 </script>
 
@@ -108,35 +108,43 @@
 		<input name="search" type="text" placeholder="Search..." bind:value={$searchText} />
 
 		<button class="icon-button" on:click={handleSearchClick} aria-label="Search">
-			<Search />
+            <span class="action-icons">
+                <span class="icon-wrapper view">
+                    <Search />
+                </span>
+            </span>
+			
 		</button>
 
 		<button class="icon-button" on:click={handleRefreshButtonClick} aria-label="Refresh">
-			<RefreshCw />
+            <span class="action-icons">
+                <span class="icon-wrapper edit">
+                    <RefreshCw />
+                </span>
+            </span>
+			
 		</button>
 	</div>
 	<div class="action-buttons">
-		<button type="button" class="btn ripple" on:click={openModal}>
+		<button type="button" class="btn ripple" on:click={handleAdd}>
 			<Plus size={16} />
 			<span>Add Section</span>
 		</button>
 	</div>
 </div>
+
 <DataTable {response} {columns} {actions} onPaginationChange={handlePaginationChange} onPageLimitChange={handlePageLimitChange} />
-isUpdate - {$isUpdate}
+
 {#if isModalOpen}
-	<!-- <Modal title="Add Section" size="md">
-		<SectionForm onRefreshPage={handleRefreshPage} {onUpdate} />
-	</Modal> -->
-    <Modal title={$isUpdate ? "Update Section" : "Add Section" } size="md">
-		<SectionForm onRefreshPage={handleRefreshPage} {onUpdate} />
+	<Modal title={$isUpdate ? "Update Section" : "Add Section"} size="md">
+		<SectionForm onRefreshPage={handleRefreshPage} {dataToUpdate} />
 	</Modal>
 {/if}
 
 {#if isDeleteModalOpen}
 	<DeleteConfirmModal
 		title="Delete Section"
-		size="sm"
+		size="md"
 		onDelete={() => {
 			onDelete($modalData._id);
 		}}

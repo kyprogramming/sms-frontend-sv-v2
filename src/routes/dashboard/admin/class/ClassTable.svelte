@@ -86,7 +86,7 @@
 		<tfoot>
 			<tr>
 				<td colspan="6" style="padding:3px;">
-					<Pagination />
+					<!-- <Pagination /> -->
 				</td>
 			</tr>
 		</tfoot>

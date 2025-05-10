@@ -4,23 +4,23 @@
 	function handleSearch(e: Event) {
 		const input = e.target as HTMLInputElement;
 		searchQuery = input.value;
-		console.log("Searching:", searchQuery);
+		// console.log("Searching:", searchQuery);
 	}
 
 	function copyData() {
-		console.log("Copy clicked");
+		// console.log("Copy clicked");
 	}
 
 	function exportExcel() {
-		console.log("Export Excel");
+		// console.log("Export Excel");
 	}
 
 	function exportCSV() {
-		console.log("Export CSV");
+		// console.log("Export CSV");
 	}
 
 	function exportPDF() {
-		console.log("Export PDF");
+		// console.log("Export PDF");
 	}
 </script>
 

@@ -18,6 +18,6 @@ export const load: PageLoad = async ({ fetch }) => {
 		}
 	}
 	const data = await res.json();
-	console.log("Data from Server:", data);
+	// console.log("Data from Server:", data);
 	return { data };
 };

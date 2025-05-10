@@ -6,54 +6,46 @@
 	import { get } from "svelte/store";
 	import { API_BASE_URL } from "$lib/constants/env.config";
 	import { showSnackbar } from "$lib/components/snackbar/store";
+	import { deleteSectionById, getSectionById, getSections } from "$lib/api/section";
+	import type { any } from "zod";
 
 	export let data: any;
 	let response: any = data.data;
-	// let refreshKey = 0; // ✅ Key that forces re-render
+    let dataToUpdate:any;
 
 	const breadcrumbItems = [{ label: "Home", href: "/" }, { label: "Dashboard", href: "/dashboard/admin" }, { label: "Sections" }];
-	console.log("server data on svelte page:", response);
-
-	async function handleRefreshPage() {
-		isModalOpen.set(false);
-		// Build query string
-		loadPaginationVariables();
-		const params = new URLSearchParams({ search: $searchText || "", page: String($currentPage), limit: String($rowsPerPage) });
-
-		console.log("handleSectionAdded called on page.svelte");
-		const res = await fetch(`${API_BASE_URL}/section?${params.toString()}`, {
-			method: "GET",
-			credentials: "include",
-		});
-		const json = await res.json();
+    
+    async function handleSearchChange() {
+		if ($searchText === '') return; 
+        isModalOpen.set(false);
+		loadPaginationVariables(); // Load pagination variables
+		const params = new URLSearchParams({ search: $searchText , page: String($currentPage), limit: String($rowsPerPage) }); // Build query string
+		const json = await getSections(params);
 		response = { ...json };
-		console.log("Server Response - API: ", response);
+	}
+
+    async function handleRefreshPage() {
+		isModalOpen.set(false);
+		loadPaginationVariables(); // Load pagination variables
+		const params = new URLSearchParams({ search: $searchText || "", page: String($currentPage), limit: String($rowsPerPage) }); // Build query string
+		const json = await getSections(params);
+		response = { ...json };
 	}
 
 	async function handleUpdate(id: string) {
-		// console.log("id:", id);
-		const res = await fetch(`${API_BASE_URL}/section/${id}`, {
-			method: "GET",
-			headers: { "Content-Type": "application/json" },
-			credentials: "include",
-		});
-		const json = await res.json();
-        if(json.success) openEditModal();
-		// console.log("GET JSON DATA BY ID:", json);
-		// showSnackbar({ message: `${json.message}`, type: "success" });
+		console.log("id:", id);
+        dataToUpdate = null;
+        const res = await getSectionById(id);
+        const {data} = res;
+        dataToUpdate =  data;
+		if (res.success) openEditModal();
 	}
 
 	async function handleDelete(id: string) {
-		// debugger;
-		console.log("Update section:", id);
-		const res = await fetch(`${API_BASE_URL}/section/${id}`, {
-			method: "DELETE",
-			credentials: "include",
-		});
-		const json = await res.json();
-		console.log("DELETE JSON:", json);
-		showSnackbar({ message: `Section ${json.message}`, type: "success" });
-		handleRefreshPage();
+		const json = await deleteSectionById(id);
+		if (json.success) showSnackbar({ message: `Section ${json.message}`, type: "success" });
+		else showSnackbar({ message: `${json.message}`, type: "error" });
+		await handleRefreshPage();
 	}
 
 	function loadPaginationVariables() {
@@ -66,6 +58,6 @@
 </script>
 
 <Breadcrumb title="Sections" items={breadcrumbItems} />
-{#key response}
-	<SectionList {response} onRefreshPage={handleRefreshPage} onSearchChange={handleRefreshPage} onDelete={handleDelete} onUpdate={handleUpdate} />
+{#key response || dataToUpdate}
+	<SectionList {response} onRefreshPage={handleRefreshPage} onSearchChange={handleSearchChange} onDelete={handleDelete} onUpdate={handleUpdate} dataToUpdate={dataToUpdate}/>
 {/key}

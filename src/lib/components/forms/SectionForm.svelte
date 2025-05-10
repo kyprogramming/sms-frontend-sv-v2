@@ -1,22 +1,29 @@
 <script lang="ts">
-	import { writable } from "svelte/store";
+	import { get, writable } from "svelte/store";
 	import { z } from "zod";
 	import { isLoading } from "$lib/stores/loading";
 	import { validateForm } from "$lib/utils/validate";
 	import { showSnackbar } from "$lib/components/snackbar/store";
 	import { closeModal, isUpdate } from "$lib/stores/modalStore";
-	import { createSection } from "$lib/api/section";
+	import { createSection, updateSection } from "$lib/api/section";
 
 	export let onRefreshPage: () => void;
+	// export let onUpdate: (id: string) => void;
+	export let dataToUpdate: any;
+
+	// console.log("dataToUpdate: SectionForm", dataToUpdate);
 
 	const sectionSchema = z.object({
 		name: z.string().min(1, "Section name is required"),
 	});
 
 	type SectionFormData = z.infer<typeof sectionSchema>;
-	let formData: SectionFormData = {
-		name: "",
-	};
+	let formData: SectionFormData = { name: "" }; // Create formData
+
+    // Populate formData if sectionToEdit is provided
+	$: if (dataToUpdate) {
+		formData.name = dataToUpdate?.name;
+	} 
 
 	let error = "";
 	const formErrors = writable<Partial<Record<keyof SectionFormData, string>>>({});
@@ -30,37 +37,32 @@
 		submitAttempted.set(true);
 		const isValid = await validateForm(sectionSchema, formData, formErrors);
 		if (!isValid) return;
-		isLoading.set(true);
 		try {
-			// console.log("formData:", formData);
-			const res = await createSection(formData);
+			if (get(isUpdate) && dataToUpdate) {
+				await updateSection(dataToUpdate._id, formData);
+				showSnackbar({ message: "Section updated successfully", type: "success" });
+			} else {
+				await createSection(formData);
+				showSnackbar({ message: "Section created successfully", type: "success" });
+			}
 			closeModal();
 			onRefreshPage();
-			showSnackbar({ message: "Section created successfully", type: "success" });
-			// await goto('/dashboard/admin/section', { invalidateAll: true });
 		} catch (err: any) {
-			error = err.message || "Failed to create class";
-		} finally {
-			isLoading.set(false);
+			error = err.message || "Failed to save section";
 		}
 	}
 
 	function handleChange(field: keyof SectionFormData, value: string): void {
 		formData[field] = value;
-
 		touched.update((t) => ({ ...t, [field]: true }));
-
 		const result = sectionSchema.safeParse(formData);
-
 		formErrors.update(() => {
 			if (!result.success) {
 				const fieldErrors = result.error.flatten().fieldErrors as Record<string, string[] | undefined>;
 				const errorMap: Record<string, string | undefined> = {};
-
 				for (const key in fieldErrors) {
 					errorMap[key] = fieldErrors[key]?.[0];
 				}
-
 				return errorMap;
 			}
 			return {};
@@ -88,7 +90,11 @@
 	<div class="flex-items-center" style="justify-content:end;">
 		<button class="btn ripple" style="background-color: var(--primary-light); align-self: right;" type="reset" disabled={$isLoading}> Clear </button>
 		<button class="btn ripple" type="submit" disabled={$isLoading}>
-			{#if $isLoading}{$isUpdate ? "Updating.." : "Saving..." } {:else}{$isUpdate ? "Update" : "Save" } {/if}
+			{#if $isLoading}
+				{#if $isUpdate}Updating...{:else}Saving...{/if}
+			{:else}
+				{#if $isUpdate}Update{:else}Save{/if}
+			{/if}
 		</button>
 	</div>
 </form>

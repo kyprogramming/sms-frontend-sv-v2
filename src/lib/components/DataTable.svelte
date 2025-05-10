@@ -1,44 +1,12 @@
-<script context="module" lang="ts">
-	import { currentPage, rowsPerPage, totalPages, totalItems } from "$lib/stores/paginationStore";
-	import { get } from "svelte/store";
-
-	export interface ColumnConfig {
-		key: string;
-		label: string;
-		sortable?: boolean;
-		type?: "text" | "number" | "date";
-		format?: (value: any) => string;
-		width?: string;
-		align?: "left" | "center" | "right";
-		visible?: boolean;
-	}
-
-	export interface ActionIconConfig {
-		show?: boolean;
-		edit?: boolean;
-		delete?: boolean;
-	}
-
-	export interface CustomAction {
-		show: boolean;
-		icon: any;
-		action: (item: any) => void;
-	}
-
-	export interface ActionConfig {
-		show?: boolean;
-		icons?: ActionIconConfig;
-		customActions?: CustomAction[];
-		deleteAction?: (item: any) => void;
-	}
-</script>
-
 <script lang="ts">
+    import { ACTION_COLUMN_WIDTH, DEFAULT_PAGE_LIMIT } from "$lib/constants/env.config";
+    import { get } from "svelte/store";
 	import Pagination from "./Pagination.svelte";
-	import { ACTION_COLUMN_WIDTH, DEFAULT_PAGE_LIMIT } from "$lib/constants/env.config";
+    import { currentPage, rowsPerPage, totalPages, totalItems } from "$lib/stores/paginationStore";
+	import type { ActionConfig, ColumnConfig } from "$lib/interfaces/table.interface";
 
 	export let response: any;
-	console.log("RESPONSE on TABLE", response);
+	// console.log("RESPONSE on TABLE", response);
 	let { success, message } = response;
 	let { sections, pagination } = response.data;
 	export let onPaginationChange: () => void;
@@ -47,12 +15,7 @@
 	export let columns: ColumnConfig[] = [];
 	export let actions: ActionConfig = {
 		show: false,
-		icons: {
-			show: false,
-			edit: false,
-			delete: false,
-		},
-		customActions: [],
+		iconActions: [],
 	};
 
 	totalItems.set(pagination.total);
@@ -128,13 +91,13 @@
 						{#if actions?.show}
 							<td style="width:150px">
 								<span class="action-icons">
-									{#if actions.customActions}
-										{#each actions.customActions as action}
+									{#if actions.iconActions}
+										{#each actions.iconActions as action}
 											<!-- svelte-ignore a11y_click_events_have_key_events -->
 											<!-- svelte-ignore a11y_no_static_element_interactions -->
 											{#if action.show}
-												<span class="icon-wrapper" on:click={() => action?.action(item)}>
-													<svelte:component this={action.icon} size={15} />
+												<span class={`icon-wrapper ${action.class}`} on:click={() => action?.action(item)}>
+													<svelte:component this={action.icon} />
 												</span>
 											{/if}
 										{/each}
@@ -169,6 +132,7 @@
 	</table>
 </div>
 
+<!-- prettier-ignore -->
 <style>
 	.sortable {
 		cursor: pointer;
@@ -176,18 +140,15 @@
 	.sortable:hover {
 		background-color: #f5f5f5;
 	}
-	.action-icons {
-		display: flex;
-		gap: 8px;
-	}
-	.icon-wrapper {
+	.action-icons {display: flex; gap: 1rem; }
+	/* .icon-wrapper {
 		cursor: pointer;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
 		padding: 4px;
 		border-radius: 4px;
-	}
+	} */
 	.icon-wrapper:hover {
 		background-color: #f0f0f0;
 	}
