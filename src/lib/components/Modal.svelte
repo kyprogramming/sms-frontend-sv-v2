@@ -18,6 +18,7 @@
 	function handleModalClick(event: MouseEvent) {
 		event.stopPropagation();
 	}
+
 </script>
 
 {#if $isModalOpen}
@@ -35,6 +36,7 @@
 			transition:fly={{ y: -20, duration: 150 }}
 		>
 			<div class="modal-header">
+                
 				<h2>{title}</h2>
 				<button class="close-button" on:click={closeModal}>&times;</button>
 			</div>

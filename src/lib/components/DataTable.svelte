@@ -35,7 +35,7 @@
 
 <script lang="ts">
 	import Pagination from "./Pagination.svelte";
-	import { ACTION_COLUMN_WIDTH } from "$lib/constants/env.config";
+	import { ACTION_COLUMN_WIDTH, DEFAULT_PAGE_LIMIT } from "$lib/constants/env.config";
 
 	export let response: any;
 	console.log("RESPONSE on TABLE", response);
@@ -156,7 +156,9 @@
 					{#if $totalItems > 0}
 						<div style="display: flex; justify-content: space-between; align-items: center; margin: 5px;">
 							<p style="font-weight: bold;"><b style="font-size: larger; color: blue;">{$totalItems}</b> record(s) found on {$totalPages} page(s)</p>
-							<Pagination {onPaginationChange} {onPageLimitChange} />
+							{#if $totalItems > Number(DEFAULT_PAGE_LIMIT) }
+								<Pagination {onPaginationChange} {onPageLimitChange} />
+							{/if}
 						</div>
 					{:else}
 						<p style="text-align: center; font-weight: bold; margin: 5px;">{message}.</p>

@@ -4,9 +4,8 @@
 	import { isLoading } from "$lib/stores/loading";
 	import { validateForm } from "$lib/utils/validate";
 	import { showSnackbar } from "$lib/components/snackbar/store";
-	import { closeModal } from "$lib/stores/modalStore";
+	import { closeModal, isUpdate } from "$lib/stores/modalStore";
 	import { createSection } from "$lib/api/section";
-	import { goto, invalidate } from "$app/navigation";
 
 	export let onRefreshPage: () => void;
 
@@ -35,7 +34,6 @@
 		try {
 			// console.log("formData:", formData);
 			const res = await createSection(formData);
-			// console.log("SAVE SECTION RESPONSE", res)
 			closeModal();
 			onRefreshPage();
 			showSnackbar({ message: "Section created successfully", type: "success" });
@@ -70,7 +68,6 @@
 	}
 </script>
 
-<!-- <div class="form-wrapper"> -->
 <form on:submit={onSubmit}>
 	<div class="input-wrapper">
 		<label for="name">Name *</label>
@@ -78,8 +75,8 @@
 			type="text"
 			name="name"
 			placeholder="Section name"
-			bind:value={formData.name}
 			class={`w-full ${$formErrors.name && ($touched.name || $submitAttempted) ? "input-error" : ""}`}
+			bind:value={formData.name}
 			on:input={(e) => handleChange("name", (e.target as HTMLInputElement).value)}
 			on:blur={() => touched.update((t) => ({ ...t, name: true }))}
 		/>
@@ -91,12 +88,10 @@
 	<div class="flex-items-center" style="justify-content:end;">
 		<button class="btn ripple" style="background-color: var(--primary-light); align-self: right;" type="reset" disabled={$isLoading}> Clear </button>
 		<button class="btn ripple" type="submit" disabled={$isLoading}>
-			{#if $isLoading}Saving...{:else}Save{/if}
+			{#if $isLoading}{$isUpdate ? "Updating.." : "Saving..." } {:else}{$isUpdate ? "Update" : "Save" } {/if}
 		</button>
 	</div>
 </form>
-
-<!-- </div> -->
 
 <style>
 	.form-wrapper {

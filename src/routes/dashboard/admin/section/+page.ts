@@ -5,19 +5,15 @@ import type { PageLoad } from "../../../home/$types";
 export const load: PageLoad = async ({ fetch }) => {
 	const params = new URLSearchParams({ search: "", page: "1", limit: DEFAULT_PAGE_LIMIT });
 
-	const res = await fetch(`${API_BASE_URL}/api/section?${params.toString()}`, {
+	const res = await fetch(`${API_BASE_URL}/section?${params.toString()}`, {
 		method: "GET",
 		credentials: "include",
 	});
-	debugger;
-	console.log("Server response:", res);
 	if (!res.ok) {
 		if (res.status === 401) {
-			// Redirect logic or show unauthorized error
-			throw redirect(302, "/login");
+			throw redirect(302, "/login"); // Redirect logic or show unauthorized error
 		} else {
-			// Generic server error
-			const message = await res.text();
+			const message = await res.text(); // Generic server error
 			throw error(res.status, message || "Failed to fetch data from server");
 		}
 	}

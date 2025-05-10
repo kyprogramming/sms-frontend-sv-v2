@@ -4,7 +4,7 @@
 	import DeleteConfirmModal from "$lib/components/DeleteConfirmModal.svelte";
 	import SectionForm from "$lib/components/forms/SectionForm.svelte";
 	import Modal from "$lib/components/Modal.svelte";
-	import { isDeleteModalOpen, isModalOpen, modalData, openDeleteModal, openModal } from "$lib/stores/modalStore";
+	import { isDeleteModalOpen, isModalOpen, modalData, openDeleteModal, openModal ,isUpdate } from "$lib/stores/modalStore";
 
 	import { formatDate } from "$lib/utils/formatDate";
 	import { Pencil, Eye, Trash2, Plus } from "@lucide/svelte";
@@ -15,6 +15,8 @@
 	export let response: any;
 	export let onRefreshPage: () => void;
 	export let onSearchChange: () => void;
+	export let onDelete: (id: string) => void;
+	export let onUpdate: (id: string) => void;
 
 	let localSearch = get(searchText);
 	$: searchText.set(localSearch);
@@ -54,28 +56,19 @@
 				icon: Pencil,
 				show: true,
 				action: (item: { _id: any }) => {
-					alert(`Edit ${item._id}`);
+					// alert(`Edit ${item._id}`);
+					handleUpdate(item._id);
 				},
 			},
 			{
 				icon: Trash2,
 				show: true,
 				action: (item: { _id: any }) => {
-					handleDeleteClick(item._id);
+					handleDelete(item._id);
 				},
 			},
 		],
 	};
-
-	function handleDeleteClick(itemId: string) {
-		openDeleteModal({ _id: itemId });
-	}
-
-	function deleteItem() {
-		// Perform deletion using the ID
-		// console.log("Deleting item with ID:");
-		// your actual delete logic here (API call, store update, etc.)
-	}
 
 	async function handleRefreshPage() {
 		onRefreshPage();
@@ -101,11 +94,12 @@
 		onRefreshPage();
 	}
 
-	function setDefaultPagination() {
-		$currentPage = get(currentPage);
-		$rowsPerPage = get(rowsPerPage);
-		$totalPages = get(totalPages);
-		$totalItems = get(totalItems);
+	function handleDelete(itemId: string) {
+		openDeleteModal({ _id: itemId });
+	}
+
+	function handleUpdate(itemId: string) {
+		onUpdate(itemId);
 	}
 </script>
 
@@ -114,11 +108,11 @@
 		<input name="search" type="text" placeholder="Search..." bind:value={$searchText} />
 
 		<button class="icon-button" on:click={handleSearchClick} aria-label="Search">
-			<Search size={20} />
+			<Search />
 		</button>
 
 		<button class="icon-button" on:click={handleRefreshButtonClick} aria-label="Refresh">
-			<RefreshCw size={20} />
+			<RefreshCw />
 		</button>
 	</div>
 	<div class="action-buttons">
@@ -129,25 +123,25 @@
 	</div>
 </div>
 <DataTable {response} {columns} {actions} onPaginationChange={handlePaginationChange} onPageLimitChange={handlePageLimitChange} />
-
-<!-- {#if isModalOpen} -->
-<Modal title="Add Section" size="md">
-	<SectionForm onRefreshPage={handleRefreshPage} />
-</Modal>
-<!-- {/if} -->
+isUpdate - {$isUpdate}
+{#if isModalOpen}
+	<!-- <Modal title="Add Section" size="md">
+		<SectionForm onRefreshPage={handleRefreshPage} {onUpdate} />
+	</Modal> -->
+    <Modal title={$isUpdate ? "Update Section" : "Add Section" } size="md">
+		<SectionForm onRefreshPage={handleRefreshPage} {onUpdate} />
+	</Modal>
+{/if}
 
 {#if isDeleteModalOpen}
 	<DeleteConfirmModal
 		title="Delete Section"
 		size="sm"
 		onDelete={() => {
-			alert(JSON.stringify($modalData));
-			// TODO: implement delete functionality
+			onDelete($modalData._id);
 		}}
 		onCancel={() => {
 			modalData.set(null);
-			// alert("Cancelled");
-			// TODO: implement delete functionality
 		}}
 	/>
 {/if}

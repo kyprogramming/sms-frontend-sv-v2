@@ -28,7 +28,7 @@ export const SECTIONS = [
 	{ id: 3, name: "C" },
 	{ id: 4, name: "D" },
 	{ id: 5, name: "E" },
-	{ id: 5, name: "F" },
+	{ id: 6, name: "F" },
 ];
 
 export const MENU_GROUPS = [

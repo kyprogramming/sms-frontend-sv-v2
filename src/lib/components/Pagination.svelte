@@ -68,12 +68,6 @@
 			Showing {startRange}-{endRange} of {$totalItems} records
 		</div>
 	</div>
-	<!-- <div class="nav-buttons">
-		<button class="nav-button first" on:click={goToFirstPage} disabled={$currentPage === 1}> <span class="icon-wrapper1"><ChevronsLeft /></span></button>
-		<button class="nav-button prev" on:click={goToPreviousPage} disabled={$currentPage === 1}><span><ChevronLeft /></span></button>
-		<button class="nav-button next" on:click={goToNextPage} disabled={$currentPage === $totalPages}><span><ChevronRight /></span></button>
-		<button class="nav-button last" on:click={goToLastPage} disabled={$currentPage === $totalPages}><ChevronsRight /></button>
-	</div> -->
 	<div class="nav-buttons">
 		<button class="nav-button first" on:click={goToFirstPage} disabled={$currentPage === 1}>
 			<span class="page-icon-wrapper">
