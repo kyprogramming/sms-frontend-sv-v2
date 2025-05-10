@@ -36,7 +36,6 @@
 		response = { ...json };
 		console.log("Server Response - API: ", response);
 	}
-
 </script>
 
 <Breadcrumb title="Sections" items={breadcrumbItems} />

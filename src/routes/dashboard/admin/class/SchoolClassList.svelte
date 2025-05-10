@@ -33,17 +33,11 @@
 	// Filter and paginate classes
 	$: filteredClasses = classes
 		.filter((cls) => levelFilter === "" || cls.level.toString() === levelFilter)
-		.filter(
-			(cls) =>
-				academicYearFilter === "" || cls.academicYear === academicYearFilter,
-		);
+		.filter((cls) => academicYearFilter === "" || cls.academicYear === academicYearFilter);
 
 	$: totalItems = filteredClasses.length;
 
-	$: paginatedClasses = filteredClasses.slice(
-		(currentPage - 1) * rowsPerPage,
-		currentPage * rowsPerPage,
-	);
+	$: paginatedClasses = filteredClasses.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
 	// Reset currentPage to 1 when rowsPerPage changes
 	$: if (rowsPerPage) {
@@ -57,10 +51,5 @@
 	<ClassTable {classes} {rowsPerPage} />
 </div>
 
-
-
 <style>
-
-
-   
 </style>

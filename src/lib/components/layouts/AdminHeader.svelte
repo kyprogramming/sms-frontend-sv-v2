@@ -15,10 +15,7 @@
 
 <header class="header">
 	<div class="flex-container">
-		<button
-			on:click={onToggleSidebar}
-			style="background: none; border: none; cursor: pointer;"
-		>
+		<button on:click={onToggleSidebar} style="background: none; border: none; cursor: pointer;">
 			{#if sidebarOpen}
 				<Menu size="24" color="red" />
 			{:else}
@@ -34,7 +31,9 @@
 </header>
 
 <style>
-    .flex-container h1{
-        margin: 0px; padding: 0px; font-size:20px;
-    }
+	.flex-container h1 {
+		margin: 0px;
+		padding: 0px;
+		font-size: 20px;
+	}
 </style>

@@ -51,21 +51,12 @@
 
 			<div class="form-group">
 				<label for="level">Level</label>
-				<input
-					id="level"
-					type="number"
-					placeholder="type here"
-					bind:value={formData.level}
-				/>
+				<input id="level" type="number" placeholder="type here" bind:value={formData.level} />
 			</div>
 
 			<div class="form-group">
 				<label for="academicYear">Academic Year</label>
-				<input
-					id="academicYear"
-					placeholder="e.g. 2024-2025"
-					bind:value={formData.academicYear}
-				/>
+				<input id="academicYear" placeholder="e.g. 2024-2025" bind:value={formData.academicYear} />
 			</div>
 		</div>
 
@@ -110,10 +101,8 @@
 		gap: 0.3rem;
 	}
 
-
 	button:disabled {
 		opacity: 0.6;
 		cursor: not-allowed;
 	}
-
 </style>

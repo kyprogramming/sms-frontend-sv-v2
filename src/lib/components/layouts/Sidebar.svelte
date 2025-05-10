@@ -12,10 +12,7 @@
 	<ul class="space-y-2">
 		{#each menuItems as item}
 			<li>
-				<a
-					href={item.link}
-					class="block py-2 px-3 rounded hover:bg-gray-700 transition"
-				>
+				<a href={item.link} class="block py-2 px-3 rounded hover:bg-gray-700 transition">
 					{item.label}
 				</a>
 			</li>

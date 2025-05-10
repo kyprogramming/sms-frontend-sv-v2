@@ -16,7 +16,6 @@
 	export let onRefreshPage: () => void;
 	export let onSearchChange: () => void;
 
-
 	let localSearch = get(searchText);
 	$: searchText.set(localSearch);
 
@@ -46,21 +45,21 @@
 		customActions: [
 			{
 				icon: Eye,
-                show: false,
+				show: false,
 				action: (item: { _id: any }) => {
 					alert(`View ${item._id}`);
 				},
 			},
 			{
 				icon: Pencil,
-                show: true,
+				show: true,
 				action: (item: { _id: any }) => {
 					alert(`Edit ${item._id}`);
 				},
 			},
 			{
 				icon: Trash2,
-                show: true,
+				show: true,
 				action: (item: { _id: any }) => {
 					handleDeleteClick(item._id);
 				},
@@ -83,25 +82,24 @@
 	}
 
 	function handleSearchClick() {
-        currentPage.set(1);
+		currentPage.set(1);
 		onSearchChange?.();
 	}
 
 	function handleRefreshButtonClick() {
-		searchText.set('');
-		currentPage.set(1);		
+		searchText.set("");
+		currentPage.set(1);
 		onSearchChange?.();
 	}
 
 	function handlePaginationChange() {
-        // searchText.set('');	
+		// searchText.set('');
 		onRefreshPage();
 	}
 
-    function handlePageLimitChange() {
+	function handlePageLimitChange() {
 		onRefreshPage();
 	}
-
 
 	function setDefaultPagination() {
 		$currentPage = get(currentPage);
@@ -130,7 +128,7 @@
 		</button>
 	</div>
 </div>
-<DataTable {response} {columns} {actions} onPaginationChange={handlePaginationChange} onPageLimitChange={handlePageLimitChange}/>
+<DataTable {response} {columns} {actions} onPaginationChange={handlePaginationChange} onPageLimitChange={handlePageLimitChange} />
 
 <!-- {#if isModalOpen} -->
 <Modal title="Add Section" size="md">
@@ -175,7 +173,7 @@
 		display: flex;
 		align-items: center;
 	}
-    input[name='search'] {
-        width:300px;
-    }
+	input[name="search"] {
+		width: 300px;
+	}
 </style>

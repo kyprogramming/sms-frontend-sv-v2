@@ -21,32 +21,9 @@
 	}
 </script>
 
-<form
-	on:submit|preventDefault={handleRegister}
-	class="space-y-4 p-4 max-w-md mx-auto"
->
-	<input
-		bind:value={name}
-		type="text"
-		placeholder="Full Name"
-		required
-		class="w-full p-2 border rounded"
-	/>
-	<input
-		bind:value={email}
-		type="email"
-		placeholder="Email"
-		required
-		class="w-full p-2 border rounded"
-	/>
-	<input
-		bind:value={password}
-		type="password"
-		placeholder="Password"
-		required
-		class="w-full p-2 border rounded"
-	/>
-	<button type="submit" class="w-full bg-green-600 text-white py-2 rounded"
-		>Register</button
-	>
+<form on:submit|preventDefault={handleRegister} class="space-y-4 p-4 max-w-md mx-auto">
+	<input bind:value={name} type="text" placeholder="Full Name" required class="w-full p-2 border rounded" />
+	<input bind:value={email} type="email" placeholder="Email" required class="w-full p-2 border rounded" />
+	<input bind:value={password} type="password" placeholder="Password" required class="w-full p-2 border rounded" />
+	<button type="submit" class="w-full bg-green-600 text-white py-2 rounded">Register</button>
 </form>

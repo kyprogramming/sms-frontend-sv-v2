@@ -50,12 +50,7 @@
 			<div class="menu-item"><UserCog size="22" />Profile</div>
 			<div class="divider"></div>
 			<div class="menu-item">
-				<button
-					class="logout-button"
-					type="button"
-					disabled={$isLoading}
-					on:click|stopPropagation={onSubmit}
-				>
+				<button class="logout-button" type="button" disabled={$isLoading} on:click|stopPropagation={onSubmit}>
 					<div class="logout-container">
 						<Power size="22" color="red" />
 						Log out

@@ -1,37 +1,32 @@
 <script lang="ts">
-	let searchQuery = '';
+	let searchQuery = "";
 
 	function handleSearch(e: Event) {
 		const input = e.target as HTMLInputElement;
 		searchQuery = input.value;
-		console.log('Searching:', searchQuery);
+		console.log("Searching:", searchQuery);
 	}
 
 	function copyData() {
-		console.log('Copy clicked');
+		console.log("Copy clicked");
 	}
 
 	function exportExcel() {
-		console.log('Export Excel');
+		console.log("Export Excel");
 	}
 
 	function exportCSV() {
-		console.log('Export CSV');
+		console.log("Export CSV");
 	}
 
 	function exportPDF() {
-		console.log('Export PDF');
+		console.log("Export PDF");
 	}
 </script>
 
 <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 border rounded-lg shadow-sm bg-white">
 	<!-- Search -->
-	<input
-		type="text"
-		placeholder="Search..."
-		class="border px-4 py-2 rounded-md w-full md:w-1/3"
-		on:input={handleSearch}
-	/>
+	<input type="text" placeholder="Search..." class="border px-4 py-2 rounded-md w-full md:w-1/3" on:input={handleSearch} />
 
 	<!-- Action Buttons -->
 	<div class="flex flex-wrap gap-2">

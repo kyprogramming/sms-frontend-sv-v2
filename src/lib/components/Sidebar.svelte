@@ -76,7 +76,7 @@
 	let activeMenuItem: string | null = null;
 	let sidebarCollapsed = false;
 	// All menu groups and their items
-	
+
 	function toggleGroup(groupTitle: string) {
 		activeGroup = activeGroup === groupTitle ? null : groupTitle;
 	}
@@ -89,36 +89,19 @@
 			<div class="menu-group">
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<!-- svelte-ignore a11y_no_static_element_interactions -->
-				<div
-					class="group-header {activeGroup === group.title ? 'active' : ''}"
-					on:click={() => toggleGroup(group.title)}
-				>
-					<svelte:component
-						this={iconComponents[group.icon]}
-						size={18}
-						class="lucide-icon"
-					/>
+				<div class="group-header {activeGroup === group.title ? 'active' : ''}" on:click={() => toggleGroup(group.title)}>
+					<svelte:component this={iconComponents[group.icon]} size={18} class="lucide-icon" />
 					{#if !sidebarCollapsed}
 						<div class="header-content">
 							<span>{group.title}</span>
-							<svelte:component
-								this={activeGroup === group.title ? ChevronDown : ChevronRight}
-								size={16}
-								class="pull-right"
-							/>
+							<svelte:component this={activeGroup === group.title ? ChevronDown : ChevronRight} size={16} class="pull-right" />
 						</div>
 					{/if}
 				</div>
 				{#if activeGroup === group.title && !sidebarCollapsed}
 					<div class="group-items" transition:slide>
 						{#each group.items as item}
-							<a
-								href={item.link}
-								class="menu-item {activeMenuItem === item.title
-									? 'active'
-									: ''}"
-								on:click={() => (activeMenuItem = item.title)}
-							>
+							<a href={item.link} class="menu-item {activeMenuItem === item.title ? 'active' : ''}" on:click={() => (activeMenuItem = item.title)}>
 								<span>{item.title}</span>
 							</a>
 						{/each}

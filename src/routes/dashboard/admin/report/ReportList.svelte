@@ -88,12 +88,12 @@
 		title="Delete Section"
 		size="sm"
 		onDelete={() => {
-			// alert("Deleted"); 
-            // TODO: implement delete functionality 
+			// alert("Deleted");
+			// TODO: implement delete functionality
 		}}
 		onCancel={() => {
 			// alert("Cancelled");
-            // TODO: implement delete functionality 
+			// TODO: implement delete functionality
 		}}
 	/>
 {/if}

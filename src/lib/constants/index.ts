@@ -31,7 +31,6 @@ export const SECTIONS = [
 	{ id: 5, name: "F" },
 ];
 
-
 export const MENU_GROUPS = [
 	// {
 	// 	title: "Front Office",

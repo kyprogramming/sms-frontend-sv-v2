@@ -4,10 +4,10 @@
 </script>
 
 <div class="container-breadcrumb">
-    <div class="flex-items-center">
-        <h1 class="heading">{title}</h1>
-    	<!-- <PlusCircle class="lucide-icon" color="green" /> -->
-    </div>
+	<div class="flex-items-center">
+		<h1 class="heading">{title}</h1>
+		<!-- <PlusCircle class="lucide-icon" color="green" /> -->
+	</div>
 	<nav class="breadcrumb">
 		{#each items as item, i}
 			{#if item.href}

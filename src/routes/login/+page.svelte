@@ -78,8 +78,7 @@
 					placeholder="Enter your email"
 					bind:value={formData.email}
 					class={`w-full ${$formErrors.password && $touched.password ? "input-error" : ""}`}
-					on:input={(e) =>
-						handleChange("email", (e.target as HTMLInputElement).value)}
+					on:input={(e) => handleChange("email", (e.target as HTMLInputElement).value)}
 					on:blur={() => touched.update((t) => ({ ...t, email: true }))}
 				/>
 				{#if $formErrors.email && $touched.email}
@@ -94,8 +93,7 @@
 					placeholder="Enter your password"
 					bind:value={formData.password}
 					class={`w-full ${$formErrors.password && $touched.password ? "input-error" : ""}`}
-					on:input={(e) =>
-						handleChange("password", (e.target as HTMLInputElement).value)}
+					on:input={(e) => handleChange("password", (e.target as HTMLInputElement).value)}
 					on:blur={() => touched.update((t) => ({ ...t, password: true }))}
 				/>
 				{#if $formErrors.password && $touched.password}
@@ -107,12 +105,7 @@
 				<a href="forgot-password">Forgot password?</a>
 			</div>
 
-			<button
-				class="btn ripple"
-				style="width: 100%; justify-content: center;"
-				type="submit"
-				disabled={$isLoading}
-			>
+			<button class="btn ripple" style="width: 100%; justify-content: center;" type="submit" disabled={$isLoading}>
 				{#if $isLoading}
 					<!-- <img src="/spinner.svg" alt="Loading..." class="spinner" /> -->
 					Loading...

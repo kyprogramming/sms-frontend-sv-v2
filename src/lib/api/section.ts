@@ -19,8 +19,8 @@ export async function createSection(data: any) {
 		if (!res.ok) throw new Error("Failed to create section");
 		// Refresh the page's load() function
 		// await invalidate("/dashboard/admin/section");
-        // await invalidate("http://localhost:5000/api/section");
-        // await goto("/dashboard/admin/section");
+		// await invalidate("http://localhost:5000/api/section");
+		// await goto("/dashboard/admin/section");
 		return await res.json();
 	} catch (error) {
 		console.error("Create Section Error:", error);

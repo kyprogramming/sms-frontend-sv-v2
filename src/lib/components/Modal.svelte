@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-	import {isModalOpen, closeModal  } from "$lib/stores/modalStore";
+	import { isModalOpen, closeModal } from "$lib/stores/modalStore";
 	import { fade, fly } from "svelte/transition";
 	export let title: string = "Title";
 	export let size: ModalSize = "md";
@@ -23,11 +23,7 @@
 {#if $isModalOpen}
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div
-		class="modal-overlay"
-		on:click={handleOverlayClick}
-		transition:fade={{ duration: 150 }}
-	>
+	<div class="modal-overlay" on:click={handleOverlayClick} transition:fade={{ duration: 150 }}>
 		<div
 			class="modal-content"
 			class:sm={size === "sm"}
@@ -75,13 +71,25 @@
 	}
 
 	/* Size classes */
-	.modal-content.sm { max-width: 400px; }
-	.modal-content.md { max-width: 600px; }
-	.modal-content.lg { max-width: 800px; }
-	.modal-content.xl { max-width: 1140px; }
-	.modal-content.full { width: 95%; height: 95vh; max-width: none; }
+	.modal-content.sm {
+		max-width: 400px;
+	}
+	.modal-content.md {
+		max-width: 600px;
+	}
+	.modal-content.lg {
+		max-width: 800px;
+	}
+	.modal-content.xl {
+		max-width: 1140px;
+	}
+	.modal-content.full {
+		width: 95%;
+		height: 95vh;
+		max-width: none;
+	}
 
-	.modal-header{
+	.modal-header {
 		padding: 0.5rem;
 		background-color: var(--gray1);
 		display: flex;
