@@ -48,7 +48,7 @@
 			closeModal();
 			onRefreshPage();
 		} catch (err: any) {
-			error = err.message || "Failed to save section";
+			error = err?.message || "Failed to save section";
 		}
 	}
 

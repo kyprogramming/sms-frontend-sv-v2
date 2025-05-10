@@ -13,7 +13,7 @@ export async function apiRequest<T>(url: string, method: "GET" | "POST" | "PUT" 
 	const data = await res.json();
 
 	if (!res.ok || !data.success) {
-		throw new Error(data.message || "Request failed");
+		throw new Error(data?.message || "Request failed");
 	}
 
 	return data;

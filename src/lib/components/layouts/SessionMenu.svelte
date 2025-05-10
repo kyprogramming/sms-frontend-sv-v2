@@ -22,7 +22,7 @@
 			isLoading.set(true);
 			const response = await apiRequest<any>("/api/auth/logout", "POST", {});
 			if (response.success) {
-				showSnackbar({ message: response.message, type: "success" });
+				showSnackbar({ message: response?.message, type: "success" });
 				goto("/");
 			}
 		} catch (err: any) {

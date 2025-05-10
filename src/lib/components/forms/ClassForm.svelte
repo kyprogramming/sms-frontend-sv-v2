@@ -33,7 +33,7 @@
 			await new Promise((res) => setTimeout(res, 1000));
 			showSnackbar({ message: "Class created successfully", type: "success" });
 		} catch (err: any) {
-			error = err.message || "Failed to create class";
+			error = err?.message || "Failed to create class";
 		} finally {
 			isLoading.set(false);
 		}

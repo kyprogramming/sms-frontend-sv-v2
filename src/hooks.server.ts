@@ -1,37 +1,42 @@
-import type { Handle } from "@sveltejs/kit";
+import type { Handle, HandleServerError } from "@sveltejs/kit";
+import { decodeJwt } from "$lib/utils/utils";
 
 export const handle: Handle = async ({ event, resolve }) => {
-	const sessionToken = event.cookies.get("session_token");
-	//   console.log("sessionToken:", sessionToken);
+    try {
+		const sessionToken = event.cookies.get("session_token");
 
-	if (sessionToken) {
-		const decoded = decodeJwt(sessionToken);
-		// console.log("decoded:", decoded);
-		event.locals.user = {
-			id: decoded.id,
-			name: decoded.name,
-			email: decoded.email,
-			role: decoded.role,
-			authenticated: true,
-		};
+		if (sessionToken) {
+			const decoded = decodeJwt(sessionToken);
+
+			event.locals.user = {
+				id: decoded.id,
+				name: decoded.name,
+				email: decoded.email,
+				role: decoded.role,
+				authenticated: true,
+			};
+		}
+
+		const response = await resolve(event);
+		return response;
+    } catch (error) {
+		console.error("Error caught in handle():", error);
+		throw error; // optional: you can customize this if needed
 	}
-
-	return await resolve(event);
 };
-function decodeJwt(token: string) {
-	try {
-		const payload = JSON.parse(atob(token.split(".")[1]));
-		return payload;
-	} catch {
-		return null;
-	}
-}
 
-// authStore.update((store) => {
-//   const newStore = { ...store, decoded };
-//   // Save to localStorage only in the browser
-//   if (typeof window !== "undefined") {
-//     localStorage.setItem("auth", JSON.stringify(newStore));
-//   }
-//   return newStore;
-// });
+export const handleError: HandleServerError = ({ error, event }) => {
+	let message = "An unexpected error occurred. Please try again.";
+	let code = "UNKNOWN";
+
+	if (error instanceof Error) {
+		console.error("Global error:", error.message);
+		message = error.message;
+		code = error.name;
+	} else {
+		console.error("Global error:", error);
+	}
+	console.error("At route:", event.url.pathname);
+	return { message, code};
+};
+

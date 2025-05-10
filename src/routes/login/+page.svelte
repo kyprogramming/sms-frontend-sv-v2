@@ -55,7 +55,7 @@
 			showSnackbar({ message: data.message, type: "success" });
 			goto(`/dashboard/${data.data.role}`);
 		} catch (err: any) {
-			error = err.message || "Unexpected error occurred";
+			error = err?.message || "Unexpected error occurred";
 		} finally {
 			isLoading.set(false);
 		}
