@@ -35,6 +35,7 @@
 
 <script lang="ts">
 	import Pagination from "./Pagination.svelte";
+	import { ACTION_COLUMN_WIDTH } from "$lib/constants/env.config";
 
 	export let response: any;
 	console.log("RESPONSE on TABLE", response);
@@ -103,7 +104,7 @@
 					</th>
 				{/each}
 				{#if actions?.show}
-					<th>ACTION</th>
+					<th style={`width:${ACTION_COLUMN_WIDTH};`}>ACTION</th>
 				{/if}
 			</tr>
 		</thead>
@@ -125,7 +126,7 @@
 							</td>
 						{/each}
 						{#if actions?.show}
-							<td style="width:250px">
+							<td style="width:150px">
 								<span class="action-icons">
 									{#if actions.customActions}
 										{#each actions.customActions as action}
