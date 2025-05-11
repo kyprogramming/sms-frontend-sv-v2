@@ -1,7 +1,5 @@
 <script lang="ts">
     import { page } from '$app/state';
-	// export let error: Error;
-	// export let status: number;
     const status = page.status;
     const message = page?.error?.message;
     console.log("Error Page:", { message, status });
