@@ -11,7 +11,7 @@
 
 	<div class="status-box">
 		<h2>{status}</h2>
-		<h4>{message}</h4>
+		<p>{message}</p>
 	</div>
 
 	{#if status === 400}
