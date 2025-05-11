@@ -6,15 +6,7 @@
 	import { showSnackbar } from "$lib/components/snackbar/store";
 	import { closeModal, isUpdate } from "$lib/stores/modalStore";
 	import { createSubject, updateSubject } from "$lib/services/subject";
-	import { fetchSectionList } from "$lib/services/section";
-	import { onMount } from "svelte";
-
-	// type Section = { _id: string; name: string };
-	let allSections: any;
-	onMount(async () => {
-		allSections = await fetchSectionList();
-		console.log("allSections", allSections);
-	});
+	import { SUBJECT_TYPE } from "$lib/constants";
 
 	// Props
 	export let onRefreshPage: () => void;
@@ -22,8 +14,9 @@
 
 	// Zod schema
 	const subjectSchema = z.object({
+		type: z.number().min(1, "Please select a subject type"),
 		name: z.string().min(1, "Subject name is required"),
-		sectionIds: z.array(z.string()).min(1, "Please select at least one section"),
+		code: z.string().optional(),
 	});
 
 	type SubjectFormData = z.infer<typeof subjectSchema>;
@@ -31,22 +24,25 @@
 	// Reactive form state
 	let formData: SubjectFormData = {
 		name: "",
-		sectionIds: [], // Now this works fine
+		code: "",
+		type: 0,
 	};
 	let error = "";
 
 	const formErrors = writable<Partial<Record<keyof SubjectFormData, string>>>({});
-	const touched = writable<Partial<Record<keyof SubjectFormData, boolean>>>({ name: false });
+	const touched = writable<Partial<Record<keyof SubjectFormData, boolean>>>({});
 	const submitAttempted = writable(false);
 
 	// Prefill data if editing
 	function populateFormData() {
-        console.log("dataToUpdate:", dataToUpdate);
+        console.log("dataToUpdate", dataToUpdate);
 		if (dataToUpdate) {
 			formData = {
 				name: dataToUpdate.name,
-				sectionIds:  dataToUpdate.sectionIds.map((section: { _id: string; }) => section._id)  || [],
+				code: dataToUpdate.code || "",
+				type: dataToUpdate.type || 0,
 			};
+			touched.set({ name: true, code: true, type: true });
 		}
 	}
 	$: populateFormData();
@@ -78,11 +74,13 @@
 	}
 
 	// Handle field changes
-	function handleChange(field: keyof SubjectFormData, value: string | string[]): void {
+	function handleChange(field: keyof SubjectFormData, value: string | number): void {
 		if (field === "name" && typeof value === "string") {
 			formData.name = value;
-		} else if (field === "sectionIds" && Array.isArray(value)) {
-			formData.sectionIds = value;
+		} else if (field === "code" && typeof value === "string") {
+			formData.code = value;
+		} else if (field === "type" && typeof value === "number") {
+			formData.type = value;
 		}
 
 		touched.update((t) => ({ ...t, [field]: true }));
@@ -104,17 +102,44 @@
 </script>
 
 <form on:submit={onSubmit}>
+    <div class="input-wrapper">
+		<!-- svelte-ignore a11y_label_has_associated_control -->
+		<label>Subject Type <span class="required">*</span></label>
+		<div class="radio-section" class:has-error={$formErrors.type && ($touched.type || $submitAttempted)}>
+			{#each SUBJECT_TYPE as type}
+				<div class="radio-item">
+					<label class="radio-label">
+						<input
+							type="radio"
+							class="radio-input"
+							name="subjectType"
+							value={type.id}
+							checked={formData.type === type.id}
+							on:change={() => handleChange("type", type.id)}
+							on:blur={() => handleChange("type", formData.type)}
+						/>
+						<span class="radio-custom"></span>
+						<span class="radio-text">{type.name}</span>
+					</label>
+				</div>
+			{/each}
+		</div>
+		{#if $formErrors.type && ($touched.type || $submitAttempted)}
+			<p class="error-text">{$formErrors.type}</p>
+		{/if}
+	</div>
+
 	<div class="input-wrapper">
-		<label for="name">Name *</label>
+		<label for="name">Subject Name <span class="required">*</span></label>
 		<input
 			id="name"
 			type="text"
 			name="name"
-			placeholder="Subject name"
-			class={`w-full ${$formErrors.name && ($touched.name || $submitAttempted) ? "input-error" : ""}`}
+			placeholder="Enter subject name"
+            class={`w-full ${$formErrors.name && ($touched.name || $submitAttempted) ? "input-error" : ""}`}
 			bind:value={formData.name}
 			on:input={(e) => handleChange("name", (e.target as HTMLInputElement).value)}
-			on:blur={() => touched.update((t) => ({ ...t, name: true }))}
+			on:blur={() => handleChange("name", formData.name)}
 		/>
 		{#if $formErrors.name && ($touched.name || $submitAttempted)}
 			<p class="error-text">{$formErrors.name}</p>
@@ -122,39 +147,20 @@
 	</div>
 
 	<div class="input-wrapper">
-		<!-- svelte-ignore a11y_label_has_associated_control -->
-		<label>Sections *</label>
-		<div class="checkbox-section" class:has-error={$formErrors.sectionIds && $submitAttempted}>
-			{#each allSections?.data as section}
-				<div class="checkbox-item">
-					<label class="checkbox-label">
-						<input
-							type="checkbox"
-							class="checkbox-input"
-							value={section._id}
-							checked={formData.sectionIds.includes(section._id)}
-							on:change={(e) => {
-								const checked = (e.target as HTMLInputElement).checked;
-								if (checked) {
-									formData.sectionIds = [...formData.sectionIds, section._id];
-								} else {
-									formData.sectionIds = formData.sectionIds.filter((id) => id !== section._id);
-								}
-								handleChange("sectionIds", formData.sectionIds);
-							}}
-							on:blur={() => handleChange("sectionIds", formData.sectionIds)}
-						/>
-						<span class="checkbox-custom"></span>
-						<span class="checkbox-text">{section.name}</span>
-					</label>
-				</div>
-			{/each}
-		</div>
-		{#if $formErrors.sectionIds && ($submitAttempted || $touched.sectionIds)}
-			<p class="error-text">{$formErrors.sectionIds}</p>
-		{/if}
+		<label for="code">Subject Code</label>
+		<input
+			id="code"
+			type="text"
+			name="code"
+            class={`w-full`}
+			placeholder="Enter subject code"
+			bind:value={formData.code}
+			on:input={(e) => handleChange("code", (e.target as HTMLInputElement).value)}
+			on:blur={() => handleChange("code", String(formData.code))}
+		/>
 	</div>
 
+	
 	<div class="flex-items-center" style="justify-content:end;">
 		<button class="btn ripple" type="reset" disabled={$isLoading} style="background-color: var(--primary-light); align-self: right;"> Clear </button>
 		<button class="btn ripple" type="submit" disabled={$isLoading}>
@@ -166,85 +172,69 @@
 </form>
 
 <style>
-	.checkbox-section {
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-		padding: 16px;
-		background: #f8f9fa;
-		border-radius: 8px;
-		max-height: 300px;
-		overflow-y: auto;
+	/* .input-wrapper {
+      margin-bottom: 0.6rem;
+    } */
+
+	label {
+		display: block;
+		font-weight: bold;
+		margin-bottom: 0.5rem;
 	}
 
-	.checkbox-item {
+	.required {
+		color: red;
+	}
+
+	.radio-section {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+	}
+
+	.radio-item {
 		display: flex;
 		align-items: center;
 	}
 
-	.checkbox-label {
+	.radio-label {
 		display: flex;
 		align-items: center;
 		cursor: pointer;
-		gap: 8px;
-		font-size: 14px;
-		color: #333;
-		transition: all 0.2s ease;
 	}
 
-	.checkbox-label:hover {
-		color: #0066cc;
+	.radio-input {
+		display: none;
 	}
 
-	.checkbox-input {
-		position: absolute;
-		opacity: 0;
-		cursor: pointer;
-		height: 0;
-		width: 0;
-	}
-
-	.checkbox-custom {
+	.radio-custom {
+		width: 1rem;
+		height: 1rem;
+		border: 2px solid #ccc;
+		border-radius: 50%;
+		margin-right: 0.5rem;
 		position: relative;
-		height: 18px;
-		width: 18px;
-		background-color: #fff;
-		border: 2px solid #ddd;
-		border-radius: 4px;
-		transition: all 0.2s ease;
 	}
 
-	.checkbox-input:checked ~ .checkbox-custom {
-		background-color: #0066cc;
-		border-color: #0066cc;
-	}
-
-	.checkbox-input:checked ~ .checkbox-custom::after {
+	.radio-input:checked + .radio-custom::after {
 		content: "";
+		width: 0.6rem;
+		height: 0.6rem;
+		background: #007bff;
+		border-radius: 50%;
 		position: absolute;
-		left: 5px;
-		top: 1px;
-		width: 5px;
-		height: 10px;
-		border: solid white;
-		border-width: 0 2px 2px 0;
-		transform: rotate(45deg);
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
 	}
 
-	.checkbox-text {
-		margin-left: 4px;
-	}
-	/* Add this to your existing styles */
-	.has-error {
-		/* border: 1px solid #ff4444; */
-		padding: 15px;
-		border-radius: 4px;
-        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
+	.has-error .radio-custom {
+		border-color: red;
 	}
 
 	.error-text {
-		color: #ff4444;
-		font-size: 0.8rem;
-		margin-top: 4px;     
+		color: red;
+		font-size: 0.875rem;
+		margin-top: 0.25rem;
 	}
 </style>

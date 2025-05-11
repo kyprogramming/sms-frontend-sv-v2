@@ -27,6 +27,8 @@
 		{ key: "_id", label: "Id", visible: false },
 		{ key: "serialNo", label: "Sr No", width: "100px", sortable: true, align: "center" },
 		{ key: "name", label: "Name", sortable: true, align: "center" },
+		{ key: "code", label: "Code", sortable: true, align: "center" },
+		{ key: "type", label: "Type", sortable: true, align: "center" },
 		{
 			key: "createdAt",
 			label: "Created At",
