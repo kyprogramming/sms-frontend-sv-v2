@@ -24,6 +24,16 @@ export async function createSection(data: SectionPayload) {
 	return handleResponse(res, "Failed to create section");
 }
 
+// Fetch all sections list
+export async function fetchSectionList() {
+	const res = await fetchWrapper(`${API_BASE_URL}/section/list`, {
+		method: "GET",
+		headers: JSON_HEADERS,
+		credentials: "include",
+	});
+	return handleResponse(res, "Failed to fetch sections");
+}
+
 // Fetch multiple sections
 export async function fetchSections(params: URLSearchParams) {
 	const res = await fetchWrapper(`${API_BASE_URL}/section?${params.toString()}`, {
@@ -33,6 +43,7 @@ export async function fetchSections(params: URLSearchParams) {
 	});
 	return handleResponse(res, "Failed to fetch sections");
 }
+
 
 // Fetch single section by ID
 export async function fetchSectionById(id: string) {

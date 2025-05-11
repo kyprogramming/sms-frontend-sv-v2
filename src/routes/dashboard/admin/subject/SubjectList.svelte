@@ -1,7 +1,6 @@
 <script lang="ts">
 	import DataTable from "$lib/components/DataTable.svelte";
 	import DeleteConfirmModal from "$lib/components/DeleteConfirmModal.svelte";
-	import SectionForm from "./SectionForm.svelte";
 	import Modal from "$lib/components/Modal.svelte";
 	import { isDeleteModalOpen, isModalOpen, modalData, openDeleteModal, openModal, isUpdate, openEditModal } from "$lib/stores/modalStore";
 	import { formatDate } from "$lib/utils/formatDate";
@@ -10,6 +9,7 @@
 	import { RefreshCw, Search } from "@lucide/svelte";
 	import { searchText, currentPage } from "$lib/stores/paginationStore";
 	import type { ColumnConfig } from "$lib/interfaces/table.interface";
+	import SubjectForm from "./SubjectForm.svelte";
 
 	export let response: any;
 	export let dataToUpdate: any;
@@ -21,7 +21,7 @@
 	let localSearch = get(searchText);
 	$: searchText.set(localSearch);
 
-	// console.log("dataToUpdate: SectionList", dataToUpdate);
+	// console.log("dataToUpdate: SubjectList", dataToUpdate);
 
 	const columns: ColumnConfig[] = [
 		{ key: "_id", label: "Id", visible: false },
@@ -43,7 +43,7 @@
 			{
 				icon: Eye,
 				class: "view",
-				show: false,
+				show: true,
 				action: (item: { _id: any }) => {
 					alert(`View ${item._id}`);
 				},
@@ -93,6 +93,7 @@
 	function handleDelete(itemId: string) {
 		openDeleteModal({ _id: itemId });
 	}
+
 	function handleAdd() {
 		openModal();
 		dataToUpdate = null;
@@ -105,7 +106,7 @@
 
 <div class="class-container">
 	<div class="search-container">
-		<input name="search" type="text" placeholder="Search section..." bind:value={$searchText} />
+		<input name="search" type="text" placeholder="Search subject..." bind:value={$searchText} />
 
 		<button class="icon-button" on:click={handleSearchClick} aria-label="Search">
 			<span class="action-icons">
@@ -126,7 +127,7 @@
 	<div class="action-buttons">
 		<button type="button" class="btn ripple" on:click={handleAdd}>
 			<Plus size={16} />
-			<span>Add Section</span>
+			<span>Add Subject</span>
 		</button>
 	</div>
 </div>
@@ -134,14 +135,14 @@
 <DataTable {response} {columns} {actions} onPaginationChange={handlePaginationChange} onPageLimitChange={handlePageLimitChange} />
 
 {#if isModalOpen}
-	<Modal title={$isUpdate ? "Update Section" : "Add Section"} size="md">
-		<SectionForm onRefreshPage={handleRefreshPage} {dataToUpdate} />
+	<Modal title={$isUpdate ? "Update Subject" : "Add Subject"} size="lg">
+		<SubjectForm onRefreshPage={handleRefreshPage} {dataToUpdate} />
 	</Modal>
 {/if}
 
 {#if isDeleteModalOpen}
 	<DeleteConfirmModal
-		title="Delete Section"
+		title="Delete Subject"
 		size="md"
 		onDelete={() => {
 			onDelete($modalData._id);

@@ -31,6 +31,11 @@ export const SECTIONS = [
 	{ id: 6, name: "F" },
 ];
 
+export const SUBJECT_TYPE = [
+	{ id: 1, name: "Theory" },
+	{ id: 2, name: "Practical" },
+];
+
 export const MENU_GROUPS = [
 	// {
 	// 	title: "Front Office",
@@ -45,47 +50,47 @@ export const MENU_GROUPS = [
 	// 		{ title: "Setup Front Office", link: "/admin/visitorspurpose" },
 	// 	],
 	// },
-	{
-		title: "Dashboard",
-		icon: "LayoutDashboard",
-		items: [
-			{ title: "Admission Enquiry", link: "/dashboard/admin" },
-			{ title: "Class", link: "/dashboard/admin/class" },
-			{ title: "Sections Test", link: "/dashboard/admin/section-old" },
-			{ title: "Sections", link: "/dashboard/admin/section" },
-		],
-	},
+	// {
+	// 	title: "Dashboard",
+	// 	icon: "LayoutDashboard",
+	// 	items: [
+	// 		{ title: "Admission Enquiry", link: "/dashboard/admin" },
+	// 		{ title: "Class", link: "/dashboard/admin/class" },
+	// 		{ title: "Sections Test", link: "/dashboard/admin/section-old" },
+	// 		{ title: "Sections", link: "/dashboard/admin/section" },
+	// 	],
+	// },
 
-	{
-		title: "Student Information",
-		icon: "Users",
-		items: [
-			{ title: "Student Details", link: "/student/search" },
-			{ title: "Student Admission", link: "/student/create" },
-			{ title: "Online Admission", link: "/admin/onlinestudent" },
-			{ title: "Disabled Students", link: "/student/disablestudentslist" },
-			{ title: "Multi Class Student", link: "/student/multiclass" },
-			{ title: "Bulk Delete", link: "/student/bulkdelete" },
-			{ title: "Student Categories", link: "/category" },
-			{ title: "Student House", link: "/admin/schoolhouse" },
-			{ title: "Disable Reason", link: "/admin/disable_reason" },
-		],
-	},
+	// {
+	// 	title: "Student Information",
+	// 	icon: "Users",
+	// 	items: [
+	// 		{ title: "Student Details", link: "/student/search" },
+	// 		{ title: "Student Admission", link: "/student/create" },
+	// 		{ title: "Online Admission", link: "/admin/onlinestudent" },
+	// 		{ title: "Disabled Students", link: "/student/disablestudentslist" },
+	// 		{ title: "Multi Class Student", link: "/student/multiclass" },
+	// 		{ title: "Bulk Delete", link: "/student/bulkdelete" },
+	// 		{ title: "Student Categories", link: "/category" },
+	// 		{ title: "Student House", link: "/admin/schoolhouse" },
+	// 		{ title: "Disable Reason", link: "/admin/disable_reason" },
+	// 	],
+	// },
 	{
 		title: "Academics",
 		icon: "GraduationCap",
 		items: [
-			{ title: "Class Timetable", link: "/admin/timetable/classreport" },
-			{ title: "Teachers Timetable", link: "/admin/timetable/mytimetable" },
-			{
-				title: "Assign Class Teacher",
-				link: "/admin/teacher/assign_class_teacher",
-			},
-			{ title: "Promote Students", link: "/admin/stdtransfer" },
-			{ title: "Subject Group", link: "/admin/subjectgroup" },
-			{ title: "Subjects", link: "/admin/subject" },
+			// { title: "Class Timetable", link: "/admin/timetable/classreport" },
+			// { title: "Teachers Timetable", link: "/admin/timetable/mytimetable" },
+			// {
+			// 	title: "Assign Class Teacher",
+			// 	link: "/admin/teacher/assign_class_teacher",
+			// },
+			// { title: "Promote Students", link: "/admin/stdtransfer" },
+			// { title: "Subject Group", link: "/admin/subjectgroup" },
+			{ title: "Sections", link: "/dashboard/admin/section" },
 			{ title: "Class", link: "/dashboard/admin/class" },
-			{ title: "Sections", link: "/dashboard/admin//sections" },
+			{ title: "Subjects", link: "/dashboard/admin/subject" },
 		],
 	},
 	// {

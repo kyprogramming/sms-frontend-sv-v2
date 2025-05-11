@@ -19,7 +19,7 @@ export async function fetchWrapper<T = any>(url: string, options: FetchOptions =
 		});
 
 		isLoading.set(false);
-		console.log("RESPONSE:", res);
+		// console.log("RESPONSE:", res);
 
 		if (!res.ok) {
 			let errorMessage = `HTTP error! Status: ${res.status}`;

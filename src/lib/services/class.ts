@@ -1,0 +1,66 @@
+import { API_BASE_URL } from "$lib/constants/env.config";
+import { fetchWrapper } from "$lib/utils/fetchWrapper";
+import { handleResponse, JSON_HEADERS } from "$lib/utils/utils";
+
+// Class interface
+export interface IClass {
+    id: string;
+    name: string;
+}
+
+// Payload interface for create/update
+export interface ClassPayload {
+    name: string;
+}
+
+// Create class
+export async function createClass(data: ClassPayload) {
+    const res = await fetchWrapper(`${API_BASE_URL}/class`, {
+        method: "POST",
+        headers: JSON_HEADERS,
+        body: JSON.stringify(data),
+        credentials: "include",
+    });
+    return handleResponse(res, "Failed to create class");
+}
+
+// Fetch multiple classes
+export async function fetchClasses(params: URLSearchParams) {
+    const res = await fetchWrapper(`${API_BASE_URL}/class?${params.toString()}`, {
+        method: "GET",
+        headers: JSON_HEADERS,
+        credentials: "include",
+    });
+    return handleResponse(res, "Failed to fetch classes");
+}
+
+// Fetch single class by ID
+export async function fetchClassById(id: string) {
+    const res = await fetchWrapper(`${API_BASE_URL}/class/${id}`, {
+        method: "GET",
+        headers: JSON_HEADERS,
+        credentials: "include",
+    });
+    return handleResponse(res, "Failed to fetch class");
+}
+
+// Update class
+export async function updateClass(id: string, data: ClassPayload) {
+    const res = await fetchWrapper(`${API_BASE_URL}/class/${id}`, {
+        method: "PUT",
+        headers: JSON_HEADERS,
+        body: JSON.stringify(data),
+        credentials: "include",
+    });
+    return handleResponse(res, "Failed to update class");
+}
+
+// Delete class
+export async function deleteClassById(id: string) {
+    const res = await fetchWrapper(`${API_BASE_URL}/class/${id}`, {
+        method: "DELETE",
+        headers: JSON_HEADERS,
+        credentials: "include",
+    });
+    return handleResponse(res, "Failed to delete class");
+}

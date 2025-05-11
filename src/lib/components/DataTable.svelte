@@ -6,9 +6,9 @@
 	import type { ActionConfig, ColumnConfig } from "$lib/interfaces/table.interface";
 
 	export let response: any;
-	// console.log("RESPONSE on TABLE", response);
-	let { success, message } = response;
-	let { sections, pagination } = response.data;
+    console.log("RESPONSE on TABLE", response);
+	export let dataKey = "data"; // Default key for the data array
+	export let paginationKey = "pagination"; // Default key for pagination
 	export let onPaginationChange: () => void;
 	export let onPageLimitChange: () => void;
 
@@ -18,16 +18,24 @@
 		iconActions: [],
 	};
 
-	totalItems.set(pagination.total);
-	rowsPerPage.set(pagination.limit);
-	currentPage.set(pagination.page);
-	totalPages.set(pagination.totalPages);
+	// Extract data and pagination dynamically
+	$: dataArray = response.data?.[dataKey] || [];
+	$: paginationData = response.data?.[paginationKey] || { 
+		total: 0, 
+		page: 1, 
+		limit: DEFAULT_PAGE_LIMIT, 
+		totalPages: 1 
+	};
 
-	$currentPage = get(currentPage);
-	$rowsPerPage = get(rowsPerPage);
-	$totalPages = get(totalPages);
-	$totalItems = get(totalItems);
+	// Initialize pagination stores
+	$: {
+		totalItems.set(paginationData.total);
+		rowsPerPage.set(paginationData.limit);
+		currentPage.set(paginationData.page);
+		totalPages.set(paginationData.totalPages);
+	}
 
+    console.log("dataArray", dataArray);
 	// STATE
 	let sortColumn = "";
 	let sortDirection = 1;
@@ -41,7 +49,7 @@
 		}
 	}
 
-	$: visibleData = [...sections].sort((a, b) => {
+	$: visibleData = [...dataArray].sort((a, b) => {
 		if (!sortColumn) return 0;
 		const valA = a[sortColumn]?.toString().toLowerCase() || "";
 		const valB = b[sortColumn]?.toString().toLowerCase() || "";
@@ -49,7 +57,7 @@
 	});
 </script>
 
-<!-- TABLE -->
+<!-- TABLE STRUCTURE REMAINS THE SAME AS BEFORE -->
 <div class="table-container">
 	<table>
 		<thead>
@@ -73,7 +81,6 @@
 		</thead>
 	</table>
 
-	<!-- Scrollable body table -->
 	<div class="table-body-scroll">
 		<table>
 			<tbody>
@@ -91,17 +98,17 @@
 						{#if actions?.show}
 							<td style="width:150px">
 								<span class="action-icons">
-									{#if actions.iconActions}
-										{#each actions.iconActions as action}
-											<!-- svelte-ignore a11y_click_events_have_key_events -->
-											<!-- svelte-ignore a11y_no_static_element_interactions -->
-											{#if action.show}
-												<span class={`icon-wrapper ${action.class}`} on:click={() => action?.action(item)}>
-													<svelte:component this={action.icon} />
-												</span>
-											{/if}
-										{/each}
-									{/if}
+                                    {#if actions.iconActions}
+									{#each actions.iconActions as action}
+                                    <!-- svelte-ignore a11y_click_events_have_key_events -->
+                                    <!-- svelte-ignore a11y_no_static_element_interactions -->
+										{#if action.show}
+											<span class={`icon-wrapper ${action.class}`} on:click={() => action?.action(item)}>
+												<svelte:component this={action.icon} />
+											</span>
+										{/if}
+									{/each}
+                                    {/if}
 								</span>
 							</td>
 						{/if}
@@ -111,7 +118,6 @@
 		</table>
 	</div>
 
-	<!-- Footer below scrollable body -->
 	<table>
 		<tfoot>
 			<tr>
@@ -124,14 +130,13 @@
 							{/if}
 						</div>
 					{:else}
-						<p style="text-align: center; font-weight: bold; margin: 5px;">{message}.</p>
+						<p style="text-align: center; font-weight: bold; margin: 5px;">{response.message || 'No records found'}.</p>
 					{/if}
 				</td>
 			</tr>
 		</tfoot>
 	</table>
 </div>
-
 <!-- prettier-ignore -->
 <style>
 	.sortable {

@@ -33,7 +33,7 @@
 	}
 
 	async function handleUpdate(id: string) {
-		console.log("id:", id);
+		// console.log("id:", id);
 		dataToUpdate = null;
 		const res = await fetchSectionById(id);
 		const { data } = res;
