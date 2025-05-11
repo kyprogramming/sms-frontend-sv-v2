@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { ACTION_COLUMN_WIDTH, DEFAULT_PAGE_LIMIT } from "$lib/constants/env.config";
-    import { get } from "svelte/store";
+	import { ACTION_COLUMN_WIDTH, DEFAULT_PAGE_LIMIT } from "$lib/constants/env.config";
+	import { get } from "svelte/store";
 	import Pagination from "./Pagination.svelte";
-    import { currentPage, rowsPerPage, totalPages, totalItems } from "$lib/stores/paginationStore";
+	import { currentPage, rowsPerPage, totalPages, totalItems } from "$lib/stores/paginationStore";
 	import type { ActionConfig, ColumnConfig } from "$lib/interfaces/table.interface";
 
 	export let response: any;
@@ -119,7 +119,7 @@
 					{#if $totalItems > 0}
 						<div style="display: flex; justify-content: space-between; align-items: center; margin: 5px;">
 							<p style="font-weight: bold;"><b style="font-size: larger; color: blue;">{$totalItems}</b> record(s) found on {$totalPages} page(s)</p>
-							{#if $totalItems > Number(DEFAULT_PAGE_LIMIT) }
+							{#if $totalItems > Number(DEFAULT_PAGE_LIMIT)}
 								<Pagination {onPaginationChange} {onPageLimitChange} />
 							{/if}
 						</div>

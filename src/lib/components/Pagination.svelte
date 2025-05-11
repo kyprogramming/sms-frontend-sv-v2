@@ -1,90 +1,71 @@
 <script lang="ts">
 	import { currentPage, rowsPerPage, totalPages, totalItems } from "$lib/stores/paginationStore";
-	import { get } from "svelte/store";
 	import { ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight } from "@lucide/svelte";
 
 	export let onPaginationChange: () => void;
 	export let onPageLimitChange: () => void;
 
-	$currentPage = get(currentPage);
-	$rowsPerPage = get(rowsPerPage);
-	$totalPages = get(totalPages);
-	$totalItems = get(totalItems);
+	// Reactive values from stores
+	$: page = $currentPage;
+	$: limit = $rowsPerPage;
+	$: pages = $totalPages;
+	$: items = $totalItems;
 
-	// Calculate the range for display (e.g., "31-60")
-	$: startRange = ($currentPage - 1) * $rowsPerPage + 1;
-	$: endRange = Math.min($currentPage * $rowsPerPage, $totalItems);
+	// Ranges for the pagination display
+	$: startRange = (page - 1) * limit + 1;
+	$: endRange = Math.min(page * limit, items);
 
-	// Navigation handlers
-	function goToFirstPage() {
-		currentPage.set(1);
+	// Navigation actions
+	function navigateToPage(newPage: number) {
+		if (newPage < 1 || newPage > pages) return;
+		currentPage.set(newPage);
 		onPaginationChange();
 	}
 
-	function goToPreviousPage() {
-		if ($currentPage > 1) currentPage.set($currentPage - 1);
-		onPaginationChange();
-	}
-
-	function goToNextPage() {
-		if ($currentPage < $totalPages) currentPage.set(($currentPage += 1));
-		onPaginationChange();
-	}
-
-	function goToLastPage() {
-		currentPage.set($totalPages);
-		onPaginationChange();
-	}
-
-	function handleLimitChange(e: Event) {
-		const target = e.target as HTMLSelectElement | null;
-		if (target) {
-			const limit = parseInt(target.value);
-			rowsPerPage.set(limit);
-			currentPage.set(1);
+	function handleRowsPerPageChange(event: Event) {
+		const target = event.target as HTMLSelectElement;
+		const newLimit = parseInt(target.value, 10);
+		if (!isNaN(newLimit)) {
+			rowsPerPage.set(newLimit);
+			currentPage.set(1); // Reset to first page
 			onPageLimitChange();
 			onPaginationChange();
 		}
 	}
-
-	// function changeRowsPerPage(newLimit: number) {
-	// 	rowsPerPage.set(newLimit);
-	// 	onPaginationChange?.(get(currentPage), newLimit);
-	// }
 </script>
 
 <div class="pagination">
 	<div class="rows-per-page">
-		<span>Rows per page:</span>
-		<select id="rowsPerPage" style="padding: 4px;" bind:value={$rowsPerPage} on:change={handleLimitChange}>
-			<option value={15}>15</option>
-			<option value={30}>30</option>
-			<option value={50}>50</option>
-			<option value={100}>100</option>
+		<label for="rowsPerPage">Rows per page:</label>
+		<select id="rowsPerPage" bind:value={$rowsPerPage} on:change={handleRowsPerPageChange} aria-label="Rows per page selection">
+			<option value="15">15</option>
+			<option value="30">30</option>
+			<option value="50">50</option>
+			<option value="100">100</option>
 		</select>
 	</div>
+
 	<div class="range">
-		<div class="footer">
-			Showing {startRange}-{endRange} of {$totalItems} records
-		</div>
+		<span>Showing {startRange}-{endRange} of {items} records</span>
 	</div>
+
 	<div class="nav-buttons">
-		<button class="nav-button first" on:click={goToFirstPage} disabled={$currentPage === 1}>
+		<button class="nav-button first" on:click={() => navigateToPage(1)} disabled={page === 1} aria-label="First page">
 			<span class="page-icon-wrapper">
 				<ChevronsLeft />
 			</span>
 		</button>
-		<button class="nav-button prev" on:click={goToPreviousPage} disabled={$currentPage === 1}>
+		<button class="nav-button prev" on:click={() => navigateToPage(page - 1)} disabled={page === 1} aria-label="Previous page">
 			<span class="page-icon-wrapper">
 				<ChevronLeft />
 			</span>
 		</button>
-		<button class="nav-button next" on:click={goToNextPage} disabled={$currentPage === $totalPages}>
+		<button class="nav-button next" on:click={() => navigateToPage(page + 1)} disabled={page === pages} aria-label="Next page">
 			<span class="page-icon-wrapper">
 				<ChevronRight />
 			</span>
 		</button>
-		<button class="nav-button last" on:click={goToLastPage} disabled={$currentPage === $totalPages}>
+		<button class="nav-button last" on:click={() => navigateToPage(pages)} disabled={page === pages} aria-label="Last page">
 			<span class="page-icon-wrapper">
 				<ChevronsRight />
 			</span>

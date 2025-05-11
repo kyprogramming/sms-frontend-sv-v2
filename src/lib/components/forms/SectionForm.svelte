@@ -1,42 +1,49 @@
 <script lang="ts">
-	import { get, writable } from "svelte/store";
 	import { z } from "zod";
+	import { get, writable } from "svelte/store";
 	import { isLoading } from "$lib/stores/loading";
 	import { validateForm } from "$lib/utils/validate";
 	import { showSnackbar } from "$lib/components/snackbar/store";
 	import { closeModal, isUpdate } from "$lib/stores/modalStore";
-	import { createSection, updateSection } from "$lib/api/section";
+	import { createSection, updateSection } from "$lib/services/section";
 
+	// Props
 	export let onRefreshPage: () => void;
-	// export let onUpdate: (id: string) => void;
-	export let dataToUpdate: any;
+	export let dataToUpdate: { _id: string; name: string } | null = null;
 
-	// console.log("dataToUpdate: SectionForm", dataToUpdate);
-
+	// Zod schema
 	const sectionSchema = z.object({
 		name: z.string().min(1, "Section name is required"),
 	});
 
 	type SectionFormData = z.infer<typeof sectionSchema>;
-	let formData: SectionFormData = { name: "" }; // Create formData
 
-    // Populate formData if sectionToEdit is provided
-	$: if (dataToUpdate) {
-		formData.name = dataToUpdate?.name;
-	} 
-
+	// Reactive form state
+	let formData: SectionFormData = { name: "" };
 	let error = "";
-	const formErrors = writable<Partial<Record<keyof SectionFormData, string>>>({});
-	const touched = writable<Partial<Record<keyof SectionFormData, boolean>>>({
-		name: false,
-	});
-	export const submitAttempted = writable(false);
 
-	async function onSubmit(e: Event) {
-		e.preventDefault();
+	const formErrors = writable<Partial<Record<keyof SectionFormData, string>>>({});
+	const touched = writable<Partial<Record<keyof SectionFormData, boolean>>>({ name: false });
+	const submitAttempted = writable(false);
+
+	// Prefill data if editing
+	function populateFormData() {
+		if (dataToUpdate) {
+			formData = {
+				name: dataToUpdate.name,
+			};
+		}
+	}
+	$: populateFormData();
+
+	// Form submission handler
+	async function onSubmit(event: Event) {
+		event.preventDefault();
 		submitAttempted.set(true);
+
 		const isValid = await validateForm(sectionSchema, formData, formErrors);
 		if (!isValid) return;
+
 		try {
 			if (get(isUpdate) && dataToUpdate) {
 				await updateSection(dataToUpdate._id, formData);
@@ -45,23 +52,29 @@
 				await createSection(formData);
 				showSnackbar({ message: "Section created successfully", type: "success" });
 			}
+
 			closeModal();
 			onRefreshPage();
-		} catch (err: any) {
-			error = err?.message || "Failed to save section";
+		} catch (err: unknown) {
+			const errMsg = (err as Error)?.message ?? "Failed to save section";
+			error = errMsg;
+			console.error(err);
 		}
 	}
 
+	// Handle field changes
 	function handleChange(field: keyof SectionFormData, value: string): void {
 		formData[field] = value;
 		touched.update((t) => ({ ...t, [field]: true }));
+
 		const result = sectionSchema.safeParse(formData);
+
 		formErrors.update(() => {
 			if (!result.success) {
-				const fieldErrors = result.error.flatten().fieldErrors as Record<string, string[] | undefined>;
-				const errorMap: Record<string, string | undefined> = {};
+				const fieldErrors = result.error.flatten().fieldErrors as Record<string, string[]>;
+				const errorMap: Partial<Record<keyof SectionFormData, string>> = {};
 				for (const key in fieldErrors) {
-					errorMap[key] = fieldErrors[key]?.[0];
+					errorMap[key as keyof SectionFormData] = fieldErrors[key]?.[0] ?? "";
 				}
 				return errorMap;
 			}
@@ -74,6 +87,7 @@
 	<div class="input-wrapper">
 		<label for="name">Name *</label>
 		<input
+			id="name"
 			type="text"
 			name="name"
 			placeholder="Section name"
@@ -88,52 +102,11 @@
 	</div>
 
 	<div class="flex-items-center" style="justify-content:end;">
-		<button class="btn ripple" style="background-color: var(--primary-light); align-self: right;" type="reset" disabled={$isLoading}> Clear </button>
+		<button class="btn ripple" type="reset" disabled={$isLoading} style="background-color: var(--primary-light); align-self: right;"> Clear </button>
 		<button class="btn ripple" type="submit" disabled={$isLoading}>
 			{#if $isLoading}
 				{#if $isUpdate}Updating...{:else}Saving...{/if}
-			{:else}
-				{#if $isUpdate}Update{:else}Save{/if}
-			{/if}
+			{:else if $isUpdate}Update{:else}Save{/if}
 		</button>
 	</div>
 </form>
-
-<style>
-	.form-wrapper {
-		background: #fff;
-		padding: 6px;
-		border-radius: 10px;
-		box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-		width: 100%;
-	}
-
-	h2 {
-		/* font-size: 1.2rem; */
-		margin-bottom: 1rem;
-		color: #2c3e50;
-	}
-
-	form {
-		display: flex;
-		flex-direction: column;
-		gap: 1.5rem;
-	}
-
-	.form-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-		gap: 1rem;
-	}
-
-	.form-group {
-		display: flex;
-		flex-direction: column;
-		gap: 0.3rem;
-	}
-
-	button:disabled {
-		opacity: 0.6;
-		cursor: not-allowed;
-	}
-</style>

@@ -247,3 +247,11 @@ tr:nth-child(even) { background-color: #f9fafb; }
     height: 100%;
     /* Make sure this div has some height */
 }
+
+/* FORMs css */
+.form-wrapper { background: #fff; padding: 6px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.05); width: 100%; }
+/* h2 { margin-bottom: 1rem; color: #2c3e50; } */
+form { display: flex; flex-direction: column; gap: 1.5rem; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+.form-group { display: flex; flex-direction: column; gap: 0.3rem; }
+button:disabled { opacity: 0.6; cursor: not-allowed; }

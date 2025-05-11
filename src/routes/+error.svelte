@@ -1,17 +1,17 @@
 <script lang="ts">
-    import { page } from '$app/state';
-    const status = page.status;
-    const message = page?.error?.message;
-    console.log("Error Page:", { message, status });
-
+	import { page } from "$app/state";
+	const status = page.status;
+	const message = page?.error?.message;
+	console.log("Error Page:", { message, status });
 </script>
+
 <div class="error-container">
 	<h1 class="title">Oops!!!</h1>
 	<p class="subtitle">Something went wrong.</p>
-    
+
 	<div class="status-box">
 		<h2>{status}</h2>
-		<p>{message}</p>
+		<h4>{message}</h4>
 	</div>
 
 	{#if status === 400}

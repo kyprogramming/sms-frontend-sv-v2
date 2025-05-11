@@ -15,6 +15,3 @@
     <span class="change-label">{period}</span>
   </div> -->
 </div>
-
-<style>
-</style>

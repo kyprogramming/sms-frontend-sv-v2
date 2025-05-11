@@ -2,7 +2,7 @@ import type { Handle, HandleServerError } from "@sveltejs/kit";
 import { decodeJwt } from "$lib/utils/utils";
 
 export const handle: Handle = async ({ event, resolve }) => {
-    try {
+	try {
 		const sessionToken = event.cookies.get("session_token");
 
 		if (sessionToken) {
@@ -19,7 +19,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 		const response = await resolve(event);
 		return response;
-    } catch (error) {
+	} catch (error) {
 		console.error("Error caught in handle():", error);
 		throw error; // optional: you can customize this if needed
 	}
@@ -37,6 +37,5 @@ export const handleError: HandleServerError = ({ error, event }) => {
 		console.error("Global error:", error);
 	}
 	console.error("At route:", event.url.pathname);
-	return { message, code};
+	return { message, code };
 };
-

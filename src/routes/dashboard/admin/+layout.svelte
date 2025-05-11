@@ -1,6 +1,6 @@
 <script lang="ts">
 	import AdminHeader from "$lib/components/layouts/AdminHeader.svelte";
-	import Sidebar from "$lib/components/Sidebar.svelte";
+	import Sidebar from "$lib/components/layouts/Sidebar.svelte";
 	export let data;
 
 	let sidebarOpen = true;

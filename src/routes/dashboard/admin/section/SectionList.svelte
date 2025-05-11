@@ -42,7 +42,7 @@
 		iconActions: [
 			{
 				icon: Eye,
-                class: 'view',
+				class: "view",
 				show: false,
 				action: (item: { _id: any }) => {
 					alert(`View ${item._id}`);
@@ -50,7 +50,7 @@
 			},
 			{
 				icon: Pencil,
-                class: 'edit',
+				class: "edit",
 				show: true,
 				action: (item: { _id: any }) => {
 					handleUpdate(item._id);
@@ -58,7 +58,7 @@
 			},
 			{
 				icon: Trash2,
-                class: 'delete',
+				class: "delete",
 				show: true,
 				action: (item: { _id: any }) => {
 					handleDelete(item._id);
@@ -108,21 +108,19 @@
 		<input name="search" type="text" placeholder="Search..." bind:value={$searchText} />
 
 		<button class="icon-button" on:click={handleSearchClick} aria-label="Search">
-            <span class="action-icons">
-                <span class="icon-wrapper view">
-                    <Search />
-                </span>
-            </span>
-			
+			<span class="action-icons">
+				<span class="icon-wrapper view">
+					<Search />
+				</span>
+			</span>
 		</button>
 
 		<button class="icon-button" on:click={handleRefreshButtonClick} aria-label="Refresh">
-            <span class="action-icons">
-                <span class="icon-wrapper edit">
-                    <RefreshCw />
-                </span>
-            </span>
-			
+			<span class="action-icons">
+				<span class="icon-wrapper edit">
+					<RefreshCw />
+				</span>
+			</span>
 		</button>
 	</div>
 	<div class="action-buttons">

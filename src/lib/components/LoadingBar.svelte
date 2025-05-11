@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { isLoading } from "$lib/stores/loading";
-	import { cubicOut } from "svelte/easing";
 	import { onDestroy } from "svelte";
 
 	let progress = 0;
