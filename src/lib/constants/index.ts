@@ -61,21 +61,21 @@ export const MENU_GROUPS = [
 	// 	],
 	// },
 
-	// {
-	// 	title: "Student Information",
-	// 	icon: "Users",
-	// 	items: [
-	// 		{ title: "Student Details", link: "/student/search" },
-	// 		{ title: "Student Admission", link: "/student/create" },
-	// 		{ title: "Online Admission", link: "/admin/onlinestudent" },
-	// 		{ title: "Disabled Students", link: "/student/disablestudentslist" },
-	// 		{ title: "Multi Class Student", link: "/student/multiclass" },
-	// 		{ title: "Bulk Delete", link: "/student/bulkdelete" },
-	// 		{ title: "Student Categories", link: "/category" },
-	// 		{ title: "Student House", link: "/admin/schoolhouse" },
-	// 		{ title: "Disable Reason", link: "/admin/disable_reason" },
-	// 	],
-	// },
+	{
+		title: "Student Information",
+		icon: "Users",
+		items: [
+			{ title: "Student Details", link: "/dashboard/admin/student/search" },
+			{ title: "Student Admission", link: "/dashboard/admin/student/create" },
+			// { title: "Online Admission", link: "/admin/onlinestudent" },
+			// { title: "Disabled Students", link: "/student/disablestudentslist" },
+			// { title: "Multi Class Student", link: "/student/multiclass" },
+			// { title: "Bulk Delete", link: "/student/bulkdelete" },
+			// { title: "Student Categories", link: "/category" },
+			// { title: "Student House", link: "/admin/schoolhouse" },
+			// { title: "Disable Reason", link: "/admin/disable_reason" },
+		],
+	},
 	{
 		title: "Academics",
 		icon: "GraduationCap",
