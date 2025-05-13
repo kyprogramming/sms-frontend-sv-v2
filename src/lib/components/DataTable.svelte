@@ -35,7 +35,7 @@
 		totalPages.set(paginationData.totalPages);
 	}
 
-    console.log("dataArray", dataArray);
+   
 	// STATE
 	let sortColumn = "";
 	let sortDirection = 1;
@@ -59,31 +59,28 @@
 
 <!-- TABLE STRUCTURE REMAINS THE SAME AS BEFORE -->
 <div class="table-container">
-	<table>
-		<thead>
-			<tr>
-				{#each columns as column}
-					<th
-						on:click={() => column.sortable && sortBy(column.key)}
-						class:sortable={column.sortable}
-						style={`width: ${column.width || "auto"}; text-align: ${column.align || "left"}; display: ${column.visible === false ? "none" : "table-cell"};`}
-					>
-						{column.label}
-						{#if column.sortable && sortColumn === column.key}
-							<span>{sortDirection === 1 ? "▲" : "▼"}</span>
-						{/if}
-					</th>
-				{/each}
-				{#if actions?.show}
-					<th style={`width:${ACTION_COLUMN_WIDTH};`}>ACTION</th>
-				{/if}
-			</tr>
-		</thead>
-	</table>
-
-	<div class="table-body-scroll">
+	<div >
 		<table>
-			<tbody>
+            <thead>
+                <tr>
+                    {#each columns as column}
+                        <th
+                            on:click={() => column.sortable && sortBy(column.key)}
+                            class:sortable={column.sortable}
+                            style={`width: ${column.width || "auto"}; text-align: ${column.align || "left"}; display: ${column.visible === false ? "none" : "table-cell"};`}
+                        >
+                            {column.label}
+                            {#if column.sortable && sortColumn === column.key}
+                                <span>{sortDirection === 1 ? "▲" : "▼"}</span>
+                            {/if}
+                        </th>
+                    {/each}
+                    {#if actions?.show}
+                        <th style={`width:${ACTION_COLUMN_WIDTH};`}>ACTION</th>
+                    {/if}
+                </tr>
+            </thead>
+			<tbody class="table-body-scroll">
 				{#each visibleData as item}
 					<tr>
 						{#each columns as column}
@@ -115,27 +112,25 @@
 					</tr>
 				{/each}
 			</tbody>
+            <tfoot>
+                <tr>
+                    <td colspan={columns.length } style="padding: 3px;">
+                        <!-- <p>{columns.length + (actions?.show ? 2 : 1)}</p> -->
+                        {#if $totalItems > 0}
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin: 5px;">
+                                <p style="font-weight: bold;"><b style="font-size: larger; color: blue;">{$totalItems}</b> record(s) found on {$totalPages} page(s)</p>
+                                {#if $totalItems > Number(DEFAULT_PAGE_LIMIT)}
+                                    <Pagination {onPaginationChange} {onPageLimitChange} />
+                                {/if}
+                            </div>
+                        {:else}
+                            <p style="text-align: center; font-weight: bold; margin: 5px;">{response.message || 'No records found'}.</p>
+                        {/if}
+                    </td>
+                </tr>
+            </tfoot>
 		</table>
 	</div>
-
-	<table>
-		<tfoot>
-			<tr>
-				<td colspan={columns.length + (actions?.show ? 2 : 1)} style="padding: 3px;">
-					{#if $totalItems > 0}
-						<div style="display: flex; justify-content: space-between; align-items: center; margin: 5px;">
-							<p style="font-weight: bold;"><b style="font-size: larger; color: blue;">{$totalItems}</b> record(s) found on {$totalPages} page(s)</p>
-							{#if $totalItems > Number(DEFAULT_PAGE_LIMIT)}
-								<Pagination {onPaginationChange} {onPageLimitChange} />
-							{/if}
-						</div>
-					{:else}
-						<p style="text-align: center; font-weight: bold; margin: 5px;">{response.message || 'No records found'}.</p>
-					{/if}
-				</td>
-			</tr>
-		</tfoot>
-	</table>
 </div>
 <!-- prettier-ignore -->
 <style>

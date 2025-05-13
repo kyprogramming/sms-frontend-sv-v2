@@ -35,7 +35,7 @@
 
 	// Prefill data if editing
 	function populateFormData() {
-        console.log("dataToUpdate", dataToUpdate);
+		// console.log("dataToUpdate", dataToUpdate);
 		if (dataToUpdate) {
 			formData = {
 				name: dataToUpdate.name,
@@ -51,8 +51,9 @@
 	async function onSubmit(event: Event) {
 		event.preventDefault();
 		submitAttempted.set(true);
-
+        // debugger;
 		const isValid = await validateForm(subjectSchema, formData, formErrors);
+        // alert(isValid);
 		if (!isValid) return;
 
 		try {
@@ -99,10 +100,22 @@
 			return {};
 		});
 	}
+
+    function handleReset() {
+	formData = {
+		name: "",
+		code: "",
+		type: 0, // reset to default
+	};
+	formErrors.set({});
+	touched.set({});
+	submitAttempted.set(false);
+}
 </script>
 
 <form on:submit={onSubmit}>
-    <div class="input-wrapper">
+	<div class="input-wrapper">
+        
 		<!-- svelte-ignore a11y_label_has_associated_control -->
 		<label>Subject Type <span class="required">*</span></label>
 		<div class="radio-section" class:has-error={$formErrors.type && ($touched.type || $submitAttempted)}>
@@ -110,9 +123,9 @@
 				<div class="radio-item">
 					<label class="radio-label">
 						<input
+							name="type"
 							type="radio"
 							class="radio-input"
-							name="subjectType"
 							value={type.id}
 							checked={formData.type === type.id}
 							on:change={() => handleChange("type", type.id)}
@@ -136,7 +149,7 @@
 			type="text"
 			name="name"
 			placeholder="Enter subject name"
-            class={`w-full ${$formErrors.name && ($touched.name || $submitAttempted) ? "input-error" : ""}`}
+			class={`w-full ${$formErrors.name && ($touched.name || $submitAttempted) ? "input-error" : ""}`}
 			bind:value={formData.name}
 			on:input={(e) => handleChange("name", (e.target as HTMLInputElement).value)}
 			on:blur={() => handleChange("name", formData.name)}
@@ -152,7 +165,7 @@
 			id="code"
 			type="text"
 			name="code"
-            class={`w-full`}
+			class={`w-full`}
 			placeholder="Enter subject code"
 			bind:value={formData.code}
 			on:input={(e) => handleChange("code", (e.target as HTMLInputElement).value)}
@@ -160,9 +173,8 @@
 		/>
 	</div>
 
-	
 	<div class="flex-items-center" style="justify-content:end;">
-		<button class="btn ripple" type="reset" disabled={$isLoading} style="background-color: var(--primary-light); align-self: right;"> Clear </button>
+		<button class="btn ripple" type="reset" disabled={$isLoading} style="background-color: var(--primary-light); align-self: right;" on:click={handleReset}> Clear </button>
 		<button class="btn ripple" type="submit" disabled={$isLoading}>
 			{#if $isLoading}
 				{#if $isUpdate}Updating...{:else}Saving...{/if}

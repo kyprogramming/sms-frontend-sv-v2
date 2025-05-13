@@ -25,16 +25,16 @@
 
 	const columns: ColumnConfig[] = [
 		{ key: "_id", label: "Id", visible: false },
-		{ key: "serialNo", label: "Sr No", width: "100px", sortable: true, align: "center" },
-		{ key: "name", label: "Name", sortable: true, align: "center" },
-		{ key: "code", label: "Code", sortable: true, align: "center" },
-		{ key: "type", label: "Type", sortable: true, align: "center" },
+		{ key: "serialNo", label: "Sr No", width: "10%", sortable: true, align: "center" },
+		{ key: "name", label: "Name",  width: "25%",sortable: true, align: "center" },
+		{ key: "code", label: "Code", width: "15%",sortable: true, align: "center" },
+		{ key: "type", label: "Type", width: "15%",sortable: true, align: "center" },
 		{
 			key: "createdAt",
 			label: "Created At",
+            width: "15%",
 			sortable: true,
 			format: formatDate,
-			width: "250px",
 			align: "center",
 		},
 	];

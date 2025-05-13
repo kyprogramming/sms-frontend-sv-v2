@@ -101,7 +101,7 @@
 				{#if activeGroup === group.title && !sidebarCollapsed}
 					<div class="group-items" transition:slide>
 						{#each group.items as item}
-							<a href={item.link} class="menu-item {activeMenuItem === item.title ? 'active' : ''}" on:click={() => (activeMenuItem = item.title)}>
+							<a href={item.link} class="menu-item {activeMenuItem === item.title ? 'active' : ''}" on:click={() => (activeMenuItem = item.title)} data-sveltekit-preload-data="off">
 								<span>{item.title}</span>
 							</a>
 						{/each}
