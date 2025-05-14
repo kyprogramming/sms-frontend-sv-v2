@@ -1,6 +1,7 @@
 <script lang="ts">
 	export let value: Date | null = null;
 	export let onChange: (date: Date | null) => void = () => {};
+    export let defaultToday: boolean = false;
 
 	let showCalendar = false;
 	let selectedDate: Date | null = value;
@@ -72,6 +73,12 @@
 
 	$: daysInMonth = getDaysInMonth(currentMonth, currentYear);
 	$: firstDayOfMonth = getFirstDayOfMonth(currentMonth, currentYear);
+    $: if (defaultToday && !value && !selectedDate) {
+        selectedDate = new Date();
+        currentMonth = selectedDate.getMonth();
+        currentYear = selectedDate.getFullYear();
+        onChange(selectedDate);
+    }
 
 	// Sync with external value changes
 	$: if (value && (!selectedDate || value.getTime() !== selectedDate.getTime())) {
@@ -83,7 +90,7 @@
 
 <div class="datepicker-wrapper" bind:this={calendarRef} use:clickOutside={() => (showCalendar = false)}>
 	<div class="input-container">
-		<input class="w-full" type="text" readonly on:click={toggleCalendar} value={formatDate(selectedDate)} />
+		<input type="text" readonly on:click={toggleCalendar} value={formatDate(selectedDate)} />
 		<!-- svelte-ignore a11y_consider_explicit_label -->
 		<button class="calendar-icon" type="button" on:click={toggleCalendar}>
 			<svg
@@ -186,6 +193,7 @@
 	.calendar-container {
 		position: relative;
 		z-index: 1000;
+        min-width: 260px;
 	}
 
 	.calendar {
@@ -201,6 +209,7 @@
 		width: 100%;
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 		animation: fadeIn 0.2s ease-out;
+        min-width: 260px;
 	}
 
 	.calendar-header {

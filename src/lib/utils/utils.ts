@@ -17,7 +17,6 @@ export function handleResponse(response: any, errorMessage: string) {
 	return response;
 }
 
-
 export function generateAdmissionNo(): string {
 	const now = new Date();
 	const year = now.getFullYear();
@@ -28,4 +27,19 @@ export function generateAdmissionNo(): string {
 	const seconds = String(now.getSeconds()).padStart(2, "0");
 
 	return `STU${year}${month}${day}${hours}${minutes}${seconds}`;
+}
+
+export function getCurrentAcademicSession(date: Date = new Date()): string {
+	const currentYear = date.getFullYear();
+	const currentMonth = date.getMonth(); // 0-11 (Jan-Dec)
+
+	// If month is June or before (Jan-Jun), session is previous year-current year
+	// If month is July or after (Jul-Dec), session is current year-next year
+	if (currentMonth < 6) {
+		// January-June (0-5)
+		return `${currentYear - 1}-${currentYear}`;
+	} else {
+		// July-December (6-11)
+		return `${currentYear}-${currentYear + 1}`;
+	}
 }

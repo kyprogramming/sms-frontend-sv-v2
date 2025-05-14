@@ -65,7 +65,7 @@ export const MENU_GROUPS = [
 		title: "Student Information",
 		icon: "Users",
 		items: [
-			{ title: "Student Details", link: "/dashboard/admin/student/search" },
+			// { title: "Student Details", link: "/dashboard/admin/student/search" },
 			{ title: "Student Admission", link: "/dashboard/admin/student/create" },
 			// { title: "Online Admission", link: "/admin/onlinestudent" },
 			// { title: "Disabled Students", link: "/student/disablestudentslist" },
