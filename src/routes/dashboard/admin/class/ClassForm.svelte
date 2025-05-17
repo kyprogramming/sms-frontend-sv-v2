@@ -13,7 +13,7 @@
 	let allSections: any;
 	onMount(async () => {
 		allSections = await fetchSectionList();
-		console.log("allSections", allSections);
+		// console.log("allSections", allSections);
 	});
 
 	// Props
@@ -41,7 +41,7 @@
 
 	// Prefill data if editing
 	function populateFormData() {
-        console.log("dataToUpdate:", dataToUpdate);
+        // console.log("dataToUpdate:", dataToUpdate);
 		if (dataToUpdate) {
 			formData = {
 				name: dataToUpdate.name,

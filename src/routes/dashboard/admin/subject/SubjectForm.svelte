@@ -148,7 +148,7 @@
 			id="name"
 			type="text"
 			name="name"
-			placeholder="Enter subject name"
+			placeholder="Subject name"
 			class={`w-full ${$formErrors.name && ($touched.name || $submitAttempted) ? "input-error" : ""}`}
 			bind:value={formData.name}
 			on:input={(e) => handleChange("name", (e.target as HTMLInputElement).value)}
@@ -166,7 +166,7 @@
 			type="text"
 			name="code"
 			class={`w-full`}
-			placeholder="Enter subject code"
+			placeholder="Subject code"
 			bind:value={formData.code}
 			on:input={(e) => handleChange("code", (e.target as HTMLInputElement).value)}
 			on:blur={() => handleChange("code", String(formData.code))}

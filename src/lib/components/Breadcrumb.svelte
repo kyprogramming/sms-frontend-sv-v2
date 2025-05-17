@@ -27,7 +27,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 10px;
+		padding: 15px;
 		background-color: #ffffff;
 		border-radius: 10px;
 		box-shadow: var(--shadow-sm);

@@ -7,20 +7,10 @@ export const COOKIE_OPTIONS = {
 	maxAge: 60 * 60 * 24 * 7, // 1 week
 };
 
-export const CASTE_CATEGORIES = [
-	{ id: 1, name: "General" },
-	{ id: 2, name: "OBC" },
-	{ id: 3, name: "SC" },
-	{ id: 4, name: "ST" },
-	{ id: 5, name: "Special" },
-	{ id: 6, name: "Physical Challenged" },
-];
-
-export const GENDERS = [
-	{ id: 1, name: "Male" },
-	{ id: 2, name: "Female" },
-	{ id: 3, name: "Other" },
-];
+export const CASTE_CATEGORIES = [{ name: "General" }, { name: "OBC" }, { name: "SC" }, { name: "ST" }, { name: "Special" }, { name: "Physical Challenged" }];
+export const RELIGIONS = [{ name: "Hindu" }, { name: "Muslim" }, { name: "Other" }];
+export const GENDERS = [{ name: "Male" }, { name: "Female" }, { name: "Other" }];
+export const BLOOD_GROUPS = [{ name: "A+" }, { name: "A-" }, { name: "B+" }, { name: "B-" }, { name: "AB+" }, { name: "AB-" }, { name: "O+" }, { name: "O-" }];
 
 export const SECTIONS = [
 	{ id: 1, name: "A" },

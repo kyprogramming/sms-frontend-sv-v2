@@ -1,7 +1,9 @@
 <script lang="ts">
 	export let value: Date | null = null;
 	export let onChange: (date: Date | null) => void = () => {};
-    export let defaultToday: boolean = false;
+	export let onClear: (date: Date | null) => void = () => {};
+	export let defaultToday: boolean = false;
+	export let cls: string = "";
 
 	let showCalendar = false;
 	let selectedDate: Date | null = value;
@@ -11,14 +13,31 @@
 	let currentMonth = today.getMonth();
 	let currentYear = today.getFullYear();
 
+	$: if (value === null && selectedDate !== null) {
+		selectedDate = null;
+        onClear(null); 
+		// showCalendar = false;
+	}
+
+	// Month and year dropdown options
+	const months = Array.from({ length: 12 }, (_, i) => ({
+		value: i,
+		name: new Date(2000, i, 1).toLocaleString("default", { month: "long" }),
+	}));
+
+	// console.log("months", months);
+	const years = Array.from({ length: 27 }, (_, i) => today.getFullYear() - 25 + i);
+
+	// console.log("years", years);
+
 	function toggleCalendar() {
 		showCalendar = !showCalendar;
 	}
 
 	function selectDate(date: Date) {
 		selectedDate = date;
-		value = date; // Update the bound value
-		onChange(date); // Call the onChange callback
+		value = date;
+		onChange(date);
 		showCalendar = false;
 	}
 
@@ -32,22 +51,31 @@
 		return new Date(year, month + 1, 0).getDate();
 	}
 
-	function nextMonth() {
-		if (currentMonth === 11) {
-			currentMonth = 0;
-			currentYear++;
-		} else {
-			currentMonth++;
+	function changeMonth(e: Event) {
+		const target = e.target as HTMLSelectElement;
+		if (target) {
+			currentMonth = parseInt(target.value);
 		}
 	}
 
-	function prevMonth() {
-		if (currentMonth === 0) {
-			currentMonth = 11;
-			currentYear--;
-		} else {
-			currentMonth--;
+	function changeYear(e: Event) {
+		const target = e.target as HTMLSelectElement;
+		if (target) {
+			currentYear = parseInt(target.value);
 		}
+	}
+
+	function handleDayClick(day: number, e: MouseEvent) {
+		if (e.target instanceof HTMLElement) {
+			selectDate(new Date(currentYear, currentMonth, day));
+		}
+	}
+
+	function selectToday() {
+		const today = new Date();
+		selectDate(today);
+		currentMonth = today.getMonth();
+		currentYear = today.getFullYear();
 	}
 
 	function getFirstDayOfMonth(month: number, year: number): number {
@@ -73,12 +101,10 @@
 
 	$: daysInMonth = getDaysInMonth(currentMonth, currentYear);
 	$: firstDayOfMonth = getFirstDayOfMonth(currentMonth, currentYear);
-    $: if (defaultToday && !value && !selectedDate) {
-        selectedDate = new Date();
-        currentMonth = selectedDate.getMonth();
-        currentYear = selectedDate.getFullYear();
-        onChange(selectedDate);
-    }
+
+	$: if (defaultToday && !value && !selectedDate) {
+		selectToday();
+	}
 
 	// Sync with external value changes
 	$: if (value && (!selectedDate || value.getTime() !== selectedDate.getTime())) {
@@ -90,7 +116,7 @@
 
 <div class="datepicker-wrapper" bind:this={calendarRef} use:clickOutside={() => (showCalendar = false)}>
 	<div class="input-container">
-		<input type="text" readonly on:click={toggleCalendar} value={formatDate(selectedDate)} />
+		<input type="text" readonly on:click={toggleCalendar} value={formatDate(selectedDate)} class={cls} />
 		<!-- svelte-ignore a11y_consider_explicit_label -->
 		<button class="calendar-icon" type="button" on:click={toggleCalendar}>
 			<svg
@@ -116,9 +142,18 @@
 		<div class="calendar-container">
 			<div class="calendar">
 				<div class="calendar-header">
-					<button type="button" on:click={prevMonth}>&lt;</button>
-					<strong>{new Date(currentYear, currentMonth).toLocaleString("default", { month: "long", year: "numeric" })}</strong>
-					<button type="button" on:click={nextMonth}>&gt;</button>
+					<div class="month-year-selectors">
+						<select class="month-selector" value={currentMonth} on:change={changeMonth}>
+							{#each months as month}
+								<option value={month.value}>{month.name}</option>
+							{/each}
+						</select>
+						<select class="year-selector" value={currentYear} on:change={changeYear}>
+							{#each years as year}
+								<option value={year}>{year}</option>
+							{/each}
+						</select>
+					</div>
 				</div>
 
 				<div class="calendar-weekdays">
@@ -127,23 +162,25 @@
 					{/each}
 				</div>
 
+				<!-- Calendar Grid -->
 				<div class="calendar-grid">
-					<!-- Empty cells for days before the first of the month -->
-					{#each Array(firstDayOfMonth) as _, i}
-						<div class="calendar-day empty"></div>
-					{/each}
-
-					<!-- Days of the month -->
 					{#each Array(daysInMonth) as _, i}
-						<div
-							class="calendar-day
-                  {selectedDate?.getDate() === i + 1 && selectedDate?.getMonth() === currentMonth && selectedDate?.getFullYear() === currentYear ? 'selected' : ''}
-                  {new Date(currentYear, currentMonth, i + 1).toDateString() === today.toDateString() ? 'today' : ''}"
-							on:click={() => selectDate(new Date(currentYear, currentMonth, i + 1))}
-						>
+						<div class="calendar-day" on:click={(e) => handleDayClick(i + 1, e)}>
 							{i + 1}
 						</div>
 					{/each}
+				</div>
+
+				<div class="calendar-footer">
+					<button
+						class="today-button"
+						on:click={(e) => {
+							e.preventDefault();
+							selectToday();
+						}}
+					>
+						Today
+					</button>
 				</div>
 			</div>
 		</div>
@@ -154,18 +191,21 @@
 	.datepicker-wrapper {
 		position: relative;
 		width: 100%;
-		/* max-width: 300px; */
 		font-family: sans-serif;
 	}
-
-	/* .datepicker-input{
-        width:100%
-    } */
 
 	.input-container {
 		position: relative;
 		display: flex;
 		align-items: center;
+	}
+
+	.input-container input {
+		width: 100%;
+		padding: 0.5rem 2rem 0.5rem 0.75rem;
+		border: 1px solid #ddd;
+		border-radius: 4px;
+		font-size: 0.875rem;
 	}
 
 	.calendar-icon {
@@ -193,7 +233,7 @@
 	.calendar-container {
 		position: relative;
 		z-index: 1000;
-        min-width: 260px;
+		min-width: 260px;
 	}
 
 	.calendar {
@@ -209,33 +249,27 @@
 		width: 100%;
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 		animation: fadeIn 0.2s ease-out;
-        min-width: 260px;
+		min-width: 260px;
 	}
 
 	.calendar-header {
 		display: flex;
-		justify-content: space-between;
-		align-items: center;
+		justify-content: center;
 		margin-bottom: 1rem;
 	}
 
-	.calendar-header strong {
-		font-size: 1.1rem;
-		font-weight: 600;
+	.month-year-selectors {
+		display: flex;
+		gap: 0.5rem;
 	}
 
-	.calendar-header button {
-		background: none;
-		border: none;
-		cursor: pointer;
-		font-size: 1.2rem;
-		padding: 0.5rem 1rem;
+	.month-selector,
+	.year-selector {
+		padding: 0.25rem 0.5rem;
+		border: 1px solid #ddd;
+		width: 120px;
 		border-radius: 4px;
-		transition: background-color 0.2s;
-	}
-
-	.calendar-header button:hover {
-		background-color: #f0f0f0;
+		font-size: 0.875rem;
 	}
 
 	.calendar-weekdays {
@@ -247,7 +281,7 @@
 
 	.weekday {
 		text-align: center;
-		font-size: 0.9rem;
+		font-size: 0.8rem;
 		font-weight: 500;
 		color: #666;
 	}
@@ -264,7 +298,7 @@
 		cursor: pointer;
 		border-radius: 4px;
 		transition: all 0.2s;
-		font-size: 0.9rem;
+		font-size: 0.8rem;
 	}
 
 	.calendar-day.empty {
@@ -287,6 +321,27 @@
 
 	.calendar-day.today.selected {
 		color: #fff;
+	}
+
+	.calendar-footer {
+		display: flex;
+		justify-content: center;
+		margin-top: 1rem;
+	}
+
+	.today-button {
+		width: 100%;
+		background: #f0f0f0;
+		border: none;
+		border-radius: 4px;
+		padding: 0.5rem 1rem;
+		cursor: pointer;
+		font-size: 0.8rem;
+		transition: background-color 0.2s;
+	}
+
+	.today-button:hover {
+		background: #e0e0e0;
 	}
 
 	@keyframes fadeIn {

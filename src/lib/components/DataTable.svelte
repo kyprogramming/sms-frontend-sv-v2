@@ -6,7 +6,7 @@
 	import type { ActionConfig, ColumnConfig } from "$lib/interfaces/table.interface";
 
 	export let response: any;
-    console.log("RESPONSE on TABLE", response);
+    // console.log("RESPONSE on TABLE", response);
 	export let dataKey = "data"; // Default key for the data array
 	export let paginationKey = "pagination"; // Default key for pagination
 	export let onPaginationChange: () => void;
