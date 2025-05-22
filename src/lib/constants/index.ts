@@ -26,6 +26,9 @@ export const SUBJECT_TYPE = [
 	{ id: 2, name: "Practical" },
 ];
 
+export const GUARDIAN_TYPE = [{ name: "Father" }, { name: "Mother" }, { name: "Other" }];
+
+
 export const MENU_GROUPS = [
 	// {
 	// 	title: "Front Office",

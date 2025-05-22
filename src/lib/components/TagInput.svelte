@@ -1,5 +1,7 @@
 <script lang="ts">
-	let tags: string[] = [];
+	export let id: string;
+	export let tags: string[] = [];
+
 	let input = "";
 
 	function addTag() {
@@ -18,11 +20,11 @@
 	}
 
 	function removeTag(index: number) {
-		tags = tags.filter((_, i) => i !== index); // ✅ reassign to trigger reactivity
+		tags = tags.filter((_, i) => i !== index);
 	}
 </script>
 
-<div class="tag-input-wrapper">
+<div class="tag-input-wrapper" {id}>
 	{#each tags as tag, index}
 		<span class="tag">
 			{tag}
@@ -31,10 +33,15 @@
 	{/each}
 
 	{#if tags.length < 10}
-		<input class="tag-input" type="text" bind:value={input} placeholder="Type and press Enter" on:keydown={handleKey} />
+		<input
+			class="tag-input"
+			type="text"
+			bind:value={input}
+			placeholder="Type and press Enter"
+			on:keydown={handleKey}
+		/>
 	{/if}
 </div>
-
 <style>
 	.tag-input-wrapper {
 		display: flex;

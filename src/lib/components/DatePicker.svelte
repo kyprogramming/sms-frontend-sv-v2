@@ -1,190 +1,234 @@
 <script lang="ts">
-	export let value: Date | null = null;
-	export let onChange: (date: Date | null) => void = () => {};
-	export let onClear: (date: Date | null) => void = () => {};
-	export let defaultToday: boolean = false;
-	export let cls: string = "";
+	import { formatDateToLocalYYYYMMDD } from "$lib/utils/utils";
 
-	let showCalendar = false;
-	let selectedDate: Date | null = value;
-	let calendarRef: HTMLDivElement;
+    export let id: string = "";
+    export let value: Date | string | null = null;
+    export let onChange: (date: Date | null) => void = () => {};
+    export let onClear: (date: Date | null) => void = () => {};
+    export let defaultToday: boolean = false;
+    export let cls: string = "";
 
-	const today = new Date();
-	let currentMonth = today.getMonth();
-	let currentYear = today.getFullYear();
+    let showCalendar = false;
+    let selectedDate: Date | null = value instanceof Date ? value : (value ? new Date(value) : null);
+    let calendarRef: HTMLDivElement;
 
-	$: if (value === null && selectedDate !== null) {
-		selectedDate = null;
-        onClear(null); 
-		// showCalendar = false;
-	}
+    const today = new Date();
+    let currentMonth = selectedDate ? selectedDate.getMonth() : today.getMonth();
+    let currentYear = selectedDate ? selectedDate.getFullYear() : today.getFullYear();
 
-	// Month and year dropdown options
-	const months = Array.from({ length: 12 }, (_, i) => ({
-		value: i,
-		name: new Date(2000, i, 1).toLocaleString("default", { month: "long" }),
-	}));
+    // Helper function to safely parse dates
+    function safeDateParse(date: Date | string | null): Date | null {
+        if (!date) return null;
+        if (date instanceof Date) return date;
+        const parsed = new Date(date);
+        return isNaN(parsed.getTime()) ? null : parsed;
+    }
 
-	// console.log("months", months);
-	const years = Array.from({ length: 27 }, (_, i) => today.getFullYear() - 25 + i);
+    $: if (value === null && selectedDate !== null) {
+        selectedDate = null;
+        onClear(null);
+    }
 
-	// console.log("years", years);
+    // Month and year dropdown options
+    const months = Array.from({ length: 12 }, (_, i) => ({
+        value: i,
+        name: new Date(2000, i, 1).toLocaleString("default", { month: "long" }),
+    }));
 
-	function toggleCalendar() {
-		showCalendar = !showCalendar;
-	}
+    const years = Array.from({ length: 27 }, (_, i) => today.getFullYear() - 25 + i);
 
-	function selectDate(date: Date) {
-		selectedDate = date;
-		value = date;
-		onChange(date);
-		showCalendar = false;
-	}
+    function toggleCalendar() {
+        showCalendar = !showCalendar;
+        if (showCalendar) {
+            if (selectedDate) {
+                currentMonth = selectedDate.getMonth();
+                currentYear = selectedDate.getFullYear();
+            } else {
+                const parsedValue = safeDateParse(value);
+                if (parsedValue) {
+                    currentMonth = parsedValue.getMonth();
+                    currentYear = parsedValue.getFullYear();
+                }
+            }
+        }
+    }
 
-	function formatDate(date: Date | null): string {
-		if (!date) return "";
-		const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "short", day: "numeric" };
-		return date.toLocaleDateString(undefined, options);
-	}
+    function selectDate(date: Date) {
+        selectedDate =  date;
+        value = formatDateToLocalYYYYMMDD(date); // This will update the bound value
+        onChange(date);
+        showCalendar = false;
+    }
 
-	function getDaysInMonth(month: number, year: number): number {
-		return new Date(year, month + 1, 0).getDate();
-	}
+    function formatDate(date: Date | null): string {
+        if (!date) return "";
+        const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "short", day: "numeric" };
+        return date.toLocaleDateString(undefined, options);
+    }
 
-	function changeMonth(e: Event) {
-		const target = e.target as HTMLSelectElement;
-		if (target) {
-			currentMonth = parseInt(target.value);
-		}
-	}
+    function getDaysInMonth(month: number, year: number): number {
+        return new Date(year, month + 1, 0).getDate();
+    }
 
-	function changeYear(e: Event) {
-		const target = e.target as HTMLSelectElement;
-		if (target) {
-			currentYear = parseInt(target.value);
-		}
-	}
+    function changeMonth(e: Event) {
+        const target = e.target as HTMLSelectElement;
+        if (target) {
+            currentMonth = parseInt(target.value);
+        }
+    }
 
-	function handleDayClick(day: number, e: MouseEvent) {
-		if (e.target instanceof HTMLElement) {
-			selectDate(new Date(currentYear, currentMonth, day));
-		}
-	}
+    function changeYear(e: Event) {
+        const target = e.target as HTMLSelectElement;
+        if (target) {
+            currentYear = parseInt(target.value);
+        }
+    }
 
-	function selectToday() {
-		const today = new Date();
-		selectDate(today);
-		currentMonth = today.getMonth();
-		currentYear = today.getFullYear();
-	}
+    function handleDayClick(day: number, e: MouseEvent) {
+        if (e.target instanceof HTMLElement) {
+            selectDate(new Date(currentYear, currentMonth, day));
+        }
+    }
 
-	function getFirstDayOfMonth(month: number, year: number): number {
-		return new Date(year, month, 1).getDay();
-	}
+    function selectToday() {
+        const today = new Date();
+        selectDate(today);
+        currentMonth = today.getMonth();
+        currentYear = today.getFullYear();
+    }
 
-	// Action for click outside
-	function clickOutside(node: HTMLElement, callback: () => void) {
-		const handleClick = (event: MouseEvent) => {
-			if (!node.contains(event.target as Node)) {
-				callback();
-			}
-		};
+    function getFirstDayOfMonth(month: number, year: number): number {
+        return new Date(year, month, 1).getDay();
+    }
 
-		document.addEventListener("click", handleClick, true);
+    // Action for click outside
+    function clickOutside(node: HTMLElement, callback: () => void) {
+        const handleClick = (event: MouseEvent) => {
+            if (!node.contains(event.target as Node)) {
+                callback();
+            }
+        };
 
-		return {
-			destroy() {
-				document.removeEventListener("click", handleClick, true);
-			},
-		};
-	}
+        document.addEventListener("click", handleClick, true);
 
-	$: daysInMonth = getDaysInMonth(currentMonth, currentYear);
-	$: firstDayOfMonth = getFirstDayOfMonth(currentMonth, currentYear);
+        return {
+            destroy() {
+                document.removeEventListener("click", handleClick, true);
+            },
+        };
+    }
 
-	$: if (defaultToday && !value && !selectedDate) {
-		selectToday();
-	}
+    $: daysInMonth = getDaysInMonth(currentMonth, currentYear);
+    $: firstDayOfMonth = getFirstDayOfMonth(currentMonth, currentYear);
 
-	// Sync with external value changes
-	$: if (value && (!selectedDate || value.getTime() !== selectedDate.getTime())) {
-		selectedDate = value;
-		currentMonth = value.getMonth();
-		currentYear = value.getFullYear();
-	}
+    $: if (defaultToday && !value && !selectedDate) {
+        selectToday();
+    }
+
+    // Sync with external value changes
+    $: {
+        const parsedValue = safeDateParse(value);
+        if (parsedValue !== selectedDate) {
+            if (parsedValue === null) {
+                selectedDate = null;
+            } else if (!selectedDate || parsedValue.getTime() !== selectedDate.getTime()) {
+                selectedDate = parsedValue;
+                currentMonth = parsedValue.getMonth();
+                currentYear = parsedValue.getFullYear();
+            }
+        }
+    }
 </script>
 
 <div class="datepicker-wrapper" bind:this={calendarRef} use:clickOutside={() => (showCalendar = false)}>
-	<div class="input-container">
-		<input type="text" readonly on:click={toggleCalendar} value={formatDate(selectedDate)} class={cls} />
-		<!-- svelte-ignore a11y_consider_explicit_label -->
-		<button class="calendar-icon" type="button" on:click={toggleCalendar}>
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				width="16"
-				height="16"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-			>
-				<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-				<line x1="16" y1="2" x2="16" y2="6"></line>
-				<line x1="8" y1="2" x2="8" y2="6"></line>
-				<line x1="3" y1="10" x2="21" y2="10"></line>
-			</svg>
-		</button>
-	</div>
+    <div class="input-container">
+        <input 
+            id={id} 
+            type="text" 
+            readonly 
+            on:click={toggleCalendar} 
+            value={formatDate(selectedDate)} 
+            class={cls} 
+            placeholder="Select date" 
+        />
+        <!-- svelte-ignore a11y_consider_explicit_label -->
+        <button class="calendar-icon" type="button" on:click={toggleCalendar}>
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+        </button>
+    </div>
 
-	{#if showCalendar}
-		<div class="calendar-container">
-			<div class="calendar">
-				<div class="calendar-header">
-					<div class="month-year-selectors">
-						<select class="month-selector" value={currentMonth} on:change={changeMonth}>
-							{#each months as month}
-								<option value={month.value}>{month.name}</option>
-							{/each}
-						</select>
-						<select class="year-selector" value={currentYear} on:change={changeYear}>
-							{#each years as year}
-								<option value={year}>{year}</option>
-							{/each}
-						</select>
-					</div>
-				</div>
+    {#if showCalendar}
+        <div class="calendar-container">
+            <div class="calendar">
+                <div class="calendar-header">
+                    <div class="month-year-selectors">
+                        <select class="month-selector" value={currentMonth} on:change={changeMonth}>
+                            {#each months as month}
+                                <option value={month.value}>{month.name}</option>
+                            {/each}
+                        </select>
+                        <select class="year-selector" value={currentYear} on:change={changeYear}>
+                            {#each years as year}
+                                <option value={year}>{year}</option>
+                            {/each}
+                        </select>
+                    </div>
+                </div>
 
-				<div class="calendar-weekdays">
-					{#each ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"] as day}
-						<div class="weekday">{day}</div>
-					{/each}
-				</div>
+                <div class="calendar-weekdays">
+                    {#each ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"] as day}
+                        <div class="weekday">{day}</div>
+                    {/each}
+                </div>
 
-				<!-- Calendar Grid -->
-				<div class="calendar-grid">
-					{#each Array(daysInMonth) as _, i}
-						<div class="calendar-day" on:click={(e) => handleDayClick(i + 1, e)}>
-							{i + 1}
-						</div>
-					{/each}
-				</div>
+                <div class="calendar-grid">
+                    <!-- Empty cells for days before the first day of the month -->
+                    {#each Array(firstDayOfMonth) as _, i}
+                        <div class="calendar-day empty"></div>
+                    {/each}
 
-				<div class="calendar-footer">
-					<button
-						class="today-button"
-						on:click={(e) => {
-							e.preventDefault();
-							selectToday();
-						}}
-					>
-						Today
-					</button>
-				</div>
-			</div>
-		</div>
-	{/if}
+                    <!-- Days of the month -->
+                    {#each Array(daysInMonth) as _, i}
+                        <div 
+                            class="calendar-day {selectedDate?.getDate() === i + 1 && 
+                                   selectedDate?.getMonth() === currentMonth && 
+                                   selectedDate?.getFullYear() === currentYear ? 'selected' : ''}"
+                            on:click={(e) => handleDayClick(i + 1, e)}
+                        >
+                            {i + 1}
+                        </div>
+                    {/each}
+                </div>
+
+                <div class="calendar-footer">
+                    <button
+                        class="today-button"
+                        on:click={(e) => {
+                            e.preventDefault();
+                            selectToday();
+                        }}
+                    >
+                        Today
+                    </button>
+                </div>
+            </div>
+        </div>
+    {/if}
 </div>
 
 <style>

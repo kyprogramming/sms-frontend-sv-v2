@@ -29,7 +29,7 @@ export function generateAdmissionNo(): string {
 	return `STU${year}${month}${day}${hours}${minutes}${seconds}`;
 }
 
-export function getCurrentAcademicSession(date: Date = new Date()): string {
+export function getCurrentAcademicYear(date: Date = new Date()): string {
 	const currentYear = date.getFullYear();
 	const currentMonth = date.getMonth(); // 0-11 (Jan-Dec)
 
@@ -42,4 +42,14 @@ export function getCurrentAcademicSession(date: Date = new Date()): string {
 		// July-December (6-11)
 		return `${currentYear}-${currentYear + 1}`;
 	}
+}
+
+export function formatDateToLocalYYYYMMDD(date: Date | null): string {
+	if (!date) return "";
+
+	const year = date.getFullYear();
+	const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+	const day = String(date.getDate()).padStart(2, "0");
+
+	return `${year}-${month}-${day}`;
 }

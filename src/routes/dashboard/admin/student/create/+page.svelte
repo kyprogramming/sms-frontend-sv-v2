@@ -5,7 +5,6 @@
 	import { get } from "svelte/store";
 	import { showSnackbar } from "$lib/components/snackbar/store";
 	import { deleteSectionById, fetchSectionById, fetchSections } from "$lib/services/section";
-	import type { any } from "zod";
 	import StudentForm from "./StudentForm.svelte";
 
 	export let data: any;
