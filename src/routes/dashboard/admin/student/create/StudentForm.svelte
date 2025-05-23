@@ -44,7 +44,7 @@
 
 	function guardianTypeChange(type: any) {
 		formData.studentData.parentGuardianDetails.primaryGuardian = type;
-        $formErrors["studentData.parentGuardianDetails.primaryGuardian"] = "";
+		$formErrors["studentData.parentGuardianDetails.primaryGuardian"] = "";
 	}
 
 	const studentSchema = z.object({
@@ -116,20 +116,20 @@
 					motherPhoto: z.any().optional(),
 				}),
 				guardianDetails: z.object({
-					guardianName: z.string().optional(),
+                    guardianName: z.string().min(1, "Guardian name is required").min(2, "Guardian name must be at least 2 characters"),
 					guardianPhone: z
 						.string()
 						.regex(/^[0-9]{10}$/, "Invalid phone number (10 digits required)")
 						.optional(),
 					guardianOccupation: z.string().optional(),
 					guardianEducation: z.string().optional(),
-					guardianRelation: z.string().optional(),
+                    guardianRelation: z.string().min(1, "Guardian relation is required").min(2, "Guardian relation must be at least 2 characters"),
 					guardianEmail: z.string().email("Invalid email format").optional(),
-					guardianCurrentAddress: z.string().optional(),
+                    guardianCurrentAddress: z.string().min(1, "Guardian current address is required").min(2, "Parent current address must be at least 2 characters"),
 					guardianPermanentAddress: z.string().optional(),
 				}),
-				primaryGuardian: z.union([z.enum(["" as "" | "Father" | "Mother" | "Other"]), z.literal("")]).refine((val) => val !== "", {
-					message: "Primary guardian is required",
+				primaryGuardian: z.string().refine((val) => ["Father", "Mother", "Other"].includes(val), {
+					message: "Primary guardian must be selected",
 				}),
 				parentCurrentAddress: z.string().min(1, "Parent current address is required").min(2, "Parent current address must be at least 2 characters"),
 				parentPermanentAddress: z.string().optional(),
@@ -884,14 +884,12 @@
 					bind:value={formData.studentData.parentGuardianDetails.parentCurrentAddress}
 					on:blur={() => handleBlur("studentData.parentGuardianDetails.parentCurrentAddress")}
 					on:input={() => handleBlur("studentData.parentGuardianDetails.parentCurrentAddress")}
-					maxlength="10"
+					maxlength="250"
 				>
 				</textarea>
 				{#if $formErrors["studentData.parentGuardianDetails.parentCurrentAddress"] && $submitAttempted}
 					<p class="error-text">{$formErrors["studentData.parentGuardianDetails.parentCurrentAddress"]}</p>
 				{/if}
-
-				<!-- <textarea id="currentAddress" bind:value={formData.studentData.parentGuardianDetails.parentCurrentAddress} placeholder="Write current address.."></textarea> -->
 			</div>
 			<div class="col-6">
 				<label for="parentPermanentAddress">Parent Permanent Address</label>
@@ -922,104 +920,87 @@
 					<p class="error-text">{$formErrors["studentData.parentGuardianDetails.primaryGuardian"]}</p>
 				{/if}
 			</div>
-
-			<!-- <div class="col-2">
-				<label for="primaryGuardian">Primary Guardian</label>
-				<div class="radio-group">
-					<div class="radio-item">
-						<label class="radio-label">
-							<input
-								type="radio"
-								value="Father"
-								bind:group={formData.studentData.parentGuardianDetails.primaryGuardian}
-								class={`${$formErrors?.studentData?.parentGuardianDetails?.primaryGuardian && $submitAttempted ? "input-error" : ""}`}
-							/>
-							Father
-						</label>
-					</div>
-					<div class="radio-item">
-						<label class="radio-label">
-							<input
-								type="radio"
-								value="Mother"
-								bind:group={formData.studentData.parentGuardianDetails.primaryGuardian}
-								class={`${$formErrors?.studentData?.parentGuardianDetails?.primaryGuardian && $submitAttempted ? "input-error" : ""}`}
-							/>
-							Mother
-						</label>
-					</div>
-					<div class="radio-item">
-						<label class="radio-label">
-							<input
-								type="radio"
-								value="Other"
-								bind:group={formData.studentData.parentGuardianDetails.primaryGuardian}
-								class={`${$formErrors?.studentData?.parentGuardianDetails?.primaryGuardian && $submitAttempted ? "input-error" : ""}`}
-							/>
-							Other
-						</label>
-					</div>
-				</div>
-				<p>{$formErrors?.studentData?.parentGuardianDetails?.primaryGuardian}</p>
-				{#if $formErrors?.studentData?.parentGuardianDetails?.primaryGuardian && $submitAttempted}
-					<p class="error-text">{$formErrors.studentData.parentGuardianDetails.primaryGuardian}</p>
-				{/if}
-			</div>
-             -->
-
 			<div class="col-10"></div>
+
 			{#if formData.studentData.parentGuardianDetails.primaryGuardian === "Other"}
 				<div class="col-12">
 					<div class="grid-12">
 						<div class="col-2">
-							<label for="guardianName">Guardian Name</label>
-							<input id="guardianName" type="text" bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianName} />
+							<label for="guardianName">Guardian Name <span class="required">*</span></label>
+							<input
+								id="guardianName"
+								type="text"
+								bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianName}
+								class={`w-full ${$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianName"] && $submitAttempted ? "input-error" : ""}`}
+							/>
+							{#if $formErrors["studentData.parentGuardianDetails.guardianDetails.guardianName"] && $submitAttempted}
+								<p class="error-text">{$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianName"]}</p>
+							{/if}
 						</div>
+
 						<div class="col-2">
-							<label for="guardianPhone">Guardian Phone</label>
+							<label for="guardianPhone">Guardian Phone <span class="required">*</span></label>
 							<input
 								id="guardianPhone"
 								type="tel"
 								bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianPhone}
-								class={`w-full ${$formErrors.parentGuardianDetails?.guardianDetails?.guardianPhone && $submitAttempted ? "input-error" : ""}`}
+								class={`w-full ${$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianPhone"] && $submitAttempted ? "input-error" : ""}`}
 								maxlength="10"
 							/>
-							{#if $formErrors.parentGuardianDetails?.guardianDetails?.guardianPhone && $submitAttempted}
-								<p class="error-text">{$formErrors.parentGuardianDetails.guardianDetails.guardianPhone}</p>
+							{#if $formErrors["studentData.parentGuardianDetails.guardianDetails.guardianPhone"] && $submitAttempted}
+								<p class="error-text">{$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianPhone"]}</p>
 							{/if}
 						</div>
+
 						<div class="col-2">
-							<label for="guardianOccupation">Guardian Occupation</label>
-							<input id="guardianOccupation" type="text" bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianOccupation} />
-						</div>
-						<div class="col-2">
-							<label for="guardianEducation">Guardian Education</label>
-							<input id="guardianEducation" type="text" bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianEducation} />
-						</div>
-						<div class="col-2">
-							<label for="guardianRelation">Guardian Relation</label>
-							<input id="guardianRelation" type="text" bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianRelation} />
-						</div>
-						<div class="col-2">
-							<label for="guardianEmail">Guardian Email</label>
+							<label for="guardianEmail">Guardian Email <span class="required">*</span></label>
 							<input
 								id="guardianEmail"
 								type="email"
 								bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianEmail}
-								class={`w-full ${$formErrors.parentGuardianDetails?.guardianDetails?.guardianEmail && $submitAttempted ? "input-error" : ""}`}
+								class={`w-full ${$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianEmail"] && $submitAttempted ? "input-error" : ""}`}
 							/>
-							{#if $formErrors.parentGuardianDetails?.guardianDetails?.guardianEmail && $submitAttempted}
-								<p class="error-text">{$formErrors.parentGuardianDetails.guardianDetails.guardianEmail}</p>
+							{#if $formErrors["studentData.parentGuardianDetails.guardianDetails.guardianEmail"] && $submitAttempted}
+								<p class="error-text">{$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianEmail"]}</p>
 							{/if}
 						</div>
+
+						<div class="col-2">
+							<label for="guardianRelation">Guardian Relation <span class="required">*</span></label>
+							<input
+								id="guardianRelation"
+								type="text"
+								bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianRelation}
+								class={`w-full ${$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianRelation"] && $submitAttempted ? "input-error" : ""}`}
+							/>
+							{#if $formErrors["studentData.parentGuardianDetails.guardianDetails.guardianRelation"] && $submitAttempted}
+								<p class="error-text">{$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianRelation"]}</p>
+							{/if}
+						</div>
+
+						<div class="col-2">
+							<label for="guardianOccupation">Guardian Occupation</label>
+							<input id="guardianOccupation" type="text" bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianOccupation} />
+						</div>
+
+						<div class="col-2">
+							<label for="guardianEducation">Guardian Education</label>
+							<input id="guardianEducation" type="text" bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianEducation} />
+						</div>
+
 						<div class="col-6">
-							<label for="guardianCurrentAddress">Guardian Current Address</label>
+							<label for="guardianCurrentAddress">Guardian Current Address <span class="required">*</span></label>
 							<textarea
 								id="guardianCurrentAddress"
 								bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianCurrentAddress}
 								placeholder="Write current address.."
+								class={`w-full ${$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianCurrentAddress"] && $submitAttempted ? "input-error" : ""}`}
 							></textarea>
+							{#if $formErrors["studentData.parentGuardianDetails.guardianDetails.guardianCurrentAddress"] && $submitAttempted}
+								<p class="error-text">{$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianCurrentAddress"]}</p>
+							{/if}
 						</div>
+
 						<div class="col-6">
 							<label for="guardianPermanentAddress">Guardian Permanent Address</label>
 							<textarea
