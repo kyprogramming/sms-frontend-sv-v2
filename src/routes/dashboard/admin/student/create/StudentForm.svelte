@@ -114,16 +114,16 @@
 					motherPhoto: z.any().optional(),
 				}),
 				guardianDetails: z.object({
-                    guardianName: z.string().min(1, "Guardian name is required").min(2, "Guardian name must be at least 2 characters"),
+					guardianName: z.string().min(1, "Guardian name is required").min(2, "Guardian name must be at least 2 characters"),
 					guardianPhone: z
 						.string()
 						.regex(/^[0-9]{10}$/, "Invalid phone number (10 digits required)")
 						.optional(),
 					guardianOccupation: z.string().optional(),
 					guardianEducation: z.string().optional(),
-                    guardianRelation: z.string().min(1, "Guardian relation is required").min(2, "Guardian relation must be at least 2 characters"),
+					guardianRelation: z.string().min(1, "Guardian relation is required").min(2, "Guardian relation must be at least 2 characters"),
 					guardianEmail: z.string().email("Invalid email format").optional(),
-                    guardianCurrentAddress: z.string().min(1, "Guardian current address is required").min(2, "Parent current address must be at least 2 characters"),
+					guardianCurrentAddress: z.string().min(1, "Guardian current address is required").min(2, "Parent current address must be at least 2 characters"),
 					guardianPermanentAddress: z.string().optional(),
 				}),
 				primaryGuardian: z.string().refine((val) => ["Father", "Mother", "Other"].includes(val), {
@@ -132,60 +132,6 @@
 				parentCurrentAddress: z.string().min(1, "Parent current address is required").min(2, "Parent current address must be at least 2 characters"),
 				parentPermanentAddress: z.string().optional(),
 			}),
-			// .superRefine((data, ctx) => {
-			// 	if (data.primaryGuardian === "Other") {
-			// 		const guardian = data.guardianDetails;
-			// 		// Check required fields (including optional ones when primaryGuardian is "Other")
-			// 		if (!guardian.guardianName) {
-			// 			ctx.addIssue({
-			// 				path: ["guardianDetails", "guardianName"],
-			// 				code: z.ZodIssueCode.custom,
-			// 				message: "Guardian name is required",
-			// 			});
-			// 		}
-			// 		if (!guardian.guardianRelation) {
-			// 			ctx.addIssue({
-			// 				path: ["guardianDetails", "guardianRelation"],
-			// 				code: z.ZodIssueCode.custom,
-			// 				message: "Guardian relation is required",
-			// 			});
-			// 		}
-			// 		if (!guardian.guardianCurrentAddress) {
-			// 			ctx.addIssue({
-			// 				path: ["guardianDetails", "guardianCurrentAddress"],
-			// 				code: z.ZodIssueCode.custom,
-			// 				message: "Guardian current address is required",
-			// 			});
-			// 		}
-			// 		if (!guardian.guardianPhone) {
-			// 			ctx.addIssue({
-			// 				path: ["guardianDetails", "guardianPhone"],
-			// 				code: z.ZodIssueCode.custom,
-			// 				message: "Guardian phone is required",
-			// 			});
-			// 		} else if (!/^[0-9]{10}$/.test(guardian.guardianPhone)) {
-			// 			ctx.addIssue({
-			// 				path: ["guardianDetails", "guardianPhone"],
-			// 				code: z.ZodIssueCode.custom,
-			// 				message: "Guardian phone must be a valid 10-digit number",
-			// 			});
-			// 		}
-			// 		// Email validation
-			// 		if (!guardian.guardianEmail) {
-			// 			ctx.addIssue({
-			// 				path: ["guardianDetails", "guardianEmail"],
-			// 				code: z.ZodIssueCode.custom,
-			// 				message: "Guardian email is required",
-			// 			});
-			// 		} else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(guardian.guardianEmail)) {
-			// 			ctx.addIssue({
-			// 				path: ["guardianDetails", "guardianEmail"],
-			// 				code: z.ZodIssueCode.custom,
-			// 				message: "Guardian email must be a valid email address",
-			// 			});
-			// 		}
-			// 	}
-			// }),
 		}),
 	});
 
@@ -392,41 +338,29 @@
 
 	function validate() {
 		let schema;
-
 		const primary = formData.studentData.parentGuardianDetails.primaryGuardian;
 
 		if (primary === "Father" || primary === "Mother") {
-			// Step 1: Get the nested parentGuardianDetails schema
-			const parentGuardianDetailsSchema = studentSchema.shape.studentData.shape.parentGuardianDetails;
-
-			// Step 2: Omit guardianDetails from parentGuardianDetails
-			const modifiedParentGuardianDetails = parentGuardianDetailsSchema.omit({
-				guardianDetails: true,
-			});
-
-			// Step 3: Create new studentData schema with modified parentGuardianDetails
-			const modifiedStudentData = studentSchema.shape.studentData.extend({
-				parentGuardianDetails: modifiedParentGuardianDetails,
-			});
-
-			// Step 4: Extend root schema with new studentData
 			schema = studentSchema.extend({
-				studentData: modifiedStudentData,
+				studentData: studentSchema.shape.studentData.extend({
+					parentGuardianDetails: studentSchema.shape.studentData.shape.parentGuardianDetails.omit({
+						guardianDetails: true,
+					}),
+				}),
 			});
+		} else if (primary === "Other") {
+			schema = studentSchema;
 		} else {
-			// Use full schema when "Other" or any other value
 			schema = studentSchema;
 		}
 
 		const result = schema.safeParse(formData);
-
 		if (!result.success) {
 			const mapped = flattenErrors(result.error.format());
 			formErrors.set(mapped);
 		} else {
 			formErrors.set({});
 		}
-
 		return result.success;
 	}
 
