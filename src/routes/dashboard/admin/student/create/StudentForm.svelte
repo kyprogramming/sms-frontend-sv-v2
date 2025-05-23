@@ -1,23 +1,22 @@
 <script lang="ts">
-	import { z } from "zod";
-	import { derived, get, writable } from "svelte/store";
+	import DatePicker from "$lib/components/DatePicker.svelte";
+	import TagInput from "$lib/components/TagInput.svelte";
+	import { BLOOD_GROUPS, CASTE_CATEGORIES, GENDERS, GUARDIAN_TYPE } from "$lib/constants";
 	import { isLoading } from "$lib/stores/loading";
 	import { isUpdate } from "$lib/stores/modalStore";
 	import { generateAdmissionNo, getCurrentAcademicYear } from "$lib/utils/utils";
-	import DatePicker from "$lib/components/DatePicker.svelte";
-	import { BLOOD_GROUPS, CASTE_CATEGORIES, GENDERS, GUARDIAN_TYPE } from "$lib/constants";
-	import TagInput from "$lib/components/TagInput.svelte";
-	import { createStudent } from "$lib/services/student";
+	import { get, writable } from "svelte/store";
+	import { z } from "zod";
 
 	export let classesWithSections: any;
 
-	$: sectionsForSelectedClass = classesWithSections.find((cls: any) => cls.name === formData.studentData.classId)?.sections ?? [];
+	// $: sectionsForSelectedClass = classesWithSections.find((cls: any) => cls.name === formData.studentData.classId)?.sections ?? [];
 	let availableSections: { _id: string; name: string }[] = [];
 	let selectedDate: Date | null = null;
 	let selectedDateOfBirth: Date | null = null;
 
-	let allergyTags: string[] = [];
-	let medicalConditions: string[] = [];
+	// let allergyTags: string[] = [];
+	// let medicalConditions: string[] = [];
 
 	function handleDateChange(date: Date | null) {
 		selectedDate = date!;
@@ -72,7 +71,6 @@
 				category: z.string().optional(),
 				religion: z.string().optional(),
 				caste: z.string().optional(),
-
 				studentPhoto: z.any().optional(),
 				address: z.object({
 					street: z.string().min(1, "Street is required").min(2, "Street must be at least 2 characters"),
@@ -134,6 +132,60 @@
 				parentCurrentAddress: z.string().min(1, "Parent current address is required").min(2, "Parent current address must be at least 2 characters"),
 				parentPermanentAddress: z.string().optional(),
 			}),
+			// .superRefine((data, ctx) => {
+			// 	if (data.primaryGuardian === "Other") {
+			// 		const guardian = data.guardianDetails;
+			// 		// Check required fields (including optional ones when primaryGuardian is "Other")
+			// 		if (!guardian.guardianName) {
+			// 			ctx.addIssue({
+			// 				path: ["guardianDetails", "guardianName"],
+			// 				code: z.ZodIssueCode.custom,
+			// 				message: "Guardian name is required",
+			// 			});
+			// 		}
+			// 		if (!guardian.guardianRelation) {
+			// 			ctx.addIssue({
+			// 				path: ["guardianDetails", "guardianRelation"],
+			// 				code: z.ZodIssueCode.custom,
+			// 				message: "Guardian relation is required",
+			// 			});
+			// 		}
+			// 		if (!guardian.guardianCurrentAddress) {
+			// 			ctx.addIssue({
+			// 				path: ["guardianDetails", "guardianCurrentAddress"],
+			// 				code: z.ZodIssueCode.custom,
+			// 				message: "Guardian current address is required",
+			// 			});
+			// 		}
+			// 		if (!guardian.guardianPhone) {
+			// 			ctx.addIssue({
+			// 				path: ["guardianDetails", "guardianPhone"],
+			// 				code: z.ZodIssueCode.custom,
+			// 				message: "Guardian phone is required",
+			// 			});
+			// 		} else if (!/^[0-9]{10}$/.test(guardian.guardianPhone)) {
+			// 			ctx.addIssue({
+			// 				path: ["guardianDetails", "guardianPhone"],
+			// 				code: z.ZodIssueCode.custom,
+			// 				message: "Guardian phone must be a valid 10-digit number",
+			// 			});
+			// 		}
+			// 		// Email validation
+			// 		if (!guardian.guardianEmail) {
+			// 			ctx.addIssue({
+			// 				path: ["guardianDetails", "guardianEmail"],
+			// 				code: z.ZodIssueCode.custom,
+			// 				message: "Guardian email is required",
+			// 			});
+			// 		} else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(guardian.guardianEmail)) {
+			// 			ctx.addIssue({
+			// 				path: ["guardianDetails", "guardianEmail"],
+			// 				code: z.ZodIssueCode.custom,
+			// 				message: "Guardian email must be a valid email address",
+			// 			});
+			// 		}
+			// 	}
+			// }),
 		}),
 	});
 
@@ -211,49 +263,6 @@
 			},
 		},
 	};
-
-	// let formData: StudentFormData = {
-	// 	userData: {
-	// 		email: "y.kaushalkumar@gmail.com",
-	// 		mobile: "7442555583",
-	// 	},
-	// 	studentData: {
-	// 		admissionNo: "STU20250521205512",
-	// 		admissionDate: "2025-05-21",
-	// 		academicYear: "2024-2025",
-	// 		rollNo: "223452345235",
-	// 		classId: "6820c761da96b1d6aead98a7",
-	// 		sectionId: "68204841c0da7dddf6557d9e",
-	// 		profile: {
-	// 			firstName: "Kaushal",
-	// 			middleName: "KUMAR",
-	// 			lastName: "Yadav",
-	// 			dob: "2025-05-12",
-	// 			gender: "Male",
-	// 			category: "OBC",
-	// 			religion: "Hindu",
-	// 			caste: "Yadav",
-	// 			studentPhoto: null,
-	// 			address: {
-	// 				street: "49 Carrick Knowe Hill",
-	// 				city: "Edinburgh",
-	// 				state: "Scotland",
-	// 				postalCode: "EH127BU",
-	// 				country: "United Kingdom",
-	// 			},
-	// 		},
-	// 		medicalDetails: {
-	// 			bloodGroup: "AB-",
-	// 			height: "193",
-	// 			weight: "69",
-	// 			measurementDate: "2025-05-20",
-	// 			allergies: ["Pennut", "Oil", "Sugar"],
-	// 			medicalConditions: ["Genetic Diabetic"],
-	// 			medicalHistory: "Diabetic",
-	// 			eyeSight: "6/6",
-	// 		},
-	// 	},
-	// };
 
 	function clearForm() {
 		submitAttempted.set(false);
@@ -367,14 +376,6 @@
 	}
 
 	function handleClassChange(e: Event) {
-		// const selected = (e.target as HTMLSelectElement).value || "";
-		// formData.studentData.classId = selected;
-		// formData.studentData.sectionId = "";
-		// $touched["class"] = true;
-		// $formErrors["class"] = "";
-		// const selectedClass = classesWithSections.find((cls: any) => cls._id === selected);
-		// availableSections = selectedClass?.sectionIds || [];
-
 		const selected = (e.target as HTMLSelectElement).value || "";
 		formData.studentData.classId = selected;
 		formData.studentData.sectionId = "";
@@ -390,24 +391,54 @@
 	}
 
 	function validate() {
-		const result = studentSchema.safeParse(formData);
+		let schema;
+
+		const primary = formData.studentData.parentGuardianDetails.primaryGuardian;
+
+		if (primary === "Father" || primary === "Mother") {
+			// Step 1: Get the nested parentGuardianDetails schema
+			const parentGuardianDetailsSchema = studentSchema.shape.studentData.shape.parentGuardianDetails;
+
+			// Step 2: Omit guardianDetails from parentGuardianDetails
+			const modifiedParentGuardianDetails = parentGuardianDetailsSchema.omit({
+				guardianDetails: true,
+			});
+
+			// Step 3: Create new studentData schema with modified parentGuardianDetails
+			const modifiedStudentData = studentSchema.shape.studentData.extend({
+				parentGuardianDetails: modifiedParentGuardianDetails,
+			});
+
+			// Step 4: Extend root schema with new studentData
+			schema = studentSchema.extend({
+				studentData: modifiedStudentData,
+			});
+		} else {
+			// Use full schema when "Other" or any other value
+			schema = studentSchema;
+		}
+
+		const result = schema.safeParse(formData);
+
 		if (!result.success) {
 			const mapped = flattenErrors(result.error.format());
 			formErrors.set(mapped);
 		} else {
 			formErrors.set({});
 		}
+
 		return result.success;
 	}
 
 	async function onSubmit(e: Event) {
 		validate();
 		console.log(formData);
+		console.log(Object.keys(get(formErrors)).length);
 		e.preventDefault();
 		submitAttempted.set(true);
 		if (Object.keys(get(formErrors)).length === 0) {
 			console.log("Student registered successfully!");
-			await createStudent(formData);
+			// await createStudent(formData);
 		}
 	}
 
@@ -428,7 +459,7 @@
 			</div>
 			<div class="col-2">
 				<label for="admissionNo">Admission No</label>
-				<input id="admissionNo" type="text" bind:value={formData.studentData.admissionNo} readonly disabled />
+				<input id="admissionNo" type="text" bind:value={formData.studentData.admissionNo} />
 			</div>
 			<div class="col-2">
 				<label for="admissionDate">Admission Date</label>
@@ -748,7 +779,6 @@
 			<div class="col-6">
 				<label for="medicalHistory">Medical History</label>
 				<input id="medicalHistory" type="text" bind:value={formData.studentData.medicalDetails.medicalHistory} class="w-full" />
-				<!-- <textarea id="medicalHistory" class="w-full" bind:value={formData.studentData.medicalDetails.medicalHistory}></textarea> -->
 			</div>
 			<div class="col-6">
 				<label for="allergies">Allergies</label>
@@ -896,7 +926,7 @@
 				<textarea id="permanentAddress" bind:value={formData.studentData.parentGuardianDetails.parentPermanentAddress} placeholder="Write permanent address.."></textarea>
 			</div>
 
-			<div class="col-2">
+			<div class="col-6">
 				<label for="primaryGuardian">Primary Guardian <span class="required">*</span></label>
 				<div class="radio-section" class:has-error={$formErrors["studentData.parentGuardianDetails.primaryGuardian"] && $submitAttempted}>
 					{#each GUARDIAN_TYPE as type}
@@ -920,7 +950,8 @@
 					<p class="error-text">{$formErrors["studentData.parentGuardianDetails.primaryGuardian"]}</p>
 				{/if}
 			</div>
-			<div class="col-10"></div>
+
+			<div class="col-6"></div>
 
 			{#if formData.studentData.parentGuardianDetails.primaryGuardian === "Other"}
 				<div class="col-12">
