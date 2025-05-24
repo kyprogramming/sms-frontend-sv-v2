@@ -5,7 +5,7 @@
 	import { isLoading } from "$lib/stores/loading";
 	import { isUpdate } from "$lib/stores/modalStore";
 	import { get } from "svelte/store";
-	import { formErrors, initializeStudentFormData, submitAttempted, touched, validate, type StudentFormData } from "./studentValidation";
+	import { formErrors, initializeStudentFormData, submitAttempted, touched, validateStudentForm, type StudentFormData } from "./studentValidation";
     import {  slide } from 'svelte/transition';
 
 	export let classesWithSections: any;
@@ -40,7 +40,7 @@
 		}
 
 		console.log("formData.studentData.profile.dob:", formData.studentData.profile.dob);
-        validate(formData);
+        validateStudentForm(formData);
 	}
 
 	function handleOnClear(date: Date | null) {
@@ -50,7 +50,7 @@
 	function guardianTypeChange(type: any) {
 		formData.studentData.parentGuardianDetails.primaryGuardian = type;
 		$formErrors["studentData.parentGuardianDetails.primaryGuardian"] = "";
-        validate(formData);
+        validateStudentForm(formData);
 	}
 
 	function handleClassChange(e: Event) {
@@ -69,7 +69,7 @@
 	}
 
 	async function onSubmit(e: Event) {
-        validate(formData);
+        validateStudentForm(formData);
 		console.log(formData);
 		console.log(Object.keys(get(formErrors)).length);
 		e.preventDefault();
@@ -82,7 +82,7 @@
 
 	function handleBlur(field: keyof any) {
 		$touched = { ...$touched, [field]: true };
-		validate(formData);
+		validateStudentForm(formData);
 	}
 
 </script>

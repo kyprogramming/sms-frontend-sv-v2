@@ -198,7 +198,7 @@ export function flattenErrors<T>(error: z.ZodFormattedError<T>): FormErrors {
 	return result;
 }
 
-export function validate(formData: StudentFormData) {
+export function validateStudentForm(formData: StudentFormData) {
 	let schema;
 	const primary = formData.studentData.parentGuardianDetails.primaryGuardian;
 
