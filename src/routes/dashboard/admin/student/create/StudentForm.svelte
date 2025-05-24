@@ -4,19 +4,24 @@
 	import { BLOOD_GROUPS, CASTE_CATEGORIES, GENDERS, GUARDIAN_TYPE } from "$lib/constants";
 	import { isLoading } from "$lib/stores/loading";
 	import { isUpdate } from "$lib/stores/modalStore";
-	import { generateAdmissionNo, getCurrentAcademicYear } from "$lib/utils/utils";
-	import { get, writable } from "svelte/store";
-	import { z } from "zod";
+	import { get } from "svelte/store";
+	import { formErrors, initializeStudentFormData, submitAttempted, touched, validate, type StudentFormData } from "./studentValidation";
+    import {  slide } from 'svelte/transition';
 
 	export let classesWithSections: any;
 
-	// $: sectionsForSelectedClass = classesWithSections.find((cls: any) => cls.name === formData.studentData.classId)?.sections ?? [];
 	let availableSections: { _id: string; name: string }[] = [];
 	let selectedDate: Date | null = null;
 	let selectedDateOfBirth: Date | null = null;
 
-	// let allergyTags: string[] = [];
-	// let medicalConditions: string[] = [];
+	let formData: StudentFormData = initializeStudentFormData();
+	function clearForm() {
+		submitAttempted.set(false);
+		selectedDateOfBirth = null;
+		formData = initializeStudentFormData();
+		formErrors.set({});
+		touched.set({});
+	}
 
 	function handleDateChange(date: Date | null) {
 		selectedDate = date!;
@@ -35,8 +40,9 @@
 		}
 
 		console.log("formData.studentData.profile.dob:", formData.studentData.profile.dob);
-		validate();
+        validate(formData);
 	}
+
 	function handleOnClear(date: Date | null) {
 		formData.studentData.profile.dob = "";
 	}
@@ -44,281 +50,7 @@
 	function guardianTypeChange(type: any) {
 		formData.studentData.parentGuardianDetails.primaryGuardian = type;
 		$formErrors["studentData.parentGuardianDetails.primaryGuardian"] = "";
-	}
-
-	const studentSchema = z.object({
-		userData: z.object({
-			email: z.string().email("Invalid email format").optional().or(z.literal("")),
-			mobile: z
-				.string()
-				.regex(/^[0-9]{10}$/, "Invalid mobile number (10 digits required)")
-				.optional()
-				.or(z.literal("")),
-		}),
-		studentData: z.object({
-			admissionNo: z.string().min(1, "Admission number is required"),
-			admissionDate: z.string().min(1, "Admission date is required"),
-			academicYear: z.string().min(1, "Academic session is required"),
-			rollNo: z.string().optional(),
-			classId: z.string().min(1, "Class is required"),
-			sectionId: z.string().min(1, "Section is required"),
-			profile: z.object({
-				firstName: z.string().min(1, "First name is required").min(2, "First name must be at least 2 characters"),
-				middleName: z.string().optional(),
-				lastName: z.string().min(1, "Last name is required").min(2, "Last name must be at least 2 characters"),
-				dob: z.string().min(1, "Date of birth is required"),
-				gender: z.string().min(1, "Gender is required"),
-				category: z.string().optional(),
-				religion: z.string().optional(),
-				caste: z.string().optional(),
-				studentPhoto: z.any().optional(),
-				address: z.object({
-					street: z.string().min(1, "Street is required").min(2, "Street must be at least 2 characters"),
-					city: z.string().min(1, "City is required").min(2, "City must be at least 2 characters"),
-					state: z.string().min(1, "State is required").min(2, "State must be at least 2 characters"),
-					postalCode: z.string().min(1, "Postal Code is required").min(2, "Postal Code must be at least 2 characters"),
-					country: z.string().min(1, "Country is required").min(2, "Country must be at least 2 characters"),
-				}),
-			}),
-			medicalDetails: z.object({
-				bloodGroup: z.string().optional(),
-				height: z.string().regex(/^\d+$/, "Height must be a number").optional().or(z.literal("")),
-				weight: z.string().regex(/^\d+$/, "Weight must be a number").optional().or(z.literal("")),
-				eyeSight: z.string().optional(),
-				measurementDate: z.string().optional(),
-				allergies: z.array(z.string()).optional(),
-				medicalConditions: z.array(z.string()).optional(),
-				medicalHistory: z.string().optional(),
-			}),
-			parentGuardianDetails: z.object({
-				fatherDetails: z.object({
-					fatherName: z.string().min(1, "Father name is required").min(2, "Father name must be at least 2 characters"),
-					fatherPhone: z
-						.string()
-						.regex(/^[0-9]{10}$/, "Invalid phone number (10 digits required)")
-						.optional(),
-					fatherOccupation: z.string().optional(),
-					fatherEducation: z.string().optional(),
-					fatherEmail: z.string().email("Invalid email format").optional().or(z.literal("")),
-					fatherPhoto: z.any().optional(),
-				}),
-				motherDetails: z.object({
-					motherName: z.string().min(1, "Mother name is required").min(2, "Mother name must be at least 2 characters"),
-					motherPhone: z
-						.string()
-						.regex(/^[0-9]{10}$/, "Invalid phone number (10 digits required)")
-						.optional(),
-					motherOccupation: z.string().optional(),
-					motherEducation: z.string().optional(),
-					motherEmail: z.string().email("Invalid email format").optional().or(z.literal("")),
-					motherPhoto: z.any().optional(),
-				}),
-				guardianDetails: z.object({
-					guardianName: z.string().min(1, "Guardian name is required").min(2, "Guardian name must be at least 2 characters"),
-					guardianPhone: z
-						.string()
-						.regex(/^[0-9]{10}$/, "Invalid phone number (10 digits required)")
-						.optional(),
-					guardianOccupation: z.string().optional(),
-					guardianEducation: z.string().optional(),
-					guardianRelation: z.string().min(1, "Guardian relation is required").min(2, "Guardian relation must be at least 2 characters"),
-					guardianEmail: z.string().email("Invalid email format").optional(),
-					guardianCurrentAddress: z.string().min(1, "Guardian current address is required").min(2, "Parent current address must be at least 2 characters"),
-					guardianPermanentAddress: z.string().optional(),
-				}),
-				primaryGuardian: z.string().refine((val) => ["Father", "Mother", "Other"].includes(val), {
-					message: "Primary guardian must be selected",
-				}),
-				parentCurrentAddress: z.string().min(1, "Parent current address is required").min(2, "Parent current address must be at least 2 characters"),
-				parentPermanentAddress: z.string().optional(),
-			}),
-		}),
-	});
-
-	type StudentFormData = z.infer<typeof studentSchema>;
-
-	let formData: StudentFormData = {
-		userData: {
-			email: "",
-			mobile: "",
-		},
-		studentData: {
-			admissionNo: generateAdmissionNo(),
-			admissionDate: new Date().toISOString().split("T")[0],
-			academicYear: getCurrentAcademicYear(),
-			rollNo: "",
-			classId: "",
-			sectionId: "",
-			profile: {
-				firstName: "",
-				middleName: "",
-				lastName: "",
-				dob: "",
-				gender: "",
-				category: "",
-				religion: "",
-				caste: "",
-				studentPhoto: null,
-				address: {
-					street: "",
-					city: "",
-					state: "",
-					postalCode: "",
-					country: "",
-				},
-			},
-			medicalDetails: {
-				bloodGroup: "",
-				height: "",
-				weight: "",
-				measurementDate: "",
-				allergies: [],
-				medicalConditions: [],
-				medicalHistory: "",
-			},
-			parentGuardianDetails: {
-				fatherDetails: {
-					fatherName: "",
-					fatherPhone: "",
-					fatherOccupation: "",
-					fatherEducation: "",
-					fatherEmail: "",
-					fatherPhoto: null,
-				},
-				motherDetails: {
-					motherName: "",
-					motherPhone: "",
-					motherOccupation: "",
-					motherEducation: "",
-					motherEmail: "",
-					motherPhoto: null,
-				},
-				guardianDetails: {
-					guardianName: "",
-					guardianPhone: "",
-					guardianOccupation: "",
-					guardianEducation: "",
-					guardianRelation: "",
-					guardianEmail: "",
-					guardianCurrentAddress: "",
-					guardianPermanentAddress: "",
-				},
-				primaryGuardian: "",
-				parentCurrentAddress: "",
-				parentPermanentAddress: "",
-			},
-		},
-	};
-
-	function clearForm() {
-		submitAttempted.set(false);
-		selectedDateOfBirth = null;
-		formData = {
-			userData: {
-				email: "",
-				mobile: "",
-			},
-			studentData: {
-				admissionNo: generateAdmissionNo(),
-				admissionDate: new Date().toISOString().split("T")[0],
-				academicYear: getCurrentAcademicYear(),
-				rollNo: "",
-				classId: "",
-				sectionId: "",
-				profile: {
-					firstName: "",
-					middleName: "",
-					lastName: "",
-					dob: "",
-					gender: "",
-					category: "",
-					religion: "",
-					caste: "",
-					studentPhoto: null,
-					address: {
-						street: "",
-						city: "",
-						state: "",
-						postalCode: "",
-						country: "",
-					},
-				},
-				medicalDetails: {
-					bloodGroup: "",
-					height: "",
-					weight: "",
-					allergies: [],
-					medicalConditions: [],
-					measurementDate: "",
-					medicalHistory: "",
-				},
-				parentGuardianDetails: {
-					fatherDetails: {
-						fatherName: "",
-						fatherPhone: "",
-						fatherOccupation: "",
-						fatherEducation: "",
-						fatherEmail: "",
-						fatherPhoto: null,
-					},
-					motherDetails: {
-						motherName: "",
-						motherPhone: "",
-						motherOccupation: "",
-						motherEducation: "",
-						motherEmail: "",
-						motherPhoto: null,
-					},
-					guardianDetails: {
-						guardianName: "",
-						guardianPhone: "",
-						guardianOccupation: "",
-						guardianEducation: "",
-						guardianRelation: "",
-						guardianEmail: "",
-						guardianCurrentAddress: "",
-						guardianPermanentAddress: "",
-					},
-					primaryGuardian: "",
-					parentCurrentAddress: "",
-					parentPermanentAddress: "",
-				},
-			},
-		};
-		formErrors.set({});
-		touched.set({});
-	}
-
-	type FormErrors = Partial<Record<any, any>>;
-	const formErrors = writable<FormErrors>({});
-
-	type TouchedFields = Partial<Record<any, any>>;
-	const touched = writable<TouchedFields>({});
-
-	const submitAttempted = writable(false);
-
-	function flattenErrors<T>(error: z.ZodFormattedError<T>): FormErrors {
-		const result: FormErrors = {};
-
-		function recurse(err: z.ZodFormattedError<any> | { _errors: any[] }, path: any[] = []) {
-			// Only proceed with objects
-			if (typeof err !== "object" || err === null) return;
-
-			for (const key in err) {
-				if (key === "_errors") {
-					const messages = (err as { _errors: any[] })._errors;
-					if (messages.length > 0) {
-						const fullPath = path.join(".");
-						result[fullPath] = messages[0]; // Only take the first error
-					}
-				} else {
-					// Safely recurse into nested fields
-					recurse((err as Record<string, any>)[key], [...path, key]);
-				}
-			}
-		}
-		recurse(error);
-		return result;
+        validate(formData);
 	}
 
 	function handleClassChange(e: Event) {
@@ -336,36 +68,8 @@
 		$formErrors["studentData.sectionId"] = "";
 	}
 
-	function validate() {
-		let schema;
-		const primary = formData.studentData.parentGuardianDetails.primaryGuardian;
-
-		if (primary === "Father" || primary === "Mother") {
-			schema = studentSchema.extend({
-				studentData: studentSchema.shape.studentData.extend({
-					parentGuardianDetails: studentSchema.shape.studentData.shape.parentGuardianDetails.omit({
-						guardianDetails: true,
-					}),
-				}),
-			});
-		} else if (primary === "Other") {
-			schema = studentSchema;
-		} else {
-			schema = studentSchema;
-		}
-
-		const result = schema.safeParse(formData);
-		if (!result.success) {
-			const mapped = flattenErrors(result.error.format());
-			formErrors.set(mapped);
-		} else {
-			formErrors.set({});
-		}
-		return result.success;
-	}
-
 	async function onSubmit(e: Event) {
-		validate();
+        validate(formData);
 		console.log(formData);
 		console.log(Object.keys(get(formErrors)).length);
 		e.preventDefault();
@@ -378,8 +82,9 @@
 
 	function handleBlur(field: keyof any) {
 		$touched = { ...$touched, [field]: true };
-		validate();
+		validate(formData);
 	}
+
 </script>
 
 <form on:submit={onSubmit}>
@@ -754,6 +459,8 @@
 					name="fatherPhone"
 					class={`w-full ${$formErrors["studentData.parentGuardianDetails.fatherDetails.fatherPhone"] && $submitAttempted ? "input-error" : ""}`}
 					bind:value={formData.studentData.parentGuardianDetails.fatherDetails.fatherPhone}
+                    on:blur={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherPhone")}
+					on:input={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherPhone")}
 					maxlength="10"
 				/>
 				{#if $formErrors["studentData.parentGuardianDetails.fatherDetails.fatherPhone"] && $submitAttempted}
@@ -769,6 +476,8 @@
 					type="text"
 					class={`w-full ${$formErrors["studentData.parentGuardianDetails.fatherDetails.fatherEmail"] && $submitAttempted ? "input-error" : ""}`}
 					bind:value={formData.studentData.parentGuardianDetails.fatherDetails.fatherEmail}
+                    on:blur={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherEmail")}
+					on:input={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherEmail")}
 				/>
 				{#if $formErrors["studentData.parentGuardianDetails.fatherDetails.fatherEmail"] && $submitAttempted}
 					<p class="error-text">{$formErrors["studentData.parentGuardianDetails.fatherDetails.fatherEmail"]}</p>
@@ -808,6 +517,9 @@
 					name="fatherPhone"
 					class={`w-full ${$formErrors["studentData.parentGuardianDetails.motherDetails.motherPhone"] && $submitAttempted ? "input-error" : ""}`}
 					bind:value={formData.studentData.parentGuardianDetails.motherDetails.motherPhone}
+                    on:blur={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherPhone")}
+					on:input={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherPhone")}
+                    
 					maxlength="10"
 				/>
 				{#if $formErrors["studentData.parentGuardianDetails.motherDetails.motherPhone"] && $submitAttempted}
@@ -823,6 +535,8 @@
 					type="text"
 					class={`w-full ${$formErrors["studentData.parentGuardianDetails.motherDetails.motherEmail"] && $submitAttempted ? "input-error" : ""}`}
 					bind:value={formData.studentData.parentGuardianDetails.motherDetails.motherEmail}
+                    on:blur={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherEmail")}
+					on:input={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherEmail")}
 				/>
 				{#if $formErrors["studentData.parentGuardianDetails.motherDetails.motherEmail"] && $submitAttempted}
 					<p class="error-text">{$formErrors["studentData.parentGuardianDetails.motherDetails.motherEmail"]}</p>
@@ -888,7 +602,7 @@
 			<div class="col-6"></div>
 
 			{#if formData.studentData.parentGuardianDetails.primaryGuardian === "Other"}
-				<div class="col-12">
+            <div class="col-12" transition:slide>
 					<div class="grid-12">
 						<div class="col-2">
 							<label for="guardianName">Guardian Name <span class="required">*</span></label>
@@ -896,6 +610,8 @@
 								id="guardianName"
 								type="text"
 								bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianName}
+								on:blur={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianName")}
+								on:input={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianName")}
 								class={`w-full ${$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianName"] && $submitAttempted ? "input-error" : ""}`}
 							/>
 							{#if $formErrors["studentData.parentGuardianDetails.guardianDetails.guardianName"] && $submitAttempted}
@@ -909,6 +625,8 @@
 								id="guardianPhone"
 								type="tel"
 								bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianPhone}
+								on:blur={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianPhone")}
+								on:input={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianPhone")}
 								class={`w-full ${$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianPhone"] && $submitAttempted ? "input-error" : ""}`}
 								maxlength="10"
 							/>
@@ -923,6 +641,8 @@
 								id="guardianEmail"
 								type="email"
 								bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianEmail}
+								on:blur={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianEmail")}
+								on:input={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianEmail")}
 								class={`w-full ${$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianEmail"] && $submitAttempted ? "input-error" : ""}`}
 							/>
 							{#if $formErrors["studentData.parentGuardianDetails.guardianDetails.guardianEmail"] && $submitAttempted}
@@ -936,6 +656,8 @@
 								id="guardianRelation"
 								type="text"
 								bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianRelation}
+								on:blur={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianRelation")}
+								on:input={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianRelation")}
 								class={`w-full ${$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianRelation"] && $submitAttempted ? "input-error" : ""}`}
 							/>
 							{#if $formErrors["studentData.parentGuardianDetails.guardianDetails.guardianRelation"] && $submitAttempted}
@@ -958,6 +680,8 @@
 							<textarea
 								id="guardianCurrentAddress"
 								bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianCurrentAddress}
+								on:blur={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianCurrentAddress")}
+								on:input={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianCurrentAddress")}
 								placeholder="Write current address.."
 								class={`w-full ${$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianCurrentAddress"] && $submitAttempted ? "input-error" : ""}`}
 							></textarea>
@@ -989,6 +713,8 @@
 			</button>
 		</div>
 	</div>
+
+    
 </form>
 
 <style>
