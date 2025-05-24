@@ -703,17 +703,18 @@
 			{/if}
 		</div>
 
-		<!-- Form Actions -->
-		<div class="form-actions">
-			<button class="btn" type="button" on:click={clearForm} disabled={$isLoading}> Clear </button>
-			<button class="btn" type="submit" disabled={$isLoading}>
-				{#if $isLoading}
-					{#if $isUpdate}Updating...{:else}Saving...{/if}
-				{:else if $isUpdate}Update{:else}Save{/if}
-			</button>
-		</div>
+		
+		
 	</div>
-
+    <!-- Form Actions -->
+    <div class="form-actions">
+        <button class="btn" type="button" on:click={clearForm} disabled={$isLoading}> Clear </button>
+        <button class="btn" type="submit" disabled={$isLoading}>
+            {#if $isLoading}
+                {#if $isUpdate}Updating...{:else}Saving...{/if}
+            {:else if $isUpdate}Update{:else}Save{/if}
+        </button>
+    </div>
     
 </form>
 
@@ -828,7 +829,7 @@
 
 	.card-wrapper {
 		padding: 15px;
-		background-color: #ffffff;
+        background-color: #ffffff;
 		border-radius: 10px;
 		box-shadow: var(--shadow-sm);
 		margin-bottom: 10px;
