@@ -81,9 +81,9 @@ export const MENU_GROUPS = [
 			// },
 			// { title: "Promote Students", link: "/admin/stdtransfer" },
 			// { title: "Subject Group", link: "/admin/subjectgroup" },
-			{ title: "Sections", link: "/admin/dashboard/section" },
-			{ title: "Class", link: "/admin/dashboard/class" },
-			{ title: "Subjects", link: "/admin/dashboard/subject" },
+			{ title: "Sections", link: "/admin/section" },
+			{ title: "Class", link: "/admin/class" },
+			{ title: "Subjects", link: "/admin/subject" },
 		],
 	},
 	// {

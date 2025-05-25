@@ -21,8 +21,7 @@
 			<div class="main-container">
 				<Sidebar cls={sidebarOpen ? "" : "collapsed"} />
 			</div>
-
-			<slot />
+            <slot />
 		{:else if role === "teacher"}
 			<!-- <TeacherMenu /> -->
 		{:else if role === "student"}
@@ -30,6 +29,7 @@
 		{:else if role === "parent"}
 			<!-- <ParentMenu /> -->
 		{/if}
+       
 	</div>
 {:else}
 	<!-- Public UI or redirect logic -->

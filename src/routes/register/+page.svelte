@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from "$app/navigation";
+	import { goto, invalidateAll } from "$app/navigation";
 
 	let name = "";
 	let email = "";
@@ -14,6 +14,7 @@
 
 		const data = await res.json();
 		if (res.ok) {
+            await invalidateAll(); 
 			goto("/login");
 		} else {
 			alert(data.message);

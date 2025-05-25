@@ -28,8 +28,10 @@
 				// goto("/");
 			}
 		} catch (err: any) {
+            await invalidateAll(); 
 			goto("/login");
 		} finally {
+            await invalidateAll(); 
 			isLoading.set(false);
 		}
 	}
