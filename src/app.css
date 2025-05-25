@@ -876,7 +876,7 @@ tr:nth-child(even) {
 .sidebar {
     width: 300px;
     max-width: 300px;
-    min-height: 90vh;
+    min-height: 92vh;
     background: #fff;
     color: var(--gray5);
     transition: max-width 0.3s ease;

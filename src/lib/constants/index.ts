@@ -60,11 +60,11 @@ export const MENU_GROUPS = [
 		link: "/admin/dashboard",
 	},
 	{
-		title: "Student Information",
+		title: "Student",
 		icon: "Users",
 		items: [
-			// { title: "Student Details", link: "/admin/dashboard/student/search" },
-			{ title: "Student Registration", link: "/student/register" },
+			{ title: "Student Details", link: "/student/search" },
+            { title: "Student Registration", link: "/student/register" },
 			// { title: "Online Admission", link: "/admin/onlinestudent" },
 			// { title: "Disabled Students", link: "/student/disablestudentslist" },
 			// { title: "Multi Class Student", link: "/student/multiclass" },
