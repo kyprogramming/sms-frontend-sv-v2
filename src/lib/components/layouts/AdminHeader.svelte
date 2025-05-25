@@ -1,13 +1,7 @@
 <script lang="ts">
-	import { goto } from "$app/navigation";
 	import { Menu, Logs } from "@lucide/svelte";
-	import { isLoading } from "$lib/stores/loading";
-	import { apiRequest } from "$lib/utils/api";
-
 	import type { User } from "$lib/utils/types";
-	import { showSnackbar } from "../snackbar/store";
 	import SessionMenu from "./SessionMenu.svelte";
-
 	export let user: User | null;
 	export let sidebarOpen: boolean;
 	export let onToggleSidebar: () => void;

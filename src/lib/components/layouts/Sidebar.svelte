@@ -36,6 +36,7 @@
 		ChevronDown,
 		ChevronRight,
 		ChevronRightSquare as ChevronRightDouble,
+		LayoutDashboardIcon,
 	} from "@lucide/svelte";
 	import { MENU_GROUPS } from "$lib/constants";
 
@@ -70,6 +71,7 @@
 		UserSquare,
 		LineChart,
 		Settings,
+		LayoutDashboardIcon,
 	};
 
 	let activeGroup: string | null = null;
@@ -83,29 +85,55 @@
 </script>
 
 <nav class={`sidebar ${cls}`}>
-	<!-- <span class="current-session">Current Session: 2025-26</span> -->
 	<div class="sidebar-menu">
 		{#each MENU_GROUPS as group}
 			<div class="menu-group">
-				<!-- svelte-ignore a11y_click_events_have_key_events -->
-				<!-- svelte-ignore a11y_no_static_element_interactions -->
-				<div class="group-header {activeGroup === group.title ? 'active' : ''}" on:click={() => toggleGroup(group.title)}>
-					<svelte:component this={iconComponents[group.icon]} size={18} class="lucide-icon" />
-					{#if !sidebarCollapsed}
-						<div class="header-content">
-							<span>{group.title}</span>
-							<svelte:component this={activeGroup === group.title ? ChevronDown : ChevronRight} size={16} class="pull-right" />
+				{#if group.link}
+					<!-- Top-level single link -->
+					<a
+						href={group.link}
+						class="group-header {activeMenuItem === group.title ? 'active' : ''}"
+						on:click={() => {
+							activeMenuItem = group.title;
+							activeGroup = null;
+						}}
+						data-sveltekit-preload-data="off"
+					>
+						<svelte:component this={iconComponents[group.icon]} size={18} class="lucide-icon" />
+						{#if !sidebarCollapsed}
+							<div class="header-content">
+								<span>{group.title}</span>
+							</div>
+						{/if}
+					</a>
+				{:else}
+					<!-- Group with submenu -->
+					<!-- svelte-ignore a11y_click_events_have_key_events -->
+					<!-- svelte-ignore a11y_no_static_element_interactions -->
+					<div class="group-header {activeGroup === group.title ? 'active' : ''}" on:click={() => toggleGroup(group.title)}>
+						<svelte:component this={iconComponents[group.icon]} size={18} class="lucide-icon" />
+						{#if !sidebarCollapsed}
+							<div class="header-content">
+								<span>{group.title}</span>
+								<svelte:component this={activeGroup === group.title ? ChevronDown : ChevronRight} size={16} class="pull-right" />
+							</div>
+						{/if}
+					</div>
+
+					{#if activeGroup === group.title && !sidebarCollapsed && group.items}
+						<div class="group-items" transition:slide>
+							{#each group.items as item}
+								<a
+									href={item.link}
+									class="menu-item {activeMenuItem === item.title ? 'active' : ''}"
+									on:click={() => (activeMenuItem = item.title)}
+									data-sveltekit-preload-data="off"
+								>
+									<span>{item.title}</span>
+								</a>
+							{/each}
 						</div>
 					{/if}
-				</div>
-				{#if activeGroup === group.title && !sidebarCollapsed}
-					<div class="group-items" transition:slide>
-						{#each group.items as item}
-							<a href={item.link} class="menu-item {activeMenuItem === item.title ? 'active' : ''}" on:click={() => (activeMenuItem = item.title)} data-sveltekit-preload-data="off">
-								<span>{item.title}</span>
-							</a>
-						{/each}
-					</div>
 				{/if}
 			</div>
 		{/each}

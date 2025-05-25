@@ -21,17 +21,17 @@
 		try {
 			isLoading.set(true);
 			const response = await apiRequest<any>("/api/auth/logout", "POST", {});
+                console.log("logout response:",response)
 			if (response.success) {
 				showSnackbar({ message: response?.message, type: "success" });
                 await invalidateAll(); 
                 goto('/login'); 
-				// goto("/");
 			}
 		} catch (err: any) {
             await invalidateAll(); 
 			goto("/login");
 		} finally {
-            await invalidateAll(); 
+            // await invalidateAll(); 
 			isLoading.set(false);
 		}
 	}

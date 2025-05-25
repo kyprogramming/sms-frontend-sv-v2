@@ -53,7 +53,7 @@
 
 			// redirect to dashboard page
 			showSnackbar({ message: data.message, type: "success" });
-            await invalidateAll();
+            await invalidateAll(); 
 			goto(`/${data.data.role}/dashboard`);
 		} catch (err: any) {
 			error = err?.message || "Unexpected error occurred";

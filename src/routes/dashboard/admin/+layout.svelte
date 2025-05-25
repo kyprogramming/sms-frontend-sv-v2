@@ -15,9 +15,9 @@
 		</div>
 	</div> -->
 
-    <div class="content">
+    <!-- <div class="content">
         <slot />
-    </div>
+    </div> -->
 </div>
 
 <style>
