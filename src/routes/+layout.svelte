@@ -7,41 +7,65 @@
 	import "../app-input.css";
 
 	export let data;
-	const { role } = data;
+	export let children; 
 	let sidebarOpen = true;
 </script>
 
-{role}
 {#if data.user}
 	<LoadingBar />
 	<div class="app-layout">
 		{#if data.role === "admin"}
-			<AdminHeader   user={data.user}  {sidebarOpen} onToggleSidebar={() => (sidebarOpen = !sidebarOpen)} />
+			<AdminHeader
+				user={data.user}
+				{sidebarOpen}
+				onToggleSidebar={() => (sidebarOpen = !sidebarOpen)}
+			/>
 			<div class="main-container">
 				<div>
 					<Sidebar cls={sidebarOpen ? "" : "collapsed"} />
 				</div>
 				<div class="content">
-					<slot />
+					{#if children}
+						{@render children()}
+					{:else}
+						<p>Loading...</p>
+					{/if}
 				</div>
 			</div>
+
 		{:else if data.role === "teacher"}
-			<!-- <TeacherHeader /> -->
-			<slot />
+			{#if children}
+				{@render children()}
+			{:else}
+				<p>Loading...</p>
+			{/if}
+
 		{:else if data.role === "student"}
-			<!-- <StudentHeader /> -->
-			<slot />
+			{#if children}
+				{@render children()}
+			{:else}
+				<p>Loading...</p>
+			{/if}
+
 		{:else if data.role === "parent"}
-			<!-- <ParentHeader /> -->
-			<slot />
+			{#if children}
+				{@render children()}
+			{:else}
+				<p>Loading...</p>
+			{/if}
 		{/if}
 	</div>
 {:else}
 	<!-- Public layout -->
-	<slot />
+	{#if children}
+		{@render children()}
+	{:else}
+		<p>Loading public content...</p>
+	{/if}
 {/if}
 
 <Snackbar />
+
 <style>
 	.app-layout {
 		display: flex;
@@ -62,7 +86,6 @@
 		border: 2px;
 		background-color: #f8f8f8;
 		margin-bottom: 5px;
-		/* border-radius: 10px; */
 		box-shadow: inset 0 6px 8px -8px rgba(0, 0, 0, 0.3);
 	}
 </style>
