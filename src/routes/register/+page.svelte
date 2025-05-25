@@ -15,7 +15,7 @@
 		const data = await res.json();
 		if (res.ok) {
             await invalidateAll(); 
-			goto("/login");
+			await goto("/login");
 		} else {
 			alert(data.message);
 		}

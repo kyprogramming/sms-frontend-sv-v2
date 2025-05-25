@@ -11,39 +11,37 @@
 	let sidebarOpen = true;
 </script>
 
+{role}
 {#if data.user}
-	<!-- Loading bar global -->
 	<LoadingBar />
 	<div class="app-layout">
-		{#if role === "admin"}
-			<AdminHeader user={data.user} {sidebarOpen} onToggleSidebar={() => (sidebarOpen = !sidebarOpen)} />
+		{#if data.role === "admin"}
+			<AdminHeader   user={data.user}  {sidebarOpen} onToggleSidebar={() => (sidebarOpen = !sidebarOpen)} />
 			<div class="main-container">
-                <div>
-                    <Sidebar cls={sidebarOpen ? "" : "collapsed"} />
-                </div>
-				
-                <div class="content">
-                    <slot />
-                </div>
+				<div>
+					<Sidebar cls={sidebarOpen ? "" : "collapsed"} />
+				</div>
+				<div class="content">
+					<slot />
+				</div>
 			</div>
-			
-		{:else if role === "teacher"}
-			<!-- <TeacherMenu /> -->
-		{:else if role === "student"}
-			<!-- <StudentMenu /> -->
-		{:else if role === "parent"}
-			<!-- <ParentMenu /> -->
+		{:else if data.role === "teacher"}
+			<!-- <TeacherHeader /> -->
+			<slot />
+		{:else if data.role === "student"}
+			<!-- <StudentHeader /> -->
+			<slot />
+		{:else if data.role === "parent"}
+			<!-- <ParentHeader /> -->
+			<slot />
 		{/if}
 	</div>
 {:else}
-	<!-- Public UI or redirect logic -->
+	<!-- Public layout -->
 	<slot />
 {/if}
 
-<!-- Snackbar global -->
 <Snackbar />
-
-
 <style>
 	.app-layout {
 		display: flex;

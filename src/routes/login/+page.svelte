@@ -54,7 +54,9 @@
 			// redirect to dashboard page
 			showSnackbar({ message: data.message, type: "success" });
             await invalidateAll(); 
-			goto(`/${data.data.role}/dashboard`);
+			await goto(`/${data.data.role}/dashboard`);
+            // await goto(`/help`);
+            
 		} catch (err: any) {
 			error = err?.message || "Unexpected error occurred";
 		} finally {
@@ -71,7 +73,7 @@
 		<h3>Login to Your Account</h3>
 		<p>Enter your credentials below</p>
 
-		<form on:submit|preventDefault={onSubmit} novalidate>
+        <form on:submit={onSubmit} novalidate>
 			<div class="input-wrapper">
 				<input
 					type="email"

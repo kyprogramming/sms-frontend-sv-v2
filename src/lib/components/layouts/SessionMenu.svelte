@@ -25,11 +25,10 @@
 			if (response.success) {
 				showSnackbar({ message: response?.message, type: "success" });
                 await invalidateAll(); 
-                goto('/login'); 
+                await goto('/login'); 
 			}
 		} catch (err: any) {
-            await invalidateAll(); 
-			goto("/login");
+			await goto("/login");
 		} finally {
             // await invalidateAll(); 
 			isLoading.set(false);
