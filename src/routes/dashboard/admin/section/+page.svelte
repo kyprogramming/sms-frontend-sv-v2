@@ -13,7 +13,7 @@
 	let response: any = data.data;
 	let dataToUpdate: any;
 
-	const breadcrumbItems = [{ label: "Home", href: "/" }, { label: "Dashboard", href: "/dashboard/admin" }, { label: "Sections" }];
+	const breadcrumbItems = [{ label: "Home", href: "/" }, { label: "Dashboard", href: "/admin/dashboard" }, { label: "Sections" }];
 
 	async function handleSearchChange() {
 		if ($searchText === "") return;

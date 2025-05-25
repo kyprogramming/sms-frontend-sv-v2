@@ -47,10 +47,10 @@ export const MENU_GROUPS = [
 	// 	title: "Dashboard",
 	// 	icon: "LayoutDashboard",
 	// 	items: [
-	// 		{ title: "Admission Enquiry", link: "/dashboard/admin" },
-	// 		{ title: "Class", link: "/dashboard/admin/class" },
-	// 		{ title: "Sections Test", link: "/dashboard/admin/section-old" },
-	// 		{ title: "Sections", link: "/dashboard/admin/section" },
+	// 		{ title: "Admission Enquiry", link: "/admin/dashboard" },
+	// 		{ title: "Class", link: "/admin/dashboard/class" },
+	// 		{ title: "Sections Test", link: "/admin/dashboard/section-old" },
+	// 		{ title: "Sections", link: "/admin/dashboard/section" },
 	// 	],
 	// },
 
@@ -58,8 +58,8 @@ export const MENU_GROUPS = [
 		title: "Student Information",
 		icon: "Users",
 		items: [
-			// { title: "Student Details", link: "/dashboard/admin/student/search" },
-			{ title: "Student Admission", link: "/dashboard/admin/student/create" },
+			// { title: "Student Details", link: "/admin/dashboard/student/search" },
+			{ title: "Student Admission", link: "/admin/dashboard/student/create" },
 			// { title: "Online Admission", link: "/admin/onlinestudent" },
 			// { title: "Disabled Students", link: "/student/disablestudentslist" },
 			// { title: "Multi Class Student", link: "/student/multiclass" },
@@ -81,9 +81,9 @@ export const MENU_GROUPS = [
 			// },
 			// { title: "Promote Students", link: "/admin/stdtransfer" },
 			// { title: "Subject Group", link: "/admin/subjectgroup" },
-			{ title: "Sections", link: "/dashboard/admin/section" },
-			{ title: "Class", link: "/dashboard/admin/class" },
-			{ title: "Subjects", link: "/dashboard/admin/subject" },
+			{ title: "Sections", link: "/admin/dashboard/section" },
+			{ title: "Class", link: "/admin/dashboard/class" },
+			{ title: "Subjects", link: "/admin/dashboard/subject" },
 		],
 	},
 	// {

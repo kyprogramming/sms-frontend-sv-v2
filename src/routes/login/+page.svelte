@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Header from "$lib/components/layouts/Header.svelte";
 	import { z } from "zod";
-	import { goto } from "$app/navigation";
+	import { goto, invalidateAll } from "$app/navigation";
 	import { isLoading } from "$lib/stores/loading";
 	import LoadingBar from "$lib/components/LoadingBar.svelte";
 	import { writable } from "svelte/store";
@@ -53,7 +53,8 @@
 
 			// redirect to dashboard page
 			showSnackbar({ message: data.message, type: "success" });
-			goto(`/dashboard/${data.data.role}`);
+            await invalidateAll();
+			goto(`/${data.data.role}/dashboard`);
 		} catch (err: any) {
 			error = err?.message || "Unexpected error occurred";
 		} finally {

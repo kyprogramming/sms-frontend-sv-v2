@@ -7,13 +7,17 @@
 </script>
 
 <div class="layout">
-	<AdminHeader user={data.user} {sidebarOpen} onToggleSidebar={() => (sidebarOpen = !sidebarOpen)} />
+	<!-- <AdminHeader user={data.user} {sidebarOpen} onToggleSidebar={() => (sidebarOpen = !sidebarOpen)} />
 	<div class="main-container">
 		<Sidebar cls={sidebarOpen ? "" : "collapsed"} />
 		<div class="content">
 			<slot />
 		</div>
-	</div>
+	</div> -->
+
+    <div class="content">
+        <slot />
+    </div>
 </div>
 
 <style>

@@ -2,6 +2,8 @@
 	import { onMount } from "svelte";
 	import { writable } from "svelte/store";
 
+	// svelte-ignore export_let_unused
+	export let id: string = "";
 	export let filePath: string = "";
 	export let onFileSelect: (file: File) => void = () => {};
 
@@ -59,7 +61,7 @@
 </script>
 
 <div class="form-group">
-	<input type="file" id="fileUpload" class="custom-file-input" bind:this={fileInput} on:change={handleFileChange} accept="image/*" />
+	<input type="file" id={id} class="custom-file-input" bind:this={fileInput} on:change={handleFileChange} accept="image/*" />
 
 	{#if uploading}
 		<progress max="100" value={progress}>{progress}%</progress>
@@ -77,7 +79,7 @@
 			<img src={previewUrl} alt="Preview" class="preview-img" />
 			<div class="file-info">
 				<p style="font-size: 11px;"><strong>Name:</strong> {file?.name.substring(0, 35)}</p>
-				<p style="font-size: 11px;"><strong>Size:</strong> {file ? (file.size / 1024).toFixed(2) + ' KB' : ''}</p>
+				<p style="font-size: 11px;"><strong>Size:</strong> {file ? (file.size / 1024).toFixed(2) + " KB" : ""}</p>
 			</div>
 		</div>
 	{/if}
@@ -142,7 +144,7 @@
 		border-radius: 12px;
 		/* width: fit-content; */
 		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-        width:100%;
+		width: 100%;
 	}
 
 	.preview-img {

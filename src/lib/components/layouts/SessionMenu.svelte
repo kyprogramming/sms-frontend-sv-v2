@@ -3,7 +3,7 @@
 	import { apiRequest } from "$lib/utils/api";
 	import type { User } from "$lib/utils/types";
 	import { showSnackbar } from "../snackbar/store";
-	import { goto } from "$app/navigation";
+	import { goto, invalidateAll } from "$app/navigation";
 	import { Power, Settings, UserCog } from "@lucide/svelte";
 
 	export let user: User | null;
@@ -23,7 +23,9 @@
 			const response = await apiRequest<any>("/api/auth/logout", "POST", {});
 			if (response.success) {
 				showSnackbar({ message: response?.message, type: "success" });
-				goto("/");
+                await invalidateAll(); 
+                goto('/login'); 
+				// goto("/");
 			}
 		} catch (err: any) {
 			goto("/login");

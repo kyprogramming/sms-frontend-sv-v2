@@ -6,3 +6,15 @@ export type User = {
 	role: string;
 	authenticated: boolean;
 };
+
+
+type FieldMeta = {
+	name: string;
+	label: string;
+	type: "text" | "email" | "tel" | "date" | "textarea" | "select" | "tags";
+	required?: boolean;
+	minLength?: number;
+	maxLength?: number;
+	pattern?: RegExp;
+	enum?: string[];
+};
