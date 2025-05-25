@@ -1,7 +1,6 @@
 <script lang="ts">
 	import DataTable from "$lib/components/DataTable.svelte";
 	import DeleteConfirmModal from "$lib/components/DeleteConfirmModal.svelte";
-	import SectionForm from "./SectionForm.svelte";
 	import Modal from "$lib/components/Modal.svelte";
 	import { isDeleteModalOpen, isModalOpen, modalData, openDeleteModal, openModal, isUpdate, openEditModal } from "$lib/stores/modalStore";
 	import { formatDate } from "$lib/utils/formatDate";
@@ -25,8 +24,9 @@
 
 	const columns: ColumnConfig[] = [
 		{ key: "_id", label: "Id", visible: false },
-		{ key: "serialNo", label: "Sr No", width: "20px", sortable: true, align: "center" },
-		{ key: "name", label: "Name", sortable: true, align: "center" },
+        { key: "serialNo", label: "Sr No", width: "100px", sortable: true, align: "center" },
+		{ key: "academicYear", label: "Academic Year", sortable: true, align: "center" },
+		{ key: "profile.firstName", label: "First Name", width: "100px", sortable: true, align: "center" },
 		{
 			key: "createdAt",
 			label: "Created At",
@@ -93,6 +93,7 @@
 	function handleDelete(itemId: string) {
 		openDeleteModal({ _id: itemId });
 	}
+
 	function handleAdd() {
 		openModal();
 		dataToUpdate = null;
@@ -132,12 +133,6 @@
 </div>
 
 <DataTable {response} {columns} {actions} onPaginationChange={handlePaginationChange} onPageLimitChange={handlePageLimitChange} />
-
-{#if isModalOpen}
-	<Modal title={$isUpdate ? "Update Section" : "Add Section"} size="md">
-		<SectionForm onRefreshPage={handleRefreshPage} {dataToUpdate} />
-	</Modal>
-{/if}
 
 {#if isDeleteModalOpen}
 	<DeleteConfirmModal

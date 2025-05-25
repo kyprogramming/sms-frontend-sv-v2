@@ -42,7 +42,7 @@
 			formData.studentData.profile.dob = "";
 		}
 
-		console.log("formData.studentData.profile.dob:", formData.studentData.profile.dob);
+		// console.log("formData.studentData.profile.dob:", formData.studentData.profile.dob);
 		validateStudentForm(formData);
 	}
 
