@@ -1,43 +1,42 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { ACTION_COLUMN_WIDTH, DEFAULT_PAGE_LIMIT } from "$lib/constants/env.config";
 	import { get } from "svelte/store";
 	import Pagination from "./Pagination.svelte";
 	import { currentPage, rowsPerPage, totalPages, totalItems } from "$lib/stores/paginationStore";
 	import type { ActionConfig, ColumnConfig } from "$lib/interfaces/table.interface";
 
-	export let response: any;
-	// console.log("RESPONSE on TABLE", response);
-	export let dataKey = "data"; // Default key for the data array
-	export let paginationKey = "pagination"; // Default key for pagination
-	export let onPaginationChange: () => void;
-	export let onPageLimitChange: () => void;
+	
 
-	export let columns: ColumnConfig[] = [];
-	export let actions: ActionConfig = {
-		show: false,
-		iconActions: [],
-	};
-	// console.log("response.data:", response.data);
-	// Extract data and pagination dynamically
-	$: dataArray = response.data?.[dataKey] || [];
-	$: paginationData = response.data?.[paginationKey] || {
-		total: 0,
-		page: 1,
-		limit: DEFAULT_PAGE_LIMIT,
-		totalPages: 1,
-	};
-
-	// Initialize pagination stores
-	$: {
-		totalItems.set(paginationData.total);
-		rowsPerPage.set(paginationData.limit);
-		currentPage.set(paginationData.page);
-		totalPages.set(paginationData.totalPages);
+	interface Props {
+		response: any;
+		// console.log("RESPONSE on TABLE", response);
+		dataKey?: string; // Default key for the data array
+		paginationKey?: string; // Default key for pagination
+		onPaginationChange: () => void;
+		onPageLimitChange: () => void;
+		columns?: ColumnConfig[];
+		actions?: ActionConfig;
 	}
 
+	let {
+		response,
+		dataKey = "data",
+		paginationKey = "pagination",
+		onPaginationChange,
+		onPageLimitChange,
+		columns = [],
+		actions = {
+		show: false,
+		iconActions: [],
+	}
+	}: Props = $props();
+
+
 	// STATE
-	let sortColumn = "";
-	let sortDirection = 1;
+	let sortColumn = $state("");
+	let sortDirection = $state(1);
 
 	function sortBy(column: string) {
 		if (sortColumn === column) {
@@ -48,16 +47,32 @@
 		}
 	}
 
-	$: visibleData = [...dataArray].sort((a, b) => {
-		if (!sortColumn) return 0;
-        const valA = getNestedValue(a, sortColumn)?.toString().toLowerCase() || "";
-        const valB = getNestedValue(b, sortColumn)?.toString().toLowerCase() || "";
-		return valA > valB ? sortDirection : valA < valB ? -sortDirection : 0;
-	});
 
 	function getNestedValue(obj: any, path: string): any {
 		return path.split(".").reduce((acc, part) => acc && acc[part], obj);
 	}
+	// console.log("response.data:", response.data);
+	// Extract data and pagination dynamically
+	let dataArray = $derived(response.data?.[dataKey] || []);
+	let paginationData = $derived(response.data?.[paginationKey] || {
+		total: 0,
+		page: 1,
+		limit: DEFAULT_PAGE_LIMIT,
+		totalPages: 1,
+	});
+	// Initialize pagination stores
+	run(() => {
+		totalItems.set(paginationData.total);
+		rowsPerPage.set(paginationData.limit);
+		currentPage.set(paginationData.page);
+		totalPages.set(paginationData.totalPages);
+	});
+	let visibleData = $derived([...dataArray].sort((a, b) => {
+		if (!sortColumn) return 0;
+        const valA = getNestedValue(a, sortColumn)?.toString().toLowerCase() || "";
+        const valB = getNestedValue(b, sortColumn)?.toString().toLowerCase() || "";
+		return valA > valB ? sortDirection : valA < valB ? -sortDirection : 0;
+	}));
 </script>
 
 <!-- TABLE STRUCTURE REMAINS THE SAME AS BEFORE -->
@@ -68,7 +83,7 @@
 				<tr>
 					{#each columns as column}
 						<th
-							on:click={() => column.sortable && sortBy(column.key)}
+							onclick={() => column.sortable && sortBy(column.key)}
 							class:sortable={column.sortable}
 							style={`width: ${column.width || "auto"}; text-align: ${column.align || "left"}; display: ${column.visible === false ? "none" : "table-cell"};`}
 						>
@@ -103,8 +118,8 @@
 											<!-- svelte-ignore a11y_click_events_have_key_events -->
 											<!-- svelte-ignore a11y_no_static_element_interactions -->
 											{#if action.show}
-												<span class={`icon-wrapper ${action.class}`} on:click={() => action?.action(item)}>
-													<svelte:component this={action.icon} />
+												<span class={`icon-wrapper ${action.class}`} onclick={() => action?.action(item)}>
+													<action.icon />
 												</span>
 											{/if}
 										{/each}

@@ -1,9 +1,10 @@
 <script lang="ts">
 	import AdminHeader from "$lib/components/layouts/AdminHeader.svelte";
 	import Sidebar from "$lib/components/layouts/Sidebar.svelte";
-	export let data;
-	export let children;
-	let sidebarOpen = true;
+	// export let data;
+	// export let children;
+    let { data,  children } = $props();
+    let sidebarOpen = $state(true);
 </script>
 
 <div class="app-layout">
@@ -15,7 +16,7 @@
 	<div class="main-container">
 		<Sidebar cls={sidebarOpen ? "" : "collapsed"} />
 		<div class="content">
-			{@render children()}
+			{@render children?.()}
 		</div>
 	</div>
 </div>

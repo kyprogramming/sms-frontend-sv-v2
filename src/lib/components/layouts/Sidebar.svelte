@@ -1,5 +1,4 @@
 <script lang="ts">
-	export let cls = "";
 	import { slide } from "svelte/transition";
 
 	import {
@@ -39,6 +38,11 @@
 		LayoutDashboardIcon,
 	} from "@lucide/svelte";
 	import { MENU_GROUPS } from "$lib/constants";
+	interface Props {
+		cls?: string;
+	}
+
+	let { cls = "" }: Props = $props();
 
 	const iconComponents: any = {
 		LayoutDashboard,
@@ -74,8 +78,8 @@
 		LayoutDashboardIcon,
 	};
 
-	let activeGroup: string | null = null;
-	let activeMenuItem: string | null = null;
+	let activeGroup: string | null = $state(null);
+	let activeMenuItem: string | null = $state(null);
 	let sidebarCollapsed = false;
 	// All menu groups and their items
 
@@ -90,16 +94,17 @@
 			<div class="menu-group">
 				{#if group.link}
 					<!-- Top-level single link -->
+					{@const SvelteComponent = iconComponents[group.icon]}
 					<a
 						href={group.link}
 						class="group-header {activeMenuItem === group.title ? 'active' : ''}"
-						on:click={() => {
+						onclick={() => {
 							activeMenuItem = group.title;
 							activeGroup = null;
 						}}
 						data-sveltekit-preload-data="off"
 					>
-						<svelte:component this={iconComponents[group.icon]} size={18} class="lucide-icon" />
+						<SvelteComponent size={18} class="lucide-icon" />
 						{#if !sidebarCollapsed}
 							<div class="header-content">
 								<span>{group.title}</span>
@@ -110,12 +115,14 @@
 					<!-- Group with submenu -->
 					<!-- svelte-ignore a11y_click_events_have_key_events -->
 					<!-- svelte-ignore a11y_no_static_element_interactions -->
-					<div class="group-header {activeGroup === group.title ? 'active' : ''}" on:click={() => toggleGroup(group.title)}>
-						<svelte:component this={iconComponents[group.icon]} size={18} class="lucide-icon" />
+					{@const SvelteComponent_1 = iconComponents[group.icon]}
+					<div class="group-header {activeGroup === group.title ? 'active' : ''}" onclick={() => toggleGroup(group.title)}>
+						<SvelteComponent_1 size={18} class="lucide-icon" />
 						{#if !sidebarCollapsed}
+							{@const SvelteComponent_2 = activeGroup === group.title ? ChevronDown : ChevronRight}
 							<div class="header-content">
 								<span>{group.title}</span>
-								<svelte:component this={activeGroup === group.title ? ChevronDown : ChevronRight} size={16} class="pull-right" />
+								<SvelteComponent_2 size={16} class="pull-right" />
 							</div>
 						{/if}
 					</div>
@@ -126,7 +133,7 @@
 								<a
 									href={item.link}
 									class="menu-item {activeMenuItem === item.title ? 'active' : ''}"
-									on:click={() => (activeMenuItem = item.title)}
+									onclick={() => (activeMenuItem = item.title)}
 									data-sveltekit-preload-data="off"
 								>
 									<span>{item.title}</span>

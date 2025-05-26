@@ -19,10 +19,10 @@
 		password: string;
 	};
 
-	let formData: LoginFormData = {
+	let formData: LoginFormData = $state({
 		email: "username1@xyz.com",
 		password: "password1",
-	};
+	});
 
 	const formErrors = writable<{ email?: string; password?: string }>({});
 	const touched = writable<Partial<Record<keyof LoginFormData, boolean>>>({
@@ -30,7 +30,7 @@
 		password: false,
 	});
 
-	let error: string = "";
+	let error: string = $state("");
 
 	function handleChange(field: keyof LoginFormData, value: string): void {
 		formData[field] = value;
@@ -73,7 +73,7 @@
 		<h3>Login to Your Account</h3>
 		<p>Enter your credentials below</p>
 
-        <form on:submit={onSubmit} novalidate>
+        <form onsubmit={onSubmit} novalidate>
 			<div class="input-wrapper">
 				<input
 					type="email"
@@ -81,8 +81,8 @@
 					placeholder="Enter your email"
 					bind:value={formData.email}
 					class={`w-full ${$formErrors.password && $touched.password ? "input-error" : ""}`}
-					on:input={(e) => handleChange("email", (e.target as HTMLInputElement).value)}
-					on:blur={() => touched.update((t) => ({ ...t, email: true }))}
+					oninput={(e) => handleChange("email", (e.target as HTMLInputElement).value)}
+					onblur={() => touched.update((t) => ({ ...t, email: true }))}
 				/>
 				{#if $formErrors.email && $touched.email}
 					<p class="error-text">{$formErrors.email}</p>
@@ -96,8 +96,8 @@
 					placeholder="Enter your password"
 					bind:value={formData.password}
 					class={`w-full ${$formErrors.password && $touched.password ? "input-error" : ""}`}
-					on:input={(e) => handleChange("password", (e.target as HTMLInputElement).value)}
-					on:blur={() => touched.update((t) => ({ ...t, password: true }))}
+					oninput={(e) => handleChange("password", (e.target as HTMLInputElement).value)}
+					onblur={() => touched.update((t) => ({ ...t, password: true }))}
 				/>
 				{#if $formErrors.password && $touched.password}
 					<p class="error-text">{$formErrors.password}</p>

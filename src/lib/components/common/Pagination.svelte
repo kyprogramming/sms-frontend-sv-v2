@@ -2,18 +2,22 @@
 	import { currentPage, rowsPerPage, totalPages, totalItems } from "$lib/stores/paginationStore";
 	import { ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight } from "@lucide/svelte";
 
-	export let onPaginationChange: () => void;
-	export let onPageLimitChange: () => void;
+	interface Props {
+		onPaginationChange: () => void;
+		onPageLimitChange: () => void;
+	}
+
+	let { onPaginationChange, onPageLimitChange }: Props = $props();
 
 	// Reactive values from stores
-	$: page = $currentPage;
-	$: limit = $rowsPerPage;
-	$: pages = $totalPages;
-	$: items = $totalItems;
+	let page = $derived($currentPage);
+	let limit = $derived($rowsPerPage);
+	let pages = $derived($totalPages);
+	let items = $derived($totalItems);
 
 	// Ranges for the pagination display
-	$: startRange = (page - 1) * limit + 1;
-	$: endRange = Math.min(page * limit, items);
+	let startRange = $derived((page - 1) * limit + 1);
+	let endRange = $derived(Math.min(page * limit, items));
 
 	// Navigation actions
 	function navigateToPage(newPage: number) {
@@ -37,7 +41,7 @@
 <div class="pagination">
 	<div class="rows-per-page">
 		<label for="rowsPerPage">Rows per page:</label>
-		<select id="rowsPerPage" bind:value={$rowsPerPage} on:change={handleRowsPerPageChange} aria-label="Rows per page selection">
+		<select id="rowsPerPage" bind:value={$rowsPerPage} onchange={handleRowsPerPageChange} aria-label="Rows per page selection">
 			<option value="15">15</option>
 			<option value="30">30</option>
 			<option value="50">50</option>
@@ -50,22 +54,22 @@
 	</div>
 
 	<div class="nav-buttons">
-		<button class="nav-button first" on:click={() => navigateToPage(1)} disabled={page === 1} aria-label="First page">
+		<button class="nav-button first" onclick={() => navigateToPage(1)} disabled={page === 1} aria-label="First page">
 			<span class="page-icon-wrapper">
 				<ChevronsLeft />
 			</span>
 		</button>
-		<button class="nav-button prev" on:click={() => navigateToPage(page - 1)} disabled={page === 1} aria-label="Previous page">
+		<button class="nav-button prev" onclick={() => navigateToPage(page - 1)} disabled={page === 1} aria-label="Previous page">
 			<span class="page-icon-wrapper">
 				<ChevronLeft />
 			</span>
 		</button>
-		<button class="nav-button next" on:click={() => navigateToPage(page + 1)} disabled={page === pages} aria-label="Next page">
+		<button class="nav-button next" onclick={() => navigateToPage(page + 1)} disabled={page === pages} aria-label="Next page">
 			<span class="page-icon-wrapper">
 				<ChevronRight />
 			</span>
 		</button>
-		<button class="nav-button last" on:click={() => navigateToPage(pages)} disabled={page === pages} aria-label="Last page">
+		<button class="nav-button last" onclick={() => navigateToPage(pages)} disabled={page === pages} aria-label="Last page">
 			<span class="page-icon-wrapper">
 				<ChevronsRight />
 			</span>

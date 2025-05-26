@@ -13,14 +13,14 @@
 
 	type ClassFormData = z.infer<typeof classSchema>;
 
-	let formData: ClassFormData = {
+	let formData: ClassFormData = $state({
 		name: "",
 		level: 1,
 		academicYear: "",
-	};
+	});
 
 	const formErrors = writable<Partial<Record<keyof ClassFormData, string>>>({});
-	let error = "";
+	let error = $state("");
 
 	async function onSubmit(e: Event) {
 		e.preventDefault();
@@ -42,7 +42,7 @@
 
 <div class="form-wrapper">
 	<h2>Basic Information</h2>
-	<form on:submit={onSubmit}>
+	<form onsubmit={onSubmit}>
 		<div class="form-grid">
 			<div class="form-group">
 				<label for="name">Class Name</label>

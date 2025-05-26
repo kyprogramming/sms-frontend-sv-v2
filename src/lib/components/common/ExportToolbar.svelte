@@ -26,14 +26,14 @@
 
 <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 border rounded-lg shadow-sm bg-white">
 	<!-- Search -->
-	<input type="text" placeholder="Search..." class="border px-4 py-2 rounded-md w-full md:w-1/3" on:input={handleSearch} />
+	<input type="text" placeholder="Search..." class="border px-4 py-2 rounded-md w-full md:w-1/3" oninput={handleSearch} />
 
 	<!-- Action Buttons -->
 	<div class="flex flex-wrap gap-2">
-		<button on:click={copyData} class="btn-export">Copy</button>
-		<button on:click={exportExcel} class="btn-export">Excel</button>
-		<button on:click={exportCSV} class="btn-export">CSV</button>
-		<button on:click={exportPDF} class="btn-export">PDF</button>
+		<button onclick={copyData} class="btn-export">Copy</button>
+		<button onclick={exportExcel} class="btn-export">Excel</button>
+		<button onclick={exportCSV} class="btn-export">CSV</button>
+		<button onclick={exportPDF} class="btn-export">PDF</button>
 	</div>
 </div>
 

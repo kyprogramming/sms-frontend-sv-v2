@@ -1,9 +1,19 @@
-<script>
-	export let title = "Total Users";
-	export let value = 277;
-	export let change = 95; // Percentage
-	export let period = "Last Month";
-	export let className = ""; // Custom class prop
+<script lang="ts">
+	interface Props {
+		title?: string;
+		value?: number;
+		change?: number; // Percentage
+		period?: string;
+		className?: string; // Custom class prop
+	}
+
+	let {
+		title = "Total Users",
+		value = 277,
+		change = 95,
+		period = "Last Month",
+		className = ""
+	}: Props = $props();
 </script>
 
 <div class={`stats-card ${className}`}>

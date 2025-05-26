@@ -9,9 +9,13 @@
 	import { deleteSectionById, fetchSectionById, fetchSections } from "$lib/services/section";
 	import type { any } from "zod";
 
-	export let data: any;
-	let response: any = data.data;
-	let dataToUpdate: any;
+	interface Props {
+		data: any;
+	}
+
+	let { data }: Props = $props();
+	let response: any = $state(data.data);
+	let dataToUpdate: any = $state();
 
 	const breadcrumbItems = [{ label: "Home", href: "/" }, { label: "Dashboard", href: "/admin/dashboard" }, { label: "Sections" }];
 

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { z } from "zod";
 	import { get, writable } from "svelte/store";
 	import { isLoading } from "$lib/stores/loading";
@@ -7,9 +9,14 @@
 	import { closeModal, isUpdate } from "$lib/stores/modalStore";
 	import { createSection, updateSection } from "$lib/services/section";
 
-	// Props
-	export let onRefreshPage: () => void;
-	export let dataToUpdate: { _id: string; name: string } | null = null;
+	
+	interface Props {
+		// Props
+		onRefreshPage: () => void;
+		dataToUpdate?: { _id: string; name: string } | null;
+	}
+
+	let { onRefreshPage, dataToUpdate = null }: Props = $props();
 
 	// Zod schema
 	const sectionSchema = z.object({
@@ -19,7 +26,7 @@
 	type SectionFormData = z.infer<typeof sectionSchema>;
 
 	// Reactive form state
-	let formData: SectionFormData = { name: "" };
+	let formData: SectionFormData = $state({ name: "" });
 	let error = "";
 
 	const formErrors = writable<Partial<Record<keyof SectionFormData, string>>>({});
@@ -34,7 +41,9 @@
 			};
 		}
 	}
-	$: populateFormData();
+	run(() => {
+		populateFormData();
+	});
 
 	// Form submission handler
 	async function onSubmit(event: Event) {
@@ -83,7 +92,7 @@
 	}
 </script>
 
-<form on:submit={onSubmit}>
+<form onsubmit={onSubmit}>
 	<div class="input-wrapper">
 		<label for="name">Name *</label>
 		<input
@@ -93,8 +102,8 @@
 			placeholder="Section name"
 			class={`w-full ${$formErrors.name && ($touched.name || $submitAttempted) ? "input-error" : ""}`}
 			bind:value={formData.name}
-			on:input={(e) => handleChange("name", (e.target as HTMLInputElement).value)}
-			on:blur={() => touched.update((t) => ({ ...t, name: true }))}
+			oninput={(e) => handleChange("name", (e.target as HTMLInputElement).value)}
+			onblur={() => touched.update((t) => ({ ...t, name: true }))}
 		/>
 		{#if $formErrors.name && ($touched.name || $submitAttempted)}
 			<p class="error-text">{$formErrors.name}</p>

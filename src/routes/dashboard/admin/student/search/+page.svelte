@@ -7,7 +7,11 @@
 	import { deleteSectionById, fetchSectionById, fetchSections } from "$lib/services/section";
 	import StudentForm from "./StudentForm.svelte";
 
-	export let data: any;
+	interface Props {
+		data: any;
+	}
+
+	let { data }: Props = $props();
 	let response: any = data.data;
     let classesWithSections = response?.data || [];
 	let dataToUpdate: any;

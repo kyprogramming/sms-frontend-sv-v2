@@ -11,11 +11,15 @@
 
 	let totalItems = 30;
 	let currentPage = 1;
-	export let classes: Class[];
-	export let rowsPerPage: number;
+	interface Props {
+		classes: Class[];
+		rowsPerPage: number;
+	}
 
-	let sortColumn = "";
-	let sortDirection = 1;
+	let { classes = $bindable(), rowsPerPage }: Props = $props();
+
+	let sortColumn = $state("");
+	let sortDirection = $state(1);
 
 	function sortBy(column: keyof Class) {
 		if (sortColumn === column) {
@@ -38,25 +42,25 @@
 		<thead>
 			<tr>
 				<th><input type="checkbox" /></th>
-				<th on:click={() => sortBy("id")}>
+				<th onclick={() => sortBy("id")}>
 					ID
 					{#if sortColumn === "id"}
 						<span>{sortDirection === 1 ? "▲" : "▼"}</span>
 					{/if}
 				</th>
-				<th on:click={() => sortBy("name")}>
+				<th onclick={() => sortBy("name")}>
 					NAME
 					{#if sortColumn === "name"}
 						<span>{sortDirection === 1 ? "▲" : "▼"}</span>
 					{/if}
 				</th>
-				<th on:click={() => sortBy("level")}>
+				<th onclick={() => sortBy("level")}>
 					LEVEL
 					{#if sortColumn === "level"}
 						<span>{sortDirection === 1 ? "▲" : "▼"}</span>
 					{/if}
 				</th>
-				<th on:click={() => sortBy("academicYear")}>
+				<th onclick={() => sortBy("academicYear")}>
 					ACADEMIC YEAR
 					{#if sortColumn === "academicYear"}
 						<span>{sortDirection === 1 ? "▲" : "▼"}</span>

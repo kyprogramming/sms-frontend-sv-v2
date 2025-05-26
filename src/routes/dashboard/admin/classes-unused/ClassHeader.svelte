@@ -1,9 +1,7 @@
-<script>
+<script lang="ts">
 	import StatsCard from "$lib/components/StatsCard.svelte";
 
-	export let totalClasses;
-	export let totalLevels;
-	export let totalAcademicYears;
+	let { totalClasses, totalLevels, totalAcademicYears } = $props();
 </script>
 
 <div class="stats-cards">

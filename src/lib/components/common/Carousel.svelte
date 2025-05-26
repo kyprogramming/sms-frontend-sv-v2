@@ -1,11 +1,16 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 
-	// Props
-	export let images: string[] = ["https://picsum.photos/id/1018/1200/400", "https://picsum.photos/id/1020/1200/400", "https://picsum.photos/id/1033/1200/400"];
+	
+	interface Props {
+		// Props
+		images?: string[];
+	}
+
+	let { images = ["https://picsum.photos/id/1018/1200/400", "https://picsum.photos/id/1020/1200/400", "https://picsum.photos/id/1033/1200/400"] }: Props = $props();
 
 	// State
-	let currentIndex = 0;
+	let currentIndex = $state(0);
 
 	// Auto play interval
 	let intervalDuration = 3000;
@@ -40,7 +45,7 @@
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="carousel" on:mouseenter={stopAutoPlay} on:mouseleave={startAutoPlay}>
+<div class="carousel" onmouseenter={stopAutoPlay} onmouseleave={startAutoPlay}>
 	<div class="carousel-track" style="transform: translateX(-{currentIndex * 100}%);">
 		{#each images as image}
 			<div class="carousel-item">
@@ -50,14 +55,14 @@
 	</div>
 
 	<div class="carousel-controls">
-		<button on:click={prev} class="bg-black bg-opacity-50 text-white p-2 rounded-full focus:outline-none">❮</button>
-		<button on:click={next} class="bg-black bg-opacity-50 text-white p-2 rounded-full focus:outline-none">❯</button>
+		<button onclick={prev} class="bg-black bg-opacity-50 text-white p-2 rounded-full focus:outline-none">❮</button>
+		<button onclick={next} class="bg-black bg-opacity-50 text-white p-2 rounded-full focus:outline-none">❯</button>
 	</div>
 
 	<div class="carousel-indicators">
 		{#each images as _, index}
 			<!-- svelte-ignore a11y_consider_explicit_label -->
-			<button class="indicator {index === currentIndex ? 'active' : ''}" on:click={() => (currentIndex = index)}></button>
+			<button class="indicator {index === currentIndex ? 'active' : ''}" onclick={() => (currentIndex = index)}></button>
 		{/each}
 	</div>
 </div>

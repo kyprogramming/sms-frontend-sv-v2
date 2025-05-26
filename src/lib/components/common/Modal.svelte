@@ -1,12 +1,17 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	export type ModalSize = "sm" | "md" | "lg" | "xl" | "full";
 </script>
 
 <script lang="ts">
 	import { isModalOpen, closeModal } from "$lib/stores/modalStore";
 	import { fade, fly } from "svelte/transition";
-	export let title: string = "Title";
-	export let size: ModalSize = "md";
+	interface Props {
+		title?: string;
+		size?: ModalSize;
+		children?: import('svelte').Snippet;
+	}
+
+	let { title = "Title", size = "md", children }: Props = $props();
 
 	function handleOverlayClick(event: MouseEvent) {
 		const target = event.target as HTMLElement;
@@ -23,7 +28,7 @@
 {#if $isModalOpen}
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="modal-overlay" on:click={handleOverlayClick} transition:fade={{ duration: 150 }}>
+	<div class="modal-overlay" onclick={handleOverlayClick} transition:fade={{ duration: 150 }}>
 		<div
 			class="modal-content"
 			class:sm={size === "sm"}
@@ -31,16 +36,16 @@
 			class:lg={size === "lg"}
 			class:xl={size === "xl"}
 			class:full={size === "full"}
-			on:click={handleModalClick}
+			onclick={handleModalClick}
 			transition:fly={{ y: -20, duration: 150 }}
 		>
 			<div class="modal-header">
 				<h2>{title}</h2>
-				<button class="close-button" on:click={closeModal}>&times;</button>
+				<button class="close-button" onclick={closeModal}>&times;</button>
 			</div>
 
 			<div class="modal-body">
-				<slot />
+				{@render children?.()}
 			</div>
 		</div>
 	</div>

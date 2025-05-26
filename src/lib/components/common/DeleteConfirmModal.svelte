@@ -1,13 +1,21 @@
-<svelte:options accessors={true} />
 
 <script lang="ts">
 	import { isDeleteModalOpen, closeDeleteModal } from "$lib/stores/modalStore";
 	import { fade, fly } from "svelte/transition";
 
-	export let title: string = "Confirm Delete";
-	export let size: "sm" | "md" | "lg" | "xl" | "full" = "md";
-	export let onDelete: () => void;
-	export let onCancel: () => void;
+	interface Props {
+		title?: string;
+		size?: "sm" | "md" | "lg" | "xl" | "full";
+		onDelete: () => void;
+		onCancel: () => void;
+	}
+
+	let {
+		title = "Confirm Delete",
+		size = "md",
+		onDelete,
+		onCancel
+	}: Props = $props();
 
 	function handleOverlayClick(event: MouseEvent) {
 		if ((event.target as HTMLElement).classList.contains("modal-overlay")) {
@@ -28,24 +36,31 @@
 		onCancel?.();
 		closeDeleteModal();
 	}
+
+	export {
+		title,
+		size,
+		onDelete,
+		onCancel,
+	}
 </script>
 
 {#if $isDeleteModalOpen}
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="modal-overlay" on:click={handleOverlayClick} transition:fade={{ duration: 150 }}>
+	<div class="modal-overlay" onclick={handleOverlayClick} transition:fade={{ duration: 150 }}>
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
-		<div class="modal-content {size}" on:click={handleModalClick} transition:fly={{ y: -20, duration: 150 }}>
+		<div class="modal-content {size}" onclick={handleModalClick} transition:fly={{ y: -20, duration: 150 }}>
 			<div class="modal-header">
 				<h2>{title}</h2>
-				<button class="close-button" on:click={handleCancel}>&times;</button>
+				<button class="close-button" onclick={handleCancel}>&times;</button>
 			</div>
 
 			<div class="modal-body">
 				<p>Are you sure you want to delete this item?</p>
 				<div class="modal-actions">
-					<button class="cancel-button" on:click={handleCancel}>Cancel</button>
-					<button class="delete-button" on:click={handleDelete}>Delete</button>
+					<button class="cancel-button" onclick={handleCancel}>Cancel</button>
+					<button class="delete-button" onclick={handleDelete}>Delete</button>
 				</div>
 			</div>
 		</div>

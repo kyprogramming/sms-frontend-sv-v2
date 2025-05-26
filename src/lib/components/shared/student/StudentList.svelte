@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import DataTable from "$lib/components/common/DataTable.svelte";
 	import DeleteConfirmModal from "$lib/components/common/DeleteConfirmModal.svelte";
 	import Modal from "$lib/components/common/Modal.svelte";
@@ -10,15 +12,28 @@
 	import { searchText, currentPage } from "$lib/stores/paginationStore";
 	import type { ColumnConfig } from "$lib/interfaces/table.interface";
 
-	export let response: any;
-	export let dataToUpdate: any;
-	export let onRefreshPage: () => void;
-	export let onSearchChange: () => void;
-	export let onDelete: (id: string) => void;
-	export let onUpdate: (id: string) => void;
+	interface Props {
+		response: any;
+		dataToUpdate: any;
+		onRefreshPage: () => void;
+		onSearchChange: () => void;
+		onDelete: (id: string) => void;
+		onUpdate: (id: string) => void;
+	}
+
+	let {
+		response,
+		dataToUpdate = $bindable(),
+		onRefreshPage,
+		onSearchChange,
+		onDelete,
+		onUpdate
+	}: Props = $props();
 
 	let localSearch = get(searchText);
-	$: searchText.set(localSearch);
+	run(() => {
+		searchText.set(localSearch);
+	});
 
 	// console.log("dataToUpdate: SectionList", dataToUpdate);
 
@@ -108,7 +123,7 @@
 	<div class="search-container">
 		<input name="search" type="text" placeholder="Search section..." bind:value={$searchText} />
 
-		<button class="icon-button" on:click={handleSearchClick} aria-label="Search">
+		<button class="icon-button" onclick={handleSearchClick} aria-label="Search">
 			<span class="action-icons">
 				<span class="icon-wrapper view">
 					<Search />
@@ -116,7 +131,7 @@
 			</span>
 		</button>
 
-		<button class="icon-button" on:click={handleRefreshButtonClick} aria-label="Refresh">
+		<button class="icon-button" onclick={handleRefreshButtonClick} aria-label="Refresh">
 			<span class="action-icons">
 				<span class="icon-wrapper edit">
 					<RefreshCw />
@@ -125,7 +140,7 @@
 		</button>
 	</div>
 	<div class="action-buttons">
-		<button type="button" class="btn ripple" on:click={handleAdd}>
+		<button type="button" class="btn ripple" onclick={handleAdd}>
 			<Plus size={16} />
 			<span>Add Section</span>
 		</button>

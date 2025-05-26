@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { stopPropagation } from 'svelte/legacy';
+
 	import { isLoading } from "$lib/stores/loading";
 	import { apiRequest } from "$lib/utils/api";
 	import type { User } from "$lib/utils/types";
@@ -6,8 +8,12 @@
 	import { goto, invalidateAll } from "$app/navigation";
 	import { Power, Settings, UserCog } from "@lucide/svelte";
 
-	export let user: User | null;
-	let isOpen = false;
+	interface Props {
+		user: User | null;
+	}
+
+	let { user }: Props = $props();
+	let isOpen = $state(false);
 
 	function toggleMenu() {
 		isOpen = !isOpen;
@@ -38,7 +44,7 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="user-profile" on:click={toggleMenu}>
+<div class="user-profile" onclick={toggleMenu}>
 	<div class="profile-img">{user?.name?.charAt(0).toUpperCase()}</div>
 	<div class="user-info">
 		<div class="user-name">{user?.name.toUpperCase()}</div>
@@ -48,12 +54,12 @@
 	</div>
 
 	{#if isOpen}
-		<div class="dropdown" on:mouseleave={closeMenu}>
+		<div class="dropdown" onmouseleave={closeMenu}>
 			<div class="menu-item"><Settings size="22" />Settings</div>
 			<div class="menu-item"><UserCog size="22" />Profile</div>
 			<div class="divider"></div>
 			<div class="menu-item">
-				<button class="logout-button" type="button" disabled={$isLoading} on:click|stopPropagation={onSubmit}>
+				<button class="logout-button" type="button" disabled={$isLoading} onclick={stopPropagation(onSubmit)}>
 					<div class="logout-container">
 						<Power size="22" color="red" />
 						Log out

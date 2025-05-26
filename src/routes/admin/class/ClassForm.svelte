@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { z } from "zod";
 	import { get, writable } from "svelte/store";
 	import { isLoading } from "$lib/stores/loading";
@@ -10,15 +12,20 @@
 	import { onMount } from "svelte";
 
 	// type Section = { _id: string; name: string };
-	let allSections: any;
+	let allSections: any = $state();
 	onMount(async () => {
 		allSections = await fetchSectionList();
 		// console.log("allSections", allSections);
 	});
 
-	// Props
-	export let onRefreshPage: () => void;
-	export let dataToUpdate: any | null = null;
+	
+	interface Props {
+		// Props
+		onRefreshPage: () => void;
+		dataToUpdate?: any | null;
+	}
+
+	let { onRefreshPage, dataToUpdate = null }: Props = $props();
 
 	// Zod schema
 	const classSchema = z.object({
@@ -29,10 +36,10 @@
 	type ClassFormData = z.infer<typeof classSchema>;
 
 	// Reactive form state
-	let formData: ClassFormData = {
+	let formData: ClassFormData = $state({
 		name: "",
 		sectionIds: [], // Now this works fine
-	};
+	});
 	let error = "";
 
 	const formErrors = writable<Partial<Record<keyof ClassFormData, string>>>({});
@@ -49,7 +56,9 @@
 			};
 		}
 	}
-	$: populateFormData();
+	run(() => {
+		populateFormData();
+	});
 
 	// Form submission handler
 	async function onSubmit(event: Event) {
@@ -103,7 +112,7 @@
 	}
 </script>
 
-<form on:submit={onSubmit}>
+<form onsubmit={onSubmit}>
 	<div class="input-wrapper">
 		<label for="name">Name *</label>
 		<input
@@ -113,8 +122,8 @@
 			placeholder="Class name"
 			class={`w-full ${$formErrors.name && ($touched.name || $submitAttempted) ? "input-error" : ""}`}
 			bind:value={formData.name}
-			on:input={(e) => handleChange("name", (e.target as HTMLInputElement).value)}
-			on:blur={() => touched.update((t) => ({ ...t, name: true }))}
+			oninput={(e) => handleChange("name", (e.target as HTMLInputElement).value)}
+			onblur={() => touched.update((t) => ({ ...t, name: true }))}
 		/>
 		{#if $formErrors.name && ($touched.name || $submitAttempted)}
 			<p class="error-text">{$formErrors.name}</p>
@@ -133,7 +142,7 @@
 							class="checkbox-input"
 							value={section._id}
 							checked={formData.sectionIds.includes(section._id)}
-							on:change={(e) => {
+							onchange={(e) => {
 								const checked = (e.target as HTMLInputElement).checked;
 								if (checked) {
 									formData.sectionIds = [...formData.sectionIds, section._id];
@@ -142,7 +151,7 @@
 								}
 								handleChange("sectionIds", formData.sectionIds);
 							}}
-							on:blur={() => handleChange("sectionIds", formData.sectionIds)}
+							onblur={() => handleChange("sectionIds", formData.sectionIds)}
 						/>
 						<span class="checkbox-custom"></span>
 						<span class="checkbox-text">{section.name}</span>

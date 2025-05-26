@@ -1,5 +1,5 @@
 <script lang="ts">
-    let activeTab: string = 'tab1';
+    let activeTab: string = $state('tab1');
   
     const tabs = [
       { id: 'tab1', label: 'Profile' },
@@ -49,7 +49,7 @@
     {#each tabs as tab}
       <button
         class="tab-button {activeTab === tab.id ? 'active' : ''}"
-        on:click={() => selectTab(tab.id)}
+        onclick={() => selectTab(tab.id)}
       >
         {tab.label}
       </button>

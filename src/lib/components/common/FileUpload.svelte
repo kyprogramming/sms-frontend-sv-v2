@@ -2,16 +2,21 @@
 	import { onMount } from "svelte";
 	import { writable } from "svelte/store";
 
-	// svelte-ignore export_let_unused
-	export let id: string = "";
-	export let filePath: string = "";
-	export let onFileSelect: (file: File) => void = () => {};
+	
+	interface Props {
+		// svelte-ignore export_let_unused
+		id?: string;
+		filePath?: string;
+		onFileSelect?: (file: File) => void;
+	}
 
-	let fileInput: HTMLInputElement;
-	let file: File | null = null;
-	let previewUrl: string = "";
-	let uploading = false;
-	let progress = 0;
+	let { id = "", filePath = $bindable(""), onFileSelect = () => {} }: Props = $props();
+
+	let fileInput: HTMLInputElement = $state();
+	let file: File | null = $state(null);
+	let previewUrl: string = $state("");
+	let uploading = $state(false);
+	let progress = $state(0);
 
 	const uploadFile = async () => {
 		if (!file) return;
@@ -61,7 +66,7 @@
 </script>
 
 <div class="form-group">
-	<input type="file" id={id} class="custom-file-input" bind:this={fileInput} on:change={handleFileChange} accept="image/*" />
+	<input type="file" id={id} class="custom-file-input" bind:this={fileInput} onchange={handleFileChange} accept="image/*" />
 
 	{#if uploading}
 		<progress max="100" value={progress}>{progress}%</progress>

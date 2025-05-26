@@ -1,8 +1,12 @@
 <script lang="ts">
-	export let id: string;
-	export let tags: string[] = [];
+	interface Props {
+		id: string;
+		tags?: string[];
+	}
 
-	let input = "";
+	let { id, tags = $bindable([]) }: Props = $props();
+
+	let input = $state("");
 
 	function addTag() {
 		const trimmed = input.trim();
@@ -28,7 +32,7 @@
 	{#each tags as tag, index}
 		<span class="tag">
 			{tag}
-			<button class="close-btn" on:click={() => removeTag(index)}>&times;</button>
+			<button class="close-btn" onclick={() => removeTag(index)}>&times;</button>
 		</span>
 	{/each}
 
@@ -38,7 +42,7 @@
 			type="text"
 			bind:value={input}
 			placeholder="Type and press Enter"
-			on:keydown={handleKey}
+			onkeydown={handleKey}
 		/>
 	{/if}
 </div>

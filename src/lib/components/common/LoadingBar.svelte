@@ -1,22 +1,13 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { isLoading } from "$lib/stores/loading";
 	import { onDestroy } from "svelte";
 
-	let progress = 0;
-	let show = false;
+	let progress = $state(0);
+	let show = $state(false);
 	let interval: NodeJS.Timeout;
 
-	$: if ($isLoading) {
-		show = true;
-		startAnimation();
-	} else {
-		stopAnimation();
-		progress = 100;
-		setTimeout(() => {
-			show = false;
-			progress = 0;
-		}, 300);
-	}
 
 	function startAnimation() {
 		progress = 0;
@@ -31,6 +22,19 @@
 	}
 
 	onDestroy(stopAnimation);
+	run(() => {
+		if ($isLoading) {
+			show = true;
+			startAnimation();
+		} else {
+			stopAnimation();
+			progress = 100;
+			setTimeout(() => {
+				show = false;
+				progress = 0;
+			}, 300);
+		}
+	});
 </script>
 
 {#if show}

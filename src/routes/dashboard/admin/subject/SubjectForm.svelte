@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { z } from "zod";
 	import { get, writable } from "svelte/store";
 	import { isLoading } from "$lib/stores/loading";
@@ -8,9 +10,14 @@
 	import { createSubject, updateSubject } from "$lib/services/subject";
 	import { SUBJECT_TYPE } from "$lib/constants";
 
-	// Props
-	export let onRefreshPage: () => void;
-	export let dataToUpdate: any | null = null;
+	
+	interface Props {
+		// Props
+		onRefreshPage: () => void;
+		dataToUpdate?: any | null;
+	}
+
+	let { onRefreshPage, dataToUpdate = null }: Props = $props();
 
 	// Zod schema
 	const subjectSchema = z.object({
@@ -22,11 +29,11 @@
 	type SubjectFormData = z.infer<typeof subjectSchema>;
 
 	// Reactive form state
-	let formData: SubjectFormData = {
+	let formData: SubjectFormData = $state({
 		name: "",
 		code: "",
 		type: 0,
-	};
+	});
 	let error = "";
 
 	const formErrors = writable<Partial<Record<keyof SubjectFormData, string>>>({});
@@ -45,7 +52,9 @@
 			touched.set({ name: true, code: true, type: true });
 		}
 	}
-	$: populateFormData();
+	run(() => {
+		populateFormData();
+	});
 
 	// Form submission handler
 	async function onSubmit(event: Event) {
@@ -113,7 +122,7 @@
 }
 </script>
 
-<form on:submit={onSubmit}>
+<form onsubmit={onSubmit}>
 	<div class="input-wrapper">
         
 		<!-- svelte-ignore a11y_label_has_associated_control -->
@@ -128,8 +137,8 @@
 							class="radio-input"
 							value={type.id}
 							checked={formData.type === type.id}
-							on:change={() => handleChange("type", type.id)}
-							on:blur={() => handleChange("type", formData.type)}
+							onchange={() => handleChange("type", type.id)}
+							onblur={() => handleChange("type", formData.type)}
 						/>
 						<span class="radio-custom"></span>
 						<span class="radio-text">{type.name}</span>
@@ -151,8 +160,8 @@
 			placeholder="Subject name"
 			class={`w-full ${$formErrors.name && ($touched.name || $submitAttempted) ? "input-error" : ""}`}
 			bind:value={formData.name}
-			on:input={(e) => handleChange("name", (e.target as HTMLInputElement).value)}
-			on:blur={() => handleChange("name", formData.name)}
+			oninput={(e) => handleChange("name", (e.target as HTMLInputElement).value)}
+			onblur={() => handleChange("name", formData.name)}
 		/>
 		{#if $formErrors.name && ($touched.name || $submitAttempted)}
 			<p class="error-text">{$formErrors.name}</p>
@@ -168,13 +177,13 @@
 			class={`w-full`}
 			placeholder="Subject code"
 			bind:value={formData.code}
-			on:input={(e) => handleChange("code", (e.target as HTMLInputElement).value)}
-			on:blur={() => handleChange("code", String(formData.code))}
+			oninput={(e) => handleChange("code", (e.target as HTMLInputElement).value)}
+			onblur={() => handleChange("code", String(formData.code))}
 		/>
 	</div>
 
 	<div class="flex-items-center" style="justify-content:end;">
-		<button class="btn ripple" type="reset" disabled={$isLoading} style="background-color: var(--primary-light); align-self: right;" on:click={handleReset}> Clear </button>
+		<button class="btn ripple" type="reset" disabled={$isLoading} style="background-color: var(--primary-light); align-self: right;" onclick={handleReset}> Clear </button>
 		<button class="btn ripple" type="submit" disabled={$isLoading}>
 			{#if $isLoading}
 				{#if $isUpdate}Updating...{:else}Saving...{/if}

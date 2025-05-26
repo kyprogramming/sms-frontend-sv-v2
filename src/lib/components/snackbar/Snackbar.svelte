@@ -14,12 +14,13 @@
 
 <div class="snackbar-container">
 	{#each $snackbars as snackbar (snackbar.id)}
+		{@const SvelteComponent = icons[snackbar.type]}
 		<div class="snackbar {snackbar.type}" in:fly={{ y: -20, duration: 200 }} out:fade={{ duration: 200 }}>
 			<!-- Close Button -->
-			<button class="close-btn" on:click={() => snackbars.update((n) => n.filter((s) => s.id !== snackbar.id))} aria-label="Close"> &times; </button>
+			<button class="close-btn" onclick={() => snackbars.update((n) => n.filter((s) => s.id !== snackbar.id))} aria-label="Close"> &times; </button>
 
 			<!-- Icon and Message -->
-			<svelte:component this={icons[snackbar.type]} size={20} />
+			<SvelteComponent size={20} />
 			<span>{snackbar.message}</span>
 
 			<!-- Progress Bar -->

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import DatePicker from "$lib/components/DatePicker.svelte";
-	import TagInput from "$lib/components/TagInput.svelte";
+	import DatePicker from "$lib/components/common/DatePicker.svelte";
+	import TagInput from "$lib/components/common/TagInput.svelte";
 	import { BLOOD_GROUPS, CASTE_CATEGORIES, GENDERS, GUARDIAN_TYPE } from "$lib/constants";
 	import { isLoading } from "$lib/stores/loading";
 	import { isUpdate } from "$lib/stores/modalStore";
@@ -8,16 +8,20 @@
 	import { formErrors, initializeStudentFormData, submitAttempted, touched, validateStudentForm, type StudentFormData } from "./studentValidation";
 	import { slide } from "svelte/transition";
 	import { createStudent } from "$lib/services/student";
-	import FileUpload from "$lib/components/FileUpload.svelte";
-	import Tabs from "$lib/components/Tabs.svelte";
+	import FileUpload from "$lib/components/common/FileUpload.svelte";
+	import Tabs from "$lib/components/common/Tabs.svelte";
 
-	export let classesWithSections: any;
+	interface Props {
+		classesWithSections: any;
+	}
 
-	let availableSections: { _id: string; name: string }[] = [];
-	let selectedDate: Date | null = null;
-	let selectedDateOfBirth: Date | null = null;
+	let { classesWithSections }: Props = $props();
 
-	let formData: StudentFormData = initializeStudentFormData();
+	let availableSections: { _id: string; name: string }[] = $state([]);
+	let selectedDate: Date | null = $state(null);
+	let selectedDateOfBirth: Date | null = $state(null);
+
+	let formData: StudentFormData = $state(initializeStudentFormData());
 	function clearForm() {
 		submitAttempted.set(false);
 		selectedDateOfBirth = null;
@@ -102,7 +106,7 @@
 	}
 </script>
 
-<form on:submit={onSubmit}>
+<form onsubmit={onSubmit}>
 	<!-- Academic Detail -->
 	<div class="card-wrapper">
 		<h1>Academic Detail</h1>
@@ -125,8 +129,8 @@
 					id="classId"
 					class={`w-full ${$formErrors["class"] && ($touched["class"] || $submitAttempted) ? "input-error" : ""}`}
 					bind:value={formData.studentData.classId}
-					on:change={handleClassChange}
-					on:blur={handleClassChange}
+					onchange={handleClassChange}
+					onblur={handleClassChange}
 				>
 					<option value="" disabled selected>Select Class</option>
 					{#each classesWithSections as cls}
@@ -144,8 +148,8 @@
 					bind:value={formData.studentData.sectionId}
 					disabled={!availableSections.length}
 					class={`w-full ${$formErrors["studentData"] && ($touched["studentData.sectionId"] || $submitAttempted) ? "input-error" : ""}`}
-					on:change={handleSectionChange}
-					on:blur={() => handleBlur("studentData.sectionId")}
+					onchange={handleSectionChange}
+					onblur={() => handleBlur("studentData.sectionId")}
 				>
 					<option value="" disabled selected>Select Section</option>
 					{#each availableSections as section}
@@ -175,8 +179,8 @@
 					name="firstName"
 					class={`w-full ${$formErrors["studentData.profile.firstName"] && ($touched["studentData.profile.firstName"] || $submitAttempted) ? "input-error" : ""}`}
 					bind:value={formData.studentData.profile.firstName}
-					on:blur={() => handleBlur("studentData.profile.firstName")}
-					on:input={() => handleBlur("studentData.profile.firstName")}
+					onblur={() => handleBlur("studentData.profile.firstName")}
+					oninput={() => handleBlur("studentData.profile.firstName")}
 				/>
 				{#if $formErrors["studentData.profile.firstName"] && ($touched["studentData.profile.firstName"] || $submitAttempted)}
 					<p class="error-text">{$formErrors["studentData.profile.firstName"]}</p>
@@ -195,8 +199,8 @@
 					name="lastName"
 					class={`w-full ${$formErrors["studentData.profile.lastName"] && ($touched["studentData.profile.lastName"] || $submitAttempted) ? "input-error" : ""}`}
 					bind:value={formData.studentData.profile.lastName}
-					on:blur={() => handleBlur("studentData.profile.lastName")}
-					on:input={() => handleBlur("studentData.profile.lastName")}
+					onblur={() => handleBlur("studentData.profile.lastName")}
+					oninput={() => handleBlur("studentData.profile.lastName")}
 				/>
 				{#if $formErrors["studentData.profile.lastName"] && ($touched["studentData.profile.lastName"] || $submitAttempted)}
 					<p class="error-text">{$formErrors["studentData.profile.lastName"]}</p>
@@ -209,8 +213,8 @@
 					id="gender"
 					class={`w-full ${$formErrors["studentData.profile.gender"] && ($touched["studentData.profile.gender"] || $submitAttempted) ? "input-error" : ""}`}
 					bind:value={formData.studentData.profile.gender}
-					on:blur={() => handleBlur("gender")}
-					on:change={() => handleBlur("gender")}
+					onblur={() => handleBlur("gender")}
+					onchange={() => handleBlur("gender")}
 				>
 					<option value="" disabled selected>Select Gender</option>
 					{#each GENDERS as gender}
@@ -264,8 +268,8 @@
 					name="mobile"
 					class={`w-full ${$formErrors["userData.mobile"] && ($touched["userData.mobile"] || $submitAttempted) ? "input-error" : ""}`}
 					bind:value={formData.userData.mobile}
-					on:blur={() => handleBlur("userData.mobile")}
-					on:input={() => handleBlur("userData.mobile")}
+					onblur={() => handleBlur("userData.mobile")}
+					oninput={() => handleBlur("userData.mobile")}
 					maxlength="10"
 				/>
 				{#if $formErrors["userData.mobile"] && ($touched["userData.mobile"] || $submitAttempted)}
@@ -281,8 +285,8 @@
 					name="email"
 					class={`w-full ${$formErrors["userData.email"] && ($touched["userData.email"] || $submitAttempted) ? "input-error" : ""}`}
 					bind:value={formData.userData.email}
-					on:blur={() => handleBlur("userData.email")}
-					on:input={() => handleBlur("userData.email")}
+					onblur={() => handleBlur("userData.email")}
+					oninput={() => handleBlur("userData.email")}
 				/>
 				{#if $formErrors["userData.email"] && ($touched["userData.email"] || $submitAttempted)}
 					<p class="error-text">{$formErrors["userData.email"]}</p>
@@ -303,8 +307,8 @@
 					name="street"
 					class={`w-full ${$formErrors["studentData.profile.address.street"] && ($touched["studentData.profile.address.street"] || $submitAttempted) ? "input-error" : ""}`}
 					bind:value={formData.studentData.profile.address.street}
-					on:blur={() => handleBlur("studentData.profile.address.street")}
-					on:input={() => handleBlur("studentData.profile.address.street")}
+					onblur={() => handleBlur("studentData.profile.address.street")}
+					oninput={() => handleBlur("studentData.profile.address.street")}
 				/>
 				{#if $formErrors["studentData.profile.address.street"] && ($touched["studentData.profile.address.street"] || $submitAttempted)}
 					<p class="error-text">{$formErrors["studentData.profile.address.street"]}</p>
@@ -319,8 +323,8 @@
 					name="city"
 					class={`w-full ${$formErrors["studentData.profile.address.city"] && ($touched["studentData.profile.address.city"] || $submitAttempted) ? "input-error" : ""}`}
 					bind:value={formData.studentData.profile.address.city}
-					on:blur={() => handleBlur("studentData.profile.address.city")}
-					on:input={() => handleBlur("studentData.profile.address.city")}
+					onblur={() => handleBlur("studentData.profile.address.city")}
+					oninput={() => handleBlur("studentData.profile.address.city")}
 				/>
 				{#if $formErrors["studentData.profile.address.city"] && ($touched["studentData.profile.address.city"] || $submitAttempted)}
 					<p class="error-text">{$formErrors["studentData.profile.address.city"]}</p>
@@ -335,8 +339,8 @@
 					name="state"
 					class={`w-full ${$formErrors["studentData.profile.address.state"] && ($touched["studentData.profile.address.state"] || $submitAttempted) ? "input-error" : ""}`}
 					bind:value={formData.studentData.profile.address.state}
-					on:blur={() => handleBlur("studentData.profile.address.state")}
-					on:input={() => handleBlur("studentData.profile.address.state")}
+					onblur={() => handleBlur("studentData.profile.address.state")}
+					oninput={() => handleBlur("studentData.profile.address.state")}
 				/>
 				{#if $formErrors["studentData.profile.address.state"] && ($touched["studentData.profile.address.state"] || $submitAttempted)}
 					<p class="error-text">{$formErrors["studentData.profile.address.state"]}</p>
@@ -351,8 +355,8 @@
 					name="postalCode"
 					class={`w-full ${$formErrors["studentData.profile.address.postalCode"] && ($touched["studentData.profile.address.postalCode"] || $submitAttempted) ? "input-error" : ""}`}
 					bind:value={formData.studentData.profile.address.postalCode}
-					on:blur={() => handleBlur("studentData.profile.address.postalCode")}
-					on:input={() => handleBlur("studentData.profile.address.postalCode")}
+					onblur={() => handleBlur("studentData.profile.address.postalCode")}
+					oninput={() => handleBlur("studentData.profile.address.postalCode")}
 				/>
 				{#if $formErrors["studentData.profile.address.postalCode"] && ($touched["studentData.profile.address.postalCode"] || $submitAttempted)}
 					<p class="error-text">{$formErrors["studentData.profile.address.postalCode"]}</p>
@@ -367,8 +371,8 @@
 					name="country"
 					class={`w-full ${$formErrors["studentData.profile.address.country"] && ($touched["studentData.profile.address.country"] || $submitAttempted) ? "input-error" : ""}`}
 					bind:value={formData.studentData.profile.address.country}
-					on:blur={() => handleBlur("studentData.profile.address.country")}
-					on:input={() => handleBlur("studentData.profile.address.country")}
+					onblur={() => handleBlur("studentData.profile.address.country")}
+					oninput={() => handleBlur("studentData.profile.address.country")}
 				/>
 				{#if $formErrors["studentData.profile.address.country"] && ($touched["studentData.profile.address.country"] || $submitAttempted)}
 					<p class="error-text">{$formErrors["studentData.profile.address.country"]}</p>
@@ -398,8 +402,8 @@
 					type="text"
 					class={`w-full ${$formErrors[".medicalDetails.height"] && ($touched[".medicalDetails.height"] || $submitAttempted) ? "input-error" : ""}`}
 					bind:value={formData.studentData.medicalDetails.height}
-					on:blur={() => handleBlur("medicalDetails.height")}
-					on:input={() => handleBlur("medicalDetails.height")}
+					onblur={() => handleBlur("medicalDetails.height")}
+					oninput={() => handleBlur("medicalDetails.height")}
 				/>
 				{#if $formErrors["medicalDetails.height"] && ($touched["medicalDetails.height"] || $submitAttempted)}
 					<p class="error-text">{$formErrors["medicalDetails.height"]}</p>
@@ -413,8 +417,8 @@
 					type="text"
 					class={`w-full ${$formErrors[".medicalDetails.weight"] && ($touched[".medicalDetails.weight"] || $submitAttempted) ? "input-error" : ""}`}
 					bind:value={formData.studentData.medicalDetails.weight}
-					on:blur={() => handleBlur("medicalDetails.weight")}
-					on:input={() => handleBlur("medicalDetails.weight")}
+					onblur={() => handleBlur("medicalDetails.weight")}
+					oninput={() => handleBlur("medicalDetails.weight")}
 				/>
 				{#if $formErrors["medicalDetails.weight"] && ($touched["medicalDetails.weight"] || $submitAttempted)}
 					<p class="error-text">{$formErrors["medicalDetails.weight"]}</p>
@@ -423,7 +427,7 @@
 
 			<div class="col-1">
 				<label for="eyeSight">Eye Sight</label>
-				<input id="eyeSight" type="text" bind:value={formData.studentData.medicalDetails.eyeSight} class={`w-full`} on:blur={() => handleBlur("eyeSight")} />
+				<input id="eyeSight" type="text" bind:value={formData.studentData.medicalDetails.eyeSight} class={`w-full`} onblur={() => handleBlur("eyeSight")} />
 			</div>
 
 			<div class="col-2">
@@ -457,8 +461,8 @@
 					name="fatherFirstName"
 					class={`w-full ${$formErrors["studentData.parentGuardianDetails.fatherDetails.fatherFirstName"] && $submitAttempted ? "input-error" : ""}`}
 					bind:value={formData.studentData.parentGuardianDetails.fatherDetails.fatherFirstName}
-					on:blur={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherFirstName")}
-					on:input={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherFirstName")}
+					onblur={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherFirstName")}
+					oninput={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherFirstName")}
 					maxlength="10"
 				/>
 				{#if $formErrors["studentData.parentGuardianDetails.fatherDetails.fatherFirstName"] && $submitAttempted}
@@ -474,8 +478,8 @@
 					name="fatherLastName"
 					class={`w-full ${$formErrors["studentData.parentGuardianDetails.fatherDetails.fatherLastName"] && $submitAttempted ? "input-error" : ""}`}
 					bind:value={formData.studentData.parentGuardianDetails.fatherDetails.fatherLastName}
-					on:blur={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherLastName")}
-					on:input={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherLastName")}
+					onblur={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherLastName")}
+					oninput={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherLastName")}
 					maxlength="10"
 				/>
 				{#if $formErrors["studentData.parentGuardianDetails.fatherDetails.fatherLastName"] && $submitAttempted}
@@ -491,8 +495,8 @@
 					name="fatherPhone"
 					class={`w-full ${$formErrors["studentData.parentGuardianDetails.fatherDetails.fatherPhone"] && $submitAttempted ? "input-error" : ""}`}
 					bind:value={formData.studentData.parentGuardianDetails.fatherDetails.fatherPhone}
-					on:blur={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherPhone")}
-					on:input={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherPhone")}
+					onblur={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherPhone")}
+					oninput={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherPhone")}
 					maxlength="10"
 				/>
 				{#if $formErrors["studentData.parentGuardianDetails.fatherDetails.fatherPhone"] && $submitAttempted}
@@ -508,8 +512,8 @@
 					type="text"
 					class={`w-full ${$formErrors["studentData.parentGuardianDetails.fatherDetails.fatherEmail"] && $submitAttempted ? "input-error" : ""}`}
 					bind:value={formData.studentData.parentGuardianDetails.fatherDetails.fatherEmail}
-					on:blur={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherEmail")}
-					on:input={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherEmail")}
+					onblur={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherEmail")}
+					oninput={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherEmail")}
 				/>
 				{#if $formErrors["studentData.parentGuardianDetails.fatherDetails.fatherEmail"] && $submitAttempted}
 					<p class="error-text">{$formErrors["studentData.parentGuardianDetails.fatherDetails.fatherEmail"]}</p>
@@ -533,8 +537,8 @@
 					name="motherFirstName"
 					class={`w-full ${$formErrors["studentData.parentGuardianDetails.motherDetails.motherFirstName"] && $submitAttempted ? "input-error" : ""}`}
 					bind:value={formData.studentData.parentGuardianDetails.motherDetails.motherFirstName}
-					on:blur={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherFirstName")}
-					on:input={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherFirstName")}
+					onblur={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherFirstName")}
+					oninput={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherFirstName")}
 					maxlength="10"
 				/>
 				{#if $formErrors["studentData.parentGuardianDetails.motherDetails.motherFirstName"] && $submitAttempted}
@@ -550,8 +554,8 @@
 					name="motherLastName"
 					class={`w-full ${$formErrors["studentData.parentGuardianDetails.motherDetails.motherLastName"] && $submitAttempted ? "input-error" : ""}`}
 					bind:value={formData.studentData.parentGuardianDetails.motherDetails.motherLastName}
-					on:blur={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherLastName")}
-					on:input={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherLastName")}
+					onblur={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherLastName")}
+					oninput={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherLastName")}
 					maxlength="10"
 				/>
 				{#if $formErrors["studentData.parentGuardianDetails.motherDetails.motherLastName"] && $submitAttempted}
@@ -567,8 +571,8 @@
 					name="fatherPhone"
 					class={`w-full ${$formErrors["studentData.parentGuardianDetails.motherDetails.motherPhone"] && $submitAttempted ? "input-error" : ""}`}
 					bind:value={formData.studentData.parentGuardianDetails.motherDetails.motherPhone}
-					on:blur={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherPhone")}
-					on:input={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherPhone")}
+					onblur={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherPhone")}
+					oninput={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherPhone")}
 					maxlength="10"
 				/>
 				{#if $formErrors["studentData.parentGuardianDetails.motherDetails.motherPhone"] && $submitAttempted}
@@ -584,8 +588,8 @@
 					type="text"
 					class={`w-full ${$formErrors["studentData.parentGuardianDetails.motherDetails.motherEmail"] && $submitAttempted ? "input-error" : ""}`}
 					bind:value={formData.studentData.parentGuardianDetails.motherDetails.motherEmail}
-					on:blur={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherEmail")}
-					on:input={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherEmail")}
+					onblur={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherEmail")}
+					oninput={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherEmail")}
 				/>
 				{#if $formErrors["studentData.parentGuardianDetails.motherDetails.motherEmail"] && $submitAttempted}
 					<p class="error-text">{$formErrors["studentData.parentGuardianDetails.motherDetails.motherEmail"]}</p>
@@ -609,8 +613,8 @@
 					placeholder="Write current address.."
 					class={`w-full ${$formErrors["studentData.parentGuardianDetails.parentCurrentAddress"] && $submitAttempted ? "input-error" : ""}`}
 					bind:value={formData.studentData.parentGuardianDetails.parentCurrentAddress}
-					on:blur={() => handleBlur("studentData.parentGuardianDetails.parentCurrentAddress")}
-					on:input={() => handleBlur("studentData.parentGuardianDetails.parentCurrentAddress")}
+					onblur={() => handleBlur("studentData.parentGuardianDetails.parentCurrentAddress")}
+					oninput={() => handleBlur("studentData.parentGuardianDetails.parentCurrentAddress")}
 					maxlength="250"
 				>
 				</textarea>
@@ -635,7 +639,7 @@
 									class="radio-input"
 									value={type.name}
 									checked={formData?.studentData?.parentGuardianDetails?.primaryGuardian === type.name}
-									on:change={() => guardianTypeChange(type.name)}
+									onchange={() => guardianTypeChange(type.name)}
 								/>
 								<span class="radio-custom"></span>
 								<span class="radio-text">{type.name}</span>
@@ -659,8 +663,8 @@
 								id="guardianFirstName"
 								type="text"
 								bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianFirstName}
-								on:blur={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianFirstName")}
-								on:input={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianFirstName")}
+								onblur={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianFirstName")}
+								oninput={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianFirstName")}
 								class={`w-full ${$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianFirstName"] && $submitAttempted ? "input-error" : ""}`}
 							/>
 							{#if $formErrors["studentData.parentGuardianDetails.guardianDetails.guardianFirstName"] && $submitAttempted}
@@ -674,8 +678,8 @@
 								id="guardianLastName"
 								type="text"
 								bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianLastName}
-								on:blur={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianLastName")}
-								on:input={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianLastName")}
+								onblur={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianLastName")}
+								oninput={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianLastName")}
 								class={`w-full ${$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianLastName"] && $submitAttempted ? "input-error" : ""}`}
 							/>
 							{#if $formErrors["studentData.parentGuardianDetails.guardianDetails.guardianLastName"] && $submitAttempted}
@@ -689,8 +693,8 @@
 								id="guardianPhone"
 								type="tel"
 								bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianPhone}
-								on:blur={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianPhone")}
-								on:input={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianPhone")}
+								onblur={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianPhone")}
+								oninput={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianPhone")}
 								class={`w-full ${$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianPhone"] && $submitAttempted ? "input-error" : ""}`}
 								maxlength="10"
 							/>
@@ -705,8 +709,8 @@
 								id="guardianEmail"
 								type="email"
 								bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianEmail}
-								on:blur={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianEmail")}
-								on:input={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianEmail")}
+								onblur={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianEmail")}
+								oninput={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianEmail")}
 								class={`w-full ${$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianEmail"] && $submitAttempted ? "input-error" : ""}`}
 							/>
 							{#if $formErrors["studentData.parentGuardianDetails.guardianDetails.guardianEmail"] && $submitAttempted}
@@ -720,8 +724,8 @@
 								id="guardianRelation"
 								type="text"
 								bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianRelation}
-								on:blur={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianRelation")}
-								on:input={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianRelation")}
+								onblur={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianRelation")}
+								oninput={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianRelation")}
 								class={`w-full ${$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianRelation"] && $submitAttempted ? "input-error" : ""}`}
 							/>
 							{#if $formErrors["studentData.parentGuardianDetails.guardianDetails.guardianRelation"] && $submitAttempted}
@@ -744,8 +748,8 @@
 							<textarea
 								id="guardianCurrentAddress"
 								bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianCurrentAddress}
-								on:blur={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianCurrentAddress")}
-								on:input={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianCurrentAddress")}
+								onblur={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianCurrentAddress")}
+								oninput={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianCurrentAddress")}
 								placeholder="Write current address.."
 								class={`w-full ${$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianCurrentAddress"] && $submitAttempted ? "input-error" : ""}`}
 							></textarea>
@@ -827,7 +831,7 @@
 
 	<!-- Form Actions -->
 	<div class="form-actions">
-		<button class="btn" type="button" on:click={clearForm} disabled={$isLoading}> Clear </button>
+		<button class="btn" type="button" onclick={clearForm} disabled={$isLoading}> Clear </button>
 		<button class="btn" type="submit" disabled={$isLoading}>
 			{#if $isLoading}
 				{#if $isUpdate}Updating...{:else}Saving...{/if}

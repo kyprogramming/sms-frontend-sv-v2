@@ -2,14 +2,18 @@
 	import { Menu, Logs } from "@lucide/svelte";
 	import type { User } from "$lib/utils/types";
 	import SessionMenu from "./SessionMenu.svelte";
-	export let user: User | null;
-	export let sidebarOpen: boolean;
-	export let onToggleSidebar: () => void;
+	interface Props {
+		user: User | null;
+		sidebarOpen: boolean;
+		onToggleSidebar: () => void;
+	}
+
+	let { user, sidebarOpen, onToggleSidebar }: Props = $props();
 </script>
 
 <header class="header">
 	<div class="flex-container">
-		<button on:click={onToggleSidebar} style="background: none; border: none; cursor: pointer;">
+		<button onclick={onToggleSidebar} style="background: none; border: none; cursor: pointer;">
 			{#if sidebarOpen}
 				<Menu size="24" color="red" />
 			{:else}

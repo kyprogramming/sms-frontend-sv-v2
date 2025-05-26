@@ -1,7 +1,11 @@
 <script lang="ts">
-	export let levelFilter: string;
-	export let academicYearFilter: string;
 	import { Search, Download, Plus } from "@lucide/svelte";
+	interface Props {
+		levelFilter: string;
+		academicYearFilter: string;
+	}
+
+	let { levelFilter, academicYearFilter = $bindable() }: Props = $props();
 </script>
 
 <div class="filters">

@@ -1,4 +1,6 @@
 <script>
+	import { run } from 'svelte/legacy';
+
 	import ClassHeader from "./ClassHeader.svelte";
 	import ClassFilters from "./ClassFilters.svelte";
 	import ClassTable from "./ClassTable.svelte";
@@ -7,9 +9,9 @@
 	let totalLevels = 5;
 	let totalAcademicYears = 3;
 	let rowsPerPage = 30; // Changed to match the image's default
-	let currentPage = 1;
-	let levelFilter = "1";
-	let academicYearFilter = "2023-2024";
+	let currentPage = $state(1);
+	let levelFilter = $state("1");
+	let academicYearFilter = $state("2023-2024");
 	let classes = [
 		{ id: 1, name: "Mathematics 101", level: 1, academicYear: "2023-2024" },
 		{ id: 2, name: "Science 201", level: 2, academicYear: "2023-2024" },
@@ -31,18 +33,20 @@
 	];
 
 	// Filter and paginate classes
-	$: filteredClasses = classes
+	let filteredClasses = $derived(classes
 		.filter((cls) => levelFilter === "" || cls.level.toString() === levelFilter)
-		.filter((cls) => academicYearFilter === "" || cls.academicYear === academicYearFilter);
+		.filter((cls) => academicYearFilter === "" || cls.academicYear === academicYearFilter));
 
-	$: totalItems = filteredClasses.length;
+	let totalItems = $derived(filteredClasses.length);
 
-	$: paginatedClasses = filteredClasses.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+	let paginatedClasses = $derived(filteredClasses.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage));
 
 	// Reset currentPage to 1 when rowsPerPage changes
-	$: if (rowsPerPage) {
-		currentPage = 1;
-	}
+	run(() => {
+		if (rowsPerPage) {
+			currentPage = 1;
+		}
+	});
 </script>
 
 <!-- <ClassHeader {totalClasses} {totalLevels} {totalAcademicYears} /> -->

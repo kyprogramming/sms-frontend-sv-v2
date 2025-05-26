@@ -9,8 +9,12 @@
 	import Breadcrumb from "$lib/components/common/Breadcrumb.svelte";
 	import StudentList from "$lib/components/shared/student/StudentList.svelte";
 
-    export let data: any;
-	let response: any = data.data;
+	interface Props {
+		data: any;
+	}
+
+	let { data }: Props = $props();
+	let response: any = $state(data.data);
 	let dataToUpdate: any;
 
 	const breadcrumbItems = [{ label: "Home", href: "/" }, { label: "Dashboard", href: "/admin/dashboard" }, { label: "Students" }];

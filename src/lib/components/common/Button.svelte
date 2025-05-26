@@ -1,9 +1,13 @@
 <script lang="ts">
-	export let label: string;
-	export let onClick: () => void;
+	interface Props {
+		label: string;
+		onClick: () => void;
+	}
+
+	let { label, onClick }: Props = $props();
 </script>
 
-<button on:click={onClick} class="logout-button">
+<button onclick={onClick} class="logout-button">
 	{label}
 </button>
 
