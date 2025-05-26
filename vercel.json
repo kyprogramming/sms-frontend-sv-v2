@@ -1,8 +1,12 @@
 {
     "rewrites": [
         {
-            "source": "/api/:path*",
-            "destination": "https://school-management-api-izm4.onrender.com/api/:path*"
+            "source": "/api/(.*)",
+            "destination": "https://school-management-api-izm4.onrender.com/$1",
+            "headers": {
+                "X-Forwarded-Host": "online-school-management-sigma.vercel.app",
+                "X-Forwarded-Proto": "https"
+            }
         }
     ]
 }
