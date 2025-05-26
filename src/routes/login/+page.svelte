@@ -9,6 +9,7 @@
 	import { apiRequest } from "$lib/utils/api";
 	import { showSnackbar } from "$lib/components/snackbar/store";
 	import { API_BASE_URL } from "$lib/constants/env.config";
+	import { PUBLIC_API_BASE_URL } from "$env/static/public";
 
 	const loginSchema = z.object({
 		email: z.string().email("Invalid email address"),
@@ -70,9 +71,11 @@
 
 <div class="form-container">
 	<div class="form-card">
-		<h2>School Logo</h2>
+		  <h2>API URL</h2> {PUBLIC_API_BASE_URL}
+        <h2>School Logo</h2>
 		<h3>Login to Your Account</h3>
 		<p>Enter your credentials below</p>
+
 
         <form onsubmit={onSubmit} novalidate>
 			<div class="input-wrapper">
