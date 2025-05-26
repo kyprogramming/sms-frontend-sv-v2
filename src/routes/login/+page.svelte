@@ -50,7 +50,7 @@
 		try {
 			// Call api
 			isLoading.set(true);
-			const data = await apiRequest<any>(`${API_BASE_URL}/health/check`, "GET", formData);
+			const data = await apiRequest<any>(`${API_BASE_URL}/auth/login`, "POST", formData);
 			if (!data.success) throw new Error(data.message || "Login failed");
 
 			// redirect to dashboard page
