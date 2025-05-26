@@ -1,0 +1,10 @@
+{
+	"printWidth": 180,
+	"semi": true,
+	"singleQuote": false,
+	"svelteStrictMode": false,
+	"svelteBracketNewLine": true,
+	"svelteAllowShorthand": true,
+	"svelteIndentScriptAndStyle": true,
+	"plugins": ["prettier-plugin-svelte"]
+}

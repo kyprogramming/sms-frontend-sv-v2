@@ -1,0 +1,17 @@
+node_modules
+build
+dist
+public
+.DS_Store
+node_modules
+.npm
+/build
+/.svelte-kit
+/package
+.env
+.env.*
+!.env.example
+src/app.css
+# Ignore files for PNPM, NPM
+package-lock.json
+
