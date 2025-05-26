@@ -1,6 +1,6 @@
 <script lang="ts">
-	import DatePicker from "$lib/components/DatePicker.svelte";
-	import TagInput from "$lib/components/TagInput.svelte";
+	import DatePicker from "$lib/components/common/DatePicker.svelte";
+	import TagInput from "$lib/components/common/TagInput.svelte";
 	import { BLOOD_GROUPS, CASTE_CATEGORIES, GENDERS, GUARDIAN_TYPE } from "$lib/constants";
 	import { isLoading } from "$lib/stores/loading";
 	import { isUpdate } from "$lib/stores/modalStore";
@@ -8,8 +8,8 @@
 	import { formErrors, initializeStudentFormData, submitAttempted, touched, validateStudentForm, type StudentFormData } from "./studentValidation";
 	import { slide } from "svelte/transition";
 	import { createStudent } from "$lib/services/student";
-	import FileUpload from "$lib/components/FileUpload.svelte";
-	import Tabs from "$lib/components/Tabs.svelte";
+	import FileUpload from "$lib/components/common/FileUpload.svelte";
+	import Tabs from "$lib/components/common/Tabs.svelte";
 
 	interface Props {
 		classesWithSections: any;
