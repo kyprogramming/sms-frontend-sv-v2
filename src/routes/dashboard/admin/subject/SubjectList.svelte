@@ -1,7 +1,7 @@
 <script lang="ts">
-	import DataTable from "$lib/components/DataTable.svelte";
-	import DeleteConfirmModal from "$lib/components/DeleteConfirmModal.svelte";
-	import Modal from "$lib/components/Modal.svelte";
+	import DataTable from "$lib/components/common/DataTable.svelte";
+	import DeleteConfirmModal from "$lib/components/common/DeleteConfirmModal.svelte";
+	import Modal from "$lib/components/common/Modal.svelte";
 	import { isDeleteModalOpen, isModalOpen, modalData, openDeleteModal, openModal, isUpdate, openEditModal } from "$lib/stores/modalStore";
 	import { formatDate } from "$lib/utils/formatDate";
 	import { Pencil, Eye, Trash2, Plus } from "@lucide/svelte";

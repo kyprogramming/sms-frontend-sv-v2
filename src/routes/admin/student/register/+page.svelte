@@ -1,11 +1,12 @@
 <script lang="ts">
-	import Breadcrumb from "$lib/components/Breadcrumb.svelte";
+	import Breadcrumb from "$lib/components/common/Breadcrumb.svelte";
 	import { isModalOpen, openEditModal, openModal } from "$lib/stores/modalStore";
 	import { searchText, currentPage, rowsPerPage, totalPages, totalItems } from "$lib/stores/paginationStore";
 	import { get } from "svelte/store";
 	import { showSnackbar } from "$lib/components/snackbar/store";
 	import { deleteSectionById, fetchSectionById, fetchSections } from "$lib/services/section";
-	import StudentForm from "./StudentForm.svelte";
+	import StudentForm from "$lib/components/shared/student/StudentForm.svelte";
+
 
 	export let data: any;
 	let response: any = data.data;

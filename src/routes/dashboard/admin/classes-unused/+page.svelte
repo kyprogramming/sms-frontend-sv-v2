@@ -1,5 +1,5 @@
 <script>
-	import Breadcrumb from "$lib/components/Breadcrumb.svelte";
+	import Breadcrumb from "$lib/components/common/Breadcrumb.svelte";
 	import ClassForm from "$lib/components/forms/ClassForm-old.svelte";
 	import SchoolClassList from "./SchoolClassList.svelte";
 

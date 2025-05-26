@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Breadcrumb from "$lib/components/Breadcrumb.svelte";
+	import Breadcrumb from "$lib/components/common/Breadcrumb.svelte";
 	import { isModalOpen, openEditModal, openModal } from "$lib/stores/modalStore";
 	import { searchText, currentPage, rowsPerPage, totalPages, totalItems } from "$lib/stores/paginationStore";
 	import { get } from "svelte/store";

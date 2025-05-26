@@ -3,7 +3,7 @@
 	import { z } from "zod";
 	import { goto, invalidateAll } from "$app/navigation";
 	import { isLoading } from "$lib/stores/loading";
-	import LoadingBar from "$lib/components/LoadingBar.svelte";
+
 	import { writable } from "svelte/store";
 	import { validateForm } from "$lib/utils/validate";
 	import { apiRequest } from "$lib/utils/api";
