@@ -60,7 +60,7 @@
 		$totalItems = get(totalItems);
 	}
 
-    console.log("response::", response);
+    console.log("response::",  $state.snapshot(response));
 </script>
 
 <Breadcrumb title="Student List" items={breadcrumbItems} />
