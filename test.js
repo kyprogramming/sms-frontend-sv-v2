@@ -4,4 +4,4 @@ function generateUsername(name) {
 }
 
 const userName = generateUsername("kumar");
-// console.log(userName)
+// console.log(userName) //
