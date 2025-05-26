@@ -1,5 +1,6 @@
 export async function apiRequest<T>(url: string, method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE", body?: unknown, options?: RequestInit): Promise<T> {
-	const res = await fetch(url, {
+    console.log(url);
+    const res = await fetch(url, {
 		method,
 		headers: {
 			"Content-Type": "application/json",
