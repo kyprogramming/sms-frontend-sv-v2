@@ -23,11 +23,11 @@
 
     let showCalendar = $state(false);
     let selectedDate: Date | null = $state(value instanceof Date ? value : (value ? new Date(value) : null));
-    let calendarRef: HTMLDivElement = $state();
+    let calendarRef: HTMLDivElement | undefined = $state();
 
     const today = new Date();
-    let currentMonth = $state(selectedDate ? selectedDate.getMonth() : today.getMonth());
-    let currentYear = $state(selectedDate ? selectedDate.getFullYear() : today.getFullYear());
+    let currentMonth = $derived(selectedDate ? selectedDate.getMonth() : today.getMonth());
+    let currentYear = $derived(selectedDate ? selectedDate.getFullYear() : today.getFullYear());
 
     // Helper function to safely parse dates
     function safeDateParse(date: Date | string | null): Date | null {
@@ -221,6 +221,8 @@
 
                     <!-- Days of the month -->
                     {#each Array(daysInMonth) as _, i}
+                        <!-- svelte-ignore a11y_click_events_have_key_events -->
+                        <!-- svelte-ignore a11y_no_static_element_interactions -->
                         <div 
                             class="calendar-day {selectedDate?.getDate() === i + 1 && 
                                    selectedDate?.getMonth() === currentMonth && 
