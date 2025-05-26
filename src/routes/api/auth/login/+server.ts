@@ -1,8 +1,9 @@
+import { API_BASE_URL } from "$lib/constants/env.config";
 import type { RequestHandler } from "./$types";
 
 export const POST: RequestHandler = async ({ request }) => {
-	const body = await request.json();
-	const res = await fetch("http://localhost:5000/api/auth/login", {
+    const body = await request.json();
+	const res = await fetch(`${API_BASE_URL}/auth/login`, {
 		method: "POST",
 		body: JSON.stringify(body),
 		headers: {
