@@ -17,41 +17,28 @@ export interface SectionPayload {
 export async function createSection(data: SectionPayload) {
 	const res = await fetchWrapper(`${API_BASE_URL}/section`, {
 		method: "POST",
-		headers: JSON_HEADERS,
 		body: JSON.stringify(data),
-		credentials: "include",
 	});
 	return handleResponse(res, "Failed to create section");
 }
 
 // Fetch all sections list
 export async function fetchSectionList() {
-	const res = await fetchWrapper(`${API_BASE_URL}/section/list`, {
-		method: "GET",
-		headers: JSON_HEADERS,
-		credentials: "include",
-	});
+	const res = await fetchWrapper(`${API_BASE_URL}/section/list`, {method: "GET"});
 	return handleResponse(res, "Failed to fetch sections");
 }
 
 // Fetch multiple sections
 export async function fetchSections(params: URLSearchParams) {
-	const res = await fetchWrapper(`${API_BASE_URL}/section?${params.toString()}`, {
-		method: "GET",
-		headers: JSON_HEADERS,
-		credentials: "include",
-	});
+    debugger
+	const res = await fetchWrapper(`${API_BASE_URL}/section?${params.toString()}`, { method: "GET" });
 	return handleResponse(res, "Failed to fetch sections");
 }
 
 
 // Fetch single section by ID
 export async function fetchSectionById(id: string) {
-	const res = await fetchWrapper(`${API_BASE_URL}/section/${id}`, {
-		method: "GET",
-		headers: JSON_HEADERS,
-		credentials: "include",
-	});
+	const res = await fetchWrapper(`${API_BASE_URL}/section/${id}`, { method: "GET" });
 	return handleResponse(res, "Failed to fetch section");
 }
 
@@ -59,9 +46,7 @@ export async function fetchSectionById(id: string) {
 export async function updateSection(id: string, data: SectionPayload) {
 	const res = await fetchWrapper(`${API_BASE_URL}/section/${id}`, {
 		method: "PUT",
-		headers: JSON_HEADERS,
 		body: JSON.stringify(data),
-		credentials: "include",
 	});
 	return handleResponse(res, "Failed to update section");
 }
@@ -69,9 +54,7 @@ export async function updateSection(id: string, data: SectionPayload) {
 // Delete section
 export async function deleteSectionById(id: string) {
 	const res = await fetchWrapper(`${API_BASE_URL}/section/${id}`, {
-		method: "DELETE",
-		headers: JSON_HEADERS,
-		credentials: "include",
+		method: "DELETE"
 	});
 	return handleResponse(res, "Failed to delete section");
 }

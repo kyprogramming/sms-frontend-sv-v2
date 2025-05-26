@@ -17,30 +17,20 @@ export interface SubjectPayload {
 export async function createSubject(data: SubjectPayload) {
     const res = await fetchWrapper(`${API_BASE_URL}/subject`, {
         method: "POST",
-        headers: JSON_HEADERS,
         body: JSON.stringify(data),
-        credentials: "include",
     });
     return handleResponse(res, "Failed to create subject");
 }
 
 // Fetch multiple subjects
 export async function fetchSubjects(params: URLSearchParams) {
-    const res = await fetchWrapper(`${API_BASE_URL}/subject?${params.toString()}`, {
-        method: "GET",
-        headers: JSON_HEADERS,
-        credentials: "include",
-    });
+    const res = await fetchWrapper(`${API_BASE_URL}/subject?${params.toString()}`, { method: "GET" });
     return handleResponse(res, "Failed to fetch subjects");
 }
 
 // Fetch single subject by ID
 export async function fetchSubjectById(id: string) {
-    const res = await fetchWrapper(`${API_BASE_URL}/subject/${id}`, {
-        method: "GET",
-        headers: JSON_HEADERS,
-        credentials: "include",
-    });
+    const res = await fetchWrapper(`${API_BASE_URL}/subject/${id}`, { method: "GET" });
     return handleResponse(res, "Failed to fetch subject");
 }
 
@@ -48,19 +38,13 @@ export async function fetchSubjectById(id: string) {
 export async function updateSubject(id: string, data: SubjectPayload) {
     const res = await fetchWrapper(`${API_BASE_URL}/subject/${id}`, {
         method: "PUT",
-        headers: JSON_HEADERS,
         body: JSON.stringify(data),
-        credentials: "include",
     });
     return handleResponse(res, "Failed to update subject");
 }
 
 // Delete subject
 export async function deleteSubjectById(id: string) {
-    const res = await fetchWrapper(`${API_BASE_URL}/subject/${id}`, {
-        method: "DELETE",
-        headers: JSON_HEADERS,
-        credentials: "include",
-    });
+    const res = await fetchWrapper(`${API_BASE_URL}/subject/${id}`, { method: "DELETE"});
     return handleResponse(res, "Failed to delete subject");
 }

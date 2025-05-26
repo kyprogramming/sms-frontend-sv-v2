@@ -8,6 +8,7 @@
 	import { validateForm } from "$lib/utils/validate";
 	import { apiRequest } from "$lib/utils/api";
 	import { showSnackbar } from "$lib/components/snackbar/store";
+	import { API_BASE_URL } from "$lib/constants/env.config";
 
 	const loginSchema = z.object({
 		email: z.string().email("Invalid email address"),
@@ -48,7 +49,7 @@
 		try {
 			// Call api
 			isLoading.set(true);
-			const data = await apiRequest<any>("/api/auth/login", "POST", formData);
+			const data = await apiRequest<any>(`${API_BASE_URL}/auth/login`, "POST", formData);
 			if (!data.success) throw new Error(data.message || "Login failed");
 
 			// redirect to dashboard page

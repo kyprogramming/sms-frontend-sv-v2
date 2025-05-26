@@ -7,6 +7,7 @@
 	import { showSnackbar } from "../snackbar/store";
 	import { goto, invalidateAll } from "$app/navigation";
 	import { Power, Settings, UserCog } from "@lucide/svelte";
+	import { API_BASE_URL } from '$lib/constants/env.config';
 
 	interface Props {
 		user: User | null;
@@ -26,7 +27,7 @@
 	async function onSubmit() {
 		try {
 			isLoading.set(true);
-			const response = await apiRequest<any>("/api/auth/logout", "POST", {});
+			const response = await apiRequest<any>(`${API_BASE_URL}/auth/logout`, "POST", {});
                 // console.log("logout response:",response)
 			if (response.success) {
 				showSnackbar({ message: response?.message, type: "success" });
