@@ -9,6 +9,7 @@
 	import Breadcrumb from "$lib/components/common/Breadcrumb.svelte";
 	import StudentList from "$lib/components/shared/student/StudentList.svelte";
 
+
 	interface Props {
 		data: any;
 	}

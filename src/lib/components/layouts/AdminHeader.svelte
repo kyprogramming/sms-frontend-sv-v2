@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { Menu, Logs } from "@lucide/svelte";
+	import { Menu, ListCollapseIcon, Search, AlignJustify } from "@lucide/svelte";
 	import type { User } from "$lib/utils/types";
 	import SessionMenu from "./SessionMenu.svelte";
+	import { fade } from "svelte/transition";
 	interface Props {
 		user: User | null;
 		sidebarOpen: boolean;
@@ -13,11 +14,11 @@
 
 <header class="header">
 	<div class="flex-container">
-		<button onclick={onToggleSidebar} style="background: none; border: none; cursor: pointer;">
+		<button class="rounded-btn-icon" onclick={onToggleSidebar}>
 			{#if sidebarOpen}
-				<Menu size="24" color="red" />
+				<Menu />
 			{:else}
-				<Logs size="24" color="red" />
+				<ListCollapseIcon  />
 			{/if}
 		</button>
 		<h1>School Management System</h1>
@@ -29,9 +30,5 @@
 </header>
 
 <style>
-	.flex-container h1 {
-		margin: 0px;
-		padding: 0px;
-		font-size: 20px;
-	}
+	.flex-container h1 {margin: 0px;padding: 0px;font-size: 20px;gap: 2rem;}
 </style>

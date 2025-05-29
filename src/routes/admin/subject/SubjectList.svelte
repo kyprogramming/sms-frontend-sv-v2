@@ -40,14 +40,14 @@
 
 	const columns: ColumnConfig[] = [
 		{ key: "_id", label: "Id", visible: false },
-		{ key: "serialNo", label: "Sr No", width: "10%", sortable: true, align: "center" },
-		{ key: "name", label: "Name",  width: "25%",sortable: true, align: "center" },
-		{ key: "code", label: "Code", width: "15%",sortable: true, align: "center" },
-		{ key: "type", label: "Type", width: "15%",sortable: true, align: "center" },
+        { key: "serialNo", label: "Sr #", width: "80px", sortable: true, align: "center" },
+		{ key: "name", label: "Name",  width: "auto",sortable: true, align: "center" },
+		{ key: "code", label: "Code", width: "auto",sortable: true, align: "center" },
+		{ key: "type", label: "Type", width: "auto",sortable: true, align: "center" },
 		{
 			key: "createdAt",
 			label: "Created At",
-            width: "15%",
+            width: "auto",
 			sortable: true,
 			format: formatDate,
 			align: "center",
@@ -125,21 +125,20 @@
 	<div class="search-container">
 		<input name="search" type="text" placeholder="Search subject..." bind:value={$searchText} />
 
-		<button class="icon-button" onclick={handleSearchClick} aria-label="Search">
-			<span class="action-icons">
-				<span class="icon-wrapper view">
-					<Search />
-				</span>
-			</span>
-		</button>
+        <div class="action-buttons">
+            <button type="button" class="btn ripple" onclick={handleSearchClick}>
+                <Search  />
+                <span>Search</span>
+            </button>
+        </div>
 
-		<button class="icon-button" onclick={handleRefreshButtonClick} aria-label="Refresh">
-			<span class="action-icons">
-				<span class="icon-wrapper edit">
-					<RefreshCw />
-				</span>
-			</span>
-		</button>
+        <div class="action-buttons">
+            <button type="button" class="btn ripple" onclick={handleRefreshButtonClick}>
+                <RefreshCw  />
+                <span>Refresh</span>
+            </button>
+        </div>
+
 	</div>
 	<div class="action-buttons">
 		<button type="button" class="btn ripple" onclick={handleAdd}>
@@ -183,14 +182,6 @@
 		flex: 1;
 	}
 
-	.icon-button {
-		background: none;
-		border: none;
-		cursor: pointer;
-		padding: 4px;
-		display: flex;
-		align-items: center;
-	}
 	input[name="search"] {
 		width: 300px;
 	}

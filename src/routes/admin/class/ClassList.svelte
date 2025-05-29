@@ -40,8 +40,8 @@
 
 	const columns: ColumnConfig[] = [
 		{ key: "_id", label: "Id", visible: false },
-		{ key: "serialNo", label: "Sr No", width: "10%", sortable: true, align: "center" },
-		{ key: "name", label: "Name", sortable: true, width: "60%", align: "center" },
+        { key: "serialNo", label: "Sr #", width: "80px", sortable: true, align: "center" },
+		{ key: "name", label: "Name", sortable: true, width: "auto", align: "center" },
 		{
 			key: "createdAt",
 			label: "Created At",
@@ -123,21 +123,20 @@
 	<div class="search-container">
 		<input name="search" type="text" placeholder="Search class..." bind:value={$searchText} />
 
-		<button class="icon-button" onclick={handleSearchClick} aria-label="Search">
-			<span class="action-icons">
-				<span class="icon-wrapper view">
-					<Search />
-				</span>
-			</span>
-		</button>
+        <div class="action-buttons">
+            <button type="button" class="btn ripple" onclick={handleSearchClick}>
+                <Search  />
+                <span>Search</span>
+            </button>
+        </div>
 
-		<button class="icon-button" onclick={handleRefreshButtonClick} aria-label="Refresh">
-			<span class="action-icons">
-				<span class="icon-wrapper edit">
-					<RefreshCw />
-				</span>
-			</span>
-		</button>
+        <div class="action-buttons">
+            <button type="button" class="btn ripple" onclick={handleRefreshButtonClick}>
+                <RefreshCw  />
+                <span>Refresh</span>
+            </button>
+        </div>
+
 	</div>
 	<div class="action-buttons">
 		<button type="button" class="btn ripple" onclick={handleAdd}>

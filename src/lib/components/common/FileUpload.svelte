@@ -102,7 +102,7 @@
 		height: 35px;
 		border: 1px solid #ccc;
 		border-radius: 0.3rem;
-		background-color: var(--gray0);
+		background-color: var(--clr-bg-1);
 		transition: all 0.1s ease;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
@@ -116,7 +116,7 @@
 
 	/* Style the Choose File button (Chrome/Edge/Firefox) */
 	.custom-file-input::-webkit-file-upload-button {
-		background-color: var(--gray5);
+		background-color: var(--clr-bg-5);
 		color: white;
 		/* border: none; */
 		/* padding: 0.5rem; */

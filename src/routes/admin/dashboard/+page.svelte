@@ -1,1 +1,3 @@
-<p>Admin Dashboard Page</p>
+<div class="container">
+    <h1>Admin Dashboard</h1>
+</div>

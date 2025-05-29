@@ -118,7 +118,7 @@
 											<!-- svelte-ignore a11y_click_events_have_key_events -->
 											<!-- svelte-ignore a11y_no_static_element_interactions -->
 											{#if action.show}
-												<span class={`icon-wrapper ${action.class}`} onclick={() => action?.action(item)}>
+												<span class={`icon-circle ${action.class}`} onclick={() => action?.action(item)}>
 													<action.icon />
 												</span>
 											{/if}
@@ -136,13 +136,13 @@
 						<!-- <p>{columns.length + (actions?.show ? 2 : 1)}</p> -->
 						{#if $totalItems > 0}
 							<div style="display: flex; justify-content: space-between; align-items: center; margin: 5px;">
-								<p style="font-weight: bold;"><b style="font-size: larger; color: blue;">{$totalItems}</b> record(s) found on {$totalPages} page(s)</p>
+								<p style="margin: 0; font-weight: bold;">Total <b style="font-size: 15px; color: var(--clr-pri);">{$totalItems}</b> record(s) found on {$totalPages} page(s)</p>
 								{#if $totalItems > Number(DEFAULT_PAGE_LIMIT)}
 									<Pagination {onPaginationChange} {onPageLimitChange} />
 								{/if}
 							</div>
 						{:else}
-							<p style="text-align: center; font-weight: bold; margin: 5px;">{response.message || "No records found"}.</p>
+							<p style="margin: 0;text-align: left; font-weight: bold; margin: 5px;">{response.message || "No records found"}.</p>
 						{/if}
 					</td>
 				</tr>
@@ -159,7 +159,7 @@
 	.sortable:hover {
 		background-color: #f5f5f5;
 	}
-	.action-icons {display: flex; gap: 1rem; }
+	.action-icons {display: flex; gap: 0.5rem; }
 	/* .icon-wrapper {
 		cursor: pointer;
 		display: inline-flex;

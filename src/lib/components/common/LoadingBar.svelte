@@ -43,7 +43,7 @@
 
 <style>
 	.loading-bar {
-		height: 4px;
+		height: 1.5px;
 		background: #3b82f6;
 		position: fixed;
 		top: 0;

@@ -2,6 +2,7 @@
 
 	import "../app.css";
 	import "../app-input.css";
+	// import "../shared.css";
 	import LoadingBar from "$lib/components/common/LoadingBar.svelte";
 	import Snackbar from "$lib/components/snackbar/Snackbar.svelte";
 

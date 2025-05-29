@@ -866,13 +866,13 @@
 		align-items: center;
 		justify-content: space-between;
 		padding: 1rem;
-		background-color: var(--gray1);
+		background-color: var(--clr-bg-2);
 		font-weight: 600;
 		transition: background-color 0.3s;
 	}
 
 	.section-header:hover {
-		background-color: var(--gray2);
+		background-color: var(--clr-bg-3);
 	}
 
 	.arrow-icon {
@@ -912,11 +912,11 @@
 	}
 
 	.btn-primary:hover {
-		background-color: var(--primary-dark);
+		background-color: var(--clr-pri-dark);
 	}
 
 	.btn-primary:disabled {
-		background-color: var(--primary-light);
+		background-color: var(--clr-pri-light);
 		cursor: not-allowed;
 	}
 
@@ -1020,13 +1020,6 @@
 		font-size: 0.875rem;
 		margin-top: 0.25rem;
 	}
-
-	/* table class */
-	/* table {
-		width: 100%;
-		border-collapse: collapse;
-		margin-top: 1rem;
-	} */
 
 	th {
 		padding: 0.65rem;

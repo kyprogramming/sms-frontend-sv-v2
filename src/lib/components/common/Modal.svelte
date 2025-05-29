@@ -96,7 +96,7 @@
 
 	.modal-header {
 		padding: 0.5rem;
-		background-color: var(--gray1);
+		background-color: var(--clr-bg-2);
 		display: flex;
 		justify-content: space-between;
 		align-items: center;

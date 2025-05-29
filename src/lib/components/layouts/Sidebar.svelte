@@ -150,3 +150,47 @@
 		{/each}
 	</div>
 </nav>
+
+
+<style>
+    
+.group-items {
+    border-radius: 8px;
+}
+
+.menu-item {
+    display: flex;
+    padding: 8px 15px 8px 6px;
+    cursor: pointer;
+    align-items: center;
+    gap: 0.5rem;
+    border-left: 2px solid var(--clr-bg-3);
+    color: #5a6a85;
+    text-decoration: none;
+    transition: all 0.2s;
+    transition: border-left 0.2s ease, color 0.3s ease;
+    margin-left: 35px;
+}
+
+.menu-item:hover {
+    border-left: 2px solid var(--clr-pri-light)
+}
+
+.menu-item.active {
+    border-left: 2px solid var(--clr-pri-light)
+}
+
+.menu-item.active span {
+    color: #2364f1;
+    text-decoration: underline;
+}
+
+.menu-item span {
+    margin-left: 0.5rem;
+}
+
+.menu-item span:hover {
+    color: var(--clr-pri-light);
+    text-decoration: dotted;
+}
+</style>

@@ -165,7 +165,7 @@
 	</div>
 
 	<div class="flex-items-center" style="justify-content:end;">
-		<button class="btn ripple" type="reset" disabled={$isLoading} style="background-color: var(--primary-light); align-self: right;"> Clear </button>
+		<button class="btn ripple" type="reset" disabled={$isLoading} style="background-color: var(--clr-pri-light); align-self: right;"> Clear </button>
 		<button class="btn ripple" type="submit" disabled={$isLoading}>
 			{#if $isLoading}
 				{#if $isUpdate}Updating...{:else}Saving...{/if}

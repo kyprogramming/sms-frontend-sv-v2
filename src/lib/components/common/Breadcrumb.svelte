@@ -1,4 +1,5 @@
 <script lang="ts">
+    	import { ChevronRight } from "@lucide/svelte";
 	interface Props {
 		title?: string;
 		items?: { label: string; href?: string }[];
@@ -17,7 +18,10 @@
 			{#if item.href}
 				<a href={item.href}>{item.label}</a>
 				{#if i < items.length - 1}
-					<span class="separator">→</span>
+					<span class="separator">
+                       <ChevronRight/>
+                        <!-- → -->
+                    </span>
 				{/if}
 			{:else}
 				<span>{item.label}</span>
@@ -31,22 +35,18 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 15px;
+		padding: 0.5rem;
 		background-color: #ffffff;
-		border-radius: 10px;
+		border-radius: var(--radius-sm);
 		box-shadow: var(--shadow-sm);
-		margin-bottom: 10px;
 	}
 
 	.heading {
 		margin: 0;
-		/* font-size: 1.5rem; */
-		font-weight: bold;
-		color: #333;
+		color: var(--clr-bg-5);
 	}
 
 	.breadcrumb {
-		/* font-size: 0.9rem; */
 		display: flex;
 		align-items: center;
 		gap: 0.4rem;

@@ -6,7 +6,7 @@
 	import type { User } from "$lib/utils/types";
 	import { showSnackbar } from "../snackbar/store";
 	import { goto, invalidateAll } from "$app/navigation";
-	import { Power, Settings, UserCog } from "@lucide/svelte";
+	import { LogOut, Settings, UserCog } from "@lucide/svelte";
 	import { API_BASE_URL } from '$lib/constants/env.config';
 
 	interface Props {
@@ -56,17 +56,58 @@
 
 	{#if isOpen}
 		<div class="dropdown" onmouseleave={closeMenu}>
-			<div class="menu-item"><Settings size="22" />Settings</div>
-			<div class="menu-item"><UserCog size="22" />Profile</div>
+			<div class="menu-item"><Settings />Settings</div>
+			<div class="menu-item"><UserCog />Profile</div>
 			<div class="divider"></div>
-			<div class="menu-item">
+			<div class="menu-item menu-item-logout">
 				<button class="logout-button" type="button" disabled={$isLoading} onclick={stopPropagation(onSubmit)}>
 					<div class="logout-container">
-						<Power size="22" color="red" />
-						Log out
+						<LogOut color="red"/>
+						Logout
 					</div>
 				</button>
 			</div>
 		</div>
 	{/if}
 </div>
+<style>
+    
+ .menu-item {padding: 0.65rem 1rem; margin: 2px; cursor: pointer; display: flex;align-items: center; gap: 0.5rem;} 
+
+.dropdown {
+    position: absolute;
+    right: 0;
+    margin-top: 10.8rem;
+    margin-right: 1rem;
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 200px;
+    z-index: 10;
+}
+
+.logout-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #ff0000;
+}
+
+.logout-button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: currentColor;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+
+.logout-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+</style>
