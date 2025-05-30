@@ -98,3 +98,15 @@ input[type="checkbox"]:disabled {
 	cursor: not-allowed;
 	opacity: 0.6;
 }
+
+
+
+/* messages */
+.input-error {
+    box-shadow: 0 0 0 1.5px rgba(239, 68, 68, 0.6);
+}
+
+.error-text {
+    color: #ef4444;
+    margin: 0.4rem 0 0 0;
+}

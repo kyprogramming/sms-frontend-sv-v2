@@ -774,15 +774,6 @@ tr:nth-child(even) {
     text-align: left;
 }
 
-/* messages */
-.input-error {
-    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
-}
-
-.error-text {
-    color: #ef4444;
-    margin: 0.4rem 0 0 0;
-}
 
 .server-error {
     margin-top: 1rem;

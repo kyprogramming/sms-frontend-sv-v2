@@ -32,7 +32,8 @@
 	}: Props = $props();
 
 	let localSearch = get(searchText);
-	run(() => {
+	
+    $effect.pre(() => {
 		searchText.set(localSearch);
 	});
 

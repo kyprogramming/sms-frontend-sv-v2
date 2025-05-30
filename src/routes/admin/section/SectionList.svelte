@@ -25,10 +25,9 @@
 	let { response, dataToUpdate = $bindable(), onRefreshPage, onSearchChange, onDelete, onUpdate }: Props = $props();
 
 	let localSearch = get(searchText);
-	run(() => {
+    $effect.pre(() => {
 		searchText.set(localSearch);
 	});
-
 	// console.log("dataToUpdate: SectionList", dataToUpdate);
 
 	const columns: ColumnConfig[] = [

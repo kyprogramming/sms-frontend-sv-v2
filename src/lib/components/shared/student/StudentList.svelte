@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
+	import { run } from "svelte/legacy";
 
 	import DataTable from "$lib/components/common/DataTable.svelte";
 	import DeleteConfirmModal from "$lib/components/common/DeleteConfirmModal.svelte";
@@ -28,21 +28,20 @@
 		onSearchChange,
 		onDelete,
 		onUpdate,
-        // classesWithSections
+		// classesWithSections
 	} = $props();
 
 	let localSearch = get(searchText);
-	run(() => {
+	$effect.pre(() => {
 		searchText.set(localSearch);
 	});
-
-    let availableSections: { _id: string; name: string }[] = $state([]);
+	let availableSections: { _id: string; name: string }[] = $state([]);
 
 	// console.log("dataToUpdate: SectionList", dataToUpdate);
 
 	const columns: ColumnConfig[] = [
 		{ key: "_id", label: "Id", visible: false },
-        { key: "serialNo", label: "Sr #", width: "80px", sortable: true, align: "center" },
+		{ key: "serialNo", label: "Sr #", width: "80px", sortable: true, align: "center" },
 		{ key: "academicYear", label: "Academic Year", width: "10%", sortable: true, align: "center" },
 		{ key: "profile.firstName", label: "First Name", width: "auto", sortable: true, align: "center" },
 		{
@@ -124,38 +123,37 @@
 
 <div class="class-container">
 	<div class="search-container">
-        <div>
-            <select id="classId" style="width:200px;">
-                <option value="" disabled selected>Select Class</option>
-                <!-- {#each classesWithSections as cls}
+		<div>
+			<select id="classId" style="width:200px;">
+				<option value="" disabled selected>Select Class</option>
+				<!-- {#each classesWithSections as cls}
                     <option value={cls._id}>{cls.name}</option>
                 {/each} -->
-            </select>
-        </div>
-        <div >
-            <select id="sectionId" style="width:200px;" disabled={!availableSections.length} >
-                <option value="" disabled selected>Select Section</option>
-                {#each availableSections as section}
-                    <option value={section._id}>{section.name}</option>
-                {/each}
-            </select>
-        </div>
+			</select>
+		</div>
+		<div>
+			<select id="sectionId" style="width:200px;" disabled={!availableSections.length}>
+				<option value="" disabled selected>Select Section</option>
+				{#each availableSections as section}
+					<option value={section._id}>{section.name}</option>
+				{/each}
+			</select>
+		</div>
 		<input name="search" type="text" placeholder="Search section..." bind:value={$searchText} />
 
-        <div class="action-buttons">
-            <button type="button" class="btn ripple"onclick={handleSearchClick}>
-                <Search  />
-                <span>Search</span>
-            </button>
-        </div>
+		<div class="action-buttons">
+			<button type="button" class="btn ripple" onclick={handleSearchClick}>
+				<Search />
+				<span>Search</span>
+			</button>
+		</div>
 
-        <div class="action-buttons">
-            <button type="button" class="btn ripple"onclick={handleRefreshButtonClick}>
-                <RefreshCw  />
-                <span>Refresh</span>
-            </button>
-        </div>
-
+		<div class="action-buttons">
+			<button type="button" class="btn ripple" onclick={handleRefreshButtonClick}>
+				<RefreshCw />
+				<span>Refresh</span>
+			</button>
+		</div>
 	</div>
 	<div class="action-buttons">
 		<button type="button" class="btn ripple" onclick={handleAdd}>

@@ -63,5 +63,5 @@
 	}
 </script>
 
-<Breadcrumb title="Student Admission" items={breadcrumbItems} />
+<Breadcrumb title="Student Registration" items={breadcrumbItems} />
 <StudentForm classesWithSections={classesWithSections}/>
