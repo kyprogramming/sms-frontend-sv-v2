@@ -168,7 +168,7 @@
     color: #5a6a85;
     text-decoration: none;
     transition: all 0.2s;
-    transition: border-left 0.2s ease, color 0.3s ease;
+    transition: border-left 0.2s ease, color 0.2s ease;
     margin-left: 35px;
 }
 

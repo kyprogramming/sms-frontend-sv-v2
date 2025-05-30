@@ -19,7 +19,7 @@
 
     // console.log("response at student create", response);
 
-	const breadcrumbItems = [{ label: "Home", href: "/" }, { label: "Dashboard", href: "/admin/dashboard" }, { label: "Student", href: "/admin/dashboard/student/create" },{ label: "Create" }];
+	const breadcrumbItems = [{ label: "Dashboard", href: "/admin/dashboard" },{ label: "Student Register" }];
 
 	async function handleSearchChange() {
 		if ($searchText === "") return;

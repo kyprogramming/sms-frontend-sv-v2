@@ -94,7 +94,7 @@
 		text-decoration: none;
 		font-size: 1rem;
 		cursor: pointer;
-		transition: background-color 0.3s ease;
+		transition: background-color 0.2s ease;
 	}
 
 	.home-button:hover {

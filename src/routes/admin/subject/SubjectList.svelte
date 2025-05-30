@@ -126,19 +126,18 @@
 	<div class="search-container">
 		<input name="search" type="text" placeholder="Search subject..." bind:value={$searchText} />
 
-        <div class="action-buttons">
+       
             <button type="button" class="btn ripple" onclick={handleSearchClick}>
                 <Search  />
                 <span>Search</span>
             </button>
-        </div>
+       
 
-        <div class="action-buttons">
-            <button type="button" class="btn ripple" onclick={handleRefreshButtonClick}>
+       
+            <button type="button" class="btn ripple btn-secondary" onclick={handleRefreshButtonClick}>
                 <RefreshCw  />
                 <span>Refresh</span>
             </button>
-        </div>
 
 	</div>
 	<div class="action-buttons">

@@ -25,7 +25,7 @@
 	let { response, dataToUpdate = $bindable(), onRefreshPage, onSearchChange, onDelete, onUpdate }: Props = $props();
 
 	let localSearch = get(searchText);
-    $effect.pre(() => {
+	$effect.pre(() => {
 		searchText.set(localSearch);
 	});
 	// console.log("dataToUpdate: SectionList", dataToUpdate);
@@ -114,19 +114,15 @@
 	<div class="search-container">
 		<input name="search" type="text" placeholder="Search section..." bind:value={$searchText} />
 
-		<div class="action-buttons">
-			<button type="button" class="btn ripple" onclick={handleSearchClick}>
-				<Search />
-				<span>Search</span>
-			</button>
-		</div>
+		<button type="button" class="btn ripple" onclick={handleSearchClick}>
+			<Search />
+			<span>Search</span>
+		</button>
 
-		<div class="action-buttons">
-			<button type="button" class="btn ripple" onclick={handleRefreshButtonClick}>
-				<RefreshCw />
-				<span>Refresh</span>
-			</button>
-		</div>
+		<button type="button" class="btn ripple btn-secondary" onclick={handleRefreshButtonClick}>
+			<RefreshCw />
+			<span>Refresh</span>
+		</button>
 	</div>
 	<div class="action-buttons">
 		<button type="button" class="btn ripple" onclick={handleAdd}>
@@ -181,6 +177,4 @@
 	input[name="search"] {
 		width: 300px;
 	}
-
-    
 </style>

@@ -141,20 +141,17 @@
 		</div>
 		<input name="search" type="text" placeholder="Search section..." bind:value={$searchText} />
 
-		<div class="action-buttons">
-			<button type="button" class="btn ripple" onclick={handleSearchClick}>
-				<Search />
-				<span>Search</span>
-			</button>
-		</div>
+		<button type="button" class="btn ripple" onclick={handleSearchClick}>
+			<Search />
+			<span>Search</span>
+		</button>
 
-		<div class="action-buttons">
-			<button type="button" class="btn ripple" onclick={handleRefreshButtonClick}>
-				<RefreshCw />
-				<span>Refresh</span>
-			</button>
-		</div>
+		<button type="button" class="btn ripple btn-secondary" onclick={handleRefreshButtonClick}>
+			<RefreshCw />
+			<span>Refresh</span>
+		</button>
 	</div>
+
 	<div class="action-buttons">
 		<button type="button" class="btn ripple" onclick={handleAdd}>
 			<Plus size={16} />

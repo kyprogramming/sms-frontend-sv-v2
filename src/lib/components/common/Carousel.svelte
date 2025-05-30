@@ -84,7 +84,7 @@
 
 	.carousel-item {
 		min-width: 100%;
-		transition: transform 0.3s ease;
+		transition: transform 0.2s ease;
 	}
 
 	.carousel-item img {
@@ -117,7 +117,7 @@
 		background-color: rgba(255, 255, 255, 0.6);
 		border-radius: 999px;
 		cursor: pointer;
-		transition: background-color 0.3s;
+		transition: background-color 0.2s;
 	}
 
 	.indicator.active {

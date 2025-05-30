@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
+	import { run } from "svelte/legacy";
 
 	import DataTable from "$lib/components/common/DataTable.svelte";
 	import DeleteConfirmModal from "$lib/components/common/DeleteConfirmModal.svelte";
@@ -22,18 +22,11 @@
 		onUpdate: (id: string) => void;
 	}
 
-	let {
-		response,
-		dataToUpdate = $bindable(),
-		onRefreshPage,
-		onSearchChange,
-		onDelete,
-		onUpdate
-	}: Props = $props();
+	let { response, dataToUpdate = $bindable(), onRefreshPage, onSearchChange, onDelete, onUpdate }: Props = $props();
 
 	let localSearch = get(searchText);
-	
-    $effect.pre(() => {
+
+	$effect.pre(() => {
 		searchText.set(localSearch);
 	});
 
@@ -41,12 +34,12 @@
 
 	const columns: ColumnConfig[] = [
 		{ key: "_id", label: "Id", visible: false },
-        { key: "serialNo", label: "Sr #", width: "80px", sortable: true, align: "center" },
+		{ key: "serialNo", label: "Sr #", width: "80px", sortable: true, align: "center" },
 		{ key: "name", label: "Name", sortable: true, width: "auto", align: "center" },
 		{
 			key: "createdAt",
 			label: "Created At",
-            width: "15%",
+			width: "15%",
 			sortable: true,
 			format: formatDate,
 			align: "center",
@@ -124,20 +117,15 @@
 	<div class="search-container">
 		<input name="search" type="text" placeholder="Search class..." bind:value={$searchText} />
 
-        <div class="action-buttons">
-            <button type="button" class="btn ripple" onclick={handleSearchClick}>
-                <Search  />
-                <span>Search</span>
-            </button>
-        </div>
+		<button type="button" class="btn ripple" onclick={handleSearchClick}>
+			<Search />
+			<span>Search</span>
+		</button>
 
-        <div class="action-buttons">
-            <button type="button" class="btn ripple" onclick={handleRefreshButtonClick}>
-                <RefreshCw  />
-                <span>Refresh</span>
-            </button>
-        </div>
-
+		<button type="button" class="btn ripple btn-secondary" onclick={handleRefreshButtonClick}>
+			<RefreshCw />
+			<span>Refresh</span>
+		</button>
 	</div>
 	<div class="action-buttons">
 		<button type="button" class="btn ripple" onclick={handleAdd}>

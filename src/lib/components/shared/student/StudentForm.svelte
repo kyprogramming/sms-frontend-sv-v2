@@ -10,6 +10,7 @@
 	import { createStudent } from "$lib/services/student";
 	import FileUpload from "$lib/components/common/FileUpload.svelte";
 	import Tabs from "$lib/components/common/Tabs.svelte";
+	import { BrushCleaning, Save } from "@lucide/svelte";
 
 	interface Props {
 		classesWithSections: any;
@@ -831,15 +832,19 @@
 
 	<!-- Form Actions -->
 	<div class="form-actions">
-		<button class="btn" type="button" onclick={clearForm} disabled={$isLoading}> Clear </button>
-		<button class="btn" type="submit" disabled={$isLoading}>
+		<button type="button" class="btn ripple btn-secondary" onclick={clearForm} disabled={$isLoading}>
+			<BrushCleaning size={16} />
+			<span>Clear Form</span>
+		</button>
+
+		<button class="btn ripple" type="submit" disabled={$isLoading}>
+			<Save size={16} />
 			{#if $isLoading}
 				{#if $isUpdate}Updating...{:else}Saving...{/if}
-			{:else if $isUpdate}Update{:else}Save{/if}
+			{:else if $isUpdate}Update Student{:else}Save Student{/if}
 		</button>
 	</div>
 </form>
-
 
 <Tabs />
 
@@ -868,7 +873,7 @@
 		padding: 1rem;
 		background-color: var(--clr-bg-2);
 		font-weight: 600;
-		transition: background-color 0.3s;
+		transition: background-color 0.2s;
 	}
 
 	.section-header:hover {
@@ -876,12 +881,12 @@
 	}
 
 	.arrow-icon {
-		transition: transform 0.3s ease;
+		transition: transform 0.2s ease;
 	}
 
 	.section-body {
 		padding: 1rem;
-		transition: all 0.3s ease;
+		transition: all 0.2s ease;
 	}
 
 	.section-body.collapsed {
@@ -902,7 +907,7 @@
 		gap: 1rem;
 	}
 
-	.btn {
+	/* .btn {
 		padding: 0.75rem 1.5rem;
 		border-radius: 0.375rem;
 		font-weight: 500;
@@ -923,7 +928,7 @@
 	.btn-secondary:disabled {
 		opacity: 0.7;
 		cursor: not-allowed;
-	}
+	} */
 
 	/* Responsive styles */
 	@media (max-width: 1024px) {
