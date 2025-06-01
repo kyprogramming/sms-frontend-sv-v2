@@ -6,6 +6,8 @@
 	import { showSnackbar } from "$lib/components/snackbar/store";
 	import { deleteSectionById, fetchSectionById, fetchSections } from "$lib/services/section";
 	import StudentForm from "$lib/components/shared/student/StudentForm.svelte";
+	// import { classList } from "$lib/stores/masterData";
+    import { page } from '$app/state';
 
 
 	interface Props {
@@ -14,12 +16,19 @@
 
 	let { data }: Props = $props();
 	let response: any = data.data;
-    let classesWithSections = response?.data || [];
+    // let classesWithSections = response?.data || [];
+    // console.log("classList:", $classList);
+    let classesWithSections = page.data?.classData || [];
+    let sectionData = page.data?.sectionData || [];
+
+    console.log("classesWithSections:", classesWithSections);
+    console.log("sectionData:", sectionData);
+
 	let dataToUpdate: any;
 
     // console.log("response at student create", response);
 
-	const breadcrumbItems = [{ label: "Dashboard", href: "/admin/dashboard" },{ label: "Student Register" }];
+	const breadcrumbItems = [{ label: "Dashboard", href: "/admin/dashboard" },{ label: "Student Registration" }];
 
 	async function handleSearchChange() {
 		if ($searchText === "") return;

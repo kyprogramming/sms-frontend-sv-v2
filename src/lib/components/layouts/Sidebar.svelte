@@ -190,7 +190,7 @@
 }
 
 .menu-item span:hover {
-    color: var(--clr-pri-light);
+    color: var(--clr-pri);
     text-decoration: dotted;
 }
 </style>

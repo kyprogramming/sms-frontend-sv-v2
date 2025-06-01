@@ -50,7 +50,7 @@
 			{
 				icon: Eye,
 				class: "view",
-				show: false,
+				show: true,
 				action: (item: { _id: any }) => {
 					alert(`View ${item._id}`);
 				},

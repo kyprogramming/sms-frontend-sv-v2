@@ -5,6 +5,8 @@
 	// export let children;
     let { data,  children } = $props();
     let sidebarOpen = $state(true);
+    // import { classList } from '$lib/stores/masterData';
+    // classList.set(data.classData);
 </script>
 
 <div class="app-layout">

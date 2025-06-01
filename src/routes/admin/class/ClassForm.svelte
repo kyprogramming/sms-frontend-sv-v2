@@ -8,15 +8,20 @@
 	import { showSnackbar } from "$lib/components/snackbar/store";
 	import { closeModal, isUpdate } from "$lib/stores/modalStore";
 	import { createClass, updateClass } from "$lib/services/class";
-	import { fetchSectionList } from "$lib/services/section";
-	import { onMount } from "svelte";
+
+    import { page } from '$app/state';
+
+    
 
 	// type Section = { _id: string; name: string };
-	let allSections: any = $state();
-	onMount(async () => {
-		allSections = await fetchSectionList();
-		// console.log("allSections", allSections);
-	});
+	// let allSections: any = $state();
+    let allSections = page.data?.sectionData || [];
+
+    console.log("allSections:", page.data?.sectionData );
+	// onMount(async () => {
+	// 	allSections = await fetchSectionList();
+	// 	// console.log("allSections", allSections);
+	// });
 
 	
 	interface Props {
@@ -134,7 +139,7 @@
 		<!-- svelte-ignore a11y_label_has_associated_control -->
 		<label>Sections *</label>
 		<div class="checkbox-section" class:has-error={$formErrors.sectionIds && $submitAttempted}>
-			{#each allSections?.data as section}
+			{#each allSections as section}
 				<div class="checkbox-item">
 					<label class="checkbox-label">
 						<input

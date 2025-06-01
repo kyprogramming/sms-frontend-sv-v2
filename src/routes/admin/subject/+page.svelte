@@ -15,7 +15,7 @@
 	let response: any = $state(data.data);
 	let dataToUpdate: any = $state();
 
-	const breadcrumbItems = [{ label: "Home", href: "/" }, { label: "Dashboard", href: "/admin/dashboard" }, { label: "Subjects" }];
+	const breadcrumbItems = [{ label: "Dashboard", href: "/admin/dashboard" }, { label: "Subjects" }];
 
 	async function handleSearchChange() {
 		if ($searchText === "") return;

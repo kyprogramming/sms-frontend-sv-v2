@@ -21,6 +21,9 @@
 	let availableSections: { _id: string; name: string }[] = $state([]);
 	let selectedDate: Date | null = $state(null);
 	let selectedDateOfBirth: Date | null = $state(null);
+	formErrors.set({});
+	touched.set({});
+	submitAttempted.set(false);
 
 	let formData: StudentFormData = $state(initializeStudentFormData());
 	function clearForm() {
@@ -72,8 +75,6 @@
 
 	function handleSectionChange(e: Event) {
 		formData.studentData.sectionId = (e.target as HTMLSelectElement).value || "";
-		$touched["studentData.sectionId"] = true;
-		$formErrors["studentData.sectionId"] = "";
 	}
 
 	async function onSubmit(e: Event) {
@@ -128,7 +129,7 @@
 				<label for="classId">Class <span class="required">*</span></label>
 				<select
 					id="classId"
-					class={`w-full ${$formErrors["class"] && ($touched["class"] || $submitAttempted) ? "input-error" : ""}`}
+					class={`w-full ${$formErrors["studentData.classId"] && ($touched["studentData.classId"] || $submitAttempted) ? "input-error" : ""}`}
 					bind:value={formData.studentData.classId}
 					onchange={handleClassChange}
 					onblur={handleClassChange}
@@ -148,7 +149,7 @@
 					id="sectionId"
 					bind:value={formData.studentData.sectionId}
 					disabled={!availableSections.length}
-					class={`w-full ${$formErrors["studentData"] && ($touched["studentData.sectionId"] || $submitAttempted) ? "input-error" : ""}`}
+					class={`w-full ${$formErrors["studentData.sectionId"] && ($touched["studentData.sectionId"] || $submitAttempted) ? "input-error" : ""}`}
 					onchange={handleSectionChange}
 					onblur={() => handleBlur("studentData.sectionId")}
 				>
@@ -800,7 +801,7 @@
 	</div>
 
 	<!-- Upload Documents -->
-	<div class="card-wrapper">
+	<!-- <div class="card-wrapper">
 		<h1>Upload Documents</h1>
 		<div class="grid-12">
 			<div class="col-12">
@@ -828,25 +829,25 @@
 				</table>
 			</div>
 		</div>
-	</div>
+	</div> -->
+
+	<!-- <Tabs /> -->
 
 	<!-- Form Actions -->
 	<div class="form-actions">
 		<button type="button" class="btn ripple btn-secondary" onclick={clearForm} disabled={$isLoading}>
-			<BrushCleaning size={16} />
+			<BrushCleaning  />
 			<span>Clear Form</span>
 		</button>
 
 		<button class="btn ripple" type="submit" disabled={$isLoading}>
-			<Save size={16} />
+			<Save />
 			{#if $isLoading}
 				{#if $isUpdate}Updating...{:else}Saving...{/if}
 			{:else if $isUpdate}Update Student{:else}Save Student{/if}
 		</button>
 	</div>
 </form>
-
-<Tabs />
 
 <style>
 	/* Base styles */

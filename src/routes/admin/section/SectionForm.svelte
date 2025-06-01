@@ -8,6 +8,7 @@
 	import { showSnackbar } from "$lib/components/snackbar/store";
 	import { closeModal, isUpdate } from "$lib/stores/modalStore";
 	import { createSection, updateSection } from "$lib/services/section";
+    import { page } from '$app/state';
 
 	
 	interface Props {

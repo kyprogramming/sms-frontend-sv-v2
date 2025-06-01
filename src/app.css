@@ -612,12 +612,12 @@ tr {
 }
 
 tr:hover {
-    background-color: #f1f5f9;
+    background-color: #eeeeee;
 }
 
-tr:nth-child(even) {
+/* tr:nth-child(even) {
     background-color: #f9fafb;
-}
+} */
 
 
 /* .icon-wrapper {
@@ -1111,11 +1111,16 @@ form {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    background-color: #f8f8f8;
+    /* background-color: #f8f8f8; */
     margin-top: 1rem;
     /* align-items: baseline; */
 }
 
+form h1 {
+    text-transform: uppercase;
+    color: #666666;
+    font-size: 14px;
+}
 .form-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
