@@ -130,7 +130,7 @@
 							</div>
 						{/if}
 					</div>
-
+                    <!-- {...(item.reload ? { 'data-sveltekit-reload': true } : {})} -->
 					{#if activeGroup === group.title && !sidebarCollapsed && group.items}
 						<div class="group-items" transition:slide>
 							{#each group.items as item}

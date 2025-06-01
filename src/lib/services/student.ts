@@ -8,7 +8,7 @@ export interface StudentPayload {
 
 // Create class
 export async function createStudent(data: any) {
-    console.log(data);
+    // console.log(data);
     const res = await fetchWrapper(`${API_BASE_URL}/student`, {
         method: "POST",
         body: JSON.stringify(data),

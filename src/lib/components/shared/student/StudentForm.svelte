@@ -9,27 +9,59 @@
 	import { slide } from "svelte/transition";
 	import { createStudent } from "$lib/services/student";
 	import FileUpload from "$lib/components/common/FileUpload.svelte";
-	import Tabs from "$lib/components/common/Tabs.svelte";
+	// import Tabs from "$lib/components/common/Tabs.svelte";
 	import { BrushCleaning, Save } from "@lucide/svelte";
+	import { page } from "$app/state";
+	import { onMount } from "svelte";
 
-	interface Props {
-		classesWithSections: any;
-	}
+	let classData = page.data?.classData || [];
+	let studentData = page.data?.studentData || [];
+	let action = page.data?.action || "";
+	console.log("studentData:", studentData);
+	console.log("action:", action);
+	let classSections: { _id: string; name: string }[] = $state([]);
 
-	let { classesWithSections }: Props = $props();
-
-	let availableSections: { _id: string; name: string }[] = $state([]);
 	let selectedDate: Date | null = $state(null);
 	let selectedDateOfBirth: Date | null = $state(null);
 	formErrors.set({});
 	touched.set({});
 	submitAttempted.set(false);
 
+	// $effect.pre(() => {
+	//     console.log("action effect:", action);
+	// });
+
+	$effect.pre(() => {
+		console.log("action effect:", action);
+		if (action !== "update") studentData = null;
+	});
+
+	// $: if ($page.url.pathname === '/admin/student/register') {
+	// 	studentData.set(null);
+	// }
+
 	let formData: StudentFormData = $state(initializeStudentFormData());
-	function clearForm() {
+
+	// update form data if action is update and studentData is available
+	if (action === "update" && studentData) {
+		formData = { studentData: { ...studentData.data }, userData: { ...studentData.data.userId } };
+		classSections = studentData.data.classId ? classData.find((cls: any) => cls._id === studentData.data.classId)?.sectionIds || [] : [];
+		selectedDateOfBirth = studentData.data.profile.dob ? new Date(studentData.data.profile.dob) : null;
+	}
+	// console.log("formData:", formData);
+
+	function resetForm() {
+		if (action === "update" && studentData) {
+			formData = { studentData: { ...studentData.data }, userData: { ...studentData.data.userId } };
+			classSections = studentData.data.classId ? classData.find((cls: any) => cls._id === studentData.data.classId)?.sectionIds || [] : [];
+			selectedDateOfBirth = studentData.data.profile.dob ? new Date(studentData.data.profile.dob) : null;
+		} else {
+			formData = initializeStudentFormData();
+			classSections = [];
+			selectedDateOfBirth = null;
+		}
+
 		submitAttempted.set(false);
-		selectedDateOfBirth = null;
-		formData = initializeStudentFormData();
 		formErrors.set({});
 		touched.set({});
 	}
@@ -49,8 +81,6 @@
 		} else {
 			formData.studentData.profile.dob = "";
 		}
-
-		console.log("formData.studentData.profile.dob:", formData.studentData.profile.dob);
 		validateStudentForm(formData);
 	}
 
@@ -58,9 +88,12 @@
 		formData.studentData.profile.dob = "";
 	}
 
-	function guardianTypeChange(type: any) {
+	function handleGuardianTypeChange(type: any) {
 		formData.studentData.parentGuardianDetails.primaryGuardian = type;
 		$formErrors["studentData.parentGuardianDetails.primaryGuardian"] = "";
+		if (type === "Other" && action === "update") {
+			formData.studentData.parentGuardianDetails = studentData.data.parentGuardianDetails;
+		}
 		validateStudentForm(formData);
 	}
 
@@ -68,8 +101,8 @@
 		const selected = (e.target as HTMLSelectElement).value || "";
 		formData.studentData.classId = selected;
 		formData.studentData.sectionId = "";
-		const selectedClass = classesWithSections.find((cls: any) => cls._id === selected);
-		availableSections = selectedClass?.sectionIds || [];
+		const selectedClass = classData.find((cls: any) => cls._id === selected);
+		classSections = selectedClass?.sectionIds || [];
 		handleBlur("studentData.classId");
 	}
 
@@ -79,12 +112,12 @@
 
 	async function onSubmit(e: Event) {
 		validateStudentForm(formData);
-		console.log(formData);
-		console.log(Object.keys(get(formErrors)).length);
+		// console.log(formData);
+		// console.log(Object.keys(get(formErrors)).length);
 		e.preventDefault();
 		submitAttempted.set(true);
 		if (Object.keys(get(formErrors)).length === 0) {
-			console.log("Student registered successfully!");
+			// console.log("Student registered successfully!");
 			await createStudent(formData);
 		}
 	}
@@ -135,7 +168,7 @@
 					onblur={handleClassChange}
 				>
 					<option value="" disabled selected>Select Class</option>
-					{#each classesWithSections as cls}
+					{#each classData as cls}
 						<option value={cls._id}>{cls.name}</option>
 					{/each}
 				</select>
@@ -148,13 +181,13 @@
 				<select
 					id="sectionId"
 					bind:value={formData.studentData.sectionId}
-					disabled={!availableSections.length}
+					disabled={!classSections.length}
 					class={`w-full ${$formErrors["studentData.sectionId"] && ($touched["studentData.sectionId"] || $submitAttempted) ? "input-error" : ""}`}
 					onchange={handleSectionChange}
 					onblur={() => handleBlur("studentData.sectionId")}
 				>
 					<option value="" disabled selected>Select Section</option>
-					{#each availableSections as section}
+					{#each classSections as section}
 						<option value={section._id}>{section.name}</option>
 					{/each}
 				</select>
@@ -641,7 +674,7 @@
 									class="radio-input"
 									value={type.name}
 									checked={formData?.studentData?.parentGuardianDetails?.primaryGuardian === type.name}
-									onchange={() => guardianTypeChange(type.name)}
+									onchange={() => handleGuardianTypeChange(type.name)}
 								/>
 								<span class="radio-custom"></span>
 								<span class="radio-text">{type.name}</span>
@@ -835,16 +868,16 @@
 
 	<!-- Form Actions -->
 	<div class="form-actions">
-		<button type="button" class="btn ripple btn-secondary" onclick={clearForm} disabled={$isLoading}>
-			<BrushCleaning  />
-			<span>Clear Form</span>
+		<button type="button" class="btn ripple btn-secondary" onclick={resetForm} disabled={$isLoading}>
+			<BrushCleaning />
+			<span>Reset Form</span>
 		</button>
 
 		<button class="btn ripple" type="submit" disabled={$isLoading}>
 			<Save />
 			{#if $isLoading}
-				{#if $isUpdate}Updating...{:else}Saving...{/if}
-			{:else if $isUpdate}Update Student{:else}Save Student{/if}
+				{#if $isUpdate && action === "update"}Updating...{:else}Saving...{/if}
+			{:else if action === "update"}Update Student{:else}Save Student{/if}
 		</button>
 	</div>
 </form>

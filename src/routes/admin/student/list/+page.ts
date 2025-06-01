@@ -1,7 +1,8 @@
 import { API_BASE_URL, DEFAULT_PAGE_LIMIT } from "$lib/constants/env.config";
 import { error } from "@sveltejs/kit";
 import { isLoading } from "$lib/stores/loading";
-import type { PageLoad } from "../../../dashboard/admin/student/create/$types";
+import type { PageLoad } from "./$types";
+
 
 export const load: PageLoad = async ({ fetch }) => {
     try {

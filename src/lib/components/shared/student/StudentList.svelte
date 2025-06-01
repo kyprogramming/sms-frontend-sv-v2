@@ -11,8 +11,8 @@
 	import { RefreshCw, Search } from "@lucide/svelte";
 	import { searchText, currentPage } from "$lib/stores/paginationStore";
 	import type { ColumnConfig } from "$lib/interfaces/table.interface";
-	import { goto } from "$app/navigation";
-    import { page } from '$app/state';
+	import { goto, invalidateAll } from "$app/navigation";
+	import { page } from "$app/state";
 
 	// interface Props {
 	// 	response: any;
@@ -29,31 +29,50 @@
 		onRefreshPage,
 		onSearchChange,
 		onDelete,
-		onUpdate,
-		// classesWithSections
+		// onUpdate,
 	} = $props();
 
 	let localSearch = get(searchText);
 	$effect.pre(() => {
 		searchText.set(localSearch);
 	});
-	
-    let classData = page.data?.classData || [];
-    let classSections: { _id: string; name: string }[] = $state([]);
-    let selectedClassId = $state("");
-    let selectedSectionId = $state("");
 
-	console.log("Data: Response", response);
+	let classData = page.data?.classData || [];
+	let classSections: { _id: string; name: string }[] = $state([]);
+	let selectedClassId = $state("");
+	let selectedSectionId = $state("");
+
+	// console.log("response @ StudentList", response.data.data);
+	// console.log("classData @ StudentList", classData);
+
+	// Updating each student using map
+	const updatedStudents = response.data.data.map((student: any) => {
+		const foundClass = classData.find((cls: any) => cls._id === student.classId);
+		const className = foundClass?.name || null;
+
+		const foundSection = foundClass?.sectionIds.find((sec: any) => sec._id === student.sectionId);
+		const sectionName = foundSection?.name || null;
+
+		return {
+			...student,
+			className,
+			sectionName,
+		};
+	});
+
+	const responseStudents = { data: { data: updatedStudents } };
+
+	// console.log(updatedStudents);
 
 	const columns: ColumnConfig[] = [
 		{ key: "_id", label: "Id", visible: false },
 		{ key: "serialNo", label: "Sr #", width: "80px", sortable: true, align: "center" },
 		{ key: "profile.fullName", label: "Name", width: "25%", sortable: true, align: "center" },
-		{ key: "classId", label: "Class", width: "auto", sortable: true, align: "center"},
-		{ key: "sectionId", label: "Section", width: "auto", sortable: true, align: "center"},
-		{ key: "profile.dob", label: "DOB", width: "auto", sortable: true, align: "center",format: formatDate },
+		{ key: "className", label: "Class", width: "auto", sortable: true, align: "center" },
+		{ key: "sectionName", label: "Section", width: "auto", sortable: true, align: "center" },
+		{ key: "profile.dob", label: "DOB", width: "auto", sortable: true, align: "center", format: formatDate },
 		// { key: "academicYear", label: "Academic Year", width: "auto", sortable: true, align: "center" },
-		{ key: "admissionDate", label: "Admission Date", width: "auto", sortable: true, align: "center" ,format: formatDate},
+		{ key: "admissionDate", label: "Admission Date", width: "auto", sortable: true, align: "center", format: formatDate },
 		{ key: "profile.gender", label: "Gender", width: "auto", sortable: true, align: "center" },
 		// {
 		// 	key: "createdAt",
@@ -122,40 +141,43 @@
 		openDeleteModal({ _id: itemId });
 	}
 
-	function handleAdd() {
-        goto('/admin/student/register');
+	async function handleAdd() {
+		await goto("/admin/student/register");
+        await invalidateAll(); 
 		dataToUpdate = null;
 	}
 
 	async function handleUpdate(id: string) {
-		onUpdate(id);
+		// alert(`Update ${id}`);
+        await invalidateAll(); 
+		await goto(`/admin/student/register?id=${id}&action=update`);
 	}
 
-    function handleClassChange(e: Event) {
+	function handleClassChange(e: Event) {
 		const selected = (e.target as HTMLSelectElement).value || "";
 		const selectedClass = classData.find((cls: any) => cls._id === selected);
 		classSections = selectedClass?.sectionIds || [];
 	}
-    function handleClearSearch() {
+	function handleResetSearch() {
 		searchText.set("");
-        selectedClassId = "";
-        selectedSectionId = "";
-        classSections = [];
+		selectedClassId = "";
+		selectedSectionId = "";
+		classSections = [];
 	}
 </script>
 
 <div class="class-container">
 	<div class="search-container">
 		<div>
-			<select id="classId" style="width:200px;"  bind:value={selectedClassId} onchange={handleClassChange}>
+			<select id="classId" style="width:200px;" bind:value={selectedClassId} onchange={handleClassChange}>
 				<option value="" disabled selected>Select Class</option>
 				{#each classData as cls}
-                    <option value={cls._id}>{cls.name}</option>
-                {/each}
+					<option value={cls._id}>{cls.name}</option>
+				{/each}
 			</select>
 		</div>
 		<div>
-			<select id="sectionId" style="width:200px;"  bind:value={selectedSectionId} disabled={!classSections.length}>
+			<select id="sectionId" style="width:200px;" bind:value={selectedSectionId} disabled={!classSections.length}>
 				<option value="" disabled selected>Select Section</option>
 				{#each classSections as section}
 					<option value={section._id}>{section.name}</option>
@@ -169,9 +191,9 @@
 			<span>Search</span>
 		</button>
 
-        <button type="button" class="btn ripple btn-secondary" onclick={handleClearSearch}>
-			<BrushCleaning  />
-			<span>Clear</span>
+		<button type="button" class="btn ripple btn-secondary" onclick={handleResetSearch}>
+			<BrushCleaning />
+			<span>Reset</span>
 		</button>
 
 		<button type="button" class="btn ripple btn-secondary" onclick={handleRefreshButtonClick}>
@@ -188,7 +210,7 @@
 	</div>
 </div>
 
-<DataTable {response} {columns} {actions} onPaginationChange={handlePaginationChange} onPageLimitChange={handlePageLimitChange} />
+<DataTable response={responseStudents} {columns} {actions} onPaginationChange={handlePaginationChange} onPageLimitChange={handlePageLimitChange} />
 
 {#if isDeleteModalOpen}
 	<DeleteConfirmModal

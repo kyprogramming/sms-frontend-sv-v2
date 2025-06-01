@@ -60,8 +60,8 @@
 		align-items: center;
 		background-color: #f0f0f0;
 		border-radius: 6px;
-		/* padding-left: 6px; */
-		padding: 4px 8px;
+		padding-left: 6px;
+		/* padding: 4px 8px; */
 		font-size: 14px;
 	}
 

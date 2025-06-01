@@ -9,7 +9,6 @@
 	import Breadcrumb from "$lib/components/common/Breadcrumb.svelte";
 	import StudentList from "$lib/components/shared/student/StudentList.svelte";
 
-
 	interface Props {
 		data: any;
 	}
@@ -66,5 +65,5 @@
 
 <Breadcrumb title="Student List" items={breadcrumbItems} />
 {#key response || dataToUpdate}
-	<StudentList {response} onRefreshPage={handleRefreshPage} onSearchChange={handleSearchChange} onDelete={()=>{}} onUpdate={()=>{}} {dataToUpdate} />
+	<StudentList {response} onRefreshPage={handleRefreshPage} onSearchChange={handleSearchChange} onDelete={()=>{}} />
 {/key}

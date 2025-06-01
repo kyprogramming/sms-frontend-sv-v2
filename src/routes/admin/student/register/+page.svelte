@@ -7,8 +7,7 @@
 	import { deleteSectionById, fetchSectionById, fetchSections } from "$lib/services/section";
 	import StudentForm from "$lib/components/shared/student/StudentForm.svelte";
 	// import { classList } from "$lib/stores/masterData";
-    import { page } from '$app/state';
-
+	import { page } from "$app/state";
 
 	interface Props {
 		data: any;
@@ -16,19 +15,22 @@
 
 	let { data }: Props = $props();
 	let response: any = data.data;
-    // let classesWithSections = response?.data || [];
-    // console.log("classList:", $classList);
-    let classesWithSections = page.data?.classData || [];
-    let sectionData = page.data?.sectionData || [];
+	let action = page.data.action || null;
+	console.log("action @ page- student registration:", action);
 
-    console.log("classesWithSections:", classesWithSections);
-    console.log("sectionData:", sectionData);
+	// let classesWithSections = response?.data || [];
+	// console.log("classList:", $classList);
+	// let classesWithSections = page.data?.classData || [];
+	// let student = page.data?.student || [];
+
+	// console.log("classesWithSections:", classesWithSections);
+	// console.log("student:", student.data);
 
 	let dataToUpdate: any;
 
-    // console.log("response at student create", response);
+	// console.log("response at student create", response);
 
-	const breadcrumbItems = [{ label: "Dashboard", href: "/admin/dashboard" },{ label: "Student Registration" }];
+	const breadcrumbItems = [{ label: "Dashboard", href: "/admin/dashboard" }, { label: "Student Registration" }];
 
 	async function handleSearchChange() {
 		if ($searchText === "") return;
@@ -72,5 +74,5 @@
 	}
 </script>
 
-<Breadcrumb title="Student Registration" items={breadcrumbItems} />
-<StudentForm classesWithSections={classesWithSections}/>
+<Breadcrumb title={(action==='update') ? "Student Registration- Update" : "Student Registration- New"} items={breadcrumbItems} />
+<StudentForm />

@@ -17,7 +17,7 @@
 	// let allSections: any = $state();
     let allSections = page.data?.sectionData || [];
 
-    console.log("allSections:", page.data?.sectionData );
+    // console.log("allSections:", page.data?.sectionData );
 	// onMount(async () => {
 	// 	allSections = await fetchSectionList();
 	// 	// console.log("allSections", allSections);
