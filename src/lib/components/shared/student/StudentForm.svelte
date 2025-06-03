@@ -7,18 +7,24 @@
 	import { get } from "svelte/store";
 	import { formErrors, initializeStudentFormData, submitAttempted, touched, validateStudentForm, type StudentFormData } from "./studentValidation";
 	import { slide } from "svelte/transition";
-	import { createStudent } from "$lib/services/student";
+	import { createStudent, updateStudent } from "$lib/services/student";
 	import FileUpload from "$lib/components/common/FileUpload.svelte";
 	// import Tabs from "$lib/components/common/Tabs.svelte";
-	import { BrushCleaning, Save } from "@lucide/svelte";
+	import { BrushCleaning, Save, Loader } from "@lucide/svelte";
 	import { page } from "$app/state";
 	import { onMount } from "svelte";
+	import { showSnackbar } from "$lib/components/snackbar/store";
+	import { goto } from "$app/navigation";
+	import LoaderIcon from "$lib/components/common/LoaderIcon.svelte";
+
+	let { action, studentData } = $props();
 
 	let classData = page.data?.classData || [];
-	let studentData = page.data?.studentData || [];
-	let action = page.data?.action || "";
-	console.log("studentData:", studentData);
-	console.log("action:", action);
+	// let studentData = page.data?.studentData || [];
+	// let action = page.data?.action;
+	// console.log("studentData from classData:", classData);
+	// console.log("studentData:", studentData);
+	// console.log("action:", action);
 	let classSections: { _id: string; name: string }[] = $state([]);
 
 	let selectedDate: Date | null = $state(null);
@@ -31,10 +37,10 @@
 	//     console.log("action effect:", action);
 	// });
 
-	$effect.pre(() => {
-		console.log("action effect:", action);
-		if (action !== "update") studentData = null;
-	});
+	// $effect.pre(() => {
+	// 	console.log("action effect:", action);
+	// 	if (action !== "update") studentData = null;
+	// });
 
 	// $: if ($page.url.pathname === '/admin/student/register') {
 	// 	studentData.set(null);
@@ -48,7 +54,8 @@
 		classSections = studentData.data.classId ? classData.find((cls: any) => cls._id === studentData.data.classId)?.sectionIds || [] : [];
 		selectedDateOfBirth = studentData.data.profile.dob ? new Date(studentData.data.profile.dob) : null;
 	}
-	// console.log("formData:", formData);
+	// console.log("formData:",action, formData);
+	// console.log("action:",action);
 
 	function resetForm() {
 		if (action === "update" && studentData) {
@@ -110,15 +117,37 @@
 		formData.studentData.sectionId = (e.target as HTMLSelectElement).value || "";
 	}
 
-	async function onSubmit(e: Event) {
-		validateStudentForm(formData);
-		// console.log(formData);
-		// console.log(Object.keys(get(formErrors)).length);
-		e.preventDefault();
+	async function onSubmit(event: Event) {
+		event.preventDefault();
 		submitAttempted.set(true);
-		if (Object.keys(get(formErrors)).length === 0) {
-			// console.log("Student registered successfully!");
-			await createStudent(formData);
+
+		const isValid = validateStudentForm(formData);
+
+		// if (Object.keys(get(formErrors)).length === 0) {
+
+		// }
+		console.log("isValid:", isValid);
+		console.log("formErrors:", formErrors);
+		console.log("Object.keys(get(formErrors)).length:", Object.keys(get(formErrors)));
+		console.log("formData", formData);
+
+		if (!isValid) return;
+
+		try {
+			if (isValid && action !== "update") {
+				await createStudent(formData);
+				showSnackbar({ message: "Student created successfully", type: "success" });
+				await goto("/admin/student/list");
+			} else if (isValid && action === "update") {
+				const id = studentData.data._id;
+				await updateStudent(id, formData);
+				showSnackbar({ message: "Student updated successfully", type: "success" });
+				await goto("/admin/student/list");
+			}
+		} catch (err: unknown) {
+			// const errMsg = (err as Error)?.message ?? "Failed to save section";
+			// error = errMsg;
+			console.error(err);
 		}
 	}
 
@@ -874,10 +903,16 @@
 		</button>
 
 		<button class="btn ripple" type="submit" disabled={$isLoading}>
-			<Save />
 			{#if $isLoading}
-				{#if $isUpdate && action === "update"}Updating...{:else}Saving...{/if}
-			{:else if action === "update"}Update Student{:else}Save Student{/if}
+				<LoaderIcon />
+			{:else}
+				<Save />
+			{/if}
+			{#if action === "update"}
+				Update Student
+			{:else}
+				Save Student
+			{/if}
 		</button>
 	</div>
 </form>

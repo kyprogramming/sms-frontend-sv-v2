@@ -6,17 +6,21 @@
 	import { showSnackbar } from "$lib/components/snackbar/store";
 	import { deleteSectionById, fetchSectionById, fetchSections } from "$lib/services/section";
 	import StudentForm from "$lib/components/shared/student/StudentForm.svelte";
+	// import { page } from "$app/state";
+
 	// import { classList } from "$lib/stores/masterData";
-	import { page } from "$app/state";
+	// import { page } from '$app/stores';
+	import { navigating, page, updated } from "$app/state";
+	const action = $derived(page.params.action);
+	const studentData = page.data.studentData;
+	// const action = $page.params.action;
+	// console.log("@page- action", action);
+	// console.log("@page- studentData:", studentData);
 
-	interface Props {
-		data: any;
-	}
-
-	let { data }: Props = $props();
-	let response: any = data.data;
-	let action = page.data.action || null;
-	console.log("action @ page- student registration:", action);
+	// let { data }: Props = $props();
+	// let response: any = data.data;
+	// let action = page.data.action || null;
+	// console.log("action @ page- student registration:", action);
 
 	// let classesWithSections = response?.data || [];
 	// console.log("classList:", $classList);
@@ -24,7 +28,6 @@
 	// let student = page.data?.student || [];
 
 	// console.log("classesWithSections:", classesWithSections);
-	// console.log("student:", student.data);
 
 	let dataToUpdate: any;
 
@@ -38,7 +41,7 @@
 		loadPaginationVariables(); // Load pagination variables
 		const params = new URLSearchParams({ search: $searchText, page: String($currentPage), limit: String($rowsPerPage) }); // Build query string
 		const json = await fetchSections(params);
-		response = { ...json };
+		// response = { ...json };
 	}
 
 	async function handleRefreshPage() {
@@ -46,7 +49,7 @@
 		loadPaginationVariables(); // Load pagination variables
 		const params = new URLSearchParams({ search: $searchText || "", page: String($currentPage), limit: String($rowsPerPage) }); // Build query string
 		const json = await fetchSections(params);
-		response = { ...json };
+		// response = { ...json };
 	}
 
 	async function handleUpdate(id: string) {
@@ -74,5 +77,12 @@
 	}
 </script>
 
-<Breadcrumb title={(action==='update') ? "Student Registration- Update" : "Student Registration- New"} items={breadcrumbItems} />
-<StudentForm />
+<Breadcrumb title={action === "create" ? "Student Registration - New" : "Student Registration - Update"} items={breadcrumbItems} />
+
+{#if action === "update"}
+	<StudentForm {action} {studentData} />
+{:else if action === "create"}
+	<StudentForm {action} studentData={[]} />
+{:else if action === "view"}
+	View Student
+{/if}

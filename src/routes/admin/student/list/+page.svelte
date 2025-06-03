@@ -60,10 +60,10 @@
 		$totalItems = get(totalItems);
 	}
 
-    console.log("response::",  $state.snapshot(response));
+    // console.log("response::",  $state.snapshot(response));
 </script>
 
 <Breadcrumb title="Student List" items={breadcrumbItems} />
 {#key response || dataToUpdate}
-	<StudentList {response} onRefreshPage={handleRefreshPage} onSearchChange={handleSearchChange} onDelete={()=>{}} />
+	<StudentList {response} onRefreshPage={handleRefreshPage} onDelete={()=>{}} />
 {/key}

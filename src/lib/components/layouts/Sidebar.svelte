@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { slide } from "svelte/transition";
-
+    import { goto } from "$app/navigation";
+    
 	import {
 		Home,
 		LayoutDashboard,
@@ -130,15 +131,20 @@
 							</div>
 						{/if}
 					</div>
+                    <!-- href={item.link} -->
                     <!-- {...(item.reload ? { 'data-sveltekit-reload': true } : {})} -->
+                    <!-- await goto(`${item.link}` ,{ replaceState: true });  -->
 					{#if activeGroup === group.title && !sidebarCollapsed && group.items}
 						<div class="group-items" transition:slide>
 							{#each group.items as item}
-								<a
-									href={item.link}
+								<a 
 									class="menu-item {activeMenuItem === item.title ? 'active' : ''}"
-									onclick={() => (activeMenuItem = item.title)}
-									data-sveltekit-preload-data="off"
+									onclick={async () => {
+                                        activeMenuItem = item.title;
+                                        await goto (`${item.link}` ,{ replaceState: true }); 
+                                    }}
+									data-sveltekit-preload-data="tap" 
+
 								>
 									<span>{item.title}</span>
 								</a>

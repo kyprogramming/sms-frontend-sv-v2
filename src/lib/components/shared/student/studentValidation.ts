@@ -221,7 +221,7 @@ export function validateStudentForm(formData: StudentFormData) {
 		schema = studentSchema;
 		if (!formData.studentData.parentGuardianDetails.guardianDetails) {
 			formData.studentData.parentGuardianDetails.guardianDetails = {
-                guardianFirstName: "",
+				guardianFirstName: "",
 				guardianLastName: "",
 				guardianPhone: "",
 				guardianOccupation: "",

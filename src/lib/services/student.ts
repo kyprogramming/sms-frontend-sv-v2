@@ -1,10 +1,7 @@
 import { API_BASE_URL } from "$lib/constants/env.config";
 import { fetchWrapper } from "$lib/utils/fetchWrapper";
-import { handleResponse, JSON_HEADERS } from "$lib/utils/utils";
+import { handleResponse} from "$lib/utils/utils";
 
-export interface StudentPayload {
-	name: string;
-}
 
 // Create class
 export async function createStudent(data: any) {
@@ -16,10 +13,21 @@ export async function createStudent(data: any) {
     return handleResponse(res, "Failed to create class");
 }
 
+// Update student
+export async function updateStudent(id: string, data: any) {
+    const res = await fetchWrapper(`${API_BASE_URL}/student/${id}`, {
+			method: "PUT",
+			body: JSON.stringify(data),
+		});
+    return handleResponse(res, "Failed to update student");
+}
+
+
 // Fetch student list
 export async function fetchStudentList(params: URLSearchParams) {
-	const res = await fetchWrapper(`${API_BASE_URL}/student?${params.toString()}`, { method: "GET" });
-    // console.log("res:", res);
+    console.log("params:", params.toString());
+    let res = await fetchWrapper(`${API_BASE_URL}/student?${params.toString()}`, { method: "GET" });
+    console.log("res:", res);
 	return handleResponse(res, "Failed to fetch student");
 }
 

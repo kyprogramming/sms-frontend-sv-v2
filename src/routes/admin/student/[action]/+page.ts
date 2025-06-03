@@ -19,20 +19,20 @@ export const load: PageLoad = async ({ url, fetch }) => {
 	// } finally {
 	// 	isLoading.set(false);
 	// }
-
+    // console.log("url:", url);
     const id = url.searchParams.get("id");
-    const action = url.searchParams.get("action");
-    console.log("ID from URL:", id , action);
+    // const action = url.searchParams.get("action");
+    // console.log("ID from URL:", id );
 
 	try {
-        if (!id) return { studentData: null, action };
+        if (!id) return { studentData: null };
 
         isLoading.set(true);
         const res = await fetch(`${API_BASE_URL}/student/${id}`, { method: "GET", headers: { "Content-Type": "application/json" }, credentials: "include" });
 		if (!res.ok)  return { studentData: null };
         const studentData = await res.json();
         // console.log("Student Data from Server:", studentData);
-		return { studentData, action };
+		return { studentData };
 	} catch (error) {
 		throw error;
 	} finally {
