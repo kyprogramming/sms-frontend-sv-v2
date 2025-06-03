@@ -7,7 +7,6 @@ export interface FetchOptions extends RequestInit {
 
 export async function fetchWrapper<T = any>(url: string, options: FetchOptions = {}) {
 	isLoading.set(true);
-
 	try {
 		const res = await fetch(url, {
 			...options,

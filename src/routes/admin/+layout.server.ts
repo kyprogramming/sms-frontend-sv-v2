@@ -1,7 +1,9 @@
-import { API_BASE_URL } from "$lib/constants/env.config";
+import { API_BASE_URL, ENV, UI_BASE_URL } from "$lib/constants/env.config";
 import { classList } from "$lib/stores/masterData";
 import type { LayoutServerLoad } from "./$types";
 
+const url = import.meta.env.SSR && ENV === "development" ? `${API_BASE_URL}` : `${UI_BASE_URL}${API_BASE_URL}`;
+console.log("API URL:", url);
 export const load: LayoutServerLoad = async ({ locals, cookies }) => {
 	if (!locals.user) {
 		return {
@@ -18,26 +20,26 @@ export const load: LayoutServerLoad = async ({ locals, cookies }) => {
 	};
 
 	const [resClasses, resSections] = await Promise.all([
-		fetch(`${API_BASE_URL}/class/list`, { method: "GET", headers }),
-		fetch(`${API_BASE_URL}/section/list`, { method: "GET", headers }),
+		fetch(`${url}/class/list`, { method: "GET", headers }),
+		fetch(`${url}/section/list`, { method: "GET", headers }),
 	]);
 
 	if (resClasses.status === 401 || resSections.status === 401) {
 		console.error("Unauthorized request");
 	}
 
-    const classData = await resClasses.json();
-    const sectionData = await resSections.json();
-    
-    // if (!classData || !Array.isArray(classData.data)) { 
-    //     console.error("Invalid class data received from server");
-    //     return {
-    //         user: locals.user,
-    //         role: locals.user.role,
-    //         classData: [],
-    //     };
-    // }
-   
+	const classData = await resClasses.json();
+	const sectionData = await resSections.json();
+
+	// if (!classData || !Array.isArray(classData.data)) {
+	//     console.error("Invalid class data received from server");
+	//     return {
+	//         user: locals.user,
+	//         role: locals.user.role,
+	//         classData: [],
+	//     };
+	// }
+
 	return {
 		user: locals.user,
 		role: locals.user.role,
