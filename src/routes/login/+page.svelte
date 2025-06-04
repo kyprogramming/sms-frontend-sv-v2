@@ -6,25 +6,17 @@
 	import { apiRequest } from "$lib/utils/api";
 	import { showSnackbar } from "$lib/components/snackbar/store";
 	import { API_BASE_URL } from "$lib/constants/env.config";
-	import { formErrors } from "$lib/stores/formStore";
 	import LoaderIcon from "$lib/components/common/LoaderIcon.svelte";
 	import { Eye, EyeOff } from "@lucide/svelte";
 	import { loginFormSchema, type LoginInput } from "$lib/utils/schemas";
+	import { formErrors } from "$lib/stores/formStore";
 
-	let formData: LoginInput = $state({
-		// email: "",
-		// password: "",
-		email: "username1@xyz.com",
-		password: "password1",
-	});
-
+	formErrors.set({ email: "", password: "" });
+	// let formData: LoginInput = $state({email: "", password: ""});
+	let formData: LoginInput = $state({ email: "username1@xyz.com", password: "password1" });
+	let touched: Partial<Record<keyof LoginInput, boolean>> = $state({ email: false, password: false });
 	let formSubmitted: boolean = $state(false);
 	let showPassword = $state(false);
-
-	let touched: Partial<Record<keyof LoginInput, boolean>> = $state({
-		email: false,
-		password: false,
-	});
 
 	async function onSubmit(event: Event) {
 		event.preventDefault();
@@ -52,10 +44,6 @@
 		formData[field] = value;
 		touched = { ...touched, [field]: true };
 		validateForm(loginFormSchema, formData, formErrors);
-	}
-
-	function togglePasswordVisibility() {
-		showPassword = !showPassword;
 	}
 </script>
 
@@ -87,33 +75,31 @@
 				{/if}
 			</div>
 
-			<!-- svelte-ignore a11y_click_events_have_key_events -->
 			<div>
 				<label for="password">Password</label>
-				<div  class="input-wrapper position-relative">
-                    <input
-					type={showPassword ? "text" : "password"}
-					name="password"
-					placeholder="Enter your password"
-					bind:value={formData.password}
-					class={`w-full pr-10 ${$formErrors.password && (touched.password || formSubmitted) ? "input-error" : ""}`}
-					oninput={(e) => handleChange("password", (e.target as HTMLInputElement).value)}
-					onblur={(e) => handleChange("password", (e.target as HTMLInputElement).value)}
-				/>
+				<div class="input-wrapper position-relative">
+					<input
+						type={showPassword ? "text" : "password"}
+						name="password"
+						placeholder="Enter your password"
+						bind:value={formData.password}
+						class={`w-full pr-10 ${$formErrors.password && (touched.password || formSubmitted) ? "input-error" : ""}`}
+						oninput={(e) => handleChange("password", (e.target as HTMLInputElement).value)}
+						onblur={(e) => handleChange("password", (e.target as HTMLInputElement).value)}
+					/>
 
-				<!-- Toggle Icon -->
-				<!-- svelte-ignore a11y_click_events_have_key_events -->
-				<!-- svelte-ignore a11y_no_static_element_interactions -->
-				<span class="eye-icon" onclick={togglePasswordVisibility}>
-					{#if showPassword}
-						<EyeOff size={18} />
-					{:else}
-						<Eye size={18} />
-					{/if}
-				</span>
+					<!-- svelte-ignore a11y_click_events_have_key_events -->
+					<!-- svelte-ignore a11y_no_static_element_interactions -->
+					<span
+						class="eye-icon"
+						onclick={() => {showPassword = !showPassword;}}
+					>
+						{#if showPassword}<EyeOff size={18} />
+						{:else}<Eye size={18} />
+						{/if}
+					</span>
+				</div>
 
-                </div>
-               
 				{#if $formErrors.password && (touched.password || formSubmitted)}
 					<p class="error-text">{$formErrors.password}</p>
 				{/if}

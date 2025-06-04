@@ -23,6 +23,5 @@ export async function apiRequest<T>(url: string, method: "GET" | "POST" | "PUT" 
 			throw new Error(data?.error || "Request failed");
 		}
 	}
-
 	return data;
 }
