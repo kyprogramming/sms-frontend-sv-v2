@@ -3,22 +3,21 @@
 	import TagInput from "$lib/components/common/TagInput.svelte";
 	import { BLOOD_GROUPS, CASTE_CATEGORIES, GENDERS, GUARDIAN_TYPE } from "$lib/constants";
 	import { isLoading } from "$lib/stores/loading";
-	import { isUpdate } from "$lib/stores/modalStore";
+
 	import { get } from "svelte/store";
-	import { formErrors, initializeStudentFormData, submitAttempted, touched, validateStudentForm, type StudentFormData } from "./studentValidation";
+	import { initializeStudentFormData, submitAttempted, touched, validateStudentForm, type StudentFormData } from "./studentValidation";
 	import { slide } from "svelte/transition";
 	import { createStudent, updateStudent } from "$lib/services/student";
 	import FileUpload from "$lib/components/common/FileUpload.svelte";
 	// import Tabs from "$lib/components/common/Tabs.svelte";
-	import { BrushCleaning, Save, Loader } from "@lucide/svelte";
+	import { BrushCleaning, Save } from "@lucide/svelte";
 	import { page } from "$app/state";
-	import { onMount } from "svelte";
 	import { showSnackbar } from "$lib/components/snackbar/store";
 	import { goto } from "$app/navigation";
 	import LoaderIcon from "$lib/components/common/LoaderIcon.svelte";
+	import { formErrors } from "$lib/stores/formStore";
 
 	let { action, studentData } = $props();
-
 	let classData = page.data?.classData || [];
 	// let studentData = page.data?.studentData || [];
 	// let action = page.data?.action;
@@ -123,9 +122,6 @@
 
 		const isValid = validateStudentForm(formData);
 
-		// if (Object.keys(get(formErrors)).length === 0) {
-
-		// }
 		console.log("isValid:", isValid);
 		console.log("formErrors:", formErrors);
 		console.log("Object.keys(get(formErrors)).length:", Object.keys(get(formErrors)));
@@ -164,9 +160,9 @@
 
 	function handleFileChange(event: Event, index: number) {
 		const target = event.target as HTMLInputElement;
-		if (target.files && target.files.length > 0) {
-			// documents[index].file = target.files[0];
-		}
+		// if (target.files && target.filscriptgth > 0) {
+		// 	// documents[index].file = target.files[0];
+		// }
 	}
 </script>
 
@@ -205,6 +201,7 @@
 					<p class="error-text">{$formErrors["studentData.classId"]}</p>
 				{/if}
 			</div>
+
 			<div class="col-2">
 				<label for="sectionId">Section <span class="required">*</span></label>
 				<select
@@ -236,7 +233,15 @@
 		<h1>Student Profile</h1>
 		<div class="grid-12">
 			<div class="col-2">
-				<label for="firstName">First Name <span class="required">*</span></label>
+				{@render inputRequired(
+					"studentData.profile.firstName",
+					"First Name",
+					true,
+					"text",
+					formData.studentData.profile.firstName,
+					(val) => (formData.studentData.profile.firstName = val),
+				)}
+				<!-- <label for="firstName">First Name <span class="required">*</span></label>
 				<input
 					id="firstName"
 					type="text"
@@ -248,7 +253,7 @@
 				/>
 				{#if $formErrors["studentData.profile.firstName"] && ($touched["studentData.profile.firstName"] || $submitAttempted)}
 					<p class="error-text">{$formErrors["studentData.profile.firstName"]}</p>
-				{/if}
+				{/if} -->
 			</div>
 			<div class="col-2">
 				<label for="middleName">Middle Name</label>
@@ -916,6 +921,27 @@
 		</button>
 	</div>
 </form>
+
+{#snippet inputRequired(fieldName: string, title: string, isRequired = true, type = "text", value: string, onInput: (val: string) => void)}
+		<label for={fieldName}>
+			{title}
+			{#if isRequired}<span class="required">*</span>{/if}
+		</label>
+		<input
+			id={fieldName}
+			{type}
+			name={fieldName}
+			class={`w-full ${$formErrors[fieldName] && ($touched[fieldName] || $submitAttempted) ? "input-error" : ""}`}
+			{value}
+			oninput={(e) => onInput((e.target as HTMLInputElement).value)}
+			onblur={() => handleBlur(fieldName)}
+		/>
+		{#if isRequired}
+			{#if $formErrors[fieldName] && ($touched[fieldName] || $submitAttempted)}
+				<p class="error-text">{$formErrors[fieldName]}</p>
+			{/if}
+		{/if}
+{/snippet}
 
 <style>
 	/* Base styles */

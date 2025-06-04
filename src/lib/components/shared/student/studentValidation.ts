@@ -1,3 +1,4 @@
+import { formErrors } from "$lib/stores/formStore";
 import { generateAdmissionNo, getCurrentAcademicYear } from "$lib/utils/utils";
 import { writable } from "svelte/store";
 import { z } from "zod";
@@ -94,9 +95,10 @@ export const studentSchema = z.object({
 	}),
 });
 
+formErrors.set({});
 export type FormErrors = Partial<Record<any, any>>;
 export type TouchedFields = Partial<Record<any, any>>;
-export const formErrors = writable<FormErrors>({});
+// export const formErrors = writable<FormErrors>({});
 export const touched = writable<TouchedFields>({});
 export const submitAttempted = writable(false);
 
@@ -195,7 +197,6 @@ export function flattenErrors<T>(error: z.ZodFormattedError<T>): FormErrors {
 					result[fullPath] = messages[0];
 				}
 			} else {
-				// Safely recurse into nested fields
 				recurse((err as Record<string, any>)[key], [...path, key]);
 			}
 		}
