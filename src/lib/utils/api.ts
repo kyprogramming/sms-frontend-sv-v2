@@ -1,6 +1,8 @@
 export async function apiRequest<T>(url: string, method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE", body?: unknown, options?: RequestInit): Promise<T> {
-    // console.log(url);
-    const res = await fetch(url, {
+	if (!url) throw new Error("URL is required for API request");
+	if (!method) throw new Error("HTTP method is required for API request");
+
+	const res = await fetch(url, {
 		method,
 		headers: {
 			"Content-Type": "application/json",
@@ -12,9 +14,14 @@ export async function apiRequest<T>(url: string, method: "GET" | "POST" | "PUT" 
 	});
 
 	const data = await res.json();
-
+	console.log("data::", data);
 	if (!res.ok || !data.success) {
-		throw new Error(data?.message || "Request failed");
+		if (data?.formattedError) {
+			const errorMessage = Object.entries(data?.formattedError).map(([field, message]) => `${message}`).join(", ");
+			throw new Error(errorMessage || "Request failed");
+		} else {
+			throw new Error(data?.error || "Request failed");
+		}
 	}
 
 	return data;

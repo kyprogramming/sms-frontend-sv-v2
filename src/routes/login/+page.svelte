@@ -1,146 +1,174 @@
 <script lang="ts">
 	import Header from "$lib/components/layouts/Header.svelte";
-	import { z } from "zod";
 	import { goto, invalidateAll } from "$app/navigation";
 	import { isLoading } from "$lib/stores/loading";
-
-	import { writable } from "svelte/store";
 	import { validateForm } from "$lib/utils/validate";
 	import { apiRequest } from "$lib/utils/api";
 	import { showSnackbar } from "$lib/components/snackbar/store";
 	import { API_BASE_URL } from "$lib/constants/env.config";
-	import { PUBLIC_API_BASE_URL } from "$env/static/public";
+	import { formErrors } from "$lib/stores/formStore";
+	import LoaderIcon from "$lib/components/common/LoaderIcon.svelte";
+	import { Eye, EyeOff } from "@lucide/svelte";
+	import { loginFormSchema, type LoginInput } from "$lib/utils/schemas";
 
-	const loginSchema = z.object({
-		email: z.string().email("Invalid email address"),
-		password: z.string().min(6, "Password must be at least 6 characters"),
-	});
-
-	type LoginFormData = {
-		email: string;
-		password: string;
-	};
-
-	let formData: LoginFormData = $state({
+	let formData: LoginInput = $state({
+		// email: "",
+		// password: "",
 		email: "username1@xyz.com",
 		password: "password1",
 	});
 
-	const formErrors = writable<{ email?: string; password?: string }>({});
-	const touched = writable<Partial<Record<keyof LoginFormData, boolean>>>({
+	let formSubmitted: boolean = $state(false);
+	let showPassword = $state(false);
+
+	let touched: Partial<Record<keyof LoginInput, boolean>> = $state({
 		email: false,
 		password: false,
 	});
 
-	let error: string = $state("");
-
-	function handleChange(field: keyof LoginFormData, value: string): void {
-		formData[field] = value;
-		touched.update((t) => ({ ...t, [field]: true }));
-	}
-
 	async function onSubmit(event: Event) {
 		event.preventDefault();
-		const isValid = await validateForm(loginSchema, formData, formErrors);
+		formSubmitted = true;
+		const isValid = await validateForm(loginFormSchema, formData, formErrors);
 		if (!isValid) return;
 		await handleLogin();
 	}
 
 	async function handleLogin() {
 		try {
-			// Call api
 			isLoading.set(true);
 			const data = await apiRequest<any>(`${API_BASE_URL}/auth/login`, "POST", formData);
-			if (!data.success) throw new Error(data.message || "Login failed");
-
-			// redirect to dashboard page
 			showSnackbar({ message: data.message, type: "success" });
-            await invalidateAll(); 
+			await invalidateAll();
 			await goto(`/${data.data.role}/dashboard`);
-            // await goto(`/help`);
-            
 		} catch (err: any) {
-			error = err?.message || "Unexpected error occurred";
+			showSnackbar({ message: err?.message || "Unexpected error occurred", type: "error" });
 		} finally {
 			isLoading.set(false);
 		}
 	}
+
+	function handleChange(field: keyof LoginInput, value: string): void {
+		formData[field] = value;
+		touched = { ...touched, [field]: true };
+		validateForm(loginFormSchema, formData, formErrors);
+	}
+
+	function togglePasswordVisibility() {
+		showPassword = !showPassword;
+	}
 </script>
 
+<svelte:head>
+	<title>Login</title>
+</svelte:head>
 <Header />
 
 <div class="form-container">
-	<div class="form-card">
-		  <h2>API URL</h2> {PUBLIC_API_BASE_URL}
-        <h2>School Logo</h2>
+	<div class="card">
+		<h2>School Logo</h2>
 		<h3>Login to Your Account</h3>
-		<p>Enter your credentials below</p>
+		<p class="text-muted">Enter your credentials below</p>
 
-
-        <form onsubmit={onSubmit} novalidate>
-			<div class="input-wrapper">
+		<form onsubmit={onSubmit} novalidate>
+			<div>
+				<label for="email">Username</label>
 				<input
 					type="email"
 					name="email"
-					placeholder="Enter your email"
+					placeholder="Enter your username"
 					bind:value={formData.email}
-					class={`w-full ${$formErrors.password && $touched.password ? "input-error" : ""}`}
+					class={`w-full ${$formErrors.email && (touched.email || formSubmitted) ? "input-error" : ""}`}
 					oninput={(e) => handleChange("email", (e.target as HTMLInputElement).value)}
-					onblur={() => touched.update((t) => ({ ...t, email: true }))}
+					onblur={(e) => handleChange("email", (e.target as HTMLInputElement).value)}
 				/>
-				{#if $formErrors.email && $touched.email}
+				{#if $formErrors.email && (touched.email || formSubmitted)}
 					<p class="error-text">{$formErrors.email}</p>
 				{/if}
 			</div>
 
-			<div class="input-wrapper">
-				<input
-					type="password"
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<div>
+				<label for="password">Password</label>
+				<div  class="input-wrapper position-relative">
+                    <input
+					type={showPassword ? "text" : "password"}
 					name="password"
 					placeholder="Enter your password"
 					bind:value={formData.password}
-					class={`w-full ${$formErrors.password && $touched.password ? "input-error" : ""}`}
+					class={`w-full pr-10 ${$formErrors.password && (touched.password || formSubmitted) ? "input-error" : ""}`}
 					oninput={(e) => handleChange("password", (e.target as HTMLInputElement).value)}
-					onblur={() => touched.update((t) => ({ ...t, password: true }))}
+					onblur={(e) => handleChange("password", (e.target as HTMLInputElement).value)}
 				/>
-				{#if $formErrors.password && $touched.password}
+
+				<!-- Toggle Icon -->
+				<!-- svelte-ignore a11y_click_events_have_key_events -->
+				<!-- svelte-ignore a11y_no_static_element_interactions -->
+				<span class="eye-icon" onclick={togglePasswordVisibility}>
+					{#if showPassword}
+						<EyeOff size={18} />
+					{:else}
+						<Eye size={18} />
+					{/if}
+				</span>
+
+                </div>
+               
+				{#if $formErrors.password && (touched.password || formSubmitted)}
 					<p class="error-text">{$formErrors.password}</p>
 				{/if}
 			</div>
-
-			<div class="forgot-password">
-				<a href="forgot-password">Forgot password?</a>
-			</div>
-
-			<button class="btn ripple" style="width: 100%; justify-content: center;" type="submit" disabled={$isLoading}>
+			<button class="btn ripple" type="submit" disabled={$isLoading}>
 				{#if $isLoading}
-					<!-- <img src="/spinner.svg" alt="Loading..." class="spinner" /> -->
-					Loading...
-				{:else}
-					Login
+					<LoaderIcon />
 				{/if}
+				Sign In
 			</button>
 		</form>
 
-		<div class="signup">
-			Don't have an account? <a href="/sign-up">Sign up</a>
+		<div class="forgot-password">
+			<a href="/forgot-password">Forgot password?</a>
 		</div>
-
-		{#if error}
-			<p class="server-error">{error}</p>
-		{/if}
 	</div>
 </div>
 
-<!-- prettier-ignore -->
 <style>
- 
+	.form-container {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		border-radius: 10px;
+		height: 90vh;
+	}
 
+	.forgot-password {
+		text-align: center;
+		margin-top: 8px;
+	}
 
+	.forgot-password a {
+		color: #2563eb;
+		text-decoration: none;
+	}
 
+	.position-relative {
+		position: relative;
+	}
 
+	.eye-icon {
+		position: absolute;
+		top: 25%;
+		left: auto;
+		right: 12px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 10;
+		color: #666;
+	}
 
-
-
-
+	.eye-icon:hover {
+		opacity: 0.8;
+	}
 </style>

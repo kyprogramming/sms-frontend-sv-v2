@@ -145,12 +145,12 @@ textarea {
     font-size: 0.9rem;
 }
 
-form {
+/* form {
     display: flex;
     flex-direction: column;
     gap: 1rem;
     align-items: baseline;
-}
+} */
 
 ul:has(li):has(form) {
     list-style: none;
