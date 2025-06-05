@@ -25,12 +25,6 @@
 	let itemName = $state("");
 	let sectionData: any = $state(null);
 	let searchText = $state("");
-	// let response: any = $state(null);
-
-	// let localSearch = get(searchText);
-	// $effect.pre(() => {
-	// 	searchText.set(localSearch);
-	// });
 
 
 	const columns: ColumnConfig[] = [
@@ -79,10 +73,6 @@
 			},
 		],
 	};
-
-	// async function handleRefreshPage() {
-	// 	onRefreshPage();
-	// }
 
 	async function handleSearchClick() {
 		currentPage.set(1);
@@ -134,7 +124,7 @@
 
     async function handleSearchChange() {
 		if (searchText === "") return;
-		loadPaginationVariables(); // Load pagination variables
+		loadPaginationVariables();
 		const params = new URLSearchParams({ search: searchText, page: String($currentPage), limit: String($rowsPerPage) });
 		const json = await fetchSections(params);
 		response = { ...json };
@@ -161,7 +151,7 @@
 		$totalPages = get(totalPages);
 		$totalItems = get(totalItems);
         if($totalPages === 1) {
-            currentPage.set(1); // Reset to first page if no pages available
+            currentPage.set(1);
         }
 	}
 </script>
@@ -200,7 +190,6 @@
 		size="md"
 		onClose={closeModel}
 		onDelete={() => {
-			// onDelete($modalData._id);
 			isDeleteModalOpen = true;
 		}}
 		onCancel={closeModel}
@@ -216,7 +205,6 @@
 		itemName={`Name:  ${itemName}`}
 		onDelete={handleDelete}
 		onCancel={() => {
-			// modalData.set(null);
 			isDeleteModalOpen = false;
 		}}
 	/>
