@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
+	import { run } from "svelte/legacy";
 
 	import { z } from "zod";
 	import { get, writable } from "svelte/store";
@@ -9,128 +9,115 @@
 	import { closeModal, isUpdate } from "$lib/stores/modalStore";
 	import { createClass, updateClass } from "$lib/services/class";
 
-    import { page } from '$app/state';
+	import { page } from "$app/state";
+	import { BrushCleaning, Save } from "@lucide/svelte";
+	import LoaderIcon from "$lib/components/common/LoaderIcon.svelte";
 
-    
+	import { classFormSchema, type ClassInputType } from "$lib/utils/schemas";
+	import { formErrors } from "$lib/stores/formStore";
+	import { onMount } from "svelte";
+	import { areFieldsUnchanged } from "$lib/utils/utils";
+	import { MESSAGES } from "$lib/utils/messages";
 
-	// type Section = { _id: string; name: string };
-	// let allSections: any = $state();
-    let allSections = page.data?.sectionData || [];
+	let allSections = page.data?.sectionData || [];
 
-    // console.log("allSections:", page.data?.sectionData );
-	// onMount(async () => {
-	// 	allSections = await fetchSectionList();
-	// 	// console.log("allSections", allSections);
-	// });
-
-	
-	interface Props {
-		// Props
-		onRefreshPage: () => void;
-		dataToUpdate?: any | null;
-	}
-
-	let { onRefreshPage, dataToUpdate = null }: Props = $props();
-
-	// Zod schema
-	const classSchema = z.object({
-		name: z.string().min(1, "Class name is required"),
-		sectionIds: z.array(z.string()).min(1, "Please select at least one section"),
-	});
-
-	type ClassFormData = z.infer<typeof classSchema>;
+	let { onRefreshPage, classData = null, action } = $props();
 
 	// Reactive form state
-	let formData: ClassFormData = $state({
-		name: "",
-		sectionIds: [], // Now this works fine
-	});
-	let error = "";
+	let formData: ClassInputType = $state({ name: "", sectionIds: [] });
+	let touched: Partial<Record<keyof ClassInputType, boolean>> = $state({ name: false, sectionIds: false });
+	let formSubmitted: boolean = $state(false);
 
-	const formErrors = writable<Partial<Record<keyof ClassFormData, string>>>({});
-	const touched = writable<Partial<Record<keyof ClassFormData, boolean>>>({ name: false });
-	const submitAttempted = writable(false);
-
-	// Prefill data if editing
-	function populateFormData() {
-        // console.log("dataToUpdate:", dataToUpdate);
-		if (dataToUpdate) {
-			formData = {
-				name: dataToUpdate.name,
-				sectionIds:  dataToUpdate.sectionIds.map((section: { _id: string; }) => section._id)  || [],
-			};
-		}
-	}
-	run(() => {
+	onMount(() => {
 		populateFormData();
+		formErrors.set({ name: "" });
 	});
 
-	// Form submission handler
-	async function onSubmit(event: Event) {
-		event.preventDefault();
-		submitAttempted.set(true);
-
-		const isValid = validateForm(classSchema, formData);
-		if (!isValid) return;
-
-		try {
-			if (get(isUpdate) && dataToUpdate) {
-				await updateClass(dataToUpdate._id, formData);
-				showSnackbar({ message: "Class updated successfully", type: "success" });
-			} else {
-				await createClass(formData);
-				showSnackbar({ message: "Class created successfully", type: "success" });
-			}
-
-			closeModal();
-			onRefreshPage();
-		} catch (err: unknown) {
-			const errMsg = (err as Error)?.message ?? "Failed to save class";
-			error = errMsg;
-			console.error(err);
-		}
+	// Form reset handler
+	function handleResetForm() {
+		populateFormData();
+		// Reset form errors and touched state
+		formErrors.set({});
+		formSubmitted = false;
+		touched = { name: false, sectionIds: false };
 	}
 
 	// Handle field changes
-	function handleChange(field: keyof ClassFormData, value: string | string[]): void {
+	function handleChange(field: keyof ClassInputType, value: string | string[]): void {
 		if (field === "name" && typeof value === "string") {
 			formData.name = value;
 		} else if (field === "sectionIds" && Array.isArray(value)) {
 			formData.sectionIds = value;
 		}
+		touched = { ...touched, [field]: true };
+		validateForm(classFormSchema, formData);
 
-		touched.update((t) => ({ ...t, [field]: true }));
+		// formErrors.update(() => {
+		// 	if (!result.success) {
+		// 		const fieldErrors = result.error.flatten().fieldErrors as Record<string, string[]>;
+		// 		const errorMap: Partial<Record<keyof ClassFormData, string>> = {};
+		// 		for (const key in fieldErrors) {
+		// 			errorMap[key as keyof ClassFormData] = fieldErrors[key]?.[0] ?? "";
+		// 		}
+		// 		return errorMap;
+		// 	}
+		// 	return {};
+		// });
+	}
 
-		const result = classSchema.safeParse(formData);
+	// Populate form data based on action
+	function populateFormData() {
+		if (action === "update") {
+			formData = {
+				name: classData.name,
+				sectionIds: classData.sectionIds.map((section: { _id: string }) => section._id) || [],
+			};
+		} else {
+			formData = { name: "", sectionIds: [] };
+		}
+	}
 
-		formErrors.update(() => {
-			if (!result.success) {
-				const fieldErrors = result.error.flatten().fieldErrors as Record<string, string[]>;
-				const errorMap: Partial<Record<keyof ClassFormData, string>> = {};
-				for (const key in fieldErrors) {
-					errorMap[key as keyof ClassFormData] = fieldErrors[key]?.[0] ?? "";
-				}
-				return errorMap;
+	// Form submission handler
+	async function onSubmit(event: Event) {
+		event.preventDefault();
+		formSubmitted = true;
+
+		const isValid = validateForm(classFormSchema, formData);
+		if (!isValid) return;
+
+		if (action === "update"  && classData) {
+            	// Check if the form data is unchanged before updating
+			const isUnChanged = areFieldsUnchanged(classData, formData, ["name", "sectionIds"]);
+			if (isUnChanged) {
+				showSnackbar({ message: MESSAGES.FORM.NO_CHANGES, type: "warning" });
+				return;
 			}
-			return {};
-		});
+            
+			await updateClass(classData._id, formData);
+			showSnackbar({ message: MESSAGES.CLASS.UPDATED, type: "success" });
+		} else {
+			await createClass(formData);
+			showSnackbar({ message: MESSAGES.CLASS.CREATED, type: "success" });
+		}
+
+		closeModal();
+		onRefreshPage();
 	}
 </script>
 
 <form onsubmit={onSubmit}>
 	<div class="input-wrapper">
 		<label for="name">Name *</label>
-		<input
-			id="name"
-			type="text"
-			name="name"
-			placeholder="Class name"
-			class={`w-full ${$formErrors.name && ($touched.name || $submitAttempted) ? "input-error" : ""}`}
-			bind:value={formData.name}
-			oninput={(e) => handleChange("name", (e.target as HTMLInputElement).value)}
-			onblur={() => touched.update((t) => ({ ...t, name: true }))}
-		/>
-		{#if $formErrors.name && ($touched.name || $submitAttempted)}
+		<input id="name" 
+        type="text" 
+        name="name" 
+        placeholder="Enter class name" 
+        class={`w-full ${$formErrors.name && (touched.name || formSubmitted) ? "input-error" : ""}`} 
+        bind:value={formData.name} 
+        oninput={(e) => handleChange("name", (e.target as HTMLInputElement).value)}
+        onblur={(e) => handleChange("name", (e.target as HTMLInputElement).value)}
+    />
+		{#if $formErrors.name && (touched.name || formSubmitted)}
 			<p class="error-text">{$formErrors.name}</p>
 		{/if}
 	</div>
@@ -138,7 +125,7 @@
 	<div class="input-wrapper">
 		<!-- svelte-ignore a11y_label_has_associated_control -->
 		<label>Sections *</label>
-		<div class="checkbox-section" class:has-error={$formErrors.sectionIds && $submitAttempted}>
+		<div class="checkbox-section" class:has-error={$formErrors.sectionIds && formSubmitted}>
 			{#each allSections as section}
 				<div class="checkbox-item">
 					<label class="checkbox-label">
@@ -154,27 +141,47 @@
 								} else {
 									formData.sectionIds = formData.sectionIds.filter((id) => id !== section._id);
 								}
-								handleChange("sectionIds", formData.sectionIds);
+								// handleChange("sectionIds", formData.sectionIds);
 							}}
-							onblur={() => handleChange("sectionIds", formData.sectionIds)}
+							
 						/>
+                        <!-- onblur={() => handleChange("sectionIds", formData.sectionIds)} -->
 						<span class="checkbox-custom"></span>
 						<span class="checkbox-text">{section.name}</span>
 					</label>
 				</div>
 			{/each}
 		</div>
-		{#if $formErrors.sectionIds && ($submitAttempted || $touched.sectionIds)}
+		{#if $formErrors.sectionIds && (formSubmitted || touched.sectionIds)}
 			<p class="error-text">{$formErrors.sectionIds}</p>
 		{/if}
 	</div>
 
-	<div class="flex-items-center" style="justify-content:end;">
+	<!-- <div class="flex-items-center" style="justify-content:end;">
 		<button class="btn ripple" type="reset" disabled={$isLoading} style="background-color: var(--clr-pri-light); align-self: right;"> Clear </button>
 		<button class="btn ripple" type="submit" disabled={$isLoading}>
 			{#if $isLoading}
 				{#if $isUpdate}Updating...{:else}Saving...{/if}
 			{:else if $isUpdate}Update{:else}Save{/if}
+		</button>
+	</div> -->
+
+	<div class="form-actions">
+		<button type="button" class="btn ripple btn-secondary" onclick={handleResetForm} disabled={$isLoading}>
+			<BrushCleaning />
+			<span>Reset Form</span>
+		</button>
+
+		<button class="btn ripple" type="submit" disabled={$isLoading}>
+			<LoaderIcon />
+			{#if !$isLoading}
+				<Save />
+			{/if}
+			{#if action === "update"}
+				Update Class
+			{:else}
+				Save Class
+			{/if}
 		</button>
 	</div>
 </form>
@@ -248,17 +255,13 @@
 	.checkbox-text {
 		margin-left: 4px;
 	}
-	/* Add this to your existing styles */
+
 	.has-error {
-		/* border: 1px solid #ff4444; */
+
 		padding: 15px;
 		border-radius: 4px;
-        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
+		box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
 	}
 
-	/* .error-text {
-		color: #ff4444;
-		font-size: 0.8rem;
-		margin-top: 4px;     
-	} */
+
 </style>

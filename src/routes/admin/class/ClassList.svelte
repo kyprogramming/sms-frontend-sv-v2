@@ -1,41 +1,36 @@
 <script lang="ts">
-    	import { env } from "$env/dynamic/public";
+	import { env } from "$env/dynamic/public";
+	import { currentPage, rowsPerPage, totalItems, totalPages } from "$lib/stores/paginationStore";
+	import { formatDate } from "$lib/utils/formatDate";
+	import { RefreshCw, Search } from "@lucide/svelte";
+
 	import DataTable from "$lib/components/common/DataTable.svelte";
 	import ModalDelete from "$lib/components/common/ModalDelete.svelte";
 	import Modal from "$lib/components/common/Modal.svelte";
-	import { modalData, openDeleteModal, openModal, isUpdate, openEditModal } from "$lib/stores/modalStore";
-	import { formatDate } from "$lib/utils/formatDate";
-	import { Pencil, Eye, Trash2, Plus } from "@lucide/svelte";
-	import { get } from "svelte/store";
-	import { RefreshCw, Search } from "@lucide/svelte";
-	import { searchText, currentPage } from "$lib/stores/paginationStore";
-	import type { ColumnConfig } from "$lib/interfaces/table.interface";
 	import ClassForm from "./ClassForm.svelte";
 
-    const schoolName = env.PUBLIC_SCHOOL_NAME || "Default School";
+	import { Pencil, Eye, Trash2, Plus } from "@lucide/svelte";
 
-    let isDeleteModalOpen = $state(false);
-    const isModalOpen = $state(false);
+	import type { ColumnConfig } from "$lib/interfaces/table.interface";
+	import { showSnackbar } from "$lib/components/snackbar/store";
+	import { deleteClassById, fetchClassById, fetchClasses } from "$lib/services/class";
 
-	interface Props {
-		response: any;
-		dataToUpdate: any;
-		onRefreshPage: () => void;
-		onSearchChange: () => void;
-		onDelete: (id: string) => void;
-		onUpdate: (id: string) => void;
-	}
+	// Props
+	const schoolName = env.PUBLIC_SCHOOL_NAME || "Default School";
+	let { response } = $props();
 
-	let { response, dataToUpdate = $bindable(), onRefreshPage, onSearchChange, onDelete, onUpdate }: Props = $props();
+	// States
+	let searchText = $state("");
+	let classData: any | null = $state(null);
 
-	let localSearch = get(searchText);
+	let isModalOpen = $state(false);
+	let isDeleteModalOpen = $state(false);
+	let isUpdate = $state(false);
 
-	$effect.pre(() => {
-		searchText.set(localSearch);
-	});
+	let selectedId = $state("");
+	let selectedName = $state("");
 
-	// console.log("dataToUpdate: ClassList", dataToUpdate);
-
+	// Column configuration
 	const columns: ColumnConfig[] = [
 		{ key: "_id", label: "Id", visible: false },
 		{ key: "serialNo", label: "Sr #", width: "80px", sortable: true, align: "center" },
@@ -50,6 +45,7 @@
 		},
 	];
 
+	// Actions configuration
 	const actions = {
 		show: true,
 		iconActions: [
@@ -65,77 +61,110 @@
 				icon: Pencil,
 				class: "edit",
 				show: true,
-				action: (item: { _id: any }) => {
-					handleUpdate(item._id);
+				action: async (item: { _id: any }) => {
+					isUpdate = true;
+					await updateAction(item._id);
 				},
 			},
 			{
 				icon: Trash2,
 				class: "delete",
 				show: true,
-				action: (item: { _id: any }) => {
-					handleDelete(item._id);
+				action: (item: { _id: any; name: string }) => {
+					selectedId = item._id;
+					selectedName = item.name;
+					isDeleteModalOpen = true;
 				},
 			},
 		],
 	};
 
-	async function handleRefreshPage() {
-		onRefreshPage();
-	}
-
-	function handleSearchClick() {
+	// Page handlers
+	async function handleSearch() {
 		currentPage.set(1);
-		onSearchChange?.();
+		await searchAction();
 	}
 
-	function handleRefreshButtonClick() {
-		searchText.set("");
+	async function handleRefresh() {
+		searchText = "";
 		currentPage.set(1);
-		onRefreshPage?.();
-	}
-
-	function handlePaginationChange() {
-		onRefreshPage();
-	}
-
-	function handlePageLimitChange() {
-		onRefreshPage();
-	}
-
-    // function handleDeleteRefresh() {
-	// 	onRefreshPage();
-	// }
-    
-	function handleDelete(itemId: string) {
-        isDeleteModalOpen = true;
-		openDeleteModal({ _id: itemId });
+		await refreshAction();
 	}
 
 	function handleAdd() {
-		openModal();
-		dataToUpdate = null;
+		classData = null;
+        isUpdate = false;
+		isModalOpen = true;
 	}
 
-	async function handleUpdate(id: string) {
-		onUpdate(id);
+	async function handleDelete() {
+		await deleteAction(selectedId);
+	}
+
+	async function handlePaginationChange() {
+		await refreshAction();
+	}
+
+	async function handlePageLimitChange() {
+		await refreshAction();
+	}
+
+	async function handleDeleteRefresh() {
+		await refreshAction();
+	}
+
+	// Server actions
+	async function updateAction(id: string) {
+		classData = null;
+		const res = await fetchClassById(id);
+		const { data } = res;
+		classData = data;
+		if (res.success) isModalOpen = true;
+	}
+
+	async function deleteAction(id: string) {
+		const json = await deleteClassById(id);
+		if (json.success) {
+			showSnackbar({ message: `${json.message}`, type: "success" });
+			isDeleteModalOpen = false;
+		} else showSnackbar({ message: `${json.message}`, type: "error" });
+
+		if ($totalItems % $rowsPerPage === 1 && $currentPage > 1) {
+			currentPage.set($currentPage - 1);
+		}
+		await refreshAction();
+	}
+
+	async function searchAction() {
+		if (searchText === "") return;
+		const params = new URLSearchParams({ search: searchText, page: String($currentPage), limit: String($rowsPerPage) });
+		const json = await fetchClasses(params);
+		response = { ...json };
+	}
+
+	async function refreshAction() {
+		const params = new URLSearchParams({ search: searchText || "", page: String($currentPage), limit: String($rowsPerPage) });
+		console.log("Params:", params.toString(), $currentPage, $rowsPerPage, $totalPages, $totalItems);
+		const json = await fetchClasses(params);
+		isModalOpen = false;
+		response = { ...json };
 	}
 </script>
 
 <svelte:head>
-  <title>{schoolName} - Class</title>
+	<title>{schoolName} - Class</title>
 </svelte:head>
 
 <div class="class-container">
 	<div class="search-container">
-		<input name="search" type="text" placeholder="Search class..." bind:value={$searchText} />
+		<input name="search" type="text" placeholder="Search class..." bind:value={searchText} />
 
-		<button type="button" class="btn ripple" onclick={handleSearchClick}>
+		<button type="button" class="btn ripple" onclick={handleSearch}>
 			<Search />
 			<span>Search</span>
 		</button>
 
-		<button type="button" class="btn ripple btn-secondary" onclick={handleRefreshButtonClick}>
+		<button type="button" class="btn ripple btn-secondary" onclick={handleRefresh}>
 			<RefreshCw />
 			<span>Refresh</span>
 		</button>
@@ -151,8 +180,17 @@
 <DataTable {response} {columns} {actions} onPaginationChange={handlePaginationChange} onPageLimitChange={handlePageLimitChange} />
 
 {#if isModalOpen}
-	<Modal title={$isUpdate ? "Update Class" : "Add Class"} size="lg">
-		<ClassForm onRefreshPage={handleRefreshPage} {dataToUpdate} />
+	<Modal
+		title={isUpdate ? "Update Class" : "Add Class"}
+		size="lg"
+		onClose={() => {
+			isModalOpen = false;
+		}}
+		onCancel={() => {
+			isModalOpen = false;
+		}}
+	>
+		<ClassForm onRefreshPage={refreshAction} {classData} action={isUpdate ? "update" : "create"} />
 	</Modal>
 {/if}
 
@@ -160,12 +198,10 @@
 	<ModalDelete
 		title="Delete Class"
 		size="md"
-		onDelete={() => {
-			onDelete($modalData._id);
-		}}
+		selectedName={`Name:  ${selectedName}`}
+		onDelete={handleDelete}
 		onCancel={() => {
-			modalData.set(null);
-            isDeleteModalOpen = false;
+			isDeleteModalOpen = false;
 		}}
 	/>
 {/if}
@@ -183,14 +219,6 @@
 		flex: 1;
 	}
 
-	.icon-button {
-		background: none;
-		border: none;
-		cursor: pointer;
-		padding: 4px;
-		display: flex;
-		align-items: center;
-	}
 	input[name="search"] {
 		width: 300px;
 	}

@@ -93,6 +93,7 @@
 
 	function handleAdd() {
 		sectionData = null;
+        isUpdate = false;
 		isModalOpen = true;
 	}
 
@@ -191,7 +192,7 @@
 			isModalOpen = false;
 		}}
 	>
-		<SectionForm onRefreshPage={refreshAction} {sectionData} action={isUpdate ? "update" : "add"} />
+		<SectionForm onRefreshPage={refreshAction} {sectionData} action={isUpdate ? "update" : "create"} />
 	</Modal>
 {/if}
 

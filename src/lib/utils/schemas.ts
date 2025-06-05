@@ -14,11 +14,14 @@ export type LoginInputType = z.infer<typeof loginFormSchema>;
 
 // Section schema and type definition
 export const sectionFormSchema = z.object({
-    name: z.string().min(1, "Section name is required"),
-    // description: z.string().optional(),
-    // color: z.string().optional(),
+    name: z.string().min(1, "Section name is required")
 });
-// const sectionSchema = z.object({
-//     name: z.string().min(1, "Section name is required"),
-// });
 export type SectionInputType = z.infer<typeof sectionFormSchema>;
+
+
+// Class schema and type definition
+export const classFormSchema = z.object({
+	name: z.string().min(1, "Class name is required"),
+	sectionIds: z.array(z.string()).min(1, "Please select at least one section")
+});
+export type ClassInputType = z.infer<typeof classFormSchema>;

@@ -21,16 +21,14 @@
 
 	onMount(() => {
 		formErrors.set({ name: "" });
-        // Initialize form data based on action
-		if (action === "update" && sectionData) formData = { name: sectionData.name };
+		// Initialize form data based on action
+		if (action === "update" && sectionData) {
+			formData = { name: sectionData.name };
+		} else {
+			formData = { name: "" };
+		}
+		touched = { name: false };
 	});
-
-	// Field change handler
-	function handleChange(field: keyof SectionInputType, value: string): void {
-		formData[field] = value;
-		touched = { ...touched, [field]: true };
-		validateForm(sectionFormSchema, formData);
-	}
 
 	// Form reset handler
 	function handleResetForm() {
@@ -40,6 +38,13 @@
 		formErrors.set({});
 		formSubmitted = false;
 		touched = { name: false };
+	}
+
+	// Field change handler
+	function handleChange(field: keyof SectionInputType, value: string): void {
+		formData[field] = value;
+		touched = { ...touched, [field]: true };
+		validateForm(sectionFormSchema, formData);
 	}
 
 	// Form submission handler
