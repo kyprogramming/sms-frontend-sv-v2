@@ -149,31 +149,29 @@
 </script>
 
 <form onsubmit={onSubmit}>
-	<!-- Academic Detail -->
+	<!-- Student Academic Detail -->
 	<div class="card-wrapper">
 		<h1>Academic Detail</h1>
 		<div class="grid-12">
+			<!-- Academic Year -->
 			<div class="col-2">
 				<label for="academicYear">Academic Year</label>
 				<input id="academicYear" type="text" bind:value={formData.studentData.academicYear} readonly disabled />
 			</div>
+			<!-- Admission No -->
 			<div class="col-2">
 				<label for="admissionNo">Admission No</label>
 				<input id="admissionNo" type="text" bind:value={formData.studentData.admissionNo} />
 			</div>
+			<!-- Admission Date -->
 			<div class="col-2">
 				<label for="admissionDate">Admission Date</label>
 				<DatePicker bind:value={selectedDate} onChange={handleDateChange} defaultToday={true} />
 			</div>
+			<!-- Student Class -->
 			<div class="col-2">
 				<label for="classId">Class <span class="required">*</span></label>
-				<select
-					id="classId"
-					class={`w-full ${formData.studentData.classId === "" ? "placeholder-gray" : ""} ${$formErrors["studentData.classId"] && ($touched["studentData.classId"] || $submitAttempted) ? "input-error" : ""}`}
-					bind:value={formData.studentData.classId}
-					onchange={handleClassChange}
-					onblur={handleClassChange}
-				>
+				<select id="classId" class={`w-full ${formData.studentData.classId === "" ? "placeholder-gray" : ""} ${$formErrors["studentData.classId"] && ($touched["studentData.classId"] || $submitAttempted) ? "input-error" : ""}`} bind:value={formData.studentData.classId} onchange={handleClassChange} onblur={handleClassChange}>
 					<option value="" selected>Select class</option>
 					{#each classData as cls}
 						<option value={cls._id}>{cls.name}</option>
@@ -183,7 +181,7 @@
 					<p class="error-text">{$formErrors["studentData.classId"]}</p>
 				{/if}
 			</div>
-
+			<!-- Student Section -->
 			<div class="col-2">
 				<label for="sectionId">Section <span class="required">*</span></label>
 				<select
@@ -203,59 +201,34 @@
 					<p class="error-text">{$formErrors["studentData.sectionId"]}</p>
 				{/if}
 			</div>
+			<!-- Student Roll No -->
 			<div class="col-2">
 				{@render requiredInput("studentData.rollNo", "Roll Number", false, "text", formData.studentData.rollNo ?? "", (val) => (formData.studentData.rollNo = val), 20)}
-				<!-- <label for="rollNo">Roll Number</label>
-				<input id="rollNo" type="text" name="rollNo" class="w-full" bind:value={formData.studentData.rollNo} /> -->
 			</div>
 		</div>
 	</div>
 
-	<!-- Student Profile -->
+	<!-- Student Profile Details-->
 	<div class="card-wrapper">
 		<h1>Student Profile</h1>
 		<div class="grid-12">
+			<!-- Student First Name-->
 			<div class="col-2">
-				{@render requiredInput(
-					"studentData.profile.firstName",
-					"First Name",
-					true,
-					"text",
-					formData.studentData.profile.firstName,
-					(val) => (formData.studentData.profile.firstName = val),
-					20,
-				)}
+				{@render requiredInput("studentData.profile.firstName", "First Name", true, "text", formData.studentData.profile.firstName, (val) => (formData.studentData.profile.firstName = val), 20)}
 			</div>
+			<!-- Student Middle Name-->
 			<div class="col-2">
-				{@render requiredInput(
-					"studentData.profile.middleName",
-					"Middle Name",
-					false,
-					"text",
-					formData.studentData.profile.middleName ?? "",
-					(val) => (formData.studentData.profile.middleName = val),
-					20,
-				)}
+				{@render requiredInput("studentData.profile.middleName", "Middle Name", false, "text", formData.studentData.profile.middleName ?? "", (val) => (formData.studentData.profile.middleName = val), 20)}
 			</div>
-
+			<!-- Student Last Name-->
 			<div class="col-2">
-				{@render requiredInput(
-					"studentData.profile.lastName",
-					"Last Name",
-					true,
-					"text",
-					formData.studentData.profile.lastName ?? "",
-					(val) => (formData.studentData.profile.lastName = val),
-					20,
-				)}
+				{@render requiredInput("studentData.profile.lastName", "Last Name", true, "text", formData.studentData.profile.lastName ?? "", (val) => (formData.studentData.profile.lastName = val), 20)}
 			</div>
-
+			<!-- Gender -->
 			<div class="col-2">
 				<label for="gender">Gender <span class="required">*</span></label>
 				<select
-					class={`w-full ${formData.studentData.profile.gender === "" ? "placeholder-gray" : ""} ${
-						$formErrors["studentData.profile.gender"] && ($touched["studentData.profile.gender"] || $submitAttempted) ? "input-error" : ""
-					}`}
+					class={`w-full ${formData.studentData.profile.gender === "" ? "placeholder-gray" : ""} ${$formErrors["studentData.profile.gender"] && ($touched["studentData.profile.gender"] || $submitAttempted) ? "input-error" : ""}`}
 					bind:value={formData.studentData.profile.gender}
 					onblur={() => handleBlur("studentData.profile.gender")}
 					onchange={() => handleBlur("studentData.profile.gender")}
@@ -269,20 +242,15 @@
 					<p class="error-text">{$formErrors["studentData.profile.gender"]}</p>
 				{/if}
 			</div>
-
+			<!-- Date of Birth -->
 			<div class="col-2">
 				<label for="dob">Date of Birth <span class="required">*</span></label>
-				<DatePicker
-					bind:value={selectedDateOfBirth}
-					onChange={handleBirthDateChange}
-					onClear={handleOnClear}
-					cls={`w-full ${$formErrors["studentData.profile.dob"] && ($touched["studentData.profile.dob"] || $submitAttempted) ? "input-error" : ""}`}
-				/>
+				<DatePicker bind:value={selectedDateOfBirth} onChange={handleBirthDateChange} onClear={handleOnClear} cls={`w-full ${$formErrors["studentData.profile.dob"] && ($touched["studentData.profile.dob"] || $submitAttempted) ? "input-error" : ""}`} />
 				{#if $formErrors["studentData.profile.dob"] && ($touched["studentData.profile.dob"] || $submitAttempted)}
 					<p class="error-text">{$formErrors["studentData.profile.dob"]}</p>
 				{/if}
 			</div>
-
+			<!-- Category -->
 			<div class="col-2">
 				<label for="category">Category</label>
 				<select id="category" class={`w-full ${formData.studentData.profile.category === "" ? "placeholder-gray" : ""}`} bind:value={formData.studentData.profile.category}>
@@ -292,179 +260,93 @@
 					{/each}
 				</select>
 			</div>
-
+			<!-- Religion -->
 			<div class="col-2">
-				{@render requiredInput(
-					"studentData.profile.religion",
-					"Religion",
-					false,
-					"text",
-					formData.studentData.profile.religion ?? "",
-					(val) => (formData.studentData.profile.religion = val),
-					20,
-				)}
+				{@render requiredInput("studentData.profile.religion", "Religion", false, "text", formData.studentData.profile.religion ?? "", (val) => (formData.studentData.profile.religion = val), 20)}
 			</div>
-
+			<!-- Caste -->
 			<div class="col-2">
-				{@render requiredInput(
-					"studentData.profile.caste",
-					"Caste",
-					false,
-					"text",
-					formData.studentData.profile.caste ?? "",
-					(val) => (formData.studentData.profile.caste = val),
-					20,
-				)}
+				{@render requiredInput("studentData.profile.caste", "Caste", false, "text", formData.studentData.profile.caste ?? "", (val) => (formData.studentData.profile.caste = val), 20)}
 			</div>
-
-			<!-- User Data -->
+			<!-- Mobile No -->
 			<div class="col-2">
 				{@render requiredInput("userData.mobile", "Mobile No", false, "tel", formData.userData.mobile ?? "", (val) => (formData.userData.mobile = val), 10)}
 			</div>
-
+			<!-- Email -->
 			<div class="col-2">
 				{@render requiredInput("userData.email", "Email", false, "text", formData.userData.email ?? "", (val) => (formData.userData.email = val), 50)}
 			</div>
 		</div>
 	</div>
 
-	<!-- Student Address -->
+	<!-- Student Address Details -->
 	<div class="card-wrapper">
 		<h1>Student Address</h1>
 		<div class="grid-12">
+			<!-- House No/Street -->
 			<div class="col-4">
-				{@render requiredInput(
-					"studentData.profile.address.street",
-					"House No/Street",
-					true,
-					"text",
-					formData.studentData.profile.address.street ?? "",
-					(val) => (formData.studentData.profile.address.street = val),
-					100,
-				)}
+				{@render requiredInput("studentData.profile.address.street", "House No/Street", true, "text", formData.studentData.profile.address.street ?? "", (val) => (formData.studentData.profile.address.street = val), 100)}
 			</div>
-
+			<!-- City -->
 			<div class="col-2">
-				{@render requiredInput(
-					"studentData.profile.address.city",
-					"City",
-					true,
-					"text",
-					formData.studentData.profile.address.city ?? "",
-					(val) => (formData.studentData.profile.address.city = val),
-					20,
-				)}
+				{@render requiredInput("studentData.profile.address.city", "City", true, "text", formData.studentData.profile.address.city ?? "", (val) => (formData.studentData.profile.address.city = val), 20)}
 			</div>
-
+			<!-- State -->
 			<div class="col-2">
-				{@render requiredInput(
-					"studentData.profile.address.state",
-					"State",
-					true,
-					"text",
-					formData.studentData.profile.address.state ?? "",
-					(val) => (formData.studentData.profile.address.state = val),
-					20,
-				)}
+				{@render requiredInput("studentData.profile.address.state", "State", true, "text", formData.studentData.profile.address.state ?? "", (val) => (formData.studentData.profile.address.state = val), 20)}
 			</div>
-
+			<!-- Postal Code -->
 			<div class="col-2">
-				{@render requiredInput(
-					"studentData.profile.address.postalCode",
-					"Postal Code",
-					true,
-					"text",
-					formData.studentData.profile.address.postalCode ?? "",
-					(val) => (formData.studentData.profile.address.postalCode = val),
-					10,
-				)}
+				{@render requiredInput("studentData.profile.address.postalCode", "Postal Code", true, "text", formData.studentData.profile.address.postalCode ?? "", (val) => (formData.studentData.profile.address.postalCode = val), 10)}
 			</div>
-
+			<!-- Country -->
 			<div class="col-2">
-				{@render requiredInput(
-					"studentData.profile.address.country",
-					"Country",
-					true,
-					"text",
-					formData.studentData.profile.address.country ?? "",
-					(val) => (formData.studentData.profile.address.country = val),
-					20,
-				)}
+				{@render requiredInput("studentData.profile.address.country", "Country", true, "text", formData.studentData.profile.address.country ?? "", (val) => (formData.studentData.profile.address.country = val), 20)}
 			</div>
 		</div>
 	</div>
 
-	<!-- Medical Detail -->
+	<!-- Student Medical Detail -->
 	<div class="card-wrapper">
 		<h1>Medical Detail</h1>
 		<div class="grid-12">
+			<!-- Blood Group -->
 			<div class="col-1">
 				<label for="bloodGroup">Blood Group</label>
-				<select
-					id="bloodGroup"
-					class={`w-full ${formData.studentData.medicalDetails.bloodGroup === "" ? "placeholder-gray" : ""}`}
-					bind:value={formData.studentData.medicalDetails.bloodGroup}
-				>
+				<select id="bloodGroup" class={`w-full ${formData.studentData.medicalDetails.bloodGroup === "" ? "placeholder-gray" : ""}`} bind:value={formData.studentData.medicalDetails.bloodGroup}>
 					<option value="" selected>Select B/G</option>
 					{#each BLOOD_GROUPS as group}
 						<option value={group.name}>{group.name}</option>
 					{/each}
 				</select>
 			</div>
+			<!-- Height (CM) -->
 			<div class="col-1">
-				{@render requiredInput(
-					"studentData.medicalDetails.height",
-					"Height (CM)",
-					false,
-					"text",
-					formData.studentData.medicalDetails.height ?? "",
-					(val) => (formData.studentData.medicalDetails.height = val),
-					3,
-				)}
+				{@render requiredInput("studentData.medicalDetails.height", "Height (CM)", false, "text", formData.studentData.medicalDetails.height ?? "", (val) => (formData.studentData.medicalDetails.height = val), 3)}
 			</div>
+			<!-- Weight (KG) -->
 			<div class="col-1">
-				{@render requiredInput(
-					"studentData.medicalDetails.weight",
-					"Weight (KG)",
-					false,
-					"text",
-					formData.studentData.medicalDetails.weight ?? "",
-					(val) => (formData.studentData.medicalDetails.weight = val),
-					3,
-				)}
+				{@render requiredInput("studentData.medicalDetails.weight", "Weight (KG)", false, "text", formData.studentData.medicalDetails.weight ?? "", (val) => (formData.studentData.medicalDetails.weight = val), 3)}
 			</div>
-
+			<!-- Eye Sight -->
 			<div class="col-1">
-				{@render requiredInput(
-					"studentData.medicalDetails.eyeSight",
-					"Eye Sight",
-					false,
-					"text",
-					formData.studentData.medicalDetails.eyeSight ?? "",
-					(val) => (formData.studentData.medicalDetails.eyeSight = val),
-					10,
-				)}
+				{@render requiredInput("studentData.medicalDetails.eyeSight", "Eye Sight", false, "text", formData.studentData.medicalDetails.eyeSight ?? "", (val) => (formData.studentData.medicalDetails.eyeSight = val), 10)}
 			</div>
-
+			<!-- Measurement Date -->
 			<div class="col-2">
 				<label for="measurementDate">Measurement Date</label>
 				<DatePicker id="measurementDate" bind:value={formData.studentData.medicalDetails.measurementDate} onClear={() => console.log("Date cleared")} />
 			</div>
+			<!-- Medical History -->
 			<div class="col-6">
-				{@render requiredInput(
-					"studentData.medicalDetails.medicalHistory",
-					"Medical History",
-					false,
-					"text",
-					formData.studentData.medicalDetails.medicalHistory ?? "",
-					(val) => (formData.studentData.medicalDetails.medicalHistory = val),
-					50,
-				)}
+				{@render requiredInput("studentData.medicalDetails.medicalHistory", "Medical History", false, "text", formData.studentData.medicalDetails.medicalHistory ?? "", (val) => (formData.studentData.medicalDetails.medicalHistory = val), 50)}
 			</div>
+			<!-- Allergies -->
 			<div class="col-6">
 				<label for="allergies">Allergies</label>
 				<TagInput id="allergies" fieldName={"allergies"} bind:tags={formData.studentData.medicalDetails.allergies} />
 			</div>
+			<!-- Medical Conditions -->
 			<div class="col-6">
 				<label for="medicalConditions">Medical Conditions</label>
 				<TagInput id="medicalConditions" fieldName={"medical conditions"} bind:tags={formData.studentData.medicalDetails.medicalConditions} />
@@ -472,152 +354,59 @@
 		</div>
 	</div>
 
-	<!-- Parent Detail -->
+	<!-- Student Parent/Guardian Detail -->
 	<div class="card-wrapper">
 		<h1>Parent/Guardian Detail</h1>
 		<div class="grid-12">
+			<!-- Father First Name -->
 			<div class="col-2">
-				{@render requiredInput(
-					"studentData.parentGuardianDetails.fatherDetails.fatherFirstName",
-					"Father First Name ",
-					true,
-					"text",
-					formData.studentData.parentGuardianDetails.fatherDetails.fatherFirstName ?? "",
-					(val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherFirstName = val),
-					20,
-				)}
+				{@render requiredInput("studentData.parentGuardianDetails.fatherDetails.fatherFirstName", "Father First Name", true, "text", formData.studentData.parentGuardianDetails.fatherDetails.fatherFirstName ?? "", (val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherFirstName = val), 20)}
 			</div>
-
+			<!-- Father Last Name -->
 			<div class="col-2">
-				{@render requiredInput(
-					"studentData.parentGuardianDetails.fatherDetails.fatherLastName",
-					"Father Last Name ",
-					true,
-					"text",
-					formData.studentData.parentGuardianDetails.fatherDetails.fatherLastName ?? "",
-					(val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherLastName = val),
-					20,
-				)}
+				{@render requiredInput("studentData.parentGuardianDetails.fatherDetails.fatherLastName", "Father Last Name", true, "text", formData.studentData.parentGuardianDetails.fatherDetails.fatherLastName ?? "", (val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherLastName = val), 20)}
 			</div>
-
+			<!-- Father Phone -->
 			<div class="col-2">
-				{@render requiredInput(
-					"studentData.parentGuardianDetails.fatherDetails.fatherPhone",
-					"Father Phone",
-					true,
-					"text",
-					formData.studentData.parentGuardianDetails.fatherDetails.fatherPhone ?? "",
-					(val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherPhone = val),
-					10,
-				)}
+				{@render requiredInput("studentData.parentGuardianDetails.fatherDetails.fatherPhone", "Father Phone", true, "text", formData.studentData.parentGuardianDetails.fatherDetails.fatherPhone ?? "", (val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherPhone = val), 10)}
 			</div>
-
+			<!-- Father Email -->
 			<div class="col-2">
-				{@render requiredInput(
-					"studentData.parentGuardianDetails.fatherDetails.fatherEmail",
-					"Father Email",
-					false,
-					"text",
-					formData.studentData.parentGuardianDetails.fatherDetails.fatherEmail ?? "",
-					(val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherEmail = val),
-					30,
-				)}
+				{@render requiredInput("studentData.parentGuardianDetails.fatherDetails.fatherEmail", "Father Email", false, "text", formData.studentData.parentGuardianDetails.fatherDetails.fatherEmail ?? "", (val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherEmail = val), 30)}
 			</div>
-
+			<!-- Father Occupation -->
 			<div class="col-2">
-				{@render requiredInput(
-					"studentData.parentGuardianDetails.fatherDetails.fatherOccupation",
-					"Father Occupation",
-					false,
-					"text",
-					formData.studentData.parentGuardianDetails.fatherDetails.fatherOccupation ?? "",
-					(val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherOccupation = val),
-					30,
-				)}
+				{@render requiredInput("studentData.parentGuardianDetails.fatherDetails.fatherOccupation", "Father Occupation", false, "text", formData.studentData.parentGuardianDetails.fatherDetails.fatherOccupation ?? "", (val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherOccupation = val), 30)}
 			</div>
+			<!-- Father Education -->
 			<div class="col-2">
-				{@render requiredInput(
-					"studentData.parentGuardianDetails.fatherDetails.fatherEducation",
-					"Father Education",
-					false,
-					"text",
-					formData.studentData.parentGuardianDetails.fatherDetails.fatherEducation ?? "",
-					(val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherEducation = val),
-					20,
-				)}
+				{@render requiredInput("studentData.parentGuardianDetails.fatherDetails.fatherEducation", "Father Education", false, "text", formData.studentData.parentGuardianDetails.fatherDetails.fatherEducation ?? "", (val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherEducation = val), 20)}
 			</div>
-
+			<!-- Mother First Name -->
 			<div class="col-2">
-				{@render requiredInput(
-					"studentData.parentGuardianDetails.motherDetails.motherFirstName",
-					"Mother First Name",
-					true,
-					"text",
-					formData.studentData.parentGuardianDetails.motherDetails.motherFirstName ?? "",
-					(val) => (formData.studentData.parentGuardianDetails.motherDetails.motherFirstName = val),
-					20,
-				)}
+				{@render requiredInput("studentData.parentGuardianDetails.motherDetails.motherFirstName", "Mother First Name", true, "text", formData.studentData.parentGuardianDetails.motherDetails.motherFirstName ?? "", (val) => (formData.studentData.parentGuardianDetails.motherDetails.motherFirstName = val), 20)}
 			</div>
-
+			<!-- Mother Last Name -->
 			<div class="col-2">
-				{@render requiredInput(
-					"studentData.parentGuardianDetails.motherDetails.motherLastName",
-					"Mother First Name",
-					true,
-					"text",
-					formData.studentData.parentGuardianDetails.motherDetails.motherLastName ?? "",
-					(val) => (formData.studentData.parentGuardianDetails.motherDetails.motherLastName = val),
-					20,
-				)}
+				{@render requiredInput("studentData.parentGuardianDetails.motherDetails.motherLastName", "Mother Last Name", true, "text", formData.studentData.parentGuardianDetails.motherDetails.motherLastName ?? "", (val) => (formData.studentData.parentGuardianDetails.motherDetails.motherLastName = val), 20)}
 			</div>
-
+			<!-- Mother Phone -->
 			<div class="col-2">
-				{@render requiredInput(
-					"studentData.parentGuardianDetails.motherDetails.motherPhone",
-					"Mother Phone",
-					true,
-					"tel",
-					formData.studentData.parentGuardianDetails.motherDetails.motherPhone ?? "",
-					(val) => (formData.studentData.parentGuardianDetails.motherDetails.motherPhone = val),
-					10,
-				)}
+				{@render requiredInput("studentData.parentGuardianDetails.motherDetails.motherPhone", "Mother Phone", true, "tel", formData.studentData.parentGuardianDetails.motherDetails.motherPhone ?? "", (val) => (formData.studentData.parentGuardianDetails.motherDetails.motherPhone = val), 10)}
 			</div>
-
+			<!-- Mother Email -->
 			<div class="col-2">
-				{@render requiredInput(
-					"studentData.parentGuardianDetails.motherDetails.motherEmail",
-					"Mother Email",
-					false,
-					"email",
-					formData.studentData.parentGuardianDetails.motherDetails.motherEmail ?? "",
-					(val) => (formData.studentData.parentGuardianDetails.motherDetails.motherEmail = val),
-					30,
-				)}
+				{@render requiredInput("studentData.parentGuardianDetails.motherDetails.motherEmail", "Mother Email", false, "email", formData.studentData.parentGuardianDetails.motherDetails.motherEmail ?? "", (val) => (formData.studentData.parentGuardianDetails.motherDetails.motherEmail = val), 30)}
 			</div>
-
+			<!-- Mother Occupation -->
 			<div class="col-2">
-				{@render requiredInput(
-					"studentData.parentGuardianDetails.motherDetails.motherEmail",
-					"Mother Occupation",
-					false,
-					"text",
-					formData.studentData.parentGuardianDetails.motherDetails.motherOccupation ?? "",
-					(val) => (formData.studentData.parentGuardianDetails.motherDetails.motherOccupation = val),
-					20,
-				)}
+				{@render requiredInput("studentData.parentGuardianDetails.motherDetails.motherEmail", "Mother Occupation", false, "text", formData.studentData.parentGuardianDetails.motherDetails.motherOccupation ?? "", (val) => (formData.studentData.parentGuardianDetails.motherDetails.motherOccupation = val), 20)}
 			</div>
+			<!-- Mother Education -->
 			<div class="col-2">
-				{@render requiredInput(
-					"studentData.parentGuardianDetails.motherDetails.motherEducation",
-					"Mother Education",
-					false,
-					"text",
-					formData.studentData.parentGuardianDetails.motherDetails.motherEducation ?? "",
-					(val) => (formData.studentData.parentGuardianDetails.motherDetails.motherEducation = val),
-					20,
-				)}
+				{@render requiredInput("studentData.parentGuardianDetails.motherDetails.motherEducation", "Mother Education", false, "text", formData.studentData.parentGuardianDetails.motherDetails.motherEducation ?? "", (val) => (formData.studentData.parentGuardianDetails.motherDetails.motherEducation = val), 20)}
 			</div>
-
+			<!-- Parent Current Address -->
 			<div class="col-6">
 				<label for="parentCurrentAddress">Parent Current Address</label>
 				<textarea
@@ -640,20 +429,14 @@
 				<textarea id="permanentAddress" bind:value={formData.studentData.parentGuardianDetails.parentPermanentAddress} placeholder="Enter permanent address.."></textarea>
 			</div>
 
+			<!-- Primary Guardian Selection -->
 			<div class="col-6">
 				<label for="primaryGuardian">Primary Guardian <span class="required">*</span></label>
 				<div class="radio-section" class:has-error={$formErrors["studentData.parentGuardianDetails.primaryGuardian"] && $submitAttempted}>
 					{#each GUARDIAN_TYPE as type}
 						<div class="radio-item">
 							<label class="radio-label">
-								<input
-									name="type"
-									type="radio"
-									class="radio-input"
-									value={type.name}
-									checked={formData?.studentData?.parentGuardianDetails?.primaryGuardian === type.name}
-									onchange={() => handleGuardianTypeChange(type.name)}
-								/>
+								<input name="type" type="radio" class="radio-input" value={type.name} checked={formData?.studentData?.parentGuardianDetails?.primaryGuardian === type.name} onchange={() => handleGuardianTypeChange(type.name)} />
 								<span class="radio-custom"></span>
 								<span class="radio-text">{type.name}</span>
 							</label>
@@ -664,96 +447,40 @@
 					<p class="error-text">{$formErrors["studentData.parentGuardianDetails.primaryGuardian"]}</p>
 				{/if}
 			</div>
-
 			<div class="col-6"></div>
 
 			{#if formData.studentData.parentGuardianDetails.primaryGuardian === "Other"}
 				<div class="col-12" transition:slide>
 					<div class="grid-12">
+						<!-- Guardian First Name -->
 						<div class="col-2">
-							{@render requiredInput(
-								"studentData.parentGuardianDetails.guardianDetails.guardianFirstName",
-								"Guardian First Name",
-								true,
-								"text",
-								formData.studentData.parentGuardianDetails.guardianDetails.guardianFirstName ?? "",
-								(val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianFirstName = val),
-								20,
-							)}
+							{@render requiredInput("studentData.parentGuardianDetails.guardianDetails.guardianFirstName", "Guardian First Name", true, "text", formData.studentData.parentGuardianDetails.guardianDetails.guardianFirstName ?? "", (val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianFirstName = val), 20)}
 						</div>
-
+						<!-- Guardian Last Name -->
 						<div class="col-2">
-							{@render requiredInput(
-								"studentData.parentGuardianDetails.guardianDetails.guardianLastName",
-								"Guardian Last Name",
-								true,
-								"text",
-								formData.studentData.parentGuardianDetails.guardianDetails.guardianLastName ?? "",
-								(val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianLastName = val),
-								20,
-							)}
+							{@render requiredInput("studentData.parentGuardianDetails.guardianDetails.guardianLastName", "Guardian Last Name", true, "text", formData.studentData.parentGuardianDetails.guardianDetails.guardianLastName ?? "", (val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianLastName = val), 20)}
 						</div>
-
+						<!-- Guardian Phone -->
 						<div class="col-2">
-							{@render requiredInput(
-								"studentData.parentGuardianDetails.guardianDetails.guardianPhone",
-								"Guardian Phone",
-								true,
-								"tel",
-								formData.studentData.parentGuardianDetails.guardianDetails.guardianPhone ?? "",
-								(val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianPhone = val),
-								10,
-							)}
+							{@render requiredInput("studentData.parentGuardianDetails.guardianDetails.guardianPhone", "Guardian Phone", true, "tel", formData.studentData.parentGuardianDetails.guardianDetails.guardianPhone ?? "", (val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianPhone = val), 10)}
 						</div>
-
+						<!-- Guardian Email -->
 						<div class="col-2">
-							{@render requiredInput(
-								"studentData.parentGuardianDetails.guardianDetails.guardianEmail",
-								"Guardian Email",
-								true,
-								"email",
-								formData.studentData.parentGuardianDetails.guardianDetails.guardianEmail ?? "",
-								(val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianEmail = val),
-								30,
-							)}
+							{@render requiredInput("studentData.parentGuardianDetails.guardianDetails.guardianEmail", "Guardian Email", true, "email", formData.studentData.parentGuardianDetails.guardianDetails.guardianEmail ?? "", (val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianEmail = val), 30)}
 						</div>
-
+						<!-- Guardian Relation -->
 						<div class="col-2">
-							{@render requiredInput(
-								"studentData.parentGuardianDetails.guardianDetails.guardianRelation",
-								"Guardian Relation",
-								true,
-								"text",
-								formData.studentData.parentGuardianDetails.guardianDetails.guardianRelation ?? "",
-								(val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianRelation = val),
-								20,
-							)}
+							{@render requiredInput("studentData.parentGuardianDetails.guardianDetails.guardianRelation", "Guardian Relation", true, "text", formData.studentData.parentGuardianDetails.guardianDetails.guardianRelation ?? "", (val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianRelation = val), 20)}
 						</div>
-
+						<!-- Guardian Occupation -->
 						<div class="col-1">
-							{@render requiredInput(
-								"studentData.parentGuardianDetails.guardianDetails.guardianOccupation",
-								"Occupation",
-								false,
-								"text",
-								formData.studentData.parentGuardianDetails.guardianDetails.guardianOccupation ?? "",
-								(val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianOccupation = val),
-								20,
-							)}
+							{@render requiredInput("studentData.parentGuardianDetails.guardianDetails.guardianOccupation", "Occupation", false, "text", formData.studentData.parentGuardianDetails.guardianDetails.guardianOccupation ?? "", (val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianOccupation = val), 20)}
 						</div>
-
+						<!-- Guardian Education -->
 						<div class="col-1">
-							{@render requiredInput(
-								"studentData.parentGuardianDetails.guardianDetails.guardianEducation",
-								"Education",
-								false,
-								"text",
-								formData.studentData.parentGuardianDetails.guardianDetails.guardianEducation ?? "",
-								(val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianEducation = val),
-								20,
-							)}
+							{@render requiredInput("studentData.parentGuardianDetails.guardianDetails.guardianEducation", "Education", false, "text", formData.studentData.parentGuardianDetails.guardianDetails.guardianEducation ?? "", (val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianEducation = val), 20)}
 						</div>
-
+						<!-- Guardian Current Address -->
 						<div class="col-6">
 							<label for="guardianCurrentAddress">Guardian Current Address <span class="required">*</span></label>
 							<textarea
@@ -768,14 +495,9 @@
 								<p class="error-text">{$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianCurrentAddress"]}</p>
 							{/if}
 						</div>
-
 						<div class="col-6">
 							<label for="guardianPermanentAddress">Guardian Permanent Address</label>
-							<textarea
-								id="guardianPermanentAddress"
-								bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianPermanentAddress}
-								placeholder="Enter permanent address"
-							></textarea>
+							<textarea id="guardianPermanentAddress" bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianPermanentAddress} placeholder="Enter permanent address"></textarea>
 						</div>
 					</div>
 				</div>
@@ -840,8 +562,6 @@
 		</div>
 	</div> -->
 
-	<!-- <Tabs /> -->
-
 	<!-- Form Actions -->
 	<div class="form-actions">
 		<button type="button" class="btn ripple btn-secondary" onclick={resetForm} disabled={$isLoading}>
@@ -882,10 +602,9 @@
 		maxLength={length}
 		placeholder="Enter {title.toLowerCase()}"
 	/>
-	<!-- {#if isRequired} -->
+
 	{#if $formErrors[fieldName] && ($touched[fieldName] || $submitAttempted)}
 		<p class="error-text">{$formErrors[fieldName]}</p>
-		<!-- {/if} -->
 	{/if}
 {/snippet}
 
