@@ -2,11 +2,12 @@ import { showSnackbar } from "$lib/components/snackbar/store";
 import { isLoading } from "$lib/stores/loading";
 
 export interface FetchOptions extends RequestInit {
-	showError?: boolean; // Optional flag to control error logging/snackbar
+	showError?: boolean;
 }
 
-export async function fetchWrapper<T = any>(url: string, options: FetchOptions = {}) {
+export async function fetchWrapper<T = any>(url: string, options: FetchOptions = {}): Promise<T> {
 	isLoading.set(true);
+
 	try {
 		const res = await fetch(url, {
 			...options,
@@ -17,26 +18,29 @@ export async function fetchWrapper<T = any>(url: string, options: FetchOptions =
 			credentials: "include",
 		});
 
-		isLoading.set(false);
-		// console.log("RESPONSE:", res);
-
 		if (!res.ok) {
 			let errorMessage = `HTTP error! Status: ${res.status}`;
 			try {
 				const errorData = await res.json();
 				errorMessage = errorData.message || errorMessage;
-			} catch (e) {
-				// No JSON body
+			} catch {
+				// response was not JSON
 			}
 			throw new Error(errorMessage);
 		}
-		return await res.json();
-		// if (data.success && data.message) showSnackbar({ message: data.message, type: "success" });
-		// return data;
+
+		const data = await res.json();
+		return data as T;
 	} catch (err: any) {
-		// isLoading.set(false);
 		console.error("Fetch error:", err);
-		if (options.showError !== false) showSnackbar({ message: err?.message || "Unexpected error", type: "error" });
+
+		if (options.showError !== false) {
+			showSnackbar({
+				message: "Failed to perform the request. Please try again.",
+				type: "error",
+			});
+		}
+
 		throw err instanceof Error ? err : new Error("Unexpected fetch error");
 	} finally {
 		isLoading.set(false);

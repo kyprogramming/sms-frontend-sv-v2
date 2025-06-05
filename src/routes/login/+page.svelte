@@ -21,7 +21,7 @@
 	async function onSubmit(event: Event) {
 		event.preventDefault();
 		formSubmitted = true;
-		const isValid = await validateForm(loginFormSchema, formData, formErrors);
+		const isValid = validateForm(loginFormSchema, formData);
 		if (!isValid) return;
 		await handleLogin();
 	}
@@ -43,7 +43,7 @@
 	function handleChange(field: keyof LoginInputType, value: string): void {
 		formData[field] = value;
 		touched = { ...touched, [field]: true };
-		validateForm(loginFormSchema, formData, formErrors);
+		validateForm(loginFormSchema, formData);
 	}
 </script>
 

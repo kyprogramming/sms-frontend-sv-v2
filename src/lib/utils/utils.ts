@@ -53,3 +53,15 @@ export function formatDateToLocalYYYYMMDD(date: Date | null): string {
 
 	return `${year}-${month}-${day}`;
 }
+
+export function isEqual(obj1: any, obj2: any): boolean {
+	return JSON.stringify(obj1) === JSON.stringify(obj2);
+}
+
+export function isFieldUnchanged<T, K extends keyof T>(original: T, input: Pick<T, K>, key: K): boolean {
+	return original[key] === input[key];
+}
+
+export function areFieldsUnchanged<T>(original: T, input: Partial<T>, fields: (keyof T)[]): boolean {
+	return fields.every((field) => original[field] === input[field]);
+}

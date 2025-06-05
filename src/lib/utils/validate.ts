@@ -1,10 +1,10 @@
 
-import type { Writable } from "svelte/store";
+import { formErrors } from "$lib/stores/formStore";
 import type { ZodSchema, ZodError } from "zod";
 
 type FormErrors<T> = Partial<Record<keyof T, string>>;
 
-export function validateForm<T>(schema: ZodSchema<T>, data: T, formErrors: Writable<FormErrors<T>>): boolean {
+export function validateForm<T>(schema: ZodSchema<T>, data: T): boolean {
 	const result = schema.safeParse(data);
 
 	if (!result.success) {

@@ -70,7 +70,7 @@
 		event.preventDefault();
 		submitAttempted.set(true);
 
-		const isValid = await validateForm(classSchema, formData, formErrors);
+		const isValid = validateForm(classSchema, formData);
 		if (!isValid) return;
 
 		try {

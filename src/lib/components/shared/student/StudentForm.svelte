@@ -4,7 +4,6 @@
 	import { BLOOD_GROUPS, CASTE_CATEGORIES, GENDERS, GUARDIAN_TYPE } from "$lib/constants";
 	import { isLoading } from "$lib/stores/loading";
 
-	import { get } from "svelte/store";
 	import { initializeStudentFormData, submitAttempted, touched, validateStudentForm, type StudentFormData } from "./studentValidation";
 	import { slide } from "svelte/transition";
 	import { createStudent, updateStudent } from "$lib/services/student";
@@ -108,12 +107,6 @@
 		submitAttempted.set(true);
 
 		const isValid = validateStudentForm(formData);
-
-		console.log("isValid:", isValid);
-		console.log("formErrors:", formErrors);
-		console.log("Object.keys(get(formErrors)).length:", Object.keys(get(formErrors)));
-		console.log("formData", formData);
-
 		if (!isValid) return;
 
 		try {

@@ -1,7 +1,7 @@
 import { API_BASE_URL, DEFAULT_PAGE_LIMIT } from "$lib/constants/env.config";
 import { error } from "@sveltejs/kit";
-import type { PageLoad } from "../../../home/$types";
 import { isLoading } from "$lib/stores/loading";
+import type { PageLoad } from "./$types";
 
 export const load: PageLoad = async ({ fetch }) => {
 	try {

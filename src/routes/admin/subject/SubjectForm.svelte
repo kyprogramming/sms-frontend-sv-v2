@@ -61,7 +61,7 @@
 		event.preventDefault();
 		submitAttempted.set(true);
         // debugger;
-		const isValid = await validateForm(subjectSchema, formData, formErrors);
+		const isValid = validateForm(subjectSchema, formData);
         // alert(isValid);
 		if (!isValid) return;
 

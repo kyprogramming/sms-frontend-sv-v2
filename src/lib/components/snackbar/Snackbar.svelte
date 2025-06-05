@@ -53,6 +53,25 @@
 		overflow: hidden;
 	}
 
+    .close-btn {
+		position: absolute;
+		top: 0;
+		right: 5px;
+		background: transparent;
+		border: none;
+		color: white;
+		font-size: 1rem;
+		cursor: pointer;
+		padding: 0;
+		line-height: 1;
+	}
+
+	.close-btn:hover {
+		/* color: rgba(255, 255, 255, 0.8); */
+        color: #000000;
+        border-radius: 50%;
+	}
+
 	.snackbar.success {
 		background: #16a34a;
 	} /* green */
@@ -85,20 +104,5 @@
 		}
 	}
 
-	.close-btn {
-		position: absolute;
-		top: 6px;
-		right: 8px;
-		background: transparent;
-		border: none;
-		color: white;
-		/* font-size: 1.25rem; */
-		cursor: pointer;
-		padding: 0;
-		line-height: 1;
-	}
-
-	.close-btn:hover {
-		color: rgba(255, 255, 255, 0.8);
-	}
+	
 </style>

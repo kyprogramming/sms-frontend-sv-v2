@@ -9,11 +9,7 @@
 	import { deleteSectionById, fetchSectionById, fetchSections } from "$lib/services/section";
 	import type { any } from "zod";
 
-	interface Props {
-		data: any;
-	}
-
-	let { data }: Props = $props();
+	let { data } = $props();
 	let response: any = $state(data.data);
 	let sectionData: any = $state();
 
@@ -31,7 +27,7 @@
 	async function handleRefreshPage() {
 		isModalOpen.set(false);
 		loadPaginationVariables(); // Load pagination variables
-		const params = new URLSearchParams({ search: $searchText || "", page: String($currentPage), limit: String($rowsPerPage) }); // Build query string
+		const params = new URLSearchParams({ search: $searchText || "", page: String($currentPage), limit: String($rowsPerPage) });
 		const json = await fetchSections(params);
 		response = { ...json };
 	}

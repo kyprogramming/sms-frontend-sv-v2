@@ -30,7 +30,6 @@ export async function fetchSectionList() {
 
 // Fetch multiple sections
 export async function fetchSections(params: URLSearchParams) {
-    debugger
 	const res = await fetchWrapper(`${API_BASE_URL}/section?${params.toString()}`, { method: "GET" });
 	return handleResponse(res, "Failed to fetch sections");
 }
@@ -46,7 +45,7 @@ export async function fetchSectionById(id: string) {
 export async function updateSection(id: string, data: SectionPayload) {
 	const res = await fetchWrapper(`${API_BASE_URL}/section/${id}`, {
 		method: "PUT",
-		body: JSON.stringify(data),
+        body: JSON.stringify(data)
 	});
 	return handleResponse(res, "Failed to update section");
 }

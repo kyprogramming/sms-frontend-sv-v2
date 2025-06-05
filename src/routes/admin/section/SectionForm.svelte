@@ -1,39 +1,41 @@
 <script lang="ts">
-	import { get } from "svelte/store";
 	import { isLoading } from "$lib/stores/loading";
 	import { validateForm } from "$lib/utils/validate";
 	import { showSnackbar } from "$lib/components/snackbar/store";
-	import { closeModal, isUpdate } from "$lib/stores/modalStore";
+	import { closeModal } from "$lib/stores/modalStore";
 	import { createSection, updateSection } from "$lib/services/section";
 	import { BrushCleaning, Save } from "@lucide/svelte";
 	import { sectionFormSchema, type SectionInputType } from "$lib/utils/schemas";
 	import { formErrors } from "$lib/stores/formStore";
 	import LoaderIcon from "$lib/components/common/LoaderIcon.svelte";
+	import { onMount } from "svelte";
+	import { areFieldsUnchanged } from "$lib/utils/utils";
+	import { MESSAGES } from "$lib/utils/messages";
 
 	let { onRefreshPage, sectionData = null, action } = $props();
 
 	// Reactive form state
-	formErrors.set({ name: "" });
 	let formData: SectionInputType = $state({ name: "" });
 	let touched: Partial<Record<keyof SectionInputType, boolean>> = $state({ name: false });
 	let formSubmitted: boolean = $state(false);
 
-	if (action === "update" && sectionData) {
-		formData = {
-			name: sectionData.name,
-		};
+	onMount(() => {
+		formErrors.set({ name: "" });
+        // Initialize form data based on action
+		if (action === "update" && sectionData) formData = { name: sectionData.name };
+	});
+
+	// Field change handler
+	function handleChange(field: keyof SectionInputType, value: string): void {
+		formData[field] = value;
+		touched = { ...touched, [field]: true };
+		validateForm(sectionFormSchema, formData);
 	}
 
-	function resetForm() {
-		if (action === "update") {
-			// formData = { studentData: { ...studentData.data }, userData: { ...studentData.data.userId } };
-			// classSections = studentData.data.classId ? classData.find((cls: any) => cls._id === studentData.data.classId)?.sectionIds || [] : [];
-			// selectedDateOfBirth = studentData.data.profile.dob ? new Date(studentData.data.profile.dob) : null;
-		} else {
-			formData = { name: "" };
-			// classSections = [];
-			// selectedDateOfBirth = null;
-		}
+	// Form reset handler
+	function handleResetForm() {
+		if (action === "update") formData = { name: sectionData.name };
+		else formData = { name: "" };
 
 		formErrors.set({});
 		formSubmitted = false;
@@ -44,45 +46,25 @@
 	async function onSubmit(event: Event) {
 		event.preventDefault();
 		formSubmitted = true;
-
-		const isValid = await validateForm(sectionFormSchema, formData, formErrors);
+		const isValid = validateForm(sectionFormSchema, formData);
 		if (!isValid) return;
 
-		try {
-			if (get(isUpdate) && sectionData) {
-				await updateSection(sectionData._id, formData);
-				showSnackbar({ message: "Section updated successfully", type: "success" });
-			} else {
-				await createSection(formData);
-				showSnackbar({ message: "Section created successfully", type: "success" });
+		if (action === "update" && sectionData) {
+			// Check if the form data is unchanged before updating
+			const isUnChanged = areFieldsUnchanged(sectionData, formData, ["name"]);
+			if (isUnChanged) {
+				showSnackbar({ message: MESSAGES.FORM.NO_CHANGES, type: "warning" });
+				return;
 			}
-
-			closeModal();
-			onRefreshPage();
-		} catch (err: unknown) {
-			const errMsg = (err as Error)?.message ?? "Failed to save section";
-			console.error(err);
+			await updateSection(sectionData._id, formData);
+			showSnackbar({ message: MESSAGES.SECTION.UPDATED, type: "success" });
+		} else {
+			await createSection(formData);
+			showSnackbar({ message: MESSAGES.SECTION.CREATED, type: "success" });
 		}
-	}
 
-	// Handle field changes
-	function handleChange(field: keyof SectionInputType, value: string): void {
-		formData[field] = value;
-		touched = { ...touched, [field]: true };
-
-		const result = sectionFormSchema.safeParse(formData);
-
-		formErrors.update(() => {
-			if (!result.success) {
-				const fieldErrors = result.error.flatten().fieldErrors as Record<string, string[]>;
-				const errorMap: Partial<Record<keyof SectionInputType, string>> = {};
-				for (const key in fieldErrors) {
-					errorMap[key as keyof SectionInputType] = fieldErrors[key]?.[0] ?? "";
-				}
-				return errorMap;
-			}
-			return {};
-		});
+		closeModal();
+		onRefreshPage();
 	}
 </script>
 
@@ -93,7 +75,7 @@
 			id="name"
 			type="text"
 			name="name"
-			placeholder="Section name"
+			placeholder="Enter section name"
 			class={`w-full ${$formErrors.name && (touched.name || formSubmitted) ? "input-error" : ""}`}
 			bind:value={formData.name}
 			oninput={(e) => handleChange("name", (e.target as HTMLInputElement).value)}
@@ -104,17 +86,8 @@
 		{/if}
 	</div>
 
-	<!-- <div class="flex-items-center" style="justify-content:end;">
-		<button class="btn ripple" type="reset" disabled={$isLoading} style="background-color: var(--clr-pri-light); align-self: right;"> Clear </button>
-		<button class="btn ripple" type="submit" disabled={$isLoading}>
-			{#if $isLoading}
-				{#if $isUpdate}Updating...{:else}Saving...{/if}
-			{:else if $isUpdate}Update{:else}Save{/if}
-		</button>
-	</div> -->
-
 	<div class="form-actions">
-		<button type="button" class="btn ripple btn-secondary" onclick={resetForm} disabled={$isLoading}>
+		<button type="button" class="btn ripple btn-secondary" onclick={handleResetForm} disabled={$isLoading}>
 			<BrushCleaning />
 			<span>Reset Form</span>
 		</button>
