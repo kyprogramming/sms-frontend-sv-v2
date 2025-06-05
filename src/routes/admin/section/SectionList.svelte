@@ -127,7 +127,11 @@
 			showSnackbar({ message: `Section ${json.message}`, type: "success" });
 			isDeleteModalOpen = false;
 		} else showSnackbar({ message: `${json.message}`, type: "error" });
-		await refreshAction();
+        
+        if($totalItems % $rowsPerPage === 1 && $currentPage > 1) {
+            currentPage.set($currentPage - 1);
+        }
+        await refreshAction();
 	}
 
 	async function searchAction() {
@@ -138,6 +142,7 @@
 	}
 
 	async function refreshAction() {
+       
 		const params = new URLSearchParams({ search: searchText || "", page: String($currentPage), limit: String($rowsPerPage) });
 		console.log("Params:", params.toString(), $currentPage, $rowsPerPage, $totalPages, $totalItems);
 		const json = await fetchSections(params);
