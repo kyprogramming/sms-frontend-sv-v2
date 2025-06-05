@@ -253,9 +253,4 @@
 		border-color: red;
 	}
 
-	.error-text {
-		color: red;
-		font-size: 0.875rem;
-		margin-top: 0.25rem;
-	}
 </style>

@@ -8,7 +8,7 @@ export const studentSchema = z.object({
 		email: z.string().email("Invalid email format").optional().or(z.literal("")),
 		mobile: z
 			.string()
-			.regex(/^[0-9]{10}$/, "Invalid mobile number (10 digits required)")
+			.regex(/^[0-9]{10}$/, "10 digits mobile number required")
 			.optional()
 			.or(z.literal("")),
 	}),
@@ -30,7 +30,7 @@ export const studentSchema = z.object({
 			caste: z.string().optional(),
 			studentPhoto: z.any().optional(),
 			address: z.object({
-				street: z.string().min(1, "Street is required"),
+				street: z.string().min(1, "House No/Street is required"),
 				city: z.string().min(1, "City is required"),
 				state: z.string().min(1, "State is required"),
 				postalCode: z.string().min(1, "Postal Code is required"),

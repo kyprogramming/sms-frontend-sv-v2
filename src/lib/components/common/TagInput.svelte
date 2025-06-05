@@ -2,10 +2,10 @@
 	interface Props {
 		id: string;
 		tags?: string[];
+		fieldName: string;
 	}
 
-	let { id, tags = $bindable([]) }: Props = $props();
-
+	let { id, tags = $bindable([]), fieldName }: Props = $props();
 	let input = $state("");
 
 	function addTag() {
@@ -37,15 +37,10 @@
 	{/each}
 
 	{#if tags.length < 10}
-		<input
-			class="tag-input"
-			type="text"
-			bind:value={input}
-			placeholder="Type and press Enter"
-			onkeydown={handleKey}
-		/>
+		<input class="tag-input" type="text" bind:value={input} placeholder={`Enter ${fieldName} and press Enter`} onkeydown={handleKey} />
 	{/if}
 </div>
+
 <style>
 	.tag-input-wrapper {
 		display: flex;

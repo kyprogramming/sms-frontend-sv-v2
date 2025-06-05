@@ -53,7 +53,7 @@
 
 <style>
 	.modal-overlay {
-		position: fixed;
+        position: fixed;
 		top: 0;
 		left: 0;
 		right: 0;
@@ -95,7 +95,8 @@
 	}
 
 	.modal-header {
-		padding: 0.5rem;
+        display: flex;
+		padding: 5px;
 		background-color: var(--clr-bg-2);
 		display: flex;
 		justify-content: space-between;
@@ -103,13 +104,17 @@
 	}
 
 	.modal-body {
-		padding: 1.5rem;
+		padding: 1rem;
 	}
 
 	.modal-header h2 {
 		margin: 0;
-		font-size: 1.25rem;
+		font-size: 1rem;
 		font-weight: 600;
+        padding:0;
+        margin-left: 15px;
+        align-items: center;
+        justify-content: center;
 	}
 
 	.close-button {

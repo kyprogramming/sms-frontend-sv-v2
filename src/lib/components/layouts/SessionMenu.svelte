@@ -28,16 +28,13 @@
 		try {
 			isLoading.set(true);
 			const response = await apiRequest<any>(`${API_BASE_URL}/auth/logout`, "POST", {});
-                // console.log("logout response:",response)
 			if (response.success) {
 				showSnackbar({ message: response?.message, type: "success" });
-                await invalidateAll(); 
                 await goto('/login'); 
 			}
 		} catch (err: any) {
 			await goto("/login");
 		} finally {
-            // await invalidateAll(); 
 			isLoading.set(false);
 		}
 	}

@@ -71,7 +71,7 @@ select::placeholder,
 textarea::placeholder {
     color: #9ca3af;
     opacity: 1;
-    font-size: small;
+    /* font-size: small; */
 }
 
 /* Disabled state */

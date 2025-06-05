@@ -15,7 +15,7 @@
 
 	let { data }: Props = $props();
 	let response: any = $state(data.data);
-	let dataToUpdate: any = $state();
+	let sectionData: any = $state();
 
 	const breadcrumbItems = [{ label: "Dashboard", href: "/admin/dashboard" }, { label: "Sections" }];
 
@@ -38,10 +38,10 @@
 
 	async function handleUpdate(id: string) {
 		// console.log("id:", id);
-		dataToUpdate = null;
+		sectionData = null;
 		const res = await fetchSectionById(id);
 		const { data } = res;
-		dataToUpdate = data;
+		sectionData = data;
 		if (res.success) openEditModal();
 	}
 
@@ -62,6 +62,6 @@
 </script>
 
 <Breadcrumb title="Sections" items={breadcrumbItems} />
-{#key response || dataToUpdate}
-	<SectionList {response} onRefreshPage={handleRefreshPage} onSearchChange={handleSearchChange} onDelete={handleDelete} onUpdate={handleUpdate} {dataToUpdate} />
+{#key response || sectionData}
+	<SectionList {response} onRefreshPage={handleRefreshPage} onSearchChange={handleSearchChange} onDelete={handleDelete} onUpdate={handleUpdate} {sectionData} />
 {/key}

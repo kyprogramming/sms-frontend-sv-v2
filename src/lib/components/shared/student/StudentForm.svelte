@@ -9,7 +9,6 @@
 	import { slide } from "svelte/transition";
 	import { createStudent, updateStudent } from "$lib/services/student";
 	import FileUpload from "$lib/components/common/FileUpload.svelte";
-	// import Tabs from "$lib/components/common/Tabs.svelte";
 	import { BrushCleaning, Save } from "@lucide/svelte";
 	import { page } from "$app/state";
 	import { showSnackbar } from "$lib/components/snackbar/store";
@@ -19,11 +18,6 @@
 
 	let { action, studentData } = $props();
 	let classData = page.data?.classData || [];
-	// let studentData = page.data?.studentData || [];
-	// let action = page.data?.action;
-	// console.log("studentData from classData:", classData);
-	// console.log("studentData:", studentData);
-	// console.log("action:", action);
 	let classSections: { _id: string; name: string }[] = $state([]);
 
 	let selectedDate: Date | null = $state(null);
@@ -32,20 +26,9 @@
 	touched.set({});
 	submitAttempted.set(false);
 
-	// $effect.pre(() => {
-	//     console.log("action effect:", action);
-	// });
-
-	// $effect.pre(() => {
-	// 	console.log("action effect:", action);
-	// 	if (action !== "update") studentData = null;
-	// });
-
-	// $: if ($page.url.pathname === '/admin/student/register') {
-	// 	studentData.set(null);
-	// }
-
 	let formData: StudentFormData = $state(initializeStudentFormData());
+
+	// console.log("studentData:", action, studentData);
 
 	// update form data if action is update and studentData is available
 	if (action === "update" && studentData) {
@@ -53,8 +36,7 @@
 		classSections = studentData.data.classId ? classData.find((cls: any) => cls._id === studentData.data.classId)?.sectionIds || [] : [];
 		selectedDateOfBirth = studentData.data.profile.dob ? new Date(studentData.data.profile.dob) : null;
 	}
-	// console.log("formData:",action, formData);
-	// console.log("action:",action);
+	// console.log("formData:", formData);
 
 	function resetForm() {
 		if (action === "update" && studentData) {
@@ -116,6 +98,11 @@
 		formData.studentData.sectionId = (e.target as HTMLSelectElement).value || "";
 	}
 
+	function handleBlur(field: keyof any) {
+		$touched = { ...$touched, [field]: true };
+		validateStudentForm(formData);
+	}
+
 	async function onSubmit(event: Event) {
 		event.preventDefault();
 		submitAttempted.set(true);
@@ -147,23 +134,18 @@
 		}
 	}
 
-	function handleBlur(field: keyof any) {
-		$touched = { ...$touched, [field]: true };
-		validateStudentForm(formData);
-	}
-
 	let documents = [
 		{ id: 1, title: "ID Proof", file: null },
 		{ id: 2, title: "Address Proof", file: null },
 		{ id: 3, title: "Birth Certificate", file: null },
 	];
 
-	function handleFileChange(event: Event, index: number) {
-		const target = event.target as HTMLInputElement;
-		// if (target.files && target.filscriptgth > 0) {
-		// 	// documents[index].file = target.files[0];
-		// }
-	}
+	// function handleFileChange(event: Event, index: number) {
+	// 	const target = event.target as HTMLInputElement;
+	// 	if (target.files && target.filscriptgth > 0) {
+	// 		// documents[index].file = target.files[0];
+	// 	}
+	// }
 </script>
 
 <form onsubmit={onSubmit}>
@@ -187,12 +169,12 @@
 				<label for="classId">Class <span class="required">*</span></label>
 				<select
 					id="classId"
-					class={`w-full ${$formErrors["studentData.classId"] && ($touched["studentData.classId"] || $submitAttempted) ? "input-error" : ""}`}
+					class={`w-full ${formData.studentData.classId === "" ? "placeholder-gray" : ""} ${$formErrors["studentData.classId"] && ($touched["studentData.classId"] || $submitAttempted) ? "input-error" : ""}`}
 					bind:value={formData.studentData.classId}
 					onchange={handleClassChange}
 					onblur={handleClassChange}
 				>
-					<option value="" disabled selected>Select Class</option>
+					<option value="" selected>Select class</option>
 					{#each classData as cls}
 						<option value={cls._id}>{cls.name}</option>
 					{/each}
@@ -208,11 +190,11 @@
 					id="sectionId"
 					bind:value={formData.studentData.sectionId}
 					disabled={!classSections.length}
-					class={`w-full ${$formErrors["studentData.sectionId"] && ($touched["studentData.sectionId"] || $submitAttempted) ? "input-error" : ""}`}
+					class={`w-full ${formData.studentData.sectionId === "" ? "placeholder-gray" : ""} ${$formErrors["studentData.sectionId"] && ($touched["studentData.sectionId"] || $submitAttempted) ? "input-error" : ""}`}
 					onchange={handleSectionChange}
 					onblur={() => handleBlur("studentData.sectionId")}
 				>
-					<option value="" disabled selected>Select Section</option>
+					<option value="" selected>Select section</option>
 					{#each classSections as section}
 						<option value={section._id}>{section.name}</option>
 					{/each}
@@ -222,8 +204,9 @@
 				{/if}
 			</div>
 			<div class="col-2">
-				<label for="rollNo">Roll Number</label>
-				<input id="rollNo" type="text" name="rollNo" class="w-full" bind:value={formData.studentData.rollNo} />
+				{@render requiredInput("studentData.rollNo", "Roll Number", false, "text", formData.studentData.rollNo ?? "", (val) => (formData.studentData.rollNo = val), 20)}
+				<!-- <label for="rollNo">Roll Number</label>
+				<input id="rollNo" type="text" name="rollNo" class="w-full" bind:value={formData.studentData.rollNo} /> -->
 			</div>
 		</div>
 	</div>
@@ -233,59 +216,51 @@
 		<h1>Student Profile</h1>
 		<div class="grid-12">
 			<div class="col-2">
-				{@render inputRequired(
+				{@render requiredInput(
 					"studentData.profile.firstName",
 					"First Name",
 					true,
 					"text",
 					formData.studentData.profile.firstName,
 					(val) => (formData.studentData.profile.firstName = val),
+					20,
 				)}
-				<!-- <label for="firstName">First Name <span class="required">*</span></label>
-				<input
-					id="firstName"
-					type="text"
-					name="firstName"
-					class={`w-full ${$formErrors["studentData.profile.firstName"] && ($touched["studentData.profile.firstName"] || $submitAttempted) ? "input-error" : ""}`}
-					bind:value={formData.studentData.profile.firstName}
-					onblur={() => handleBlur("studentData.profile.firstName")}
-					oninput={() => handleBlur("studentData.profile.firstName")}
-				/>
-				{#if $formErrors["studentData.profile.firstName"] && ($touched["studentData.profile.firstName"] || $submitAttempted)}
-					<p class="error-text">{$formErrors["studentData.profile.firstName"]}</p>
-				{/if} -->
 			</div>
 			<div class="col-2">
-				<label for="middleName">Middle Name</label>
-				<input id="middleName" type="text" name="middleName" class="w-full" bind:value={formData.studentData.profile.middleName} />
+				{@render requiredInput(
+					"studentData.profile.middleName",
+					"Middle Name",
+					false,
+					"text",
+					formData.studentData.profile.middleName ?? "",
+					(val) => (formData.studentData.profile.middleName = val),
+					20,
+				)}
 			</div>
 
 			<div class="col-2">
-				<label for="lastName">Last Name <span class="required">*</span></label>
-				<input
-					id="lastName"
-					type="text"
-					name="lastName"
-					class={`w-full ${$formErrors["studentData.profile.lastName"] && ($touched["studentData.profile.lastName"] || $submitAttempted) ? "input-error" : ""}`}
-					bind:value={formData.studentData.profile.lastName}
-					onblur={() => handleBlur("studentData.profile.lastName")}
-					oninput={() => handleBlur("studentData.profile.lastName")}
-				/>
-				{#if $formErrors["studentData.profile.lastName"] && ($touched["studentData.profile.lastName"] || $submitAttempted)}
-					<p class="error-text">{$formErrors["studentData.profile.lastName"]}</p>
-				{/if}
+				{@render requiredInput(
+					"studentData.profile.lastName",
+					"Last Name",
+					true,
+					"text",
+					formData.studentData.profile.lastName ?? "",
+					(val) => (formData.studentData.profile.lastName = val),
+					20,
+				)}
 			</div>
 
 			<div class="col-2">
 				<label for="gender">Gender <span class="required">*</span></label>
 				<select
-					id="gender"
-					class={`w-full ${$formErrors["studentData.profile.gender"] && ($touched["studentData.profile.gender"] || $submitAttempted) ? "input-error" : ""}`}
+					class={`w-full ${formData.studentData.profile.gender === "" ? "placeholder-gray" : ""} ${
+						$formErrors["studentData.profile.gender"] && ($touched["studentData.profile.gender"] || $submitAttempted) ? "input-error" : ""
+					}`}
 					bind:value={formData.studentData.profile.gender}
-					onblur={() => handleBlur("gender")}
-					onchange={() => handleBlur("gender")}
+					onblur={() => handleBlur("studentData.profile.gender")}
+					onchange={() => handleBlur("studentData.profile.gender")}
 				>
-					<option value="" disabled selected>Select Gender</option>
+					<option value="" selected>Select gender</option>
 					{#each GENDERS as gender}
 						<option value={gender.name}>{gender.name}</option>
 					{/each}
@@ -310,8 +285,8 @@
 
 			<div class="col-2">
 				<label for="category">Category</label>
-				<select id="category" bind:value={formData.studentData.profile.category}>
-					<option value="" disabled selected>Select Category</option>
+				<select id="category" class={`w-full ${formData.studentData.profile.category === "" ? "placeholder-gray" : ""}`} bind:value={formData.studentData.profile.category}>
+					<option value="" selected>Select category</option>
 					{#each CASTE_CATEGORIES as category}
 						<option value={category.name}>{category.name}</option>
 					{/each}
@@ -319,47 +294,36 @@
 			</div>
 
 			<div class="col-2">
-				<label for="religion">Religion</label>
-				<input id="religion" type="text" name="religion" class="w-full" bind:value={formData.studentData.profile.religion} />
+				{@render requiredInput(
+					"studentData.profile.religion",
+					"Religion",
+					false,
+					"text",
+					formData.studentData.profile.religion ?? "",
+					(val) => (formData.studentData.profile.religion = val),
+					20,
+				)}
 			</div>
 
 			<div class="col-2">
-				<label for="caste">Caste</label>
-				<input id="caste" type="text" name="caste" class="w-full" bind:value={formData.studentData.profile.caste} />
+				{@render requiredInput(
+					"studentData.profile.caste",
+					"Caste",
+					false,
+					"text",
+					formData.studentData.profile.caste ?? "",
+					(val) => (formData.studentData.profile.caste = val),
+					20,
+				)}
 			</div>
 
 			<!-- User Data -->
 			<div class="col-2">
-				<label for="mobile">Mobile No</label>
-				<input
-					id="mobile"
-					type="tel"
-					name="mobile"
-					class={`w-full ${$formErrors["userData.mobile"] && ($touched["userData.mobile"] || $submitAttempted) ? "input-error" : ""}`}
-					bind:value={formData.userData.mobile}
-					onblur={() => handleBlur("userData.mobile")}
-					oninput={() => handleBlur("userData.mobile")}
-					maxlength="10"
-				/>
-				{#if $formErrors["userData.mobile"] && ($touched["userData.mobile"] || $submitAttempted)}
-					<p class="error-text">{$formErrors["userData.mobile"]}</p>
-				{/if}
+				{@render requiredInput("userData.mobile", "Mobile No", false, "tel", formData.userData.mobile ?? "", (val) => (formData.userData.mobile = val), 10)}
 			</div>
 
 			<div class="col-2">
-				<label for="email">Email</label>
-				<input
-					id="email"
-					type="text"
-					name="email"
-					class={`w-full ${$formErrors["userData.email"] && ($touched["userData.email"] || $submitAttempted) ? "input-error" : ""}`}
-					bind:value={formData.userData.email}
-					onblur={() => handleBlur("userData.email")}
-					oninput={() => handleBlur("userData.email")}
-				/>
-				{#if $formErrors["userData.email"] && ($touched["userData.email"] || $submitAttempted)}
-					<p class="error-text">{$formErrors["userData.email"]}</p>
-				{/if}
+				{@render requiredInput("userData.email", "Email", false, "text", formData.userData.email ?? "", (val) => (formData.userData.email = val), 50)}
 			</div>
 		</div>
 	</div>
@@ -369,83 +333,63 @@
 		<h1>Student Address</h1>
 		<div class="grid-12">
 			<div class="col-4">
-				<label for="street">House No/Street</label>
-				<input
-					id="street"
-					type="text"
-					name="street"
-					class={`w-full ${$formErrors["studentData.profile.address.street"] && ($touched["studentData.profile.address.street"] || $submitAttempted) ? "input-error" : ""}`}
-					bind:value={formData.studentData.profile.address.street}
-					onblur={() => handleBlur("studentData.profile.address.street")}
-					oninput={() => handleBlur("studentData.profile.address.street")}
-				/>
-				{#if $formErrors["studentData.profile.address.street"] && ($touched["studentData.profile.address.street"] || $submitAttempted)}
-					<p class="error-text">{$formErrors["studentData.profile.address.street"]}</p>
-				{/if}
+				{@render requiredInput(
+					"studentData.profile.address.street",
+					"House No/Street",
+					true,
+					"text",
+					formData.studentData.profile.address.street ?? "",
+					(val) => (formData.studentData.profile.address.street = val),
+					100,
+				)}
 			</div>
 
 			<div class="col-2">
-				<label for="city">City</label>
-				<input
-					id="city"
-					type="text"
-					name="city"
-					class={`w-full ${$formErrors["studentData.profile.address.city"] && ($touched["studentData.profile.address.city"] || $submitAttempted) ? "input-error" : ""}`}
-					bind:value={formData.studentData.profile.address.city}
-					onblur={() => handleBlur("studentData.profile.address.city")}
-					oninput={() => handleBlur("studentData.profile.address.city")}
-				/>
-				{#if $formErrors["studentData.profile.address.city"] && ($touched["studentData.profile.address.city"] || $submitAttempted)}
-					<p class="error-text">{$formErrors["studentData.profile.address.city"]}</p>
-				{/if}
+				{@render requiredInput(
+					"studentData.profile.address.city",
+					"City",
+					true,
+					"text",
+					formData.studentData.profile.address.city ?? "",
+					(val) => (formData.studentData.profile.address.city = val),
+					20,
+				)}
 			</div>
 
 			<div class="col-2">
-				<label for="state">State</label>
-				<input
-					id="state"
-					type="text"
-					name="state"
-					class={`w-full ${$formErrors["studentData.profile.address.state"] && ($touched["studentData.profile.address.state"] || $submitAttempted) ? "input-error" : ""}`}
-					bind:value={formData.studentData.profile.address.state}
-					onblur={() => handleBlur("studentData.profile.address.state")}
-					oninput={() => handleBlur("studentData.profile.address.state")}
-				/>
-				{#if $formErrors["studentData.profile.address.state"] && ($touched["studentData.profile.address.state"] || $submitAttempted)}
-					<p class="error-text">{$formErrors["studentData.profile.address.state"]}</p>
-				{/if}
+				{@render requiredInput(
+					"studentData.profile.address.state",
+					"State",
+					true,
+					"text",
+					formData.studentData.profile.address.state ?? "",
+					(val) => (formData.studentData.profile.address.state = val),
+					20,
+				)}
 			</div>
 
 			<div class="col-2">
-				<label for="postalCode">Postal Code</label>
-				<input
-					id="postalCode"
-					type="text"
-					name="postalCode"
-					class={`w-full ${$formErrors["studentData.profile.address.postalCode"] && ($touched["studentData.profile.address.postalCode"] || $submitAttempted) ? "input-error" : ""}`}
-					bind:value={formData.studentData.profile.address.postalCode}
-					onblur={() => handleBlur("studentData.profile.address.postalCode")}
-					oninput={() => handleBlur("studentData.profile.address.postalCode")}
-				/>
-				{#if $formErrors["studentData.profile.address.postalCode"] && ($touched["studentData.profile.address.postalCode"] || $submitAttempted)}
-					<p class="error-text">{$formErrors["studentData.profile.address.postalCode"]}</p>
-				{/if}
+				{@render requiredInput(
+					"studentData.profile.address.postalCode",
+					"Postal Code",
+					true,
+					"text",
+					formData.studentData.profile.address.postalCode ?? "",
+					(val) => (formData.studentData.profile.address.postalCode = val),
+					10,
+				)}
 			</div>
 
 			<div class="col-2">
-				<label for="country">Country</label>
-				<input
-					id="country"
-					type="text"
-					name="country"
-					class={`w-full ${$formErrors["studentData.profile.address.country"] && ($touched["studentData.profile.address.country"] || $submitAttempted) ? "input-error" : ""}`}
-					bind:value={formData.studentData.profile.address.country}
-					onblur={() => handleBlur("studentData.profile.address.country")}
-					oninput={() => handleBlur("studentData.profile.address.country")}
-				/>
-				{#if $formErrors["studentData.profile.address.country"] && ($touched["studentData.profile.address.country"] || $submitAttempted)}
-					<p class="error-text">{$formErrors["studentData.profile.address.country"]}</p>
-				{/if}
+				{@render requiredInput(
+					"studentData.profile.address.country",
+					"Country",
+					true,
+					"text",
+					formData.studentData.profile.address.country ?? "",
+					(val) => (formData.studentData.profile.address.country = val),
+					20,
+				)}
 			</div>
 		</div>
 	</div>
@@ -456,47 +400,50 @@
 		<div class="grid-12">
 			<div class="col-1">
 				<label for="bloodGroup">Blood Group</label>
-				<select id="bloodGroup" bind:value={formData.studentData.medicalDetails.bloodGroup}>
-					<option value="" disabled selected>Select</option>
+				<select
+					id="bloodGroup"
+					class={`w-full ${formData.studentData.medicalDetails.bloodGroup === "" ? "placeholder-gray" : ""}`}
+					bind:value={formData.studentData.medicalDetails.bloodGroup}
+				>
+					<option value="" selected>Select B/G</option>
 					{#each BLOOD_GROUPS as group}
 						<option value={group.name}>{group.name}</option>
 					{/each}
 				</select>
 			</div>
 			<div class="col-1">
-				<label for="height">Height (CM)</label>
-				<input
-					id="height"
-					name="height"
-					type="text"
-					class={`w-full ${$formErrors[".medicalDetails.height"] && ($touched[".medicalDetails.height"] || $submitAttempted) ? "input-error" : ""}`}
-					bind:value={formData.studentData.medicalDetails.height}
-					onblur={() => handleBlur("medicalDetails.height")}
-					oninput={() => handleBlur("medicalDetails.height")}
-				/>
-				{#if $formErrors["medicalDetails.height"] && ($touched["medicalDetails.height"] || $submitAttempted)}
-					<p class="error-text">{$formErrors["medicalDetails.height"]}</p>
-				{/if}
+				{@render requiredInput(
+					"studentData.medicalDetails.height",
+					"Height (CM)",
+					false,
+					"text",
+					formData.studentData.medicalDetails.height ?? "",
+					(val) => (formData.studentData.medicalDetails.height = val),
+					3,
+				)}
 			</div>
 			<div class="col-1">
-				<label for="weight">Weight (KG)</label>
-				<input
-					id="weight"
-					name="weight"
-					type="text"
-					class={`w-full ${$formErrors[".medicalDetails.weight"] && ($touched[".medicalDetails.weight"] || $submitAttempted) ? "input-error" : ""}`}
-					bind:value={formData.studentData.medicalDetails.weight}
-					onblur={() => handleBlur("medicalDetails.weight")}
-					oninput={() => handleBlur("medicalDetails.weight")}
-				/>
-				{#if $formErrors["medicalDetails.weight"] && ($touched["medicalDetails.weight"] || $submitAttempted)}
-					<p class="error-text">{$formErrors["medicalDetails.weight"]}</p>
-				{/if}
+				{@render requiredInput(
+					"studentData.medicalDetails.weight",
+					"Weight (KG)",
+					false,
+					"text",
+					formData.studentData.medicalDetails.weight ?? "",
+					(val) => (formData.studentData.medicalDetails.weight = val),
+					3,
+				)}
 			</div>
 
 			<div class="col-1">
-				<label for="eyeSight">Eye Sight</label>
-				<input id="eyeSight" type="text" bind:value={formData.studentData.medicalDetails.eyeSight} class={`w-full`} onblur={() => handleBlur("eyeSight")} />
+				{@render requiredInput(
+					"studentData.medicalDetails.eyeSight",
+					"Eye Sight",
+					false,
+					"text",
+					formData.studentData.medicalDetails.eyeSight ?? "",
+					(val) => (formData.studentData.medicalDetails.eyeSight = val),
+					10,
+				)}
 			</div>
 
 			<div class="col-2">
@@ -504,16 +451,23 @@
 				<DatePicker id="measurementDate" bind:value={formData.studentData.medicalDetails.measurementDate} onClear={() => console.log("Date cleared")} />
 			</div>
 			<div class="col-6">
-				<label for="medicalHistory">Medical History</label>
-				<input id="medicalHistory" type="text" bind:value={formData.studentData.medicalDetails.medicalHistory} class="w-full" />
+				{@render requiredInput(
+					"studentData.medicalDetails.medicalHistory",
+					"Medical History",
+					false,
+					"text",
+					formData.studentData.medicalDetails.medicalHistory ?? "",
+					(val) => (formData.studentData.medicalDetails.medicalHistory = val),
+					50,
+				)}
 			</div>
 			<div class="col-6">
 				<label for="allergies">Allergies</label>
-				<TagInput id="allergies" bind:tags={formData.studentData.medicalDetails.allergies} />
+				<TagInput id="allergies" fieldName={"allergies"} bind:tags={formData.studentData.medicalDetails.allergies} />
 			</div>
 			<div class="col-6">
 				<label for="medicalConditions">Medical Conditions</label>
-				<TagInput id="medicalConditions" bind:tags={formData.studentData.medicalDetails.medicalConditions} />
+				<TagInput id="medicalConditions" fieldName={"medical conditions"} bind:tags={formData.studentData.medicalDetails.medicalConditions} />
 			</div>
 		</div>
 	</div>
@@ -523,155 +477,145 @@
 		<h1>Parent/Guardian Detail</h1>
 		<div class="grid-12">
 			<div class="col-2">
-				<label for="fatherFirstName">Father First Name <span class="required">*</span></label>
-				<input
-					id="fatherFirstName"
-					type="tel"
-					name="fatherFirstName"
-					class={`w-full ${$formErrors["studentData.parentGuardianDetails.fatherDetails.fatherFirstName"] && $submitAttempted ? "input-error" : ""}`}
-					bind:value={formData.studentData.parentGuardianDetails.fatherDetails.fatherFirstName}
-					onblur={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherFirstName")}
-					oninput={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherFirstName")}
-					maxlength="10"
-				/>
-				{#if $formErrors["studentData.parentGuardianDetails.fatherDetails.fatherFirstName"] && $submitAttempted}
-					<p class="error-text">{$formErrors["studentData.parentGuardianDetails.fatherDetails.fatherFirstName"]}</p>
-				{/if}
+				{@render requiredInput(
+					"studentData.parentGuardianDetails.fatherDetails.fatherFirstName",
+					"Father First Name ",
+					true,
+					"text",
+					formData.studentData.parentGuardianDetails.fatherDetails.fatherFirstName ?? "",
+					(val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherFirstName = val),
+					20,
+				)}
 			</div>
 
 			<div class="col-2">
-				<label for="fatherLastName">Father Last Name <span class="required">*</span></label>
-				<input
-					id="fatherLastName"
-					type="tel"
-					name="fatherLastName"
-					class={`w-full ${$formErrors["studentData.parentGuardianDetails.fatherDetails.fatherLastName"] && $submitAttempted ? "input-error" : ""}`}
-					bind:value={formData.studentData.parentGuardianDetails.fatherDetails.fatherLastName}
-					onblur={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherLastName")}
-					oninput={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherLastName")}
-					maxlength="10"
-				/>
-				{#if $formErrors["studentData.parentGuardianDetails.fatherDetails.fatherLastName"] && $submitAttempted}
-					<p class="error-text">{$formErrors["studentData.parentGuardianDetails.fatherDetails.fatherLastName"]}</p>
-				{/if}
+				{@render requiredInput(
+					"studentData.parentGuardianDetails.fatherDetails.fatherLastName",
+					"Father Last Name ",
+					true,
+					"text",
+					formData.studentData.parentGuardianDetails.fatherDetails.fatherLastName ?? "",
+					(val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherLastName = val),
+					20,
+				)}
 			</div>
 
 			<div class="col-2">
-				<label for="fatherPhone">Father Phone <span class="required">*</span></label>
-				<input
-					id="fatherPhone"
-					type="tel"
-					name="fatherPhone"
-					class={`w-full ${$formErrors["studentData.parentGuardianDetails.fatherDetails.fatherPhone"] && $submitAttempted ? "input-error" : ""}`}
-					bind:value={formData.studentData.parentGuardianDetails.fatherDetails.fatherPhone}
-					onblur={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherPhone")}
-					oninput={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherPhone")}
-					maxlength="10"
-				/>
-				{#if $formErrors["studentData.parentGuardianDetails.fatherDetails.fatherPhone"] && $submitAttempted}
-					<p class="error-text">{$formErrors["studentData.parentGuardianDetails.fatherDetails.fatherPhone"]}</p>
-				{/if}
+				{@render requiredInput(
+					"studentData.parentGuardianDetails.fatherDetails.fatherPhone",
+					"Father Phone",
+					true,
+					"text",
+					formData.studentData.parentGuardianDetails.fatherDetails.fatherPhone ?? "",
+					(val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherPhone = val),
+					10,
+				)}
 			</div>
 
 			<div class="col-2">
-				<label for="fatherEmail">Father Email </label>
-				<input
-					id="fatherEmail"
-					name="fatherEmail"
-					type="text"
-					class={`w-full ${$formErrors["studentData.parentGuardianDetails.fatherDetails.fatherEmail"] && $submitAttempted ? "input-error" : ""}`}
-					bind:value={formData.studentData.parentGuardianDetails.fatherDetails.fatherEmail}
-					onblur={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherEmail")}
-					oninput={() => handleBlur("studentData.parentGuardianDetails.fatherDetails.fatherEmail")}
-				/>
-				{#if $formErrors["studentData.parentGuardianDetails.fatherDetails.fatherEmail"] && $submitAttempted}
-					<p class="error-text">{$formErrors["studentData.parentGuardianDetails.fatherDetails.fatherEmail"]}</p>
-				{/if}
+				{@render requiredInput(
+					"studentData.parentGuardianDetails.fatherDetails.fatherEmail",
+					"Father Email",
+					false,
+					"text",
+					formData.studentData.parentGuardianDetails.fatherDetails.fatherEmail ?? "",
+					(val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherEmail = val),
+					30,
+				)}
 			</div>
 
 			<div class="col-2">
-				<label for="fatherOccupation">Father Occupation</label>
-				<input id="fatherOccupation" type="text" bind:value={formData.studentData.parentGuardianDetails.fatherDetails.fatherOccupation} />
+				{@render requiredInput(
+					"studentData.parentGuardianDetails.fatherDetails.fatherOccupation",
+					"Father Occupation",
+					false,
+					"text",
+					formData.studentData.parentGuardianDetails.fatherDetails.fatherOccupation ?? "",
+					(val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherOccupation = val),
+					30,
+				)}
 			</div>
 			<div class="col-2">
-				<label for="fatherEducation">Father Education</label>
-				<input id="fatherEducation" type="text" bind:value={formData.studentData.parentGuardianDetails.fatherDetails.fatherEducation} />
-			</div>
-
-			<div class="col-2">
-				<label for="motherFirstName">Mother First Name</label>
-				<input
-					id="motherFirstName"
-					type="tel"
-					name="motherFirstName"
-					class={`w-full ${$formErrors["studentData.parentGuardianDetails.motherDetails.motherFirstName"] && $submitAttempted ? "input-error" : ""}`}
-					bind:value={formData.studentData.parentGuardianDetails.motherDetails.motherFirstName}
-					onblur={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherFirstName")}
-					oninput={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherFirstName")}
-					maxlength="10"
-				/>
-				{#if $formErrors["studentData.parentGuardianDetails.motherDetails.motherFirstName"] && $submitAttempted}
-					<p class="error-text">{$formErrors["studentData.parentGuardianDetails.motherDetails.motherFirstName"]}</p>
-				{/if}
+				{@render requiredInput(
+					"studentData.parentGuardianDetails.fatherDetails.fatherEducation",
+					"Father Education",
+					false,
+					"text",
+					formData.studentData.parentGuardianDetails.fatherDetails.fatherEducation ?? "",
+					(val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherEducation = val),
+					20,
+				)}
 			</div>
 
 			<div class="col-2">
-				<label for="motherLastName">Mother Last Name</label>
-				<input
-					id="motherLastName"
-					type="tel"
-					name="motherLastName"
-					class={`w-full ${$formErrors["studentData.parentGuardianDetails.motherDetails.motherLastName"] && $submitAttempted ? "input-error" : ""}`}
-					bind:value={formData.studentData.parentGuardianDetails.motherDetails.motherLastName}
-					onblur={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherLastName")}
-					oninput={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherLastName")}
-					maxlength="10"
-				/>
-				{#if $formErrors["studentData.parentGuardianDetails.motherDetails.motherLastName"] && $submitAttempted}
-					<p class="error-text">{$formErrors["studentData.parentGuardianDetails.motherDetails.motherLastName"]}</p>
-				{/if}
+				{@render requiredInput(
+					"studentData.parentGuardianDetails.motherDetails.motherFirstName",
+					"Mother First Name",
+					true,
+					"text",
+					formData.studentData.parentGuardianDetails.motherDetails.motherFirstName ?? "",
+					(val) => (formData.studentData.parentGuardianDetails.motherDetails.motherFirstName = val),
+					20,
+				)}
 			</div>
 
 			<div class="col-2">
-				<label for="motherPhone">Mother Phone</label>
-				<input
-					id="fatherPhone"
-					type="tel"
-					name="fatherPhone"
-					class={`w-full ${$formErrors["studentData.parentGuardianDetails.motherDetails.motherPhone"] && $submitAttempted ? "input-error" : ""}`}
-					bind:value={formData.studentData.parentGuardianDetails.motherDetails.motherPhone}
-					onblur={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherPhone")}
-					oninput={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherPhone")}
-					maxlength="10"
-				/>
-				{#if $formErrors["studentData.parentGuardianDetails.motherDetails.motherPhone"] && $submitAttempted}
-					<p class="error-text">{$formErrors["studentData.parentGuardianDetails.motherDetails.motherPhone"]}</p>
-				{/if}
+				{@render requiredInput(
+					"studentData.parentGuardianDetails.motherDetails.motherLastName",
+					"Mother First Name",
+					true,
+					"text",
+					formData.studentData.parentGuardianDetails.motherDetails.motherLastName ?? "",
+					(val) => (formData.studentData.parentGuardianDetails.motherDetails.motherLastName = val),
+					20,
+				)}
 			</div>
 
 			<div class="col-2">
-				<label for="motherEmail">Mother Email </label>
-				<input
-					id="motherEmail"
-					name="motherEmail"
-					type="text"
-					class={`w-full ${$formErrors["studentData.parentGuardianDetails.motherDetails.motherEmail"] && $submitAttempted ? "input-error" : ""}`}
-					bind:value={formData.studentData.parentGuardianDetails.motherDetails.motherEmail}
-					onblur={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherEmail")}
-					oninput={() => handleBlur("studentData.parentGuardianDetails.motherDetails.motherEmail")}
-				/>
-				{#if $formErrors["studentData.parentGuardianDetails.motherDetails.motherEmail"] && $submitAttempted}
-					<p class="error-text">{$formErrors["studentData.parentGuardianDetails.motherDetails.motherEmail"]}</p>
-				{/if}
+				{@render requiredInput(
+					"studentData.parentGuardianDetails.motherDetails.motherPhone",
+					"Mother Phone",
+					true,
+					"tel",
+					formData.studentData.parentGuardianDetails.motherDetails.motherPhone ?? "",
+					(val) => (formData.studentData.parentGuardianDetails.motherDetails.motherPhone = val),
+					10,
+				)}
 			</div>
 
 			<div class="col-2">
-				<label for="motherOccupation">Mother Occupation</label>
-				<input id="motherOccupation" type="text" bind:value={formData.studentData.parentGuardianDetails.motherDetails.motherOccupation} />
+				{@render requiredInput(
+					"studentData.parentGuardianDetails.motherDetails.motherEmail",
+					"Mother Email",
+					false,
+					"email",
+					formData.studentData.parentGuardianDetails.motherDetails.motherEmail ?? "",
+					(val) => (formData.studentData.parentGuardianDetails.motherDetails.motherEmail = val),
+					30,
+				)}
+			</div>
+
+			<div class="col-2">
+				{@render requiredInput(
+					"studentData.parentGuardianDetails.motherDetails.motherEmail",
+					"Mother Occupation",
+					false,
+					"text",
+					formData.studentData.parentGuardianDetails.motherDetails.motherOccupation ?? "",
+					(val) => (formData.studentData.parentGuardianDetails.motherDetails.motherOccupation = val),
+					20,
+				)}
 			</div>
 			<div class="col-2">
-				<label for="motherEducation">Mother Education</label>
-				<input id="motherEducation" type="text" bind:value={formData.studentData.parentGuardianDetails.motherDetails.motherEducation} />
+				{@render requiredInput(
+					"studentData.parentGuardianDetails.motherDetails.motherEducation",
+					"Mother Education",
+					false,
+					"text",
+					formData.studentData.parentGuardianDetails.motherDetails.motherEducation ?? "",
+					(val) => (formData.studentData.parentGuardianDetails.motherDetails.motherEducation = val),
+					20,
+				)}
 			</div>
 
 			<div class="col-6">
@@ -679,7 +623,7 @@
 				<textarea
 					id="parentCurrentAddress"
 					name="parentCurrentAddress"
-					placeholder="Write current address.."
+					placeholder="Enter current address"
 					class={`w-full ${$formErrors["studentData.parentGuardianDetails.parentCurrentAddress"] && $submitAttempted ? "input-error" : ""}`}
 					bind:value={formData.studentData.parentGuardianDetails.parentCurrentAddress}
 					onblur={() => handleBlur("studentData.parentGuardianDetails.parentCurrentAddress")}
@@ -693,7 +637,7 @@
 			</div>
 			<div class="col-6">
 				<label for="parentPermanentAddress">Parent Permanent Address</label>
-				<textarea id="permanentAddress" bind:value={formData.studentData.parentGuardianDetails.parentPermanentAddress} placeholder="Write permanent address.."></textarea>
+				<textarea id="permanentAddress" bind:value={formData.studentData.parentGuardianDetails.parentPermanentAddress} placeholder="Enter permanent address.."></textarea>
 			</div>
 
 			<div class="col-6">
@@ -727,89 +671,87 @@
 				<div class="col-12" transition:slide>
 					<div class="grid-12">
 						<div class="col-2">
-							<label for="guardianFirstName">Guardian First Name <span class="required">*</span></label>
-							<input
-								id="guardianFirstName"
-								type="text"
-								bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianFirstName}
-								onblur={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianFirstName")}
-								oninput={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianFirstName")}
-								class={`w-full ${$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianFirstName"] && $submitAttempted ? "input-error" : ""}`}
-							/>
-							{#if $formErrors["studentData.parentGuardianDetails.guardianDetails.guardianFirstName"] && $submitAttempted}
-								<p class="error-text">{$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianFirstName"]}</p>
-							{/if}
+							{@render requiredInput(
+								"studentData.parentGuardianDetails.guardianDetails.guardianFirstName",
+								"Guardian First Name",
+								true,
+								"text",
+								formData.studentData.parentGuardianDetails.guardianDetails.guardianFirstName ?? "",
+								(val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianFirstName = val),
+								20,
+							)}
 						</div>
 
 						<div class="col-2">
-							<label for="guardianLastName">Guardian Last Name <span class="required">*</span></label>
-							<input
-								id="guardianLastName"
-								type="text"
-								bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianLastName}
-								onblur={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianLastName")}
-								oninput={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianLastName")}
-								class={`w-full ${$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianLastName"] && $submitAttempted ? "input-error" : ""}`}
-							/>
-							{#if $formErrors["studentData.parentGuardianDetails.guardianDetails.guardianLastName"] && $submitAttempted}
-								<p class="error-text">{$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianLastName"]}</p>
-							{/if}
+							{@render requiredInput(
+								"studentData.parentGuardianDetails.guardianDetails.guardianLastName",
+								"Guardian Last Name",
+								true,
+								"text",
+								formData.studentData.parentGuardianDetails.guardianDetails.guardianLastName ?? "",
+								(val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianLastName = val),
+								20,
+							)}
 						</div>
 
 						<div class="col-2">
-							<label for="guardianPhone">Guardian Phone <span class="required">*</span></label>
-							<input
-								id="guardianPhone"
-								type="tel"
-								bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianPhone}
-								onblur={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianPhone")}
-								oninput={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianPhone")}
-								class={`w-full ${$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianPhone"] && $submitAttempted ? "input-error" : ""}`}
-								maxlength="10"
-							/>
-							{#if $formErrors["studentData.parentGuardianDetails.guardianDetails.guardianPhone"] && $submitAttempted}
-								<p class="error-text">{$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianPhone"]}</p>
-							{/if}
+							{@render requiredInput(
+								"studentData.parentGuardianDetails.guardianDetails.guardianPhone",
+								"Guardian Phone",
+								true,
+								"tel",
+								formData.studentData.parentGuardianDetails.guardianDetails.guardianPhone ?? "",
+								(val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianPhone = val),
+								10,
+							)}
 						</div>
 
 						<div class="col-2">
-							<label for="guardianEmail">Guardian Email <span class="required">*</span></label>
-							<input
-								id="guardianEmail"
-								type="email"
-								bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianEmail}
-								onblur={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianEmail")}
-								oninput={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianEmail")}
-								class={`w-full ${$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianEmail"] && $submitAttempted ? "input-error" : ""}`}
-							/>
-							{#if $formErrors["studentData.parentGuardianDetails.guardianDetails.guardianEmail"] && $submitAttempted}
-								<p class="error-text">{$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianEmail"]}</p>
-							{/if}
+							{@render requiredInput(
+								"studentData.parentGuardianDetails.guardianDetails.guardianEmail",
+								"Guardian Email",
+								true,
+								"email",
+								formData.studentData.parentGuardianDetails.guardianDetails.guardianEmail ?? "",
+								(val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianEmail = val),
+								30,
+							)}
 						</div>
 
 						<div class="col-2">
-							<label for="guardianRelation">Guardian Relation <span class="required">*</span></label>
-							<input
-								id="guardianRelation"
-								type="text"
-								bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianRelation}
-								onblur={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianRelation")}
-								oninput={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianRelation")}
-								class={`w-full ${$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianRelation"] && $submitAttempted ? "input-error" : ""}`}
-							/>
-							{#if $formErrors["studentData.parentGuardianDetails.guardianDetails.guardianRelation"] && $submitAttempted}
-								<p class="error-text">{$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianRelation"]}</p>
-							{/if}
+							{@render requiredInput(
+								"studentData.parentGuardianDetails.guardianDetails.guardianRelation",
+								"Guardian Relation",
+								true,
+								"text",
+								formData.studentData.parentGuardianDetails.guardianDetails.guardianRelation ?? "",
+								(val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianRelation = val),
+								20,
+							)}
 						</div>
 
 						<div class="col-1">
-							<label for="guardianOccupation">Occupation</label>
-							<input id="guardianOccupation" type="text" bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianOccupation} />
+							{@render requiredInput(
+								"studentData.parentGuardianDetails.guardianDetails.guardianOccupation",
+								"Occupation",
+								false,
+								"text",
+								formData.studentData.parentGuardianDetails.guardianDetails.guardianOccupation ?? "",
+								(val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianOccupation = val),
+								20,
+							)}
 						</div>
 
 						<div class="col-1">
-							<label for="guardianEducation">Guardian Education</label>
-							<input id="guardianEducation" type="text" bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianEducation} />
+							{@render requiredInput(
+								"studentData.parentGuardianDetails.guardianDetails.guardianEducation",
+								"Education",
+								false,
+								"text",
+								formData.studentData.parentGuardianDetails.guardianDetails.guardianEducation ?? "",
+								(val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianEducation = val),
+								20,
+							)}
 						</div>
 
 						<div class="col-6">
@@ -819,7 +761,7 @@
 								bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianCurrentAddress}
 								onblur={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianCurrentAddress")}
 								oninput={() => handleBlur("studentData.parentGuardianDetails.guardianDetails.guardianCurrentAddress")}
-								placeholder="Write current address.."
+								placeholder="Enter current address"
 								class={`w-full ${$formErrors["studentData.parentGuardianDetails.guardianDetails.guardianCurrentAddress"] && $submitAttempted ? "input-error" : ""}`}
 							></textarea>
 							{#if $formErrors["studentData.parentGuardianDetails.guardianDetails.guardianCurrentAddress"] && $submitAttempted}
@@ -832,7 +774,7 @@
 							<textarea
 								id="guardianPermanentAddress"
 								bind:value={formData.studentData.parentGuardianDetails.guardianDetails.guardianPermanentAddress}
-								placeholder="Write permanent address.."
+								placeholder="Enter permanent address"
 							></textarea>
 						</div>
 					</div>
@@ -908,9 +850,8 @@
 		</button>
 
 		<button class="btn ripple" type="submit" disabled={$isLoading}>
-			{#if $isLoading}
-				<LoaderIcon />
-			{:else}
+			<LoaderIcon />
+			{#if !$isLoading}
 				<Save />
 			{/if}
 			{#if action === "update"}
@@ -922,25 +863,30 @@
 	</div>
 </form>
 
-{#snippet inputRequired(fieldName: string, title: string, isRequired = true, type = "text", value: string, onInput: (val: string) => void)}
-		<label for={fieldName}>
-			{title}
-			{#if isRequired}<span class="required">*</span>{/if}
-		</label>
-		<input
-			id={fieldName}
-			{type}
-			name={fieldName}
-			class={`w-full ${$formErrors[fieldName] && ($touched[fieldName] || $submitAttempted) ? "input-error" : ""}`}
-			{value}
-			oninput={(e) => onInput((e.target as HTMLInputElement).value)}
-			onblur={() => handleBlur(fieldName)}
-		/>
-		{#if isRequired}
-			{#if $formErrors[fieldName] && ($touched[fieldName] || $submitAttempted)}
-				<p class="error-text">{$formErrors[fieldName]}</p>
-			{/if}
-		{/if}
+{#snippet requiredInput(fieldName: string, title: string, isRequired = true, type = "text", value: string, onInput: (val: string) => void, length = 100)}
+	<label for={fieldName}>
+		{title}
+		{#if isRequired}<span class="required">*</span>{/if}
+	</label>
+	<input
+		id={fieldName}
+		{type}
+		name={fieldName}
+		class={`w-full ${$formErrors[fieldName] && ($touched[fieldName] || $submitAttempted) ? "input-error" : ""}`}
+		{value}
+		oninput={(e) => {
+			onInput((e.target as HTMLInputElement).value);
+			validateStudentForm(formData);
+		}}
+		onblur={() => handleBlur(fieldName)}
+		maxLength={length}
+		placeholder="Enter {title.toLowerCase()}"
+	/>
+	<!-- {#if isRequired} -->
+	{#if $formErrors[fieldName] && ($touched[fieldName] || $submitAttempted)}
+		<p class="error-text">{$formErrors[fieldName]}</p>
+		<!-- {/if} -->
+	{/if}
 {/snippet}
 
 <style>
@@ -994,36 +940,6 @@
 		grid-template-columns: repeat(5, 1fr);
 		gap: 1.5rem;
 	}
-
-	/* Form actions */
-	.form-actions {
-		display: flex;
-		justify-content: flex-end;
-		gap: 1rem;
-	}
-
-	/* .btn {
-		padding: 0.75rem 1.5rem;
-		border-radius: 0.375rem;
-		font-weight: 500;
-		font-size: 0.875rem;
-		cursor: pointer;
-		transition: all 0.2s;
-	}
-
-	.btn-primary:hover {
-		background-color: var(--clr-pri-dark);
-	}
-
-	.btn-primary:disabled {
-		background-color: var(--clr-pri-light);
-		cursor: not-allowed;
-	}
-
-	.btn-secondary:disabled {
-		opacity: 0.7;
-		cursor: not-allowed;
-	} */
 
 	/* Responsive styles */
 	@media (max-width: 1024px) {
@@ -1115,18 +1031,23 @@
 		border-color: red;
 	}
 
-	.error-text {
+	/* .error-text {
 		color: red;
 		font-size: 0.875rem;
 		margin-top: 0.25rem;
-	}
+	} */
 
-	th {
+	/* th {
 		padding: 0.65rem;
 	}
 
 	td {
 		border: 1px solid #ccc;
 		text-align: left;
+	} */
+
+	.placeholder-gray {
+		color: gray;
+		/* font-size: 13px; */
 	}
 </style>

@@ -1,4 +1,5 @@
 <script lang="ts">
+    	import { env } from "$env/dynamic/public";
 	import DataTable from "$lib/components/common/DataTable.svelte";
 	import DeleteConfirmModal from "$lib/components/common/DeleteConfirmModal.svelte";
 	import Modal from "$lib/components/common/Modal.svelte";
@@ -10,6 +11,8 @@
 	import { searchText, currentPage } from "$lib/stores/paginationStore";
 	import type { ColumnConfig } from "$lib/interfaces/table.interface";
 	import ClassForm from "./ClassForm.svelte";
+
+    const schoolName = env.PUBLIC_SCHOOL_NAME || "Default School";
 
 	interface Props {
 		response: any;
@@ -110,6 +113,10 @@
 		onUpdate(id);
 	}
 </script>
+
+<svelte:head>
+  <title>{schoolName} - Class</title>
+</svelte:head>
 
 <div class="class-container">
 	<div class="search-container">

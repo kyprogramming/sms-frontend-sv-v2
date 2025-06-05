@@ -21,7 +21,7 @@
 	{:else if status === 403}
 		<p>Forbidden. You don't have permission to access this page.</p>
 	{:else if status === 404}
-		<p>The page you're looking for doesn't exist.</p>
+		<p>The resource you're looking for doesn't exist.</p>
 	{:else if status === 408}
 		<p>Request timeout. Please check your internet connection and try again.</p>
 	{:else if status === 409}

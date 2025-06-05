@@ -256,9 +256,9 @@
         box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
 	}
 
-	.error-text {
+	/* .error-text {
 		color: #ff4444;
 		font-size: 0.8rem;
 		margin-top: 4px;     
-	}
+	} */
 </style>

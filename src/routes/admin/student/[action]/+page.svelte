@@ -1,4 +1,5 @@
 <script lang="ts">
+    	import { env } from "$env/dynamic/public";
 	import Breadcrumb from "$lib/components/common/Breadcrumb.svelte";
 	import { isModalOpen, openEditModal, openModal } from "$lib/stores/modalStore";
 	import { searchText, currentPage, rowsPerPage, totalPages, totalItems } from "$lib/stores/paginationStore";
@@ -6,7 +7,9 @@
 	import { showSnackbar } from "$lib/components/snackbar/store";
 	import { deleteSectionById, fetchSectionById, fetchSections } from "$lib/services/section";
 	import StudentForm from "$lib/components/shared/student/StudentForm.svelte";
-	// import { page } from "$app/state";
+	
+    const schoolName = env.PUBLIC_SCHOOL_NAME || "Default School";
+    // import { page } from "$app/state";
 
 	// import { classList } from "$lib/stores/masterData";
 	// import { page } from '$app/stores';
@@ -76,6 +79,10 @@
 		$totalItems = get(totalItems);
 	}
 </script>
+<svelte:head>
+  <title>{schoolName} - Registration</title>
+</svelte:head>
+
 
 <Breadcrumb title={action === "create" ? "Student Registration - New" : "Student Registration - Update"} items={breadcrumbItems} />
 

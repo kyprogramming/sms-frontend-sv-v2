@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { run } from "svelte/legacy";
-
+    	import { env } from "$env/dynamic/public";
 	import DataTable from "$lib/components/common/DataTable.svelte";
 	import DeleteConfirmModal from "$lib/components/common/DeleteConfirmModal.svelte";
 	import SectionForm from "./SectionForm.svelte";
@@ -13,22 +12,25 @@
 	import { searchText, currentPage } from "$lib/stores/paginationStore";
 	import type { ColumnConfig } from "$lib/interfaces/table.interface";
 
+
+	const schoolName = env.PUBLIC_SCHOOL_NAME || "Default School";
+
 	interface Props {
 		response: any;
-		dataToUpdate: any;
+		sectionData: any;
 		onRefreshPage: () => void;
 		onSearchChange: () => void;
 		onDelete: (id: string) => void;
 		onUpdate: (id: string) => void;
 	}
 
-	let { response, dataToUpdate = $bindable(), onRefreshPage, onSearchChange, onDelete, onUpdate }: Props = $props();
+	let { response, sectionData = $bindable(), onRefreshPage, onSearchChange, onDelete, onUpdate }: Props = $props();
 
 	let localSearch = get(searchText);
 	$effect.pre(() => {
 		searchText.set(localSearch);
 	});
-	// console.log("dataToUpdate: SectionList", dataToUpdate);
+	// console.log("sectionData: SectionList", sectionData);
 
 	const columns: ColumnConfig[] = [
 		{ key: "_id", label: "Id", visible: false },
@@ -102,13 +104,17 @@
 	}
 	function handleAdd() {
 		openModal();
-		dataToUpdate = null;
+		sectionData = null;
 	}
 
 	async function handleUpdate(id: string) {
 		onUpdate(id);
 	}
 </script>
+
+<svelte:head>
+  <title>{schoolName} - Section</title>
+</svelte:head>
 
 <div class="class-container">
 	<div class="search-container">
@@ -136,7 +142,7 @@
 
 {#if isModalOpen}
 	<Modal title={$isUpdate ? "Update Section" : "Add Section"} size="md">
-		<SectionForm onRefreshPage={handleRefreshPage} {dataToUpdate} />
+		<SectionForm onRefreshPage={handleRefreshPage} {sectionData} action={$isUpdate ? "update" : "add"} />
 	</Modal>
 {/if}
 

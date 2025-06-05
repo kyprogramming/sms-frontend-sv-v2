@@ -3,8 +3,9 @@ import { error } from "@sveltejs/kit";
 import { isLoading } from "$lib/stores/loading";
 import type { PageLoad } from "./$types";
 import { invalidateAll } from "$app/navigation";
+import { apiRequest } from "$lib/utils/api";
 
-export const load: PageLoad = async ({ url, fetch }) => {
+export const load: PageLoad = async ({ url }) => {
 	// try {
 	// 	isLoading.set(true);
 	// 	const res = await fetch(`${API_BASE_URL}/class/list`, { method: "GET", headers: { "Content-Type": "application/json" }, credentials: "include" });
@@ -28,9 +29,10 @@ export const load: PageLoad = async ({ url, fetch }) => {
         if (!id) return { studentData: null };
 
         isLoading.set(true);
-        const res = await fetch(`${API_BASE_URL}/student/${id}`, { method: "GET", headers: { "Content-Type": "application/json" }, credentials: "include" });
-		if (!res.ok)  return { studentData: null };
-        const studentData = await res.json();
+        const studentData = await apiRequest<any>(`${API_BASE_URL}/student/${id}`, "GET");
+        // const res = await fetchApi(`${API_BASE_URL}/student/${id}`, { method: "GET", headers: { "Content-Type": "application/json" }, credentials: "include" });
+		// if (!res.ok)  return { studentData: null };
+        // const studentData = await res.json();
         // console.log("Student Data from Server:", studentData);
 		return { studentData };
 	} catch (error) {
