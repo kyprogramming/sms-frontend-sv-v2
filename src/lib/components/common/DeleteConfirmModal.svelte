@@ -1,27 +1,10 @@
-
 <script lang="ts">
-	import { isDeleteModalOpen, closeDeleteModal } from "$lib/stores/modalStore";
+	import { isLoading } from "$lib/stores/loading";
+	import { CircleX, Trash2 } from "@lucide/svelte";
 	import { fade, fly } from "svelte/transition";
+	import LoaderIcon from "./LoaderIcon.svelte";
 
-	interface Props {
-		title?: string;
-		size?: "sm" | "md" | "lg" | "xl" | "full";
-		onDelete: () => void;
-		onCancel: () => void;
-	}
-
-	let {
-		title = "Confirm Delete",
-		size = "md",
-		onDelete,
-		onCancel
-	}: Props = $props();
-
-	function handleOverlayClick(event: MouseEvent) {
-		if ((event.target as HTMLElement).classList.contains("modal-overlay")) {
-			handleCancel();
-		}
-	}
+	let { title = "Confirm Delete", size = "md", itemName, onDelete, onCancel } = $props();
 
 	function handleModalClick(event: MouseEvent) {
 		event.stopPropagation();
@@ -29,43 +12,42 @@
 
 	function handleDelete() {
 		onDelete?.();
-		closeDeleteModal();
 	}
-
+    
 	function handleCancel() {
 		onCancel?.();
-		closeDeleteModal();
-	}
-
-	export {
-		title,
-		size,
-		onDelete,
-		onCancel,
 	}
 </script>
 
-{#if $isDeleteModalOpen}
-	<!-- svelte-ignore a11y_click_events_have_key_events -->
-	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="modal-overlay" onclick={handleOverlayClick} transition:fade={{ duration: 150 }}>
-		<!-- svelte-ignore a11y_no_static_element_interactions -->
-		<div class="modal-content {size}" onclick={handleModalClick} transition:fly={{ y: -20, duration: 150 }}>
-			<div class="modal-header">
-				<h2>{title}</h2>
-				<button class="close-button" onclick={handleCancel}>&times;</button>
-			</div>
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div class="modal-overlay" transition:fade={{ duration: 150 }}>
+	<div class="modal-content {size}" onclick={handleModalClick} transition:fly={{ y: -20, duration: 150 }}>
+		<div class="modal-header">
+			<h2>{title}</h2>
+			<button class="close-button" onclick={handleCancel}>&times;</button>
+		</div>
 
-			<div class="modal-body">
-				<p>Are you sure you want to delete this item?</p>
-				<div class="modal-actions">
-					<button class="cancel-button" onclick={handleCancel}>Cancel</button>
-					<button class="delete-button" onclick={handleDelete}>Delete</button>
-				</div>
+		<div class="modal-body">
+			<h1>Are you sure you want to delete this item?</h1>
+			<h2>{itemName}</h2>
+			<div class="modal-actions">
+				<button type="button" class="btn ripple btn-secondary" onclick={handleCancel}>
+					<CircleX />
+					<span>Cancel</span>
+				</button>
+
+				<button type="button" class="btn ripple delete-button" onclick={handleDelete}>
+					<LoaderIcon />
+					{#if !$isLoading}
+                    <Trash2 />
+					{/if}
+					<span>Delete</span>
+				</button>
 			</div>
 		</div>
 	</div>
-{/if}
+</div>
 
 <style>
 	.modal-overlay {
@@ -111,7 +93,8 @@
 	}
 
 	.modal-header {
-		padding: 0.5rem;
+		display: flex;
+		padding: 5px;
 		background-color: var(--clr-bg-2);
 		display: flex;
 		justify-content: space-between;
@@ -119,13 +102,28 @@
 	}
 
 	.modal-body {
-		padding: 1.5rem;
+		padding: 1rem;
+	}
+	.modal-body h1 {
+		font-size: 1rem;
+        padding-bottom: 0;
+        margin-bottom: 1rem;
+        
+	}
+
+	.modal-body h2 {
+		font-weight: 600;
+		opacity: 0.7;
 	}
 
 	.modal-header h2 {
 		margin: 0;
-		font-size: 1.25rem;
+		font-size: 1rem;
 		font-weight: 600;
+		padding: 0;
+		margin-left: 15px;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.close-button {
@@ -152,7 +150,6 @@
 	.close-button:active {
 		transform: scale(0.95);
 	}
-
 	.modal-actions {
 		display: flex;
 		justify-content: flex-end;
@@ -161,22 +158,14 @@
 
 	.cancel-button,
 	.delete-button {
-		padding: 0.5rem 1rem;
-		font-size: 1rem;
-		border-radius: 8px;
-		border: none;
-		cursor: pointer;
+		background-color: #e53e3e;
+		color: white;
 		transition: background-color 0.2s;
 	}
 
 	.cancel-button {
 		background-color: #f0f0f0;
 		color: #333;
-	}
-
-	.delete-button {
-		background-color: #e53e3e;
-		color: white;
 	}
 
 	.cancel-button:hover {

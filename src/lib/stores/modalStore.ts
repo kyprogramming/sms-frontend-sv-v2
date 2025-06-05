@@ -6,24 +6,24 @@ export const modalData = writable<any>(null);
 export const isUpdate = writable<boolean>(false);
 
 export function openModal() {
-	isModalOpen.set(true);
-	isUpdate.set(false);
+	// isModalOpen.set(true);
+	// isUpdate.set(false);
 }
 
 export function openEditModal() {
-	isUpdate.set(true);
-	isModalOpen.set(true);
+	// isUpdate.set(true);
+	// isModalOpen.set(true);
 }
 
 export function closeModal() {
-	isModalOpen.set(false);
+	// isModalOpen.set(false);
 }
 
 export function openDeleteModal(data: any = null) {
-	isDeleteModalOpen.set(true);
-	modalData.set(data);
+    // isDeleteModalOpen.set(true);
+	// modalData.set(data);
 }
 
 export function closeDeleteModal() {
-	isDeleteModalOpen.set(false);
+	// isDeleteModalOpen.set(false);
 }

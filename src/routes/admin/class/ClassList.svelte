@@ -3,7 +3,7 @@
 	import DataTable from "$lib/components/common/DataTable.svelte";
 	import DeleteConfirmModal from "$lib/components/common/DeleteConfirmModal.svelte";
 	import Modal from "$lib/components/common/Modal.svelte";
-	import { isDeleteModalOpen, isModalOpen, modalData, openDeleteModal, openModal, isUpdate, openEditModal } from "$lib/stores/modalStore";
+	import { modalData, openDeleteModal, openModal, isUpdate, openEditModal } from "$lib/stores/modalStore";
 	import { formatDate } from "$lib/utils/formatDate";
 	import { Pencil, Eye, Trash2, Plus } from "@lucide/svelte";
 	import { get } from "svelte/store";
@@ -13,6 +13,9 @@
 	import ClassForm from "./ClassForm.svelte";
 
     const schoolName = env.PUBLIC_SCHOOL_NAME || "Default School";
+
+    let isDeleteModalOpen = $state(false);
+    const isModalOpen = $state(false);
 
 	interface Props {
 		response: any;
@@ -101,6 +104,7 @@
 	}
 
 	function handleDelete(itemId: string) {
+        isDeleteModalOpen = true;
 		openDeleteModal({ _id: itemId });
 	}
 
@@ -157,6 +161,7 @@
 		}}
 		onCancel={() => {
 			modalData.set(null);
+            isDeleteModalOpen = false;
 		}}
 	/>
 {/if}

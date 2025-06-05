@@ -5,13 +5,13 @@
 <script lang="ts">
 	import { isModalOpen, closeModal } from "$lib/stores/modalStore";
 	import { fade, fly } from "svelte/transition";
-	interface Props {
-		title?: string;
-		size?: ModalSize;
-		children?: import('svelte').Snippet;
-	}
+	// interface Props {
+	// 	title?: string;
+	// 	size?: ModalSize;
+	// 	children?: import("svelte").Snippet;
+	// }
 
-	let { title = "Title", size = "md", children }: Props = $props();
+	let { title = "Title", size = "md", children , onClose ,onDelete,onCancel } = $props();
 
 	function handleOverlayClick(event: MouseEvent) {
 		const target = event.target as HTMLElement;
@@ -25,35 +25,24 @@
 	}
 </script>
 
-{#if $isModalOpen}
-	<!-- svelte-ignore a11y_click_events_have_key_events -->
-	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="modal-overlay" onclick={handleOverlayClick} transition:fade={{ duration: 150 }}>
-		<div
-			class="modal-content"
-			class:sm={size === "sm"}
-			class:md={size === "md"}
-			class:lg={size === "lg"}
-			class:xl={size === "xl"}
-			class:full={size === "full"}
-			onclick={handleModalClick}
-			transition:fly={{ y: -20, duration: 150 }}
-		>
-			<div class="modal-header">
-				<h2>{title}</h2>
-				<button class="close-button" onclick={closeModal}>&times;</button>
-			</div>
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div class="modal-overlay" onclick={handleOverlayClick} transition:fade={{ duration: 150 }}>
+	<div class="modal-content" class:sm={size === "sm"} class:md={size === "md"} class:lg={size === "lg"} class:xl={size === "xl"} class:full={size === "full"} onclick={handleModalClick} transition:fly={{ y: -20, duration: 150 }}>
+		<div class="modal-header">
+			<h2>{title}</h2>
+			<button class="close-button" onclick={onClose}>&times;</button>
+		</div>
 
-			<div class="modal-body">
-				{@render children?.()}
-			</div>
+		<div class="modal-body">
+			{@render children?.()}
 		</div>
 	</div>
-{/if}
+</div>
 
 <style>
 	.modal-overlay {
-        position: fixed;
+		position: fixed;
 		top: 0;
 		left: 0;
 		right: 0;
@@ -95,7 +84,7 @@
 	}
 
 	.modal-header {
-        display: flex;
+		display: flex;
 		padding: 5px;
 		background-color: var(--clr-bg-2);
 		display: flex;
@@ -111,10 +100,10 @@
 		margin: 0;
 		font-size: 1rem;
 		font-weight: 600;
-        padding:0;
-        margin-left: 15px;
-        align-items: center;
-        justify-content: center;
+		padding: 0;
+		margin-left: 15px;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.close-button {

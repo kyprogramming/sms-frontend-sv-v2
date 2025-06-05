@@ -51,7 +51,7 @@
 	function getNestedValue(obj: any, path: string): any {
 		return path.split(".").reduce((acc, part) => acc && acc[part], obj);
 	}
-	console.log("DATATABLE- response:", response);
+	// console.log("DATATABLE- response:", response);
 	// Extract data and pagination dynamically
 	let dataArray = $derived(response.data?.[dataKey] || []);
 	let paginationData = $derived(response.data?.[paginationKey] || {
