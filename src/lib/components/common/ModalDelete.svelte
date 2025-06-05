@@ -4,7 +4,7 @@
 	import { fade, fly } from "svelte/transition";
 	import LoaderIcon from "./LoaderIcon.svelte";
 
-	let { title = "Confirm Delete", size = "md", itemName, onDelete, onCancel } = $props();
+	let { title = "Confirm Delete", size = "md", selectedName, onDelete, onCancel } = $props();
 
 	function handleModalClick(event: MouseEvent) {
 		event.stopPropagation();
@@ -30,7 +30,7 @@
 
 		<div class="modal-body">
 			<h1>Are you sure you want to delete this item?</h1>
-			<h2>{itemName}</h2>
+			<h2>{selectedName}</h2>
 			<div class="modal-actions">
 				<button type="button" class="btn ripple btn-secondary" onclick={handleCancel}>
 					<CircleX />

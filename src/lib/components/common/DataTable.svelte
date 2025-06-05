@@ -16,6 +16,7 @@
 		paginationKey?: string; // Default key for pagination
 		onPaginationChange: () => void;
 		onPageLimitChange: () => void;
+		// onDeleteRefresh: () => void;
 		columns?: ColumnConfig[];
 		actions?: ActionConfig;
 	}
@@ -26,6 +27,7 @@
 		paginationKey = "pagination",
 		onPaginationChange,
 		onPageLimitChange,
+		// onDeleteRefresh,
 		columns = [],
 		actions = {
 		show: false,

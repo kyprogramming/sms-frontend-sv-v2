@@ -103,6 +103,10 @@
 		onRefreshPage();
 	}
 
+    // function handleDeleteRefresh() {
+	// 	onRefreshPage();
+	// }
+    
 	function handleDelete(itemId: string) {
         isDeleteModalOpen = true;
 		openDeleteModal({ _id: itemId });

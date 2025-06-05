@@ -1,32 +1,36 @@
 <script lang="ts">
+	// Imports
 	import { env } from "$env/dynamic/public";
-	import DataTable from "$lib/components/common/DataTable.svelte";
-	import ModalDelete from "$lib/components/common/ModalDelete.svelte";
-	import SectionForm from "./SectionForm.svelte";
-	import Modal from "$lib/components/common/Modal.svelte";
-	import { modalData, openDeleteModal, openModal, openEditModal, closeModal } from "$lib/stores/modalStore";
-	import { formatDate } from "$lib/utils/formatDate";
-	import { Pencil, Eye, Trash2, Plus } from "@lucide/svelte";
-	import { get } from "svelte/store";
-	import { RefreshCw, Search } from "@lucide/svelte";
 	import { currentPage, rowsPerPage, totalItems, totalPages } from "$lib/stores/paginationStore";
-	import type { ColumnConfig } from "$lib/interfaces/table.interface";
 	import { deleteSectionById, fetchSectionById, fetchSections } from "$lib/services/section";
 	import { showSnackbar } from "$lib/components/snackbar/store";
+	import { formatDate } from "$lib/utils/formatDate";
 
+	import DataTable from "$lib/components/common/DataTable.svelte";
+	import Modal from "$lib/components/common/Modal.svelte";
+	import ModalDelete from "$lib/components/common/ModalDelete.svelte";
+	import SectionForm from "./SectionForm.svelte";
+
+	import { Eye, Pencil, Trash2, Plus, RefreshCw, Search } from "@lucide/svelte";
+
+	import type { ColumnConfig } from "$lib/interfaces/table.interface";
+
+	// Props
 	const schoolName = env.PUBLIC_SCHOOL_NAME || "Default School";
-	
-    let { response } = $props();
+	let { response } = $props();
 
-	let isDeleteModalOpen = $state(false);
-	let isModalOpen = $state(false);
-	let isUpdate = $state(false);
-	let dataId = $state("");
-	let itemName = $state("");
-	let sectionData: any = $state(null);
+	// States
 	let searchText = $state("");
+	let sectionData: any | null = $state(null);
 
+	let isModalOpen = $state(false);
+	let isDeleteModalOpen = $state(false);
+	let isUpdate = $state(false);
 
+	let selectedId = $state("");
+	let selectedName = $state("");
+
+	// Column configuration
 	const columns: ColumnConfig[] = [
 		{ key: "_id", label: "Id", visible: false },
 		{ key: "serialNo", label: "Sr #", width: "80px", sortable: true, align: "center" },
@@ -41,6 +45,7 @@
 		},
 	];
 
+	// Actions configuration
 	const actions = {
 		show: true,
 		iconActions: [
@@ -66,45 +71,48 @@
 				class: "delete",
 				show: true,
 				action: (item: { _id: any; name: string }) => {
-					dataId = item._id;
-					itemName = item.name;
+					selectedId = item._id;
+					selectedName = item.name;
 					isDeleteModalOpen = true;
 				},
 			},
 		],
 	};
 
-	async function handleSearchClick() {
+	// Page handlers
+	async function handleSearch() {
 		currentPage.set(1);
-		handleSearchChange();
+		await searchAction();
 	}
 
-	function handleRefreshButtonClick() {
+	async function handleRefresh() {
 		searchText = "";
 		currentPage.set(1);
-        handleRefreshPage();
-
-	}
-
-	function handlePaginationChange() {
-        loadPaginationVariables();
-        handleRefreshPage();
-	}
-
-	function handlePageLimitChange() {
-        loadPaginationVariables();
-        handleRefreshPage();
-	}
-
-	async function handleDelete(itemId: string) {
-		await deleteAction(dataId);
+		await refreshAction();
 	}
 
 	function handleAdd() {
-        sectionData = null;
+		sectionData = null;
 		isModalOpen = true;
 	}
 
+	async function handleDelete() {
+		await deleteAction(selectedId);
+	}
+
+	async function handlePaginationChange() {
+		await refreshAction();
+	}
+
+	async function handlePageLimitChange() {
+		await refreshAction();
+	}
+
+    async function handleDeleteRefresh() {
+		await refreshAction();
+	}
+
+	// Server actions
 	async function updateAction(id: string) {
 		sectionData = null;
 		const res = await fetchSectionById(id);
@@ -119,41 +127,24 @@
 			showSnackbar({ message: `Section ${json.message}`, type: "success" });
 			isDeleteModalOpen = false;
 		} else showSnackbar({ message: `${json.message}`, type: "error" });
-		await handleRefreshPage();
+		await refreshAction();
 	}
 
-    async function handleSearchChange() {
+	async function searchAction() {
 		if (searchText === "") return;
-		loadPaginationVariables();
 		const params = new URLSearchParams({ search: searchText, page: String($currentPage), limit: String($rowsPerPage) });
 		const json = await fetchSections(params);
 		response = { ...json };
 	}
 
-	async function handleRefreshPage() {
-		loadPaginationVariables();
+	async function refreshAction() {
 		const params = new URLSearchParams({ search: searchText || "", page: String($currentPage), limit: String($rowsPerPage) });
-        console.log("Params:", params.toString() , $currentPage, $rowsPerPage, $totalPages, $totalItems);
+		console.log("Params:", params.toString(), $currentPage, $rowsPerPage, $totalPages, $totalItems);
 		const json = await fetchSections(params);
-        isModalOpen = false;
+		isModalOpen = false;
 		response = { ...json };
 	}
 
-	function closeModel() {
-		isModalOpen = false;
-		isDeleteModalOpen = false;
-		modalData.set(null);
-	}
-    function loadPaginationVariables() {
-		// $searchText = get(searchText);
-		$currentPage = get(currentPage);
-		$rowsPerPage = get(rowsPerPage);
-		$totalPages = get(totalPages);
-		$totalItems = get(totalItems);
-        if($totalPages === 1) {
-            currentPage.set(1);
-        }
-	}
 </script>
 
 <svelte:head>
@@ -164,12 +155,12 @@
 	<div class="search-container">
 		<input name="search" type="text" placeholder="Search section..." bind:value={searchText} />
 
-		<button type="button" class="btn ripple" onclick={handleSearchClick}>
+		<button type="button" class="btn ripple" onclick={handleSearch}>
 			<Search />
 			<span>Search</span>
 		</button>
 
-		<button type="button" class="btn ripple btn-secondary" onclick={handleRefreshButtonClick}>
+		<button type="button" class="btn ripple btn-secondary" onclick={handleRefresh}>
 			<RefreshCw />
 			<span>Refresh</span>
 		</button>
@@ -188,13 +179,14 @@
 	<Modal
 		title={isUpdate ? "Update Section" : "Add Section"}
 		size="md"
-		onClose={closeModel}
-		onDelete={() => {
-			isDeleteModalOpen = true;
+		onClose={() => {
+			isModalOpen = false;
 		}}
-		onCancel={closeModel}
+		onCancel={() => {
+			isModalOpen = false;
+		}}
 	>
-		<SectionForm onRefreshPage={handleRefreshPage} {sectionData} action={isUpdate ? "update" : "add"} />
+		<SectionForm onRefreshPage={refreshAction} {sectionData} action={isUpdate ? "update" : "add"} />
 	</Modal>
 {/if}
 
@@ -202,7 +194,7 @@
 	<ModalDelete
 		title="Delete Section"
 		size="md"
-		itemName={`Name:  ${itemName}`}
+		selectedName={`Name:  ${selectedName}`}
 		onDelete={handleDelete}
 		onCancel={() => {
 			isDeleteModalOpen = false;
