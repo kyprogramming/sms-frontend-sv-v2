@@ -11,6 +11,5 @@
 
 <Breadcrumb title="Sections" items={breadcrumbItems} />
 
-<!-- {#key response } -->
-	<SectionList {response} />
-<!-- {/key} -->
+<SectionList {response} />
+

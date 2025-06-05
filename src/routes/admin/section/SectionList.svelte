@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { env } from "$env/dynamic/public";
 	import DataTable from "$lib/components/common/DataTable.svelte";
-	import DeleteConfirmModal from "$lib/components/common/DeleteConfirmModal.svelte";
+	import ModalDelete from "$lib/components/common/ModalDelete.svelte";
 	import SectionForm from "./SectionForm.svelte";
 	import Modal from "$lib/components/common/Modal.svelte";
 	import { modalData, openDeleteModal, openModal, openEditModal, closeModal } from "$lib/stores/modalStore";
@@ -97,10 +97,12 @@
 	}
 
 	function handlePaginationChange() {
+        loadPaginationVariables();
         handleRefreshPage();
 	}
 
 	function handlePageLimitChange() {
+        loadPaginationVariables();
         handleRefreshPage();
 	}
 
@@ -133,14 +135,15 @@
     async function handleSearchChange() {
 		if (searchText === "") return;
 		loadPaginationVariables(); // Load pagination variables
-		const params = new URLSearchParams({ search: searchText, page: String($currentPage), limit: String($rowsPerPage) }); // Build query string
+		const params = new URLSearchParams({ search: searchText, page: String($currentPage), limit: String($rowsPerPage) });
 		const json = await fetchSections(params);
 		response = { ...json };
 	}
 
 	async function handleRefreshPage() {
-		loadPaginationVariables(); // Load pagination variables
+		loadPaginationVariables();
 		const params = new URLSearchParams({ search: searchText || "", page: String($currentPage), limit: String($rowsPerPage) });
+        console.log("Params:", params.toString() , $currentPage, $rowsPerPage, $totalPages, $totalItems);
 		const json = await fetchSections(params);
         isModalOpen = false;
 		response = { ...json };
@@ -157,6 +160,9 @@
 		$rowsPerPage = get(rowsPerPage);
 		$totalPages = get(totalPages);
 		$totalItems = get(totalItems);
+        if($totalPages === 1) {
+            currentPage.set(1); // Reset to first page if no pages available
+        }
 	}
 </script>
 
@@ -204,7 +210,7 @@
 {/if}
 
 {#if isDeleteModalOpen}
-	<DeleteConfirmModal
+	<ModalDelete
 		title="Delete Section"
 		size="md"
 		itemName={`Name:  ${itemName}`}

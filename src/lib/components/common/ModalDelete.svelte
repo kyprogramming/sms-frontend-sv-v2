@@ -105,13 +105,15 @@
 		padding: 1rem;
 	}
 	.modal-body h1 {
-		font-size: 1rem;
+		font-size:15px;
         padding-bottom: 0;
         margin-bottom: 1rem;
+        font-weight: 500;
         
 	}
 
 	.modal-body h2 {
+        font-size:14px;
 		font-weight: 600;
 		opacity: 0.7;
 	}
@@ -147,9 +149,6 @@
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	}
 
-	.close-button:active {
-		transform: scale(0.95);
-	}
 	.modal-actions {
 		display: flex;
 		justify-content: flex-end;

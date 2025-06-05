@@ -1,7 +1,7 @@
 <script lang="ts">
         	import { env } from "$env/dynamic/public";
 	import DataTable from "$lib/components/common/DataTable.svelte";
-	import DeleteConfirmModal from "$lib/components/common/DeleteConfirmModal.svelte";
+	import ModalDelete from "$lib/components/common/ModalDelete.svelte";
 	import Modal from "$lib/components/common/Modal.svelte";
 	import { isDeleteModalOpen, isModalOpen, modalData, openDeleteModal, openModal, isUpdate, openEditModal } from "$lib/stores/modalStore";
 	import { formatDate } from "$lib/utils/formatDate";
@@ -200,7 +200,7 @@
 {/key}
 
 {#if isDeleteModalOpen}
-	<DeleteConfirmModal
+	<ModalDelete
 		title="Delete Section"
 		size="md"
 		onDelete={() => {
