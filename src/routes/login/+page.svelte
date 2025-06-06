@@ -8,13 +8,13 @@
 	import { API_BASE_URL } from "$lib/constants/env.config";
 	import LoaderIcon from "$lib/components/common/LoaderIcon.svelte";
 	import { Eye, EyeOff } from "@lucide/svelte";
-	import { loginFormSchema, type LoginInputType } from "$lib/utils/schemas";
+	import { loginFormSchema, type LoginFormType } from "$lib/utils/schemas";
 	import { formErrors } from "$lib/stores/formStore";
 
 	formErrors.set({ email: "", password: "" });
-	// let formData: LoginInputType = $state({email: "", password: ""});
-	let formData: LoginInputType = $state({ email: "username1@xyz.com", password: "password1" });
-	let touched: Partial<Record<keyof LoginInputType, boolean>> = $state({ email: false, password: false });
+	// let formData: LoginFormType = $state({email: "", password: ""});
+	let formData: LoginFormType = $state({ email: "username1@xyz.com", password: "password1" });
+	let touched: Partial<Record<keyof LoginFormType, boolean>> = $state({ email: false, password: false });
 	let formSubmitted: boolean = $state(false);
 	let showPassword = $state(false);
 
@@ -40,7 +40,7 @@
 		}
 	}
 
-	function handleChange(field: keyof LoginInputType, value: string): void {
+	function handleChange(field: keyof LoginFormType, value: string): void {
 		formData[field] = value;
 		touched = { ...touched, [field]: true };
 		validateForm(loginFormSchema, formData);

@@ -1,8 +1,4 @@
 <script lang="ts">
-	import { run } from "svelte/legacy";
-
-	import { z } from "zod";
-	import { get, writable } from "svelte/store";
 	import { isLoading } from "$lib/stores/loading";
 	import { validateForm } from "$lib/utils/validate";
 	import { showSnackbar } from "$lib/components/snackbar/store";
@@ -13,7 +9,7 @@
 	import { BrushCleaning, Save } from "@lucide/svelte";
 	import LoaderIcon from "$lib/components/common/LoaderIcon.svelte";
 
-	import { classFormSchema, type ClassInputType } from "$lib/utils/schemas";
+	import { classFormSchema, type ClassFormType } from "$lib/utils/schemas";
 	import { formErrors } from "$lib/stores/formStore";
 	import { onMount } from "svelte";
 	import { areFieldsUnchanged } from "$lib/utils/utils";
@@ -24,8 +20,8 @@
 	let { onRefreshPage, classData = null, action } = $props();
 
 	// Reactive form state
-	let formData: ClassInputType = $state({ name: "", sectionIds: [] });
-	let touched: Partial<Record<keyof ClassInputType, boolean>> = $state({ name: false, sectionIds: false });
+	let formData: ClassFormType = $state({ name: "", sectionIds: [] });
+	let touched: Partial<Record<keyof ClassFormType, boolean>> = $state({ name: false, sectionIds: false });
 	let formSubmitted: boolean = $state(false);
 
 	onMount(() => {
@@ -42,29 +38,6 @@
 		touched = { name: false, sectionIds: false };
 	}
 
-	// Handle field changes
-	function handleChange(field: keyof ClassInputType, value: string | string[]): void {
-		if (field === "name" && typeof value === "string") {
-			formData.name = value;
-		} else if (field === "sectionIds" && Array.isArray(value)) {
-			formData.sectionIds = value;
-		}
-		touched = { ...touched, [field]: true };
-		validateForm(classFormSchema, formData);
-
-		// formErrors.update(() => {
-		// 	if (!result.success) {
-		// 		const fieldErrors = result.error.flatten().fieldErrors as Record<string, string[]>;
-		// 		const errorMap: Partial<Record<keyof ClassFormData, string>> = {};
-		// 		for (const key in fieldErrors) {
-		// 			errorMap[key as keyof ClassFormData] = fieldErrors[key]?.[0] ?? "";
-		// 		}
-		// 		return errorMap;
-		// 	}
-		// 	return {};
-		// });
-	}
-
 	// Populate form data based on action
 	function populateFormData() {
 		if (action === "update") {
@@ -77,6 +50,17 @@
 		}
 	}
 
+	// Handle field changes
+	function handleChange(field: keyof ClassFormType, value: string | string[]): void {
+		if (field === "name" && typeof value === "string") {
+			formData.name = value;
+		} else if (field === "sectionIds" && Array.isArray(value)) {
+			formData.sectionIds = value;
+		}
+		touched = { ...touched, [field]: true };
+		validateForm(classFormSchema, formData);
+	}
+
 	// Form submission handler
 	async function onSubmit(event: Event) {
 		event.preventDefault();
@@ -85,14 +69,14 @@
 		const isValid = validateForm(classFormSchema, formData);
 		if (!isValid) return;
 
-		if (action === "update"  && classData) {
-            	// Check if the form data is unchanged before updating
+		if (action === "update" && classData) {
+			// Check if the form data is unchanged before updating
 			const isUnChanged = areFieldsUnchanged(classData, formData, ["name", "sectionIds"]);
 			if (isUnChanged) {
 				showSnackbar({ message: MESSAGES.FORM.NO_CHANGES, type: "warning" });
 				return;
 			}
-            
+
 			await updateClass(classData._id, formData);
 			showSnackbar({ message: MESSAGES.CLASS.UPDATED, type: "success" });
 		} else {
@@ -108,15 +92,7 @@
 <form onsubmit={onSubmit}>
 	<div class="input-wrapper">
 		<label for="name">Name *</label>
-		<input id="name" 
-        type="text" 
-        name="name" 
-        placeholder="Enter class name" 
-        class={`w-full ${$formErrors.name && (touched.name || formSubmitted) ? "input-error" : ""}`} 
-        bind:value={formData.name} 
-        oninput={(e) => handleChange("name", (e.target as HTMLInputElement).value)}
-        onblur={(e) => handleChange("name", (e.target as HTMLInputElement).value)}
-    />
+		<input id="name" type="text" name="name" placeholder="Enter class name" class={`w-full ${$formErrors.name && (touched.name || formSubmitted) ? "input-error" : ""}`} bind:value={formData.name} oninput={(e) => handleChange("name", (e.target as HTMLInputElement).value)} onblur={(e) => handleChange("name", (e.target as HTMLInputElement).value)} />
 		{#if $formErrors.name && (touched.name || formSubmitted)}
 			<p class="error-text">{$formErrors.name}</p>
 		{/if}
@@ -143,9 +119,8 @@
 								}
 								// handleChange("sectionIds", formData.sectionIds);
 							}}
-							
 						/>
-                        <!-- onblur={() => handleChange("sectionIds", formData.sectionIds)} -->
+						<!-- onblur={() => handleChange("sectionIds", formData.sectionIds)} -->
 						<span class="checkbox-custom"></span>
 						<span class="checkbox-text">{section.name}</span>
 					</label>
@@ -248,11 +223,8 @@
 	}
 
 	.has-error {
-
 		padding: 15px;
 		border-radius: 4px;
 		box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
 	}
-
-
 </style>

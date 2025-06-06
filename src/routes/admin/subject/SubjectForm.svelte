@@ -1,8 +1,4 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
-	import { z } from "zod";
-	import { get, writable } from "svelte/store";
 	import { isLoading } from "$lib/stores/loading";
 	import { validateForm } from "$lib/utils/validate";
 	import { showSnackbar } from "$lib/components/snackbar/store";
@@ -10,81 +6,52 @@
 	import { createSubject, updateSubject } from "$lib/services/subject";
 	import { SUBJECT_TYPE } from "$lib/constants";
 
-	
-	interface Props {
-		// Props
-		onRefreshPage: () => void;
-		dataToUpdate?: any | null;
-	}
+	import { page } from "$app/state";
+	import { BrushCleaning, Save } from "@lucide/svelte";
+	import LoaderIcon from "$lib/components/common/LoaderIcon.svelte";
 
-	let { onRefreshPage, dataToUpdate = null }: Props = $props();
+	import { subjectFormSchema, type SubjectFormType } from "$lib/utils/schemas";
+	import { formErrors } from "$lib/stores/formStore";
+	import { onMount } from "svelte";
+	import { areFieldsUnchanged } from "$lib/utils/utils";
+	import { MESSAGES } from "$lib/utils/messages";
 
-	// Zod schema
-	const subjectSchema = z.object({
-		type: z.number().min(1, "Please select a subject type"),
-		name: z.string().min(1, "Subject name is required"),
-		code: z.string().optional(),
-	});
-
-	type SubjectFormData = z.infer<typeof subjectSchema>;
-
+	let { onRefreshPage, subjectData = null, action } = $props();
+    console.log("SubjectForm props:", {  subjectData, action });
 	// Reactive form state
-	let formData: SubjectFormData = $state({
-		name: "",
-		code: "",
-		type: 0,
-	});
-	let error = "";
+	let formData: SubjectFormType = $state({ name: "", code: "", type: 0 });
+	let touched: Partial<Record<keyof SubjectFormType, boolean>> = $state({ name: false, code: false, type: false });
+	let formSubmitted: boolean = $state(false);
 
-	const formErrors = writable<Partial<Record<keyof SubjectFormData, string>>>({});
-	const touched = writable<Partial<Record<keyof SubjectFormData, boolean>>>({});
-	const submitAttempted = writable(false);
-
-	// Prefill data if editing
-	function populateFormData() {
-		// console.log("dataToUpdate", dataToUpdate);
-		if (dataToUpdate) {
-			formData = {
-				name: dataToUpdate.name,
-				code: dataToUpdate.code || "",
-				type: dataToUpdate.type || 0,
-			};
-			touched.set({ name: true, code: true, type: true });
-		}
-	}
-	run(() => {
+	onMount(() => {
 		populateFormData();
+		formErrors.set({ name: "", code: "", type: 0 });
 	});
 
-	// Form submission handler
-	async function onSubmit(event: Event) {
-		event.preventDefault();
-		submitAttempted.set(true);
-        // debugger;
-		const isValid = validateForm(subjectSchema, formData);
-        // alert(isValid);
-		if (!isValid) return;
+	// Form reset handler
+	function handleResetForm() {
+		populateFormData();
+		// Reset form errors and touched state
+		formErrors.set({});
+		formSubmitted = false;
+		touched = { name: false, code: false, type: false };
+	}
 
-		try {
-			if (get(isUpdate) && dataToUpdate) {
-				await updateSubject(dataToUpdate._id, formData);
-				showSnackbar({ message: "Subject updated successfully", type: "success" });
-			} else {
-				await createSubject(formData);
-				showSnackbar({ message: "Subject created successfully", type: "success" });
-			}
-
-			closeModal();
-			onRefreshPage();
-		} catch (err: unknown) {
-			const errMsg = (err as Error)?.message ?? "Failed to save subject";
-			error = errMsg;
-			console.error(err);
+	// Populate form data based on action
+	function populateFormData() {
+		if (action === "update") {
+			formData = {
+				name: subjectData.name || "",
+				code: subjectData.code || "",
+				type: subjectData.type || 0,
+			};
+		} else {
+			formData = { name: "", code: "", type: 0 };
 		}
 	}
 
 	// Handle field changes
-	function handleChange(field: keyof SubjectFormData, value: string | number): void {
+	function handleChange(field: keyof SubjectFormType, value: string | number): void {
 		if (field === "name" && typeof value === "string") {
 			formData.name = value;
 		} else if (field === "code" && typeof value === "string") {
@@ -93,110 +60,100 @@
 			formData.type = value;
 		}
 
-		touched.update((t) => ({ ...t, [field]: true }));
-
-		const result = subjectSchema.safeParse(formData);
-
-		formErrors.update(() => {
-			if (!result.success) {
-				const fieldErrors = result.error.flatten().fieldErrors as Record<string, string[]>;
-				const errorMap: Partial<Record<keyof SubjectFormData, string>> = {};
-				for (const key in fieldErrors) {
-					errorMap[key as keyof SubjectFormData] = fieldErrors[key]?.[0] ?? "";
-				}
-				return errorMap;
-			}
-			return {};
-		});
+		touched = { ...touched, [field]: true };
+		validateForm(subjectFormSchema, formData);
 	}
 
-    function handleReset() {
-	formData = {
-		name: "",
-		code: "",
-		type: 0, // reset to default
-	};
-	formErrors.set({});
-	touched.set({});
-	submitAttempted.set(false);
-}
+	// Form submission handler
+	async function onSubmit(event: Event) {
+		event.preventDefault();
+		formSubmitted = true;
+		// debugger;
+		const isValid = validateForm(subjectFormSchema, formData);
+		if (!isValid) return;
+
+		if (action === "update" && subjectData) {
+			// Check if the form data is unchanged before updating
+			const isUnChanged = areFieldsUnchanged(subjectData, formData, ["name", "code", "type"]);
+			if (isUnChanged) {
+				showSnackbar({ message: MESSAGES.FORM.NO_CHANGES, type: "warning" });
+				return;
+			}
+			await updateSubject(subjectData._id, formData);
+			showSnackbar({ message: "Subject updated successfully", type: "success" });
+		} else {
+			await createSubject(formData);
+			showSnackbar({ message: "Subject created successfully", type: "success" });
+		}
+
+		closeModal();
+		onRefreshPage();
+	}
 </script>
 
 <form onsubmit={onSubmit}>
 	<div class="input-wrapper">
-        
 		<!-- svelte-ignore a11y_label_has_associated_control -->
 		<label>Subject Type <span class="required">*</span></label>
-		<div class="radio-section" class:has-error={$formErrors.type && ($touched.type || $submitAttempted)}>
+		<div class="radio-section" class:has-error={$formErrors.type && (touched.type || formSubmitted)}>
 			{#each SUBJECT_TYPE as type}
 				<div class="radio-item">
 					<label class="radio-label">
-						<input
-							name="type"
-							type="radio"
-							class="radio-input"
-							value={type.id}
-							checked={formData.type === type.id}
-							onchange={() => handleChange("type", type.id)}
-							onblur={() => handleChange("type", formData.type)}
-						/>
+						<input name="type" type="radio" class="radio-input" value={type.id} checked={formData.type === type.id} onchange={() => handleChange("type", type.id)} onblur={() => handleChange("type", formData.type)} />
 						<span class="radio-custom"></span>
 						<span class="radio-text">{type.name}</span>
 					</label>
 				</div>
 			{/each}
 		</div>
-		{#if $formErrors.type && ($touched.type || $submitAttempted)}
+		{#if $formErrors.type && (touched.type || formSubmitted)}
 			<p class="error-text">{$formErrors.type}</p>
 		{/if}
 	</div>
 
 	<div class="input-wrapper">
 		<label for="name">Subject Name <span class="required">*</span></label>
-		<input
-			id="name"
-			type="text"
-			name="name"
-			placeholder="Subject name"
-			class={`w-full ${$formErrors.name && ($touched.name || $submitAttempted) ? "input-error" : ""}`}
-			bind:value={formData.name}
-			oninput={(e) => handleChange("name", (e.target as HTMLInputElement).value)}
-			onblur={() => handleChange("name", formData.name)}
-		/>
-		{#if $formErrors.name && ($touched.name || $submitAttempted)}
+		<input id="name" type="text" name="name" placeholder="Subject name" class={`w-full ${$formErrors.name && (touched.name || formSubmitted) ? "input-error" : ""}`} bind:value={formData.name} oninput={(e) => handleChange("name", (e.target as HTMLInputElement).value)} onblur={() => handleChange("name", formData.name)} />
+		{#if $formErrors.name && (touched.name || formSubmitted)}
 			<p class="error-text">{$formErrors.name}</p>
 		{/if}
 	</div>
 
 	<div class="input-wrapper">
 		<label for="code">Subject Code</label>
-		<input
-			id="code"
-			type="text"
-			name="code"
-			class={`w-full`}
-			placeholder="Subject code"
-			bind:value={formData.code}
-			oninput={(e) => handleChange("code", (e.target as HTMLInputElement).value)}
-			onblur={() => handleChange("code", String(formData.code))}
-		/>
+		<input id="code" type="text" name="code" class={`w-full`} placeholder="Subject code" bind:value={formData.code} oninput={(e) => handleChange("code", (e.target as HTMLInputElement).value)} onblur={() => handleChange("code", String(formData.code))} />
 	</div>
 
-	<div class="flex-items-center" style="justify-content:end;">
+	<!-- <div class="flex-items-center" style="justify-content:end;">
 		<button class="btn ripple" type="reset" disabled={$isLoading} style="background-color: var(--clr-pri-light); align-self: right;" onclick={handleReset}> Clear </button>
 		<button class="btn ripple" type="submit" disabled={$isLoading}>
 			{#if $isLoading}
-				{#if $isUpdate}Updating...{:else}Saving...{/if}
+				{#if isUpdate}Updating...{:else}Saving...{/if}
 			{:else if $isUpdate}Update{:else}Save{/if}
+		</button>
+	</div> -->
+
+    <div class="form-actions">
+		<button type="button" class="btn ripple btn-secondary" onclick={handleResetForm} disabled={$isLoading}>
+			<BrushCleaning />
+			<span>Reset Form</span>
+		</button>
+
+		<button class="btn ripple" type="submit" disabled={$isLoading}>
+			<LoaderIcon />
+			{#if !$isLoading}
+				<Save />
+			{/if}
+			{#if action === "update"}
+				Update Subject
+			{:else}
+				Save Subject
+			{/if}
 		</button>
 	</div>
 </form>
 
 <style>
-	/* .input-wrapper {
-      margin-bottom: 0.6rem;
-    } */
-
 	label {
 		display: block;
 		font-weight: bold;
@@ -252,5 +209,4 @@
 	.has-error .radio-custom {
 		border-color: red;
 	}
-
 </style>
