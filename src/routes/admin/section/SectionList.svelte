@@ -109,10 +109,6 @@
 		await refreshAction();
 	}
 
-    async function handleDeleteRefresh() {
-		await refreshAction();
-	}
-
 	// Server actions
 	async function updateAction(id: string) {
 		sectionData = null;

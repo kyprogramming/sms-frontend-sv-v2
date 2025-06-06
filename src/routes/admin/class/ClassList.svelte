@@ -79,7 +79,7 @@
 		],
 	};
 
-	// Page handlers
+	// Event handlers
 	async function handleSearch() {
 		currentPage.set(1);
 		await searchAction();
@@ -106,10 +106,6 @@
 	}
 
 	async function handlePageLimitChange() {
-		await refreshAction();
-	}
-
-	async function handleDeleteRefresh() {
 		await refreshAction();
 	}
 

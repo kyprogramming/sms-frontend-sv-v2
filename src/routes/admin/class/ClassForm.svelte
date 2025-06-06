@@ -157,15 +157,6 @@
 		{/if}
 	</div>
 
-	<!-- <div class="flex-items-center" style="justify-content:end;">
-		<button class="btn ripple" type="reset" disabled={$isLoading} style="background-color: var(--clr-pri-light); align-self: right;"> Clear </button>
-		<button class="btn ripple" type="submit" disabled={$isLoading}>
-			{#if $isLoading}
-				{#if $isUpdate}Updating...{:else}Saving...{/if}
-			{:else if $isUpdate}Update{:else}Save{/if}
-		</button>
-	</div> -->
-
 	<div class="form-actions">
 		<button type="button" class="btn ripple btn-secondary" onclick={handleResetForm} disabled={$isLoading}>
 			<BrushCleaning />
