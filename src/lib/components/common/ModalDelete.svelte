@@ -107,7 +107,7 @@
 	.modal-body h1 {
 		font-size:15px;
         padding-bottom: 0;
-        margin-bottom: 1rem;
+        /* margin-bottom: 1rem; */
         font-weight: 500;
         
 	}

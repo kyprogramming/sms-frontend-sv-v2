@@ -259,3 +259,6 @@ export function validateStudentForm(formData: StudentFormData) {
 	}
 	return result.success;
 }
+
+
+export type DeepBoolean<T> = T extends object ? { [K in keyof T]?: DeepBoolean<T[K]> } : boolean;

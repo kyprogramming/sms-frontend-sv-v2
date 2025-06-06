@@ -9,7 +9,7 @@
 
 </script>
 
-<Breadcrumb title="Sections" items={breadcrumbItems} />
+<Breadcrumb title="Section List" items={breadcrumbItems} />
 
 <SectionList {response} />
 

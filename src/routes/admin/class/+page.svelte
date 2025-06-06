@@ -9,6 +9,6 @@
 
 </script>
 
-<Breadcrumb title="Classes" items={breadcrumbItems} />
+<Breadcrumb title="Class List" items={breadcrumbItems} />
 
 <ClassList {response} />
