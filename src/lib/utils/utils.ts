@@ -65,3 +65,22 @@ export function isFieldUnchanged<T, K extends keyof T>(original: T, input: Pick<
 export function areFieldsUnchanged<T>(original: T, input: Partial<T>, fields: (keyof T)[]): boolean {
 	return fields.every((field) => original[field] === input[field]);
 }
+
+export function getFieldNames(obj: any, parentKey = ""): string[] {
+	const keys: string[] = [];
+
+	for (const key in obj) {
+		if (Object.prototype.hasOwnProperty.call(obj, key)) {
+			const fullKey = parentKey ? `${parentKey}.${key}` : key;
+			const value = obj[key];
+
+			if (value && typeof value === "object" && !Array.isArray(value) && value !== null) {
+				keys.push(...getFieldNames(value, fullKey)); // Recursive call
+			} else {
+				keys.push(fullKey);
+			}
+		}
+	}
+
+	return keys;
+}

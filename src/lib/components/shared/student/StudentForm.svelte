@@ -4,7 +4,7 @@
 	import { BLOOD_GROUPS, CASTE_CATEGORIES, GENDERS, GUARDIAN_TYPE } from "$lib/constants";
 	import { isLoading } from "$lib/stores/loading";
 
-	import { initializeStudentFormData, touched, validateStudentForm, type StudentFormData } from "./studentValidation";
+	import { initializeStudentFormData, validateStudentForm, type DeepBoolean, type StudentFormData } from "./studentValidation";
 	import { slide } from "svelte/transition";
 	import { createStudent, updateStudent } from "$lib/services/student";
 	import FileUpload from "$lib/components/common/FileUpload.svelte";
@@ -14,30 +14,40 @@
 	import { goto } from "$app/navigation";
 	import LoaderIcon from "$lib/components/common/LoaderIcon.svelte";
 	import { formErrors } from "$lib/stores/formStore";
+	import { onMount } from "svelte";
+	import { env } from "$env/dynamic/public";
+	import { areFieldsUnchanged, getFieldNames } from "$lib/utils/utils";
+	import { MESSAGES } from "$lib/utils/messages";
 
-	let { action, studentData } = $props();
+	// Props
+	let { studentData = null, action } = $props();
+	const schoolName = env.PUBLIC_SCHOOL_NAME || "Default School";
+	const pageTitle = `${schoolName} - Student Registration - ${action === "update" ? " Update" : "New"}`;
+
 	let classData = page.data?.classData || [];
 	let classSections: { _id: string; name: string }[] = $state([]);
-
 	let selectedDate: Date | null = $state(null);
 	let selectedDateOfBirth: Date | null = $state(null);
-	formErrors.set({});
-	touched.set({});
-    let formSubmitted: boolean = $state(false);
 
 	let formData: StudentFormData = $state(initializeStudentFormData());
+	formErrors.set({});
+	let touched: any = $state({});
+	let formSubmitted: boolean = $state(false);
 
 	// console.log("studentData:", action, studentData);
 
-	// update form data if action is update and studentData is available
-	if (action === "update" && studentData) {
-		formData = { studentData: { ...studentData.data }, userData: { ...studentData.data.userId } };
-		classSections = studentData.data.classId ? classData.find((cls: any) => cls._id === studentData.data.classId)?.sectionIds || [] : [];
-		selectedDateOfBirth = studentData.data.profile.dob ? new Date(studentData.data.profile.dob) : null;
-	}
-	// console.log("formData:", formData);
+	onMount(() => {
+		formErrors.set({});
+		// Initialize form data based on action
+		if (action === "update" && studentData) {
+			formData = { studentData: { ...studentData.data }, userData: { ...studentData.data.userId } };
+			classSections = studentData.data.classId ? classData.find((cls: any) => cls._id === studentData.data.classId)?.sectionIds || [] : [];
+			selectedDateOfBirth = studentData.data.profile.dob ? new Date(studentData.data.profile.dob) : null;
+		}
+		touched = {};
+	});
 
-	function resetForm() {
+	function handleResetForm() {
 		if (action === "update" && studentData) {
 			formData = { studentData: { ...studentData.data }, userData: { ...studentData.data.userId } };
 			classSections = studentData.data.classId ? classData.find((cls: any) => cls._id === studentData.data.classId)?.sectionIds || [] : [];
@@ -47,9 +57,10 @@
 			classSections = [];
 			selectedDateOfBirth = null;
 		}
-        formSubmitted = false;
+
 		formErrors.set({});
-		touched.set({});
+		formSubmitted = false;
+		touched = {};
 	}
 
 	function handleDateChange(date: Date | null) {
@@ -97,7 +108,7 @@
 	}
 
 	function handleBlur(field: keyof any) {
-		$touched = { ...$touched, [field]: true };
+		touched = { ...touched, [field]: true };
 		validateStudentForm(formData);
 	}
 
@@ -107,22 +118,24 @@
 
 		const isValid = validateStudentForm(formData);
 		if (!isValid) return;
-
-		try {
-			if (isValid && action !== "update") {
-				await createStudent(formData);
-				showSnackbar({ message: "Student created successfully", type: "success" });
-				await goto("/admin/student/list");
-			} else if (isValid && action === "update") {
-				const id = studentData.data._id;
-				await updateStudent(id, formData);
-				showSnackbar({ message: "Student updated successfully", type: "success" });
-				await goto("/admin/student/list");
+        
+		if (action === "update" && studentData) {
+            console.log("getFieldNames(formData.studentData)", getFieldNames(formData.studentData));
+            console.log("getFieldNames(studentData.data)", getFieldNames(studentData.data));
+			// Check if the form data is unchanged before updating
+			const isUnChanged = areFieldsUnchanged(studentData.data, formData.studentData, getFieldNames(studentData.data));
+			console.log("isUnChanged", isUnChanged);
+            if (isUnChanged) {
+				showSnackbar({ message: MESSAGES.FORM.NO_CHANGES, type: "warning" });
+				return;
 			}
-		} catch (err: unknown) {
-			// const errMsg = (err as Error)?.message ?? "Failed to save section";
-			// error = errMsg;
-			console.error(err);
+			await updateStudent( studentData.data._id, formData);
+			showSnackbar({ message: "Student updated successfully", type: "success" });
+			await goto("/admin/student/list");
+		} else {
+			await createStudent(formData);
+			showSnackbar({ message: "Student created successfully", type: "success" });
+			await goto("/admin/student/list");
 		}
 	}
 
@@ -139,6 +152,10 @@
 	// 	}
 	// }
 </script>
+
+<svelte:head>
+	<title>{pageTitle}</title>
+</svelte:head>
 
 <form onsubmit={onSubmit}>
 	<!-- Student Academic Detail -->
@@ -163,13 +180,13 @@
 			<!-- Student Class -->
 			<div class="col-2">
 				<label for="classId">Class <span class="required">*</span></label>
-				<select id="classId" class={`w-full ${formData.studentData.classId === "" ? "placeholder-gray" : ""} ${$formErrors["studentData.classId"] && ($touched["studentData.classId"] || formSubmitted) ? "input-error" : ""}`} bind:value={formData.studentData.classId} onchange={handleClassChange} onblur={handleClassChange}>
+				<select id="classId" class={`w-full ${formData.studentData.classId === "" ? "placeholder-gray" : ""} ${$formErrors["studentData.classId"] && (touched["studentData.classId"] || formSubmitted) ? "input-error" : ""}`} bind:value={formData.studentData.classId} onchange={handleClassChange} onblur={handleClassChange}>
 					<option value="" selected>Select class</option>
 					{#each classData as cls}
 						<option value={cls._id}>{cls.name}</option>
 					{/each}
 				</select>
-				{#if $formErrors["studentData.classId"] && ($touched["studentData.classId"] || formSubmitted)}
+				{#if $formErrors["studentData.classId"] && (touched["studentData.classId"] || formSubmitted)}
 					<p class="error-text">{$formErrors["studentData.classId"]}</p>
 				{/if}
 			</div>
@@ -180,7 +197,7 @@
 					id="sectionId"
 					bind:value={formData.studentData.sectionId}
 					disabled={!classSections.length}
-					class={`w-full ${formData.studentData.sectionId === "" ? "placeholder-gray" : ""} ${$formErrors["studentData.sectionId"] && ($touched["studentData.sectionId"] || formSubmitted) ? "input-error" : ""}`}
+					class={`w-full ${formData.studentData.sectionId === "" ? "placeholder-gray" : ""} ${$formErrors["studentData.sectionId"] && (touched["studentData.sectionId"] || formSubmitted) ? "input-error" : ""}`}
 					onchange={handleSectionChange}
 					onblur={() => handleBlur("studentData.sectionId")}
 				>
@@ -189,7 +206,7 @@
 						<option value={section._id}>{section.name}</option>
 					{/each}
 				</select>
-				{#if $formErrors["studentData.sectionId"] && ($touched["studentData.sectionId"] || formSubmitted)}
+				{#if $formErrors["studentData.sectionId"] && (touched["studentData.sectionId"] || formSubmitted)}
 					<p class="error-text">{$formErrors["studentData.sectionId"]}</p>
 				{/if}
 			</div>
@@ -220,7 +237,7 @@
 			<div class="col-2">
 				<label for="gender">Gender <span class="required">*</span></label>
 				<select
-					class={`w-full ${formData.studentData.profile.gender === "" ? "placeholder-gray" : ""} ${$formErrors["studentData.profile.gender"] && ($touched["studentData.profile.gender"] || formSubmitted) ? "input-error" : ""}`}
+					class={`w-full ${formData.studentData.profile.gender === "" ? "placeholder-gray" : ""} ${$formErrors["studentData.profile.gender"] && (touched["studentData.profile.gender"] || formSubmitted) ? "input-error" : ""}`}
 					bind:value={formData.studentData.profile.gender}
 					onblur={() => handleBlur("studentData.profile.gender")}
 					onchange={() => handleBlur("studentData.profile.gender")}
@@ -230,15 +247,15 @@
 						<option value={gender.name}>{gender.name}</option>
 					{/each}
 				</select>
-				{#if $formErrors["studentData.profile.gender"] && ($touched["studentData.profile.gender"] || formSubmitted)}
+				{#if $formErrors["studentData.profile.gender"] && (touched["studentData.profile.gender"] || formSubmitted)}
 					<p class="error-text">{$formErrors["studentData.profile.gender"]}</p>
 				{/if}
 			</div>
 			<!-- Date of Birth -->
 			<div class="col-2">
 				<label for="dob">Date of Birth <span class="required">*</span></label>
-				<DatePicker bind:value={selectedDateOfBirth} onChange={handleBirthDateChange} onClear={handleOnClear} cls={`w-full ${$formErrors["studentData.profile.dob"] && ($touched["studentData.profile.dob"] || formSubmitted) ? "input-error" : ""}`} />
-				{#if $formErrors["studentData.profile.dob"] && ($touched["studentData.profile.dob"] || formSubmitted)}
+				<DatePicker bind:value={selectedDateOfBirth} onChange={handleBirthDateChange} onClear={handleOnClear} cls={`w-full ${$formErrors["studentData.profile.dob"] && (touched["studentData.profile.dob"] || formSubmitted) ? "input-error" : ""}`} />
+				{#if $formErrors["studentData.profile.dob"] && (touched["studentData.profile.dob"] || formSubmitted)}
 					<p class="error-text">{$formErrors["studentData.profile.dob"]}</p>
 				{/if}
 			</div>
@@ -556,7 +573,7 @@
 
 	<!-- Form Actions -->
 	<div class="form-actions">
-		<button type="button" class="btn ripple btn-secondary" onclick={resetForm} disabled={$isLoading}>
+		<button type="button" class="btn ripple btn-secondary" onclick={handleResetForm} disabled={$isLoading}>
 			<BrushCleaning />
 			<span>Reset Form</span>
 		</button>
@@ -584,7 +601,7 @@
 		id={fieldName}
 		{type}
 		name={fieldName}
-		class={`w-full ${$formErrors[fieldName] && ($touched[fieldName] || formSubmitted) ? "input-error" : ""}`}
+		class={`w-full ${$formErrors[fieldName] && (touched[fieldName] || formSubmitted) ? "input-error" : ""}`}
 		{value}
 		oninput={(e) => {
 			onInput((e.target as HTMLInputElement).value);
@@ -595,7 +612,7 @@
 		placeholder="Enter {title.toLowerCase()}"
 	/>
 
-	{#if $formErrors[fieldName] && ($touched[fieldName] || formSubmitted)}
+	{#if $formErrors[fieldName] && (touched[fieldName] || formSubmitted)}
 		<p class="error-text">{$formErrors[fieldName]}</p>
 	{/if}
 {/snippet}

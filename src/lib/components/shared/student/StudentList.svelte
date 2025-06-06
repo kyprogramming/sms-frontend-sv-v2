@@ -191,7 +191,7 @@
 </script>
 
 <svelte:head>
-	<title>{schoolName} - Student</title>
+	<title>{schoolName} - Student List</title>
 </svelte:head>
 
 <div class="class-container">
