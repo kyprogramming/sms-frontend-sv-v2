@@ -37,6 +37,8 @@
 		ChevronRight,
 		ChevronRightSquare as ChevronRightDouble,
 		LayoutDashboardIcon,
+        UserPen,
+        UserPlus
 	} from "@lucide/svelte";
 	import { MENU_GROUPS } from "$lib/constants";
 	interface Props {
@@ -77,6 +79,8 @@
 		LineChart,
 		Settings,
 		LayoutDashboardIcon,
+        UserPen,
+        UserPlus
 	};
 
 	let activeGroup: string | null = $state(null);
