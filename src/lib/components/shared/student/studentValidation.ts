@@ -1,4 +1,5 @@
 import { formErrors } from "$lib/stores/formStore";
+import { formatLocalDate } from "$lib/utils/formatDate";
 import { generateAdmissionNo, getCurrentAcademicYear } from "$lib/utils/utils";
 import { writable } from "svelte/store";
 import { z } from "zod";
@@ -112,7 +113,8 @@ export function initializeStudentFormData(): StudentFormData {
 		},
 		studentData: {
 			admissionNo: generateAdmissionNo(),
-			admissionDate: new Date().toISOString().split("T")[0],
+            // admissionDate: new Date().toISOString().split("T")[0],
+            admissionDate: formatLocalDate(new Date()),
 			academicYear: getCurrentAcademicYear(),
 			rollNo: "",
 			classId: "",
