@@ -1,11 +1,13 @@
 import { formErrors } from "$lib/stores/formStore";
-import { formatDate } from "$lib/utils/formatDate";
-import { generateAdmissionNo, getCurrentAcademicYear } from "$lib/utils/utils";
 import { z } from "zod";
 
 export const staffSchema = z.object({
 	userData: z.object({
-		email: z.string().email("Invalid email format").optional().or(z.literal("")),
+		email: z
+			.string()
+			.email("Invalid email format")
+			.optional()
+			.or(z.literal("")),
 		mobile: z
 			.string()
 			.regex(/^[0-9]{10}$/, "10 digits mobile number required")
@@ -13,85 +15,63 @@ export const staffSchema = z.object({
 			.or(z.literal("")),
 	}),
 	staffData: z.object({
-		admissionNo: z.string().min(1, "Admission number is required"),
-		admissionDate: z.string().min(1, "Admission date is required"),
-		academicYear: z.string().min(1, "Academic session is required"),
-		rollNo: z.string().optional(),
-		classId: z.string().min(1, "Class is required"),
-		sectionId: z.string().min(1, "Section is required"),
 		profile: z.object({
-			firstName: z.string().min(1, "First name is required"),
+			staffId: z.string().min(1),
+			role: z.string(),
+			designation: z.string().optional(),
+			department: z.string().optional(),
+			firstName: z.string().min(1),
 			middleName: z.string().optional(),
-			lastName: z.string().min(1, "Last name is required"),
-			dob: z.string().min(1, "Date of birth is required"),
-			gender: z.string().min(1, "Gender is required"),
-			category: z.string().optional(),
-			religion: z.string().optional(),
-			caste: z.string().optional(),
-			staffPhoto: z.any().optional(),
-			address: z.object({
-				street: z.string().min(1, "House No/Street is required"),
-				city: z.string().min(1, "City is required"),
-				state: z.string().min(1, "State is required"),
-				postalCode: z.string().min(1, "Postal Code is required"),
-				country: z.string().min(1, "Country is required"),
-			}),
+			lastName: z.string().min(1),
+			fatherName: z.string().optional(),
+			motherName: z.string().optional(),
+			email: z.string().email(),
+			gender: z.string(),
+			dob: z.string(),
+			dateOfJoining: z.string().optional(),
+			contactNo: z.string().optional(),
+			emergencyNo: z.string().optional(),
+			maritalStatus: z.string().optional(),
+			photoUrl: z.string().url().optional(),
+			address: z.string().optional(),
+			permanentAddress: z.string().optional(),
+			qualification: z.string().optional(),
+			workExperience: z.string().optional(),
+			note: z.string().optional(),
+			panNumber: z.string().min(1),
 		}),
-		medicalDetails: z.object({
-			bloodGroup: z.string().optional(),
-			height: z.string().regex(/^\d+$/, "Height must be a number").optional().or(z.literal("")),
-			weight: z.string().regex(/^\d+$/, "Weight must be a number").optional().or(z.literal("")),
-			eyeSight: z.string().optional(),
-			measurementDate: z.string().optional(),
-			allergies: z.array(z.string()).optional(),
-			medicalConditions: z.array(z.string()).optional(),
-			medicalHistory: z.string().optional(),
+		payroll: z.object({
+			epfNo: z.string().optional(),
+			basicSalary: z.number().nonnegative().optional(),
+			contractType: z.enum(["permanent", "probation"]).optional(),
+			shift: z.string().optional(),
+			workLocation: z.string().optional(),
 		}),
-		parentGuardianDetails: z.object({
-			fatherDetails: z.object({
-				fatherFirstName: z.string().min(1, "Father first name is required"),
-				fatherLastName: z.string().min(1, "Father last name is required"),
-				fatherPhone: z
-					.string()
-					.regex(/^[0-9]{10}$/, "Invalid phone (10 digits required)")
-					.optional(),
-				fatherOccupation: z.string().optional(),
-				fatherEducation: z.string().optional(),
-				fatherEmail: z.string().email("Invalid email format").optional().or(z.literal("")),
-				fatherPhoto: z.any().optional(),
-			}),
-			motherDetails: z.object({
-				motherFirstName: z.string().min(1, "Mother first name is required"),
-				motherLastName: z.string().min(1, "Mother last name is required"),
-				motherPhone: z
-					.string()
-					.regex(/^[0-9]{10}$/, "Invalid phone (10 digits required)")
-					.optional(),
-				motherOccupation: z.string().optional(),
-				motherEducation: z.string().optional(),
-				motherEmail: z.string().email("Invalid email format").optional().or(z.literal("")),
-				motherPhoto: z.any().optional(),
-			}),
-			guardianDetails: z.object({
-				guardianFirstName: z.string().min(1, "Guardian first name is required"),
-				guardianLastName: z.string().min(1, "Guardian last name is required"),
-				guardianPhone: z
-					.string()
-					.regex(/^[0-9]{10}$/, "Invalid phone (10 digits required)")
-					.optional(),
-				guardianOccupation: z.string().optional(),
-				guardianEducation: z.string().optional(),
-				guardianRelation: z.string().min(1, "Guardian relation is required"),
-				guardianEmail: z.string().email("Invalid email format").optional(),
-				guardianCurrentAddress: z.string().min(1, "Guardian current address is required"),
-				guardianPermanentAddress: z.string().optional(),
-			}),
-			primaryGuardian: z.string().refine((val) => ["Father", "Mother", "Other"].includes(val), {
-				message: "Primary guardian must be selected",
-			}),
-			parentCurrentAddress: z.string().min(1, "Parent current address is required"),
-			parentPermanentAddress: z.string().optional(),
-		}),
+		leaveAllotments: z
+			.object({
+				medicalLeave: z.number().optional(),
+				casualLeave: z.number().optional(),
+				maternityLeave: z.number().optional(),
+				sickLeave: z.number().optional(),
+			})
+			.optional(),
+		bankDetails: z
+			.object({
+				accountTitle: z.string().optional(),
+				bankAccountNo: z.string().optional(),
+				bankName: z.string().optional(),
+				ifscCode: z.string().optional(),
+				bankBranch: z.string().optional(),
+			})
+			.optional(),
+		socialLinks: z
+			.object({
+				facebook: z.string().url().optional(),
+				twitter: z.string().url().optional(),
+				linkedin: z.string().url().optional(),
+				instagram: z.string().url().optional(),
+			})
+			.optional(),
 	}),
 });
 
@@ -106,73 +86,41 @@ export function initializeStaffFormData(): StaffFormData {
 			mobile: "",
 		},
 		staffData: {
-			admissionNo: generateAdmissionNo(),
-            admissionDate: formatDate(new Date()),
-			academicYear: getCurrentAcademicYear(),
-			rollNo: "",
-			classId: "",
-			sectionId: "",
-			profile: {
+            profile: {
+                staffId: "",
+				role: "",
+				designation: "",
+				department: "",
 				firstName: "",
 				middleName: "",
 				lastName: "",
-				dob: "",
+				fatherName: "",
+				motherName: "",
+				email: "",
 				gender: "",
-				category: "",
-				religion: "",
-				caste: "",
-				staffPhoto: null,
-				address: {
-					street: "",
-					city: "",
-					state: "",
-					postalCode: "",
-					country: "",
-				},
+				dob: "",
+				dateOfJoining: "",
+				contactNo: "",
+				emergencyNo: "",
+				maritalStatus: "",
+				photoUrl: "",
+				address: "",
+				permanentAddress: "",
+				qualification: "",
+				workExperience: "",
+				note: "",
+				panNumber: "",
 			},
-			medicalDetails: {
-				bloodGroup: "",
-				height: "",
-				weight: "",
-				measurementDate: "",
-				allergies: [],
-				medicalConditions: [],
-				medicalHistory: "",
+			payroll: {
+				epfNo: "",
+				basicSalary: 0,
+				contractType: "permanent",
+				shift: "",
+				workLocation: "",
 			},
-			parentGuardianDetails: {
-				fatherDetails: {
-					fatherFirstName: "",
-					fatherLastName: "",
-					fatherPhone: "",
-					fatherOccupation: "",
-					fatherEducation: "",
-					fatherEmail: "",
-					fatherPhoto: null,
-				},
-				motherDetails: {
-					motherFirstName: "",
-					motherLastName: "",
-					motherPhone: "",
-					motherOccupation: "",
-					motherEducation: "",
-					motherEmail: "",
-					motherPhoto: null,
-				},
-				guardianDetails: {
-					guardianFirstName: "",
-					guardianLastName: "",
-					guardianPhone: "",
-					guardianOccupation: "",
-					guardianEducation: "",
-					guardianRelation: "",
-					guardianEmail: "",
-					guardianCurrentAddress: "",
-					guardianPermanentAddress: "",
-				},
-				primaryGuardian: "",
-				parentCurrentAddress: "",
-				parentPermanentAddress: "",
-			},
+			leaveAllotments: {},
+			bankDetails: {},
+			socialLinks: {},
 		},
 	};
 }
@@ -199,61 +147,3 @@ export function flattenErrors<T>(error: z.ZodFormattedError<T>): FormErrors {
 	recurse(error);
 	return result;
 }
-
-export function validateStaffForm(formData: StaffFormData) {
-	let schema;
-	const primary = formData.staffData.parentGuardianDetails.primaryGuardian;
-
-	if (primary === "Father" || primary === "Mother") {
-		schema = staffSchema.extend({
-			staffData: staffSchema.shape.staffData.extend({
-				parentGuardianDetails: staffSchema.shape.staffData.shape.parentGuardianDetails.extend({
-					guardianDetails: z.undefined().optional(), // Accept missing
-				}),
-			}),
-		});
-		formData.staffData.parentGuardianDetails.guardianDetails = undefined as any;
-	} else if (primary === "Other") {
-		schema = staffSchema;
-		if (!formData.staffData.parentGuardianDetails.guardianDetails) {
-			formData.staffData.parentGuardianDetails.guardianDetails = {
-				guardianFirstName: "",
-				guardianLastName: "",
-				guardianPhone: "",
-				guardianOccupation: "",
-				guardianEducation: "",
-				guardianRelation: "",
-				guardianEmail: "",
-				guardianCurrentAddress: "",
-				guardianPermanentAddress: "",
-			};
-		}
-	} else {
-		schema = staffSchema;
-		if (!formData.staffData.parentGuardianDetails.guardianDetails) {
-			formData.staffData.parentGuardianDetails.guardianDetails = {
-				guardianFirstName: "",
-				guardianLastName: "",
-				guardianPhone: "",
-				guardianOccupation: "",
-				guardianEducation: "",
-				guardianRelation: "",
-				guardianEmail: "",
-				guardianCurrentAddress: "",
-				guardianPermanentAddress: "",
-			};
-		}
-	}
-
-	const result = schema.safeParse(formData);
-	if (!result.success) {
-		const mapped = flattenErrors(result.error.format());
-		formErrors.set(mapped);
-	} else {
-		formErrors.set({});
-	}
-	return result.success;
-}
-
-
-export type DeepBoolean<T> = T extends object ? { [K in keyof T]?: DeepBoolean<T[K]> } : boolean;
