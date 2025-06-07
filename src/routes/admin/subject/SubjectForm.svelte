@@ -92,8 +92,7 @@
 
 <form onsubmit={onSubmit}>
 	<div class="input-wrapper">
-		<!-- svelte-ignore a11y_label_has_associated_control -->
-		<label>Subject Type <span class="required">*</span></label>
+		<label for="radio-item">Subject Type <span class="required">*</span></label>
 		<div class="radio-section" class:has-error={$formErrors.type && (touched.type || formSubmitted)}>
 			{#each SUBJECT_TYPE as type}
 				<div class="radio-item">

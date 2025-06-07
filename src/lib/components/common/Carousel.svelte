@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 
-	
 	interface Props {
 		// Props
 		images?: string[];
@@ -44,8 +43,7 @@
 	});
 </script>
 
-<!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="carousel" onmouseenter={stopAutoPlay} onmouseleave={startAutoPlay}>
+<div class="carousel" role="region" aria-label="Image carousel" onmouseenter={stopAutoPlay} onmouseleave={startAutoPlay}>
 	<div class="carousel-track" style="transform: translateX(-{currentIndex * 100}%);">
 		{#each images as image}
 			<div class="carousel-item">
@@ -61,8 +59,7 @@
 
 	<div class="carousel-indicators">
 		{#each images as _, index}
-			<!-- svelte-ignore a11y_consider_explicit_label -->
-			<button class="indicator {index === currentIndex ? 'active' : ''}" onclick={() => (currentIndex = index)}></button>
+			<button class="indicator {index === currentIndex ? 'active' : ''}" aria-label={`Go to slide ${index + 1}`} onclick={() => (currentIndex = index)}></button>
 		{/each}
 	</div>
 </div>

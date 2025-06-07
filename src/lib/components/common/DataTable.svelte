@@ -1,12 +1,10 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
+	import { run } from "svelte/legacy";
 
 	import { ACTION_COLUMN_WIDTH, DEFAULT_PAGE_LIMIT } from "$lib/utils/env.config";
 	import Pagination from "./Pagination.svelte";
 	import { currentPage, rowsPerPage, totalPages, totalItems } from "$lib/stores/paginationStore";
 	import type { ActionConfig, ColumnConfig } from "$lib/interfaces/table.interface";
-
-	
 
 	interface Props {
 		response: any;
@@ -29,11 +27,10 @@
 		// onDeleteRefresh,
 		columns = [],
 		actions = {
-		show: false,
-		iconActions: [],
-	}
+			show: false,
+			iconActions: [],
+		},
 	}: Props = $props();
-
 
 	// STATE
 	let sortColumn = $state("");
@@ -48,19 +45,20 @@
 		}
 	}
 
-
 	function getNestedValue(obj: any, path: string): any {
 		return path.split(".").reduce((acc, part) => acc && acc[part], obj);
 	}
 	// console.log("DATA TABLE- response:", response);
 	// Extract data and pagination dynamically
 	let dataArray = $derived(response.data?.[dataKey] || []);
-	let paginationData = $derived(response.data?.[paginationKey] || {
-		total: 0,
-		page: 1,
-		limit: DEFAULT_PAGE_LIMIT,
-		totalPages: 1,
-	});
+	let paginationData = $derived(
+		response.data?.[paginationKey] || {
+			total: 0,
+			page: 1,
+			limit: DEFAULT_PAGE_LIMIT,
+			totalPages: 1,
+		},
+	);
 	// Initialize pagination stores
 	run(() => {
 		totalItems.set(paginationData.total);
@@ -68,12 +66,14 @@
 		currentPage.set(paginationData.page);
 		totalPages.set(paginationData.totalPages);
 	});
-	let visibleData = $derived([...dataArray].sort((a, b) => {
-		if (!sortColumn) return 0;
-        const valA = getNestedValue(a, sortColumn)?.toString().toLowerCase() || "";
-        const valB = getNestedValue(b, sortColumn)?.toString().toLowerCase() || "";
-		return valA > valB ? sortDirection : valA < valB ? -sortDirection : 0;
-	}));
+	let visibleData = $derived(
+		[...dataArray].sort((a, b) => {
+			if (!sortColumn) return 0;
+			const valA = getNestedValue(a, sortColumn)?.toString().toLowerCase() || "";
+			const valB = getNestedValue(b, sortColumn)?.toString().toLowerCase() || "";
+			return valA > valB ? sortDirection : valA < valB ? -sortDirection : 0;
+		}),
+	);
 </script>
 
 <!-- TABLE STRUCTURE REMAINS THE SAME AS BEFORE -->
@@ -83,11 +83,7 @@
 			<thead>
 				<tr>
 					{#each columns as column}
-						<th
-							onclick={() => column.sortable && sortBy(column.key)}
-							class:sortable={column.sortable}
-							style={`width: ${column.width || "auto"}; text-align: ${column.align || "left"}; display: ${column.visible === false ? "none" : "table-cell"};`}
-						>
+						<th onclick={() => column.sortable && sortBy(column.key)} class:sortable={column.sortable} style={`width: ${column.width || "auto"}; text-align: ${column.align || "left"}; display: ${column.visible === false ? "none" : "table-cell"};`}>
 							{column.label}
 							{#if column.sortable && sortColumn === column.key}
 								<span>{sortDirection === 1 ? "▲" : "▼"}</span>
@@ -116,10 +112,20 @@
 								<span class="action-icons">
 									{#if actions.iconActions}
 										{#each actions.iconActions as action}
-											<!-- svelte-ignore a11y_click_events_have_key_events -->
-											<!-- svelte-ignore a11y_no_static_element_interactions -->
 											{#if action.show}
-												<span class={`icon-circle ${action.class}`} onclick={() => action?.action(item)}>
+												<span
+													role="button"
+													tabindex="0"
+													class={`icon-circle ${action.class}`}
+													aria-label={"Perform action"}
+													onclick={() => action?.action(item)}
+													onkeydown={(e) => {
+														if (e.key === "Enter" || e.key === " ") {
+															e.preventDefault();
+															action?.action(item);
+														}
+													}}
+												>
 													<action.icon />
 												</span>
 											{/if}

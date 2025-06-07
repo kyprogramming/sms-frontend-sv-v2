@@ -60,15 +60,7 @@
 		<form onsubmit={onSubmit} novalidate>
 			<div>
 				<label for="email">Username</label>
-				<input
-					type="email"
-					name="email"
-					placeholder="Enter your username"
-					bind:value={formData.email}
-					class={`w-full ${$formErrors.email && (touched.email || formSubmitted) ? "input-error" : ""}`}
-					oninput={(e) => handleChange("email", (e.target as HTMLInputElement).value)}
-					onblur={(e) => handleChange("email", (e.target as HTMLInputElement).value)}
-				/>
+				<input type="email" name="email" placeholder="Enter your username" bind:value={formData.email} class={`w-full ${$formErrors.email && (touched.email || formSubmitted) ? "input-error" : ""}`} oninput={(e) => handleChange("email", (e.target as HTMLInputElement).value)} onblur={(e) => handleChange("email", (e.target as HTMLInputElement).value)} />
 				{#if $formErrors.email && (touched.email || formSubmitted)}
 					<p class="error-text">{$formErrors.email}</p>
 				{/if}
@@ -87,14 +79,25 @@
 						onblur={(e) => handleChange("password", (e.target as HTMLInputElement).value)}
 					/>
 
-					<!-- svelte-ignore a11y_click_events_have_key_events -->
-					<!-- svelte-ignore a11y_no_static_element_interactions -->
 					<span
 						class="eye-icon"
-						onclick={() => {showPassword = !showPassword;}}
+						role="button"
+						tabindex="0"
+						aria-label={showPassword ? "Hide password" : "Show password"}
+						onclick={() => {
+							showPassword = !showPassword;
+						}}
+						onkeydown={(e) => {
+							if (e.key === "Enter" || e.key === " ") {
+								e.preventDefault();
+								showPassword = !showPassword;
+							}
+						}}
 					>
-						{#if showPassword}<EyeOff size={18} />
-						{:else}<Eye size={18} />
+						{#if showPassword}
+							<EyeOff size={18} />
+						{:else}
+							<Eye size={18} />
 						{/if}
 					</span>
 				</div>

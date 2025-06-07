@@ -5,7 +5,7 @@
 	import { apiRequest } from "$lib/utils/api";
 	import type { User } from "$lib/utils/types";
 	import { showSnackbar } from "../snackbar/store";
-	import { goto, invalidateAll } from "$app/navigation";
+	import { goto } from "$app/navigation";
 	import { LogOut, Settings, UserCog } from "@lucide/svelte";
 	import { API_BASE_URL } from "$lib/utils/env.config";
 
@@ -40,9 +40,18 @@
 	}
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="user-profile" onclick={toggleMenu}>
+
+<div class="user-profile" role="button"
+tabindex="0"
+aria-haspopup="true"
+aria-expanded={isOpen} onclick={toggleMenu}
+onkeydown={(e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleMenu();
+    }
+}}
+>
 	<div class="profile-img">{user?.name?.charAt(0).toUpperCase()}</div>
 	<div class="user-info">
 		<div class="user-name">{user?.name.toUpperCase()}</div>
@@ -52,7 +61,7 @@
 	</div>
 
 	{#if isOpen}
-		<div class="dropdown" onmouseleave={closeMenu}>
+		<div class="dropdown" role="menu" tabindex="0" aria-label="User menu" onmouseleave={closeMenu}>
 			<div class="menu-item"><Settings />Settings</div>
 			<div class="menu-item"><UserCog />Profile</div>
 			<div class="divider"></div>
