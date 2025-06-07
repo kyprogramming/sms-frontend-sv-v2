@@ -1,5 +1,5 @@
 // +layout.ts
-import { API_BASE_URL } from "$lib/constants/env.config";
+import { API_BASE_URL } from "$lib/utils/env.config";
 import { classList } from "$lib/stores/masterData";
 import type { LayoutServerLoad } from "./$types";
 

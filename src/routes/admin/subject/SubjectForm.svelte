@@ -2,11 +2,9 @@
 	import { isLoading } from "$lib/stores/loading";
 	import { validateForm } from "$lib/utils/validate";
 	import { showSnackbar } from "$lib/components/snackbar/store";
-	import { closeModal, isUpdate } from "$lib/stores/modalStore";
+	import { closeModal } from "$lib/stores/modalStore";
 	import { createSubject, updateSubject } from "$lib/services/subject";
-	import { SUBJECT_TYPE } from "$lib/constants";
 
-	import { page } from "$app/state";
 	import { BrushCleaning, Save } from "@lucide/svelte";
 	import LoaderIcon from "$lib/components/common/LoaderIcon.svelte";
 
@@ -15,6 +13,7 @@
 	import { onMount } from "svelte";
 	import { areFieldsUnchanged } from "$lib/utils/utils";
 	import { MESSAGES } from "$lib/utils/messages";
+	import { SUBJECT_TYPE } from "$lib/utils/constants";
 
 	let { onRefreshPage, subjectData = null, action } = $props();
     console.log("SubjectForm props:", {  subjectData, action });
@@ -123,15 +122,6 @@
 		<label for="code">Subject Code</label>
 		<input id="code" type="text" name="code" class={`w-full`} placeholder="Subject code" bind:value={formData.code} oninput={(e) => handleChange("code", (e.target as HTMLInputElement).value)} onblur={() => handleChange("code", String(formData.code))} />
 	</div>
-
-	<!-- <div class="flex-items-center" style="justify-content:end;">
-		<button class="btn ripple" type="reset" disabled={$isLoading} style="background-color: var(--clr-pri-light); align-self: right;" onclick={handleReset}> Clear </button>
-		<button class="btn ripple" type="submit" disabled={$isLoading}>
-			{#if $isLoading}
-				{#if isUpdate}Updating...{:else}Saving...{/if}
-			{:else if $isUpdate}Update{:else}Save{/if}
-		</button>
-	</div> -->
 
     <div class="form-actions">
 		<button type="button" class="btn ripple btn-secondary" onclick={handleResetForm} disabled={$isLoading}>

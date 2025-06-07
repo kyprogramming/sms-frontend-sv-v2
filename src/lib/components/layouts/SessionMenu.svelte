@@ -7,7 +7,7 @@
 	import { showSnackbar } from "../snackbar/store";
 	import { goto, invalidateAll } from "$app/navigation";
 	import { LogOut, Settings, UserCog } from "@lucide/svelte";
-	import { API_BASE_URL } from "$lib/constants/env.config";
+	import { API_BASE_URL } from "$lib/utils/env.config";
 
 	interface Props {
 		user: User | null;

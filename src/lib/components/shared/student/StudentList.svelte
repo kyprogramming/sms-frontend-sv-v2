@@ -3,7 +3,7 @@
 	import { env } from "$env/dynamic/public";
 	import { currentPage, rowsPerPage, totalItems, totalPages } from "$lib/stores/paginationStore";
 	import { deleteSectionById, fetchSectionById, fetchSections } from "$lib/services/section";
-    import { formatDate } from "$lib/utils/formatDate";
+    import { formatDate, formatLocalDate } from "$lib/utils/formatDate";
 
 	import DataTable from "$lib/components/common/DataTable.svelte";
 	import ModalDelete from "$lib/components/common/ModalDelete.svelte";

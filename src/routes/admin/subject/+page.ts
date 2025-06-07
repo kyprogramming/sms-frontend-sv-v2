@@ -1,4 +1,4 @@
-import { API_BASE_URL, DEFAULT_PAGE_LIMIT } from "$lib/constants/env.config";
+import { API_BASE_URL, DEFAULT_PAGE_LIMIT } from "$lib/utils/env.config";
 import { error } from "@sveltejs/kit";
 import type { PageLoad } from "./$types";
 import { isLoading } from "$lib/stores/loading";
@@ -10,14 +10,14 @@ export const load: PageLoad = async ({ fetch }) => {
 		const res = await fetch(`${API_BASE_URL}/subject?${params.toString()}`, { method: "GET", headers: { "Content-Type": "application/json" }, credentials: "include" });
 
 		if (!res.ok) {
-			const message = await res.text(); // Generic server error
+			const message = await res.text();
 			throw error(res.status, message || "Failed to fetch data from server");
 		}
 
 		const data = await res.json(); // console.log("Data from Server:", data);
 		return { data };
 	} catch (error) {
-		throw error; // Will be caught by +error.svelte
+		throw error; 
 	} finally {
 		isLoading.set(false);
 	}

@@ -1,4 +1,4 @@
-import { API_BASE_URL, ENV, UI_BASE_URL } from "$lib/constants/env.config";
+import { API_BASE_URL, ENV, UI_BASE_URL } from "$lib/utils/env.config";
 import { classList } from "$lib/stores/masterData";
 import type { LayoutServerLoad } from "./$types";
 
@@ -30,15 +30,6 @@ export const load: LayoutServerLoad = async ({ locals, cookies }) => {
 
 	const classData = await resClasses.json();
 	const sectionData = await resSections.json();
-
-	// if (!classData || !Array.isArray(classData.data)) {
-	//     console.error("Invalid class data received from server");
-	//     return {
-	//         user: locals.user,
-	//         role: locals.user.role,
-	//         classData: [],
-	//     };
-	// }
 
 	return {
 		user: locals.user,

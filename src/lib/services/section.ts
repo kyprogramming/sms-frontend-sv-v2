@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "$lib/constants/env.config";
+import { API_BASE_URL } from "$lib/utils/env.config";
 import { fetchWrapper } from "$lib/utils/fetchWrapper";
 import { handleResponse, JSON_HEADERS } from "$lib/utils/utils";
 

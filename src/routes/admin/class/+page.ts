@@ -1,4 +1,4 @@
-import { API_BASE_URL, DEFAULT_PAGE_LIMIT } from "$lib/constants/env.config";
+import { API_BASE_URL, DEFAULT_PAGE_LIMIT } from "$lib/utils/env.config";
 import { error } from "@sveltejs/kit";
 import type { PageLoad } from "./$types";
 import { isLoading } from "$lib/stores/loading";

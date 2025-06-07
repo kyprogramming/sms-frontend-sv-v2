@@ -1,7 +1,7 @@
 <script lang="ts">
 	import DatePicker from "$lib/components/common/DatePicker.svelte";
 	import TagInput from "$lib/components/common/TagInput.svelte";
-	import { BLOOD_GROUPS, CASTE_CATEGORIES, GENDERS, GUARDIAN_TYPE } from "$lib/constants";
+	import { BLOOD_GROUPS, CASTE_CATEGORIES, GENDERS, GUARDIAN_TYPE } from "$lib/utils/constants";
 	import { isLoading } from "$lib/stores/loading";
 
 	import { initializeStudentFormData, validateStudentForm, type DeepBoolean, type StudentFormData } from "./studentValidation";
@@ -18,7 +18,7 @@
 	import { env } from "$env/dynamic/public";
 	import { isEqual } from "$lib/utils/utils";
 	import { MESSAGES } from "$lib/utils/messages";
-	import { formatDate, formatLocalDate } from "$lib/utils/formatDate";
+	import { formatLocalDate } from "$lib/utils/formatDate";
 
 	// Props
 	let { studentData = null, action } = $props();
@@ -64,7 +64,7 @@
 			formData.studentData.admissionDate = "";
 			return;
 		}
-		formData.studentData.admissionDate = formatDate(date);
+		formData.studentData.admissionDate = formatLocalDate(date);
 	}
 	function handleBirthDateChange(date: Date | null) {
 		if (date) {

@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { run } from 'svelte/legacy';
 
-	import { ACTION_COLUMN_WIDTH, DEFAULT_PAGE_LIMIT } from "$lib/constants/env.config";
-	import { get } from "svelte/store";
+	import { ACTION_COLUMN_WIDTH, DEFAULT_PAGE_LIMIT } from "$lib/utils/env.config";
 	import Pagination from "./Pagination.svelte";
 	import { currentPage, rowsPerPage, totalPages, totalItems } from "$lib/stores/paginationStore";
 	import type { ActionConfig, ColumnConfig } from "$lib/interfaces/table.interface";

@@ -5,14 +5,13 @@
 	import { validateForm } from "$lib/utils/validate";
 	import { apiRequest } from "$lib/utils/api";
 	import { showSnackbar } from "$lib/components/snackbar/store";
-	import { API_BASE_URL } from "$lib/constants/env.config";
+	import { API_BASE_URL } from "$lib/utils/env.config";
 	import LoaderIcon from "$lib/components/common/LoaderIcon.svelte";
 	import { Eye, EyeOff } from "@lucide/svelte";
 	import { loginFormSchema, type LoginFormType } from "$lib/utils/schemas";
 	import { formErrors } from "$lib/stores/formStore";
 
 	formErrors.set({ email: "", password: "" });
-	// let formData: LoginFormType = $state({email: "", password: ""});
 	let formData: LoginFormType = $state({ email: "username1@xyz.com", password: "password1" });
 	let touched: Partial<Record<keyof LoginFormType, boolean>> = $state({ email: false, password: false });
 	let formSubmitted: boolean = $state(false);

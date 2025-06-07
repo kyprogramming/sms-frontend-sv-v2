@@ -99,15 +99,15 @@
 	</div>
 
 	<div class="input-wrapper">
-		<!-- svelte-ignore a11y_label_has_associated_control -->
-		<label>Sections *</label>
+		<label for="checkbox-input">Sections *</label>
 		<div class="checkbox-section" class:has-error={$formErrors.sectionIds && formSubmitted}>
 			{#each allSections as section}
 				<div class="checkbox-item">
 					<label class="checkbox-label">
 						<input
-							type="checkbox"
+							id="checkbox-input"
 							class="checkbox-input"
+							type="checkbox"
 							value={section._id}
 							checked={formData.sectionIds.includes(section._id)}
 							onchange={(e) => {

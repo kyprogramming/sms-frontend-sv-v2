@@ -39,7 +39,7 @@
 		UserPen,
 		UserPlus,
 	} from "@lucide/svelte";
-	import { MENU_GROUPS } from "$lib/constants";
+	import { MENU_GROUPS } from  "$lib/utils/constants";
 	interface Props {
 		cls?: string;
 	}
