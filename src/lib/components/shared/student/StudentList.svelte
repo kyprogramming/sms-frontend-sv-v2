@@ -3,7 +3,7 @@
 	import { env } from "$env/dynamic/public";
 	import { currentPage, rowsPerPage, totalItems, totalPages } from "$lib/stores/paginationStore";
 	import { deleteSectionById, fetchSectionById, fetchSections } from "$lib/services/section";
-    import { formatDate, formatLocalDate } from "$lib/utils/formatDate";
+	import { formatDate, formatLocalDate } from "$lib/utils/formatDate";
 
 	import DataTable from "$lib/components/common/DataTable.svelte";
 	import ModalDelete from "$lib/components/common/ModalDelete.svelte";
@@ -147,7 +147,7 @@
 	}
 
 	async function searchAction() {
-		if (selectedClassId == "" && selectedSectionId == "" && searchText === "") return;
+		// if (selectedClassId == "" && selectedSectionId == "" && searchText === "") return;
 		const params = new URLSearchParams({ classId: selectedClassId, sectionId: selectedSectionId, search: searchText, page: String($currentPage), limit: String($rowsPerPage) });
 		const json = await fetchStudentList(params);
 		response = { ...json };
@@ -204,7 +204,17 @@
 			{/each}
 		</select>
 
-		<input name="search" type="text" placeholder="Search student..." bind:value={searchText} />
+		<input
+			name="search"
+			type="text"
+			placeholder="Search student..."
+			bind:value={searchText}
+			onkeydown={(e) => {
+				if (e.key === "Enter") {
+					handleSearch();
+				}
+			}}
+		/>
 
 		<button type="button" class="btn ripple" onclick={handleSearch}>
 			<Search />

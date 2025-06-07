@@ -93,7 +93,7 @@
 
 	function handleAdd() {
 		classData = null;
-        isUpdate = false;
+		isUpdate = false;
 		isModalOpen = true;
 	}
 
@@ -132,7 +132,7 @@
 	}
 
 	async function searchAction() {
-		if (searchText === "") return;
+		// if (searchText === "") return;
 		const params = new URLSearchParams({ search: searchText, page: String($currentPage), limit: String($rowsPerPage) });
 		const json = await fetchClasses(params);
 		response = { ...json };
@@ -153,7 +153,17 @@
 
 <div class="class-container">
 	<div class="search-container">
-		<input name="search" type="text" placeholder="Search class..." bind:value={searchText} />
+		<input
+			name="search"
+			type="text"
+			placeholder="Search class..."
+			bind:value={searchText}
+			onkeydown={(e) => {
+				if (e.key === "Enter") {
+					handleSearch();
+				}
+			}}
+		/>
 
 		<button type="button" class="btn ripple" onclick={handleSearch}>
 			<Search />

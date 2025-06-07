@@ -63,7 +63,7 @@
 				class: "edit",
 				show: true,
 				action: async (item: { _id: any }) => {
-                    isUpdate = true;
+					isUpdate = true;
 					await updateAction(item._id);
 				},
 			},
@@ -94,7 +94,7 @@
 
 	function handleAdd() {
 		subjectData = null;
-        isUpdate = false;
+		isUpdate = false;
 		isModalOpen = true;
 	}
 
@@ -110,7 +110,7 @@
 		await refreshAction();
 	}
 
-    // Server actions
+	// Server actions
 	async function updateAction(id: string) {
 		subjectData = null;
 		const res = await fetchSubjectById(id);
@@ -133,7 +133,7 @@
 	}
 
 	async function searchAction() {
-		if (searchText === "") return;
+		// if (searchText === "") return;
 		const params = new URLSearchParams({ search: searchText, page: String($currentPage), limit: String($rowsPerPage) });
 		const json = await fetchSubjects(params);
 		response = { ...json };
@@ -154,7 +154,17 @@
 
 <div class="class-container">
 	<div class="search-container">
-		<input name="search" type="text" placeholder="Search subject..." bind:value={searchText} />
+		<input
+			name="search"
+			type="text"
+			placeholder="Search subject..."
+			bind:value={searchText}
+			onkeydown={(e) => {
+				if (e.key === "Enter") {
+					handleSearch();
+				}
+			}}
+		/>
 
 		<button type="button" class="btn ripple" onclick={handleSearch}>
 			<Search />
@@ -175,7 +185,6 @@
 </div>
 
 <DataTable {response} {columns} {actions} onPaginationChange={handlePaginationChange} onPageLimitChange={handlePageLimitChange} />
-
 
 {#if isModalOpen}
 	<Modal
@@ -203,7 +212,6 @@
 		}}
 	/>
 {/if}
-
 
 <style>
 	.search-container {

@@ -93,7 +93,7 @@
 
 	function handleAdd() {
 		sectionData = null;
-        isUpdate = false;
+		isUpdate = false;
 		isModalOpen = true;
 	}
 
@@ -124,29 +124,27 @@
 			showSnackbar({ message: `Section ${json.message}`, type: "success" });
 			isDeleteModalOpen = false;
 		} else showSnackbar({ message: `${json.message}`, type: "error" });
-        
-        if($totalItems % $rowsPerPage === 1 && $currentPage > 1) {
-            currentPage.set($currentPage - 1);
-        }
-        await refreshAction();
+
+		if ($totalItems % $rowsPerPage === 1 && $currentPage > 1) {
+			currentPage.set($currentPage - 1);
+		}
+		await refreshAction();
 	}
 
 	async function searchAction() {
-		if (searchText === "") return;
+		// if (searchText === "") return;
 		const params = new URLSearchParams({ search: searchText, page: String($currentPage), limit: String($rowsPerPage) });
 		const json = await fetchSections(params);
 		response = { ...json };
 	}
 
 	async function refreshAction() {
-       
 		const params = new URLSearchParams({ search: searchText || "", page: String($currentPage), limit: String($rowsPerPage) });
 		console.log("Params:", params.toString(), $currentPage, $rowsPerPage, $totalPages, $totalItems);
 		const json = await fetchSections(params);
 		isModalOpen = false;
 		response = { ...json };
 	}
-
 </script>
 
 <svelte:head>
@@ -155,7 +153,17 @@
 
 <div class="class-container">
 	<div class="search-container">
-		<input name="search" type="text" placeholder="Search section..." bind:value={searchText} />
+		<input
+			name="search"
+			type="text"
+			placeholder="Search section..."
+			bind:value={searchText}
+			onkeydown={(e) => {
+				if (e.key === "Enter") {
+					handleSearch();
+				}
+			}}
+		/>
 
 		<button type="button" class="btn ripple" onclick={handleSearch}>
 			<Search />
