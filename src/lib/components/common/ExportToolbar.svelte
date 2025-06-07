@@ -38,7 +38,7 @@
 </div>
 
 <style>
-	.btn-export {
+	/* .btn-export {
 		@apply bg-blue-500 hover:bg-blue-600 text-white text-sm px-4 py-2 rounded transition;
-	}
+	} */
 </style>

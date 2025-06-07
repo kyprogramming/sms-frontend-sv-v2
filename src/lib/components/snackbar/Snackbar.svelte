@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { snackbars } from "./store";
-	import type { Snackbar } from "./types";
 	import { fly, fade } from "svelte/transition";
 	import { CheckCircle, AlertTriangle, Info, XCircle } from "@lucide/svelte";
 

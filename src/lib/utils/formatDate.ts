@@ -1,5 +1,3 @@
-// src/lib/utils/formatDate.ts
-
 export function formatDate(value: string | number | Date): string {
 	if (!value) return "";
 	return new Date(value).toLocaleDateString("en-GB", {
@@ -9,7 +7,7 @@ export function formatDate(value: string | number | Date): string {
 	});
 }
 
-export function formatLocalDate(date: Date): string {
+export function formatLocalDate(date: Date| null): string {
 	if (!(date instanceof Date) || isNaN(date.getTime())) {
 		throw new Error("Invalid Date object provided");
 	}

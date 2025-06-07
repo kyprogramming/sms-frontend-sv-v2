@@ -6,23 +6,32 @@
 
 	let { title = "Confirm Delete", size = "md", selectedName, onDelete, onCancel } = $props();
 
-	function handleModalClick(event: MouseEvent) {
+	function handleModalClick(event: MouseEvent | KeyboardEvent) {
 		event.stopPropagation();
 	}
 
 	function handleDelete() {
 		onDelete?.();
 	}
-    
+
 	function handleCancel() {
 		onCancel?.();
 	}
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div class="modal-overlay" transition:fade={{ duration: 150 }}>
-	<div class="modal-content {size}" onclick={handleModalClick} transition:fly={{ y: -20, duration: 150 }}>
+	<div
+		role="button"
+		tabindex="0"
+		class="modal-content {size}"
+		onclick={handleModalClick}
+		onkeydown={(e) => {
+			if (e.key === "Enter" || e.key === " ") {
+				handleModalClick(e);
+			}
+		}}
+		transition:fly={{ y: -20, duration: 150 }}
+	>
 		<div class="modal-header">
 			<h2>{title}</h2>
 			<button class="close-button" onclick={handleCancel}>&times;</button>
@@ -40,7 +49,7 @@
 				<button type="button" class="btn ripple delete-button" onclick={handleDelete}>
 					<LoaderIcon />
 					{#if !$isLoading}
-                    <Trash2 />
+						<Trash2 />
 					{/if}
 					<span>Delete</span>
 				</button>
@@ -105,15 +114,14 @@
 		padding: 1rem;
 	}
 	.modal-body h1 {
-		font-size:15px;
-        padding-bottom: 0;
-        /* margin-bottom: 1rem; */
-        font-weight: 500;
-        
+		font-size: 15px;
+		padding-bottom: 0;
+		/* margin-bottom: 1rem; */
+		font-weight: 500;
 	}
 
 	.modal-body h2 {
-        font-size:14px;
+		font-size: 14px;
 		font-weight: 600;
 		opacity: 0.7;
 	}

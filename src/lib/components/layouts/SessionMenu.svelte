@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { stopPropagation } from 'svelte/legacy';
+	import { stopPropagation } from "svelte/legacy";
 
 	import { isLoading } from "$lib/stores/loading";
 	import { apiRequest } from "$lib/utils/api";
@@ -7,7 +7,7 @@
 	import { showSnackbar } from "../snackbar/store";
 	import { goto, invalidateAll } from "$app/navigation";
 	import { LogOut, Settings, UserCog } from "@lucide/svelte";
-	import { API_BASE_URL } from '$lib/constants/env.config';
+	import { API_BASE_URL } from "$lib/constants/env.config";
 
 	interface Props {
 		user: User | null;
@@ -30,7 +30,7 @@
 			const response = await apiRequest<any>(`${API_BASE_URL}/auth/logout`, "POST", {});
 			if (response.success) {
 				showSnackbar({ message: response?.message, type: "success" });
-                await goto('/login'); 
+				await goto("/login");
 			}
 		} catch (err: any) {
 			await goto("/login");
@@ -57,9 +57,17 @@
 			<div class="menu-item"><UserCog />Profile</div>
 			<div class="divider"></div>
 			<div class="menu-item menu-item-logout">
-				<button class="logout-button" type="button" disabled={$isLoading} onclick={stopPropagation(onSubmit)}>
+				<button
+					class="logout-button"
+					type="button"
+					disabled={$isLoading}
+					onclick={(event) => {
+						event.stopPropagation();
+						onSubmit();
+					}}
+				>
 					<div class="logout-container">
-						<LogOut color="red"/>
+						<LogOut color="red" />
 						Logout
 					</div>
 				</button>
@@ -67,44 +75,49 @@
 		</div>
 	{/if}
 </div>
+
 <style>
-    
- .menu-item {padding: 0.65rem 1rem; margin: 2px; cursor: pointer; display: flex;align-items: center; gap: 0.5rem;} 
+	.menu-item {
+		padding: 0.65rem 1rem;
+		margin: 2px;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
 
-.dropdown {
-    position: absolute;
-    right: 0;
-    margin-top: 10.8rem;
-    margin-right: 1rem;
-    background: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    width: 200px;
-    z-index: 10;
-}
+	.dropdown {
+		position: absolute;
+		right: 0;
+		margin-top: 10.8rem;
+		margin-right: 1rem;
+		background: white;
+		border-radius: 0.5rem;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+		width: 200px;
+		z-index: 10;
+	}
 
-.logout-container {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #ff0000;
-}
+	.logout-container {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		color: #ff0000;
+	}
 
-.logout-button {
-    background: none;
-    border: none;
-    padding: 0;
-    margin: 0;
-    font: inherit;
-    color: currentColor;
-    cursor: pointer;
-    text-decoration: none;
-}
+	.logout-button {
+		background: none;
+		border: none;
+		padding: 0;
+		margin: 0;
+		font: inherit;
+		color: currentColor;
+		cursor: pointer;
+		text-decoration: none;
+	}
 
-
-.logout-button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
+	.logout-button:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
 </style>

@@ -1,7 +1,3 @@
-<script lang="ts">
-	import { goto } from "$app/navigation";
-</script>
-
 <header class="header">
 	<div class="header_logo">
 		<a href="/">SCHOOL MANAGEMENT</a>

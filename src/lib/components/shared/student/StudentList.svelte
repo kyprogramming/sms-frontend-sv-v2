@@ -3,11 +3,9 @@
 	import { env } from "$env/dynamic/public";
 	import { currentPage, rowsPerPage, totalItems, totalPages } from "$lib/stores/paginationStore";
 	import { deleteSectionById, fetchSectionById, fetchSections } from "$lib/services/section";
-	import { showSnackbar } from "$lib/components/snackbar/store";
-	import { formatDate } from "$lib/utils/formatDate";
+    import { formatDate } from "$lib/utils/formatDate";
 
 	import DataTable from "$lib/components/common/DataTable.svelte";
-	import Modal from "$lib/components/common/Modal.svelte";
 	import ModalDelete from "$lib/components/common/ModalDelete.svelte";
 
 	import { Eye, Pencil, Trash2, Plus, RefreshCw, Search } from "@lucide/svelte";
@@ -16,6 +14,7 @@
 	import { page } from "$app/state";
 	import { goto } from "$app/navigation";
 	import { fetchStudentList } from "$lib/services/student";
+	import { showSnackbar } from "$lib/components/snackbar/store";
 
 	// Props
 	const schoolName = env.PUBLIC_SCHOOL_NAME || "Default School";
@@ -27,7 +26,6 @@
 
 	let isModalOpen = $state(false);
 	let isDeleteModalOpen = $state(false);
-	let isUpdate = $state(false);
 
 	let selectedId = $state("");
 	let selectedName = $state("");
@@ -102,10 +100,6 @@
 	async function handlePageLimitChange() {
 		await refreshAction();
 	}
-
-	// function handleDelete(itemId: string) {
-	// 	openDeleteModal({ _id: itemId });
-	// }
 
 	async function handleAdd() {
 		await goto("/admin/student/create");

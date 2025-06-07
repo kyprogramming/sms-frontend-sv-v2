@@ -18,7 +18,7 @@
 	import { env } from "$env/dynamic/public";
 	import { isEqual } from "$lib/utils/utils";
 	import { MESSAGES } from "$lib/utils/messages";
-	import { formatLocalDate } from "$lib/utils/formatDate";
+	import { formatDate, formatLocalDate } from "$lib/utils/formatDate";
 
 	// Props
 	let { studentData = null, action } = $props();
@@ -27,8 +27,6 @@
 
 	let classData = page.data?.classData || [];
 	let classSections: { _id: string; name: string }[] = $state([]);
-	let selectedDate: Date | null = $state(null);
-	let selectedDateOfBirth: Date | null = $state(null);
 
 	let formData: StudentFormData = $state(initializeStudentFormData());
 	formErrors.set({});
@@ -43,7 +41,6 @@
 		if (action === "update" && studentData) {
 			formData = { studentData: { ...studentData.data }, userData: { ...studentData.data.userId } };
 			classSections = studentData.data.classId ? classData.find((cls: any) => cls._id === studentData.data.classId)?.sectionIds || [] : [];
-			selectedDateOfBirth = studentData.data.profile.dob ? new Date(studentData.data.profile.dob) : null;
 		}
 		touched = {};
 	});
@@ -52,13 +49,9 @@
 		if (action === "update" && studentData) {
 			formData = { studentData: { ...studentData.data }, userData: { ...studentData.data.userId } };
 			classSections = studentData.data.classId ? classData.find((cls: any) => cls._id === studentData.data.classId)?.sectionIds || [] : [];
-			selectedDateOfBirth = studentData.data.profile.dob ? new Date(studentData.data.profile.dob) : null;
-			// formData.studentData.admissionDate = new Date(studentData.admissionDate).toISOString().split("T")[0];
-            formData.studentData.admissionDate = formatLocalDate(studentData.admissionDate);
 		} else {
 			formData = initializeStudentFormData();
 			classSections = [];
-			selectedDateOfBirth = null;
 		}
 
 		formErrors.set({});
@@ -67,19 +60,13 @@
 	}
 
 	function handleAdmissionDateChange(date: Date | null) {
-        console.log("Admission Date",date);
 		if (!date) {
-			formData.studentData.admissionDate = ""; 
+			formData.studentData.admissionDate = "";
 			return;
 		}
-
-		// formData.studentData.admissionDate = new Date(date).toISOString().split("T")[0];
-		formData.studentData.admissionDate = formatLocalDate(date);
-        console.log("Admission Date Updated",formData.studentData.admissionDate );
+		formData.studentData.admissionDate = formatDate(date);
 	}
 	function handleBirthDateChange(date: Date | null) {
-		selectedDateOfBirth = date!;
-
 		if (date) {
 			const year = date.getFullYear();
 			const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
@@ -154,7 +141,7 @@
 
 	// function handleFileChange(event: Event, index: number) {
 	// 	const target = event.target as HTMLInputElement;
-	// 	if (target.files && target.filscriptgth > 0) {
+	// 	if (target.files && target.filsScriptPath > 0) {
 	// 		// documents[index].file = target.files[0];
 	// 	}
 	// }
@@ -249,7 +236,7 @@
 			<!-- Date of Birth -->
 			<div class="col-2">
 				<label for="dob">Date of Birth <span class="required">*</span></label>
-				<DatePicker bind:value={selectedDateOfBirth} onChange={handleBirthDateChange} onClear={handleOnClear} cls={`w-full ${$formErrors["studentData.profile.dob"] && (touched["studentData.profile.dob"] || formSubmitted) ? "input-error" : ""}`} />
+				<DatePicker bind:value={formData.studentData.profile.dob} onChange={handleBirthDateChange} onClear={handleOnClear} cls={`w-full ${$formErrors["studentData.profile.dob"] && (touched["studentData.profile.dob"] || formSubmitted) ? "input-error" : ""}`} />
 				{#if $formErrors["studentData.profile.dob"] && (touched["studentData.profile.dob"] || formSubmitted)}
 					<p class="error-text">{$formErrors["studentData.profile.dob"]}</p>
 				{/if}

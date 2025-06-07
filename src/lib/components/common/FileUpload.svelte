@@ -1,10 +1,5 @@
 <script lang="ts">
-	import { onMount } from "svelte";
-	import { writable } from "svelte/store";
-
-	
 	interface Props {
-		// svelte-ignore export_let_unused
 		id?: string;
 		filePath?: string;
 		onFileSelect?: (file: File) => void;
@@ -12,7 +7,7 @@
 
 	let { id = "", filePath = $bindable(""), onFileSelect = () => {} }: Props = $props();
 
-	let fileInput: HTMLInputElement = $state();
+	let fileInput: HTMLInputElement | undefined = $state();
 	let file: File | null = $state(null);
 	let previewUrl: string = $state("");
 	let uploading = $state(false);

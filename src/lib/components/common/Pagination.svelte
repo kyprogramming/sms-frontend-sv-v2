@@ -5,7 +5,6 @@
 	interface Props {
 		onPaginationChange: () => void;
 		onPageLimitChange: () => void;
-		// onDeleteRefresh: () => void;
 	}
 
 	let { onPaginationChange, onPageLimitChange  }: Props = $props();
@@ -15,11 +14,6 @@
 	let limit = $derived($rowsPerPage);
 	let pages = $derived($totalPages);
 	let items = $derived($totalItems);
-
-    // if($totalPages === 1){
-    //     currentPage.set(1);
-    //     onDeleteRefresh();
-    // }
 
 	// Ranges for the pagination display
 	let startRange = $derived((page - 1) * limit + 1);

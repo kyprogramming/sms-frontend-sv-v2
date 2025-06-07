@@ -8,9 +8,6 @@
         <Loader />
     </div>
 {/if}
-<!-- <div class="sun-spinner">
-	<Loader />
-</div> -->
 
 <style>
 	.sun-spinner {

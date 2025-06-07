@@ -1,5 +1,5 @@
 import { formErrors } from "$lib/stores/formStore";
-import { formatLocalDate } from "$lib/utils/formatDate";
+import { formatDate, formatLocalDate } from "$lib/utils/formatDate";
 import { generateAdmissionNo, getCurrentAcademicYear } from "$lib/utils/utils";
 import { writable } from "svelte/store";
 import { z } from "zod";
@@ -98,11 +98,6 @@ export const studentSchema = z.object({
 
 formErrors.set({});
 export type FormErrors = Partial<Record<any, any>>;
-export type TouchedFields = Partial<Record<any, any>>;
-// export const formErrors = writable<FormErrors>({});
-export const touched = writable<TouchedFields>({});
-export const submitAttempted = writable(false);
-
 export type StudentFormData = z.infer<typeof studentSchema>;
 
 export function initializeStudentFormData(): StudentFormData {
@@ -113,8 +108,7 @@ export function initializeStudentFormData(): StudentFormData {
 		},
 		studentData: {
 			admissionNo: generateAdmissionNo(),
-            // admissionDate: new Date().toISOString().split("T")[0],
-            admissionDate: formatLocalDate(new Date()),
+            admissionDate: formatDate(new Date()),
 			academicYear: getCurrentAcademicYear(),
 			rollNo: "",
 			classId: "",

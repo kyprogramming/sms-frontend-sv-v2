@@ -5,21 +5,26 @@
 <script lang="ts">
 	import { fade, fly } from "svelte/transition";
 
-	let { title = "Title", size = "md", children , onClose ,onCancel } = $props();
+	let { title = "Title", size = "md", children, onClose, onCancel } = $props();
 
-	function handleModalClick(event: MouseEvent) {
+	function handleModalClick(event: MouseEvent | KeyboardEvent) {
 		event.stopPropagation();
 	}
 
-    function handleCancel() {
+	function handleCancel() {
 		onCancel?.();
 	}
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div class="modal-overlay" transition:fade={{ duration: 150 }}>
-	<div class="modal-content" class:sm={size === "sm"} class:md={size === "md"} class:lg={size === "lg"} class:xl={size === "xl"} class:full={size === "full"} onclick={handleModalClick} transition:fly={{ y: -20, duration: 150 }}>
+	<div role="button" 	tabindex="0" class="modal-content" class:sm={size === "sm"} class:md={size === "md"} class:lg={size === "lg"} class:xl={size === "xl"} class:full={size === "full"} 
+    onclick={handleModalClick} 
+    onkeydown={(e) => {
+		if (e.key === 'Enter' || e.key === ' ') {
+			handleModalClick(e);
+		}
+	}}
+    transition:fly={{ y: -20, duration: 150 }}>
 		<div class="modal-header">
 			<h2>{title}</h2>
 			<button class="close-button" onclick={handleCancel}>&times;</button>
