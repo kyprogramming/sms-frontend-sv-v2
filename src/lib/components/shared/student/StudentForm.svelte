@@ -117,7 +117,6 @@
 		if (!isValid) return;
 
 		if (action === "update" && studentData) {
-			// Check if the form data is unchanged before updating
 			const isUnChanged = isEqual(studentData.data, formData.studentData);
 			if (isUnChanged) {
 				showSnackbar({ message: MESSAGES.FORM.NO_CHANGES, type: "warning" });

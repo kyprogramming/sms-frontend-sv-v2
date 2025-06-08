@@ -16,62 +16,60 @@ export const staffSchema = z.object({
 	}),
 	staffData: z.object({
 		profile: z.object({
-			staffId: z.string().min(1),
-			role: z.string(),
-			designation: z.string().optional(),
-			department: z.string().optional(),
-			firstName: z.string().min(1),
+			staffId: z.string().min(1, "Staff Id is required"),
+			role: z.string().min(1, "Role is required"),
+			designation: z.string().min(1, "Designation is required"),
+			department: z.string().min(1, "Department is required"),
+			firstName: z.string().min(1, "First name is required"),
 			middleName: z.string().optional(),
-			lastName: z.string().min(1),
+			lastName: z.string().min(1, "Last name is required"),
 			fatherName: z.string().optional(),
 			motherName: z.string().optional(),
-			email: z.string().email(),
-			gender: z.string(),
+			spouseName: z.string().optional(),
+			email: z
+				.string()
+				.min(1, "Email is required")
+				.email("Invalid email format"),
+			gender: z.string().min(1, "Gender is required"),
 			dob: z.string(),
 			dateOfJoining: z.string().optional(),
-			contactNo: z.string().optional(),
+			contactNo: z.string().min(1, "Contact no is required"),
 			emergencyNo: z.string().optional(),
-			maritalStatus: z.string().optional(),
-			photoUrl: z.string().url().optional(),
-			address: z.string().optional(),
+			maritalStatus: z.string().min(1, "Marital status is required"),
+			photoUrl: z.string().optional(),
+			address: z.string().min(1, "Current address is required"),
 			permanentAddress: z.string().optional(),
-			qualification: z.string().optional(),
+			qualification: z.string().min(1, "Qualification is required"),
 			workExperience: z.string().optional(),
 			note: z.string().optional(),
-			panNumber: z.string().min(1),
+			panNumber: z.string().optional(),
 		}),
 		payroll: z.object({
 			epfNo: z.string().optional(),
 			basicSalary: z.number().nonnegative().optional(),
-			contractType: z.enum(["permanent", "probation"]).optional(),
+			contractType: z.string().optional(),
 			shift: z.string().optional(),
 			workLocation: z.string().optional(),
 		}),
-		leaveAllotments: z
-			.object({
-				medicalLeave: z.number().optional(),
-				casualLeave: z.number().optional(),
-				maternityLeave: z.number().optional(),
-				sickLeave: z.number().optional(),
-			})
-			.optional(),
-		bankDetails: z
-			.object({
-				accountTitle: z.string().optional(),
-				bankAccountNo: z.string().optional(),
-				bankName: z.string().optional(),
-				ifscCode: z.string().optional(),
-				bankBranch: z.string().optional(),
-			})
-			.optional(),
-		socialLinks: z
-			.object({
-				facebook: z.string().url().optional(),
-				twitter: z.string().url().optional(),
-				linkedin: z.string().url().optional(),
-				instagram: z.string().url().optional(),
-			})
-			.optional(),
+		leaveAllotments: z.object({
+			medicalLeave: z.number().optional(),
+			casualLeave: z.number().optional(),
+			maternityLeave: z.number().optional(),
+			sickLeave: z.number().optional(),
+		}),
+		bankDetails: z.object({
+			accountTitle: z.string().optional(),
+			bankAccountNo: z.string().optional(),
+			bankName: z.string().optional(),
+			ifscCode: z.string().optional(),
+			bankBranch: z.string().optional(),
+		}),
+		socialLinks: z.object({
+			facebook: z.string().url().optional(),
+			twitter: z.string().url().optional(),
+			linkedin: z.string().url().optional(),
+			instagram: z.string().url().optional(),
+		}),
 	}),
 });
 
@@ -86,8 +84,8 @@ export function initializeStaffFormData(): StaffFormData {
 			mobile: "",
 		},
 		staffData: {
-            profile: {
-                staffId: "",
+			profile: {
+				staffId: "",
 				role: "",
 				designation: "",
 				department: "",
@@ -96,6 +94,7 @@ export function initializeStaffFormData(): StaffFormData {
 				lastName: "",
 				fatherName: "",
 				motherName: "",
+				spouseName: "",
 				email: "",
 				gender: "",
 				dob: "",
@@ -114,7 +113,7 @@ export function initializeStaffFormData(): StaffFormData {
 			payroll: {
 				epfNo: "",
 				basicSalary: 0,
-				contractType: "permanent",
+				contractType: "",
 				shift: "",
 				workLocation: "",
 			},
@@ -128,7 +127,10 @@ export function initializeStaffFormData(): StaffFormData {
 export function flattenErrors<T>(error: z.ZodFormattedError<T>): FormErrors {
 	const result: FormErrors = {};
 
-	function recurse(err: z.ZodFormattedError<any> | { _errors: any[] }, path: any[] = []) {
+	function recurse(
+		err: z.ZodFormattedError<any> | { _errors: any[] },
+		path: any[] = [],
+	) {
 		// Only proceed with objects
 		if (typeof err !== "object" || err === null) return;
 

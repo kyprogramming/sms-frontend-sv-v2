@@ -6,20 +6,13 @@ export const COOKIE_OPTIONS = {
 	sameSite: "strict" as const,
 	maxAge: 60 * 60 * 24 * 7, // 1 week
 };
-
 export const CASTE_CATEGORIES = [{ name: "General" }, { name: "OBC" }, { name: "SC" }, { name: "ST" }, { name: "Special" }, { name: "Physical Challenged" }];
-export const RELIGIONS = [{ name: "Hindu" }, { name: "Muslim" }, { name: "Other" }];
-export const GENDERS = [{ name: "Male" }, { name: "Female" }, { name: "Other" }];
-export const BLOOD_GROUPS = [{ name: "A+" }, { name: "A-" }, { name: "B+" }, { name: "B-" }, { name: "AB+" }, { name: "AB-" }, { name: "O+" }, { name: "O-" }];
 
-export const SECTIONS = [
-	{ id: 1, name: "A" },
-	{ id: 2, name: "B" },
-	{ id: 3, name: "C" },
-	{ id: 4, name: "D" },
-	{ id: 5, name: "E" },
-	{ id: 6, name: "F" },
-];
+export const RELIGIONS = [{ name: "Hindu" }, { name: "Muslim" }, { name: "Other" }];
+
+export const GENDERS = [{ name: "Male" }, { name: "Female" }, { name: "Other" }];
+
+export const BLOOD_GROUPS = [{ name: "A+" }, { name: "A-" }, { name: "B+" }, { name: "B-" }, { name: "AB+" }, { name: "AB-" }, { name: "O+" }, { name: "O-" }];
 
 export const SUBJECT_TYPE = [
 	{ id: 1, name: "Theory" },
@@ -27,6 +20,12 @@ export const SUBJECT_TYPE = [
 ];
 
 export const GUARDIAN_TYPE = [{ name: "Father" }, { name: "Mother" }, { name: "Other" }];
+export const STAFF_ROLES = [{ name: "Admin" }, { name: "Teacher" }, { name: "Accountant" }, { name: "Librarian" }, { name: "Receptionist" }, { name: "Super Admin" }];
+export const STAFF_DESIGNATIONS = [{ name: "Faculty" }, { name: "Accountant" }, { name: "Admin" }, { name: "Receptionist" }, { name: "Principal" }, { name: "Director" }, { name: "Librarian" }, { name: "Technical Head" }, { name: "Vice Principal" }];
+export const STAFF_DEPARTMENTS = [{ name: "Academic" }, { name: "Library" }, { name: "Sports" }, { name: "Science" }, { name: "Commerce" }, { name: "Arts" }, { name: "Exam" }, { name: "Admin" }, { name: "Finance" }, { name: "Maths" }];
+export const MARITAL_STATUSES = [{ name: "Single" }, { name: "Married" }, { name: "Widowed" }, { name: "Separated" }, { name: "Not Specified" }];
+export const SHIFT = [{ name: "Morning" }, { name: "Afternoon" }, { name: "Evening" }, { name: "Night" }];
+export const CONTRACT_TYPE = [{ name: "Permanent" }, { name: "Probation" }];
 
 
 export const MENU_GROUPS = [

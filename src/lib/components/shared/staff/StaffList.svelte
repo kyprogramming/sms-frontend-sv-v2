@@ -15,6 +15,7 @@
 	import { goto } from "$app/navigation";
 	import { fetchStaffList } from "$lib/services/staff";
 	import { showSnackbar } from "$lib/components/snackbar/store";
+	import { STAFF_DEPARTMENTS, STAFF_DESIGNATIONS, STAFF_ROLES } from "$lib/utils/constants";
 
 	// Props
 	const schoolName = env.PUBLIC_SCHOOL_NAME || "Default School";
@@ -32,21 +33,24 @@
 
 	let classData = page.data?.classData || [];
 	let classSections: { _id: string; name: string }[] = $state([]);
-	let selectedClassId = $state("");
-	let selectedSectionId = $state("");
+	let selectedRole = $state("");
+	let selectedDepartment = $state("");
+	let selectedDesignation = $state("");
 	let formattedStaff = $state(formattedStaffs(response));
 
 	// Column configuration
 	const columns: ColumnConfig[] = [
 		{ key: "_id", label: "Id", visible: false },
 		{ key: "serialNo", label: "Sr #", width: "80px", sortable: true, align: "center" },
-		{ key: "profile.fullName", label: "Name", width: "25%", sortable: true, align: "center" },
-		{ key: "className", label: "Class", width: "auto", sortable: true, align: "center" },
-		{ key: "sectionName", label: "Section", width: "auto", sortable: true, align: "center" },
-		{ key: "profile.dob", label: "DOB", width: "auto", sortable: true, align: "center", format: formatDate },
+		{ key: "profile.fullName", label: "Name", width: "15%", sortable: true, align: "center" },
+		{ key: "profile.role", label: "Role", width: "10%", sortable: true, align: "center" },
+		{ key: "profile.department", label: "Department", width: "10%", sortable: true, align: "center" },
+		{ key: "profile.designation", label: "Designation", width: "10%", sortable: true, align: "center" },
+		{ key: "profile.gender", label: "Gender", width: "10%", sortable: true, align: "center" },
+		{ key: "profile.dob", label: "DOB",  width: "10%", sortable: true, align: "center", format: formatDate },
+		{ key: "profile.dateOfJoining", label: "DOJ",  width: "10%", sortable: true, align: "center", format: formatDate },
 		// { key: "academicYear", label: "Academic Year", width: "auto", sortable: true, align: "center" },
-		{ key: "admissionDate", label: "Admission Date", width: "auto", sortable: true, align: "center", format: formatDate },
-		{ key: "profile.gender", label: "Gender", width: "auto", sortable: true, align: "center" },
+		// { key: "admissionDate", label: "Admission Date", width: "auto", sortable: true, align: "center", format: formatDate },
 	];
 
 	// Actions configuration
@@ -109,11 +113,8 @@
 		await goto(`/admin/staff/update?id=${id}`);
 	}
 
-	function handleClassChange(e: Event) {
-		selectedSectionId = "";
-		const selected = (e.target as HTMLSelectElement).value || "";
-		const selectedClass = classData.find((cls: any) => cls._id === selected);
-		classSections = selectedClass?.sectionIds || [];
+	function handleRoleChange(e: Event) {
+		selectedRole = (e.target as HTMLSelectElement).value || "";
 	}
 
 	async function handleDelete() {
@@ -147,16 +148,16 @@
 	}
 
 	async function searchAction() {
-		// if (selectedClassId == "" && selectedSectionId == "" && searchText === "") return;
-		const params = new URLSearchParams({ classId: selectedClassId, sectionId: selectedSectionId, search: searchText, page: String($currentPage), limit: String($rowsPerPage) });
+		// if (selectedRole == "" && selectedDepartment == "" && searchText === "") return;
+		const params = new URLSearchParams({ role: selectedRole, department: selectedDepartment, designation: selectedDesignation, search: searchText, page: String($currentPage), limit: String($rowsPerPage) });
 		const json = await fetchStaffList(params);
 		response = { ...json };
 		formattedStaff = formattedStaffs(response);
 	}
 
 	async function refreshAction() {
-		selectedClassId = selectedSectionId = searchText = "";
-		const params = new URLSearchParams({ classId: selectedClassId, sectionId: selectedSectionId, search: searchText, page: String($currentPage), limit: String($rowsPerPage) });
+		selectedRole = selectedDepartment = selectedDesignation = searchText = "";
+		const params = new URLSearchParams({ role: selectedRole, department: selectedDepartment, designation: selectedDesignation, search: searchText, page: String($currentPage), limit: String($rowsPerPage) });
 		const json = await fetchStaffList(params);
 		response = { ...json };
 		formattedStaff = formattedStaffs(response);
@@ -190,17 +191,24 @@
 
 <div class="class-container">
 	<div class="search-container">
-		<select id="classId" style="width:150px;" bind:value={selectedClassId} onchange={handleClassChange}>
-			<option value="" disabled selected>Select Class</option>
-			{#each classData as cls}
-				<option value={cls._id}>{cls.name}</option>
+		<select id="role" style="width:150px;" bind:value={selectedRole} onchange={(e)=> selectedRole = (e.target as HTMLSelectElement).value || ""}>
+			<option value="" selected>Select Role</option>
+			{#each STAFF_ROLES as role}
+				<option value={role.name}>{role.name}</option>
 			{/each}
 		</select>
 
-		<select id="sectionId" style="width:150px;" bind:value={selectedSectionId} disabled={selectedClassId === ""}>
-			<option value="" disabled selected>Select Section</option>
-			{#each classSections as section}
-				<option value={section._id}>{section.name}</option>
+		<select id="department" style="width:150px;" bind:value={selectedDepartment} onchange={(e)=> selectedDepartment = (e.target as HTMLSelectElement).value || ""}>
+			<option value="" selected>Select Department</option>
+			{#each STAFF_DEPARTMENTS as department}
+				<option value={department.name}>{department.name}</option>
+			{/each}
+		</select>
+
+        <select id="designation" style="width:150px;" bind:value={selectedDesignation} onchange={(e)=> selectedDesignation = (e.target as HTMLSelectElement).value || ""}>
+			<option value="" selected>Select Designation</option>
+			{#each STAFF_DESIGNATIONS as designation}
+				<option value={designation.name}>{designation.name}</option>
 			{/each}
 		</select>
 

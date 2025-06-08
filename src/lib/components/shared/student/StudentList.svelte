@@ -191,7 +191,7 @@
 <div class="class-container">
 	<div class="search-container">
 		<select id="classId" style="width:150px;" bind:value={selectedClassId} onchange={handleClassChange}>
-			<option value="" disabled selected>Select Class</option>
+			<option value="" selected>Select Class</option>
 			{#each classData as cls}
 				<option value={cls._id}>{cls.name}</option>
 			{/each}

@@ -4,12 +4,19 @@
 	import {
 		BLOOD_GROUPS,
 		CASTE_CATEGORIES,
+		CONTRACT_TYPE,
 		GENDERS,
 		GUARDIAN_TYPE,
+		MARITAL_STATUSES,
+		SHIFT,
+		STAFF_DEPARTMENTS,
+		STAFF_DESIGNATIONS,
+		STAFF_ROLES,
 	} from "$lib/utils/constants";
 	import { isLoading } from "$lib/stores/loading";
 
 	import {
+		flattenErrors,
 		initializeStaffFormData,
 		staffSchema,
 		type StaffFormData,
@@ -87,14 +94,16 @@
 
 	function handleBlur(field: keyof any) {
 		touched = { ...touched, [field]: true };
+		console.log("touched", touched);
 		validateForm(staffSchema, formData);
 	}
 
 	async function onSubmit(event: Event) {
 		event.preventDefault();
 		formSubmitted = true;
-
 		const isValid = validateForm(staffSchema, formData);
+		console.log("isValid", isValid);
+		console.log("formData", formData);
 		if (!isValid) return;
 
 		if (action === "update" && staffData) {
@@ -132,71 +141,45 @@
 					true,
 					"text",
 					formData.staffData.profile.staffId,
-					(val) => (formData.staffData.profile.firstName = val),
+					(val) => (formData.staffData.profile.staffId = String(val)),
 					20,
 				)}
 			</div>
 
 			<!-- Role -->
 			<div class="col-2">
-				<label for="classId">Role <span class="required">*</span></label>
-				<select
-					id="classId"
-					class={`w-full ${formData.staffData.profile.role === "" ? "placeholder-gray" : ""} ${$formErrors["staffData.profile.role"] && (touched["staffData.profile.role"] || formSubmitted) ? "input-error" : ""}`}
-					bind:value={formData.staffData.profile.role}
-				>
-					<option value="" selected>Select role</option>
-					<!-- {#each classData as cls}
-						<option value={cls._id}>{cls.name}</option>
-					{/each} -->
-				</select>
-				{#if $formErrors["staffData.profile.role"] && (touched["staffData.profile.role"] || formSubmitted)}
-					<p class="error-text">{$formErrors["staffData.profile.role"]}</p>
-				{/if}
+				{@render renderSelect(
+					"staffData.profile.role",
+					"Role",
+					true,
+					STAFF_ROLES,
+					formData.staffData.profile.role,
+					(val) => (formData.staffData.profile.role = val),
+				)}
 			</div>
 
 			<!-- Designation -->
 			<div class="col-2">
-				<label for="designation"
-					>Designation <span class="required">*</span></label
-				>
-				<select
-					id="designation"
-					class={`w-full ${formData.staffData.profile.designation === "" ? "placeholder-gray" : ""} ${$formErrors["staffData.profile.designation"] && (touched["staffData.profile.designation"] || formSubmitted) ? "input-error" : ""}`}
-					bind:value={formData.staffData.profile.designation}
-				>
-					<option value="" selected>Select designation</option>
-					<!-- {#each classData as cls}
-						<option value={cls._id}>{cls.name}</option>
-					{/each} -->
-				</select>
-				{#if $formErrors["staffData.profile.designation"] && (touched["staffData.profile.designation"] || formSubmitted)}
-					<p class="error-text">
-						{$formErrors["staffData.profile.designation"]}
-					</p>
-				{/if}
+				{@render renderSelect(
+					"staffData.profile.designation",
+					"Designation",
+					true,
+					STAFF_DESIGNATIONS,
+					formData.staffData.profile.designation,
+					(val) => (formData.staffData.profile.designation = val),
+				)}
 			</div>
 
 			<!-- Department -->
 			<div class="col-2">
-				<label for="designation"
-					>Department <span class="required">*</span></label
-				>
-				<select
-					id="designation"
-					class={`w-full ${formData.staffData.profile.department === "" ? "placeholder-gray" : ""} ${$formErrors["staffData.profile.department"] && (touched["staffData.profile.department"] || formSubmitted) ? "input-error" : ""}`}
-					bind:value={formData.staffData.profile.department}
-				>
-					<option value="" selected>Select department</option>
-					<!-- {#each classData as cls}
-						<option value={cls._id}>{cls.name}</option>
-					{/each} -->
-				</select>
-				{#if $formErrors["staffData.profile.department"] && (touched["staffData.profile.department"] || formSubmitted)}
-					<p class="error-text">
-						{$formErrors["staffData.profile.department"]}
-					</p>
-				{/if}
+				{@render renderSelect(
+					"staffData.profile.department",
+					"Department",
+					true,
+					STAFF_DEPARTMENTS,
+					formData.staffData.profile.department,
+					(val) => (formData.staffData.profile.department = val),
+				)}
 			</div>
 
 			<!-- Date of Joining -->
@@ -214,11 +197,11 @@
 			<div class="col-2">
 				{@render renderInput(
 					"staffData.profile.qualification",
-					"Qualification",
+					"Highest Qualification",
 					false,
 					"text",
 					formData.staffData.profile.qualification ?? "",
-					(val) => (staffData.profile.qualification = val),
+					(val) => (formData.staffData.profile.qualification = String(val)),
 					20,
 				)}
 			</div>
@@ -231,7 +214,7 @@
 					true,
 					"text",
 					formData.staffData.profile.firstName ?? "",
-					(val) => (staffData.profile.firstName = val),
+					(val) => (formData.staffData.profile.firstName = String(val)),
 					20,
 				)}
 			</div>
@@ -244,7 +227,7 @@
 					false,
 					"text",
 					formData.staffData.profile.middleName ?? "",
-					(val) => (staffData.profile.middleName = val),
+					(val) => (formData.staffData.profile.middleName = String(val)),
 					20,
 				)}
 			</div>
@@ -257,7 +240,7 @@
 					true,
 					"text",
 					formData.staffData.profile.lastName ?? "",
-					(val) => (staffData.profile.lastName = val),
+					(val) => (formData.staffData.profile.lastName = String(val)),
 					20,
 				)}
 			</div>
@@ -278,35 +261,26 @@
 
 			<!-- Gender -->
 			<div class="col-2">
-				<label for="gender">Gender <span class="required">*</span></label>
-				<select
-					class={`w-full ${formData.staffData.profile.gender === "" ? "placeholder-gray" : ""} ${$formErrors["staffData.profile.gender"] && (touched["staffData.profile.gender"] || formSubmitted) ? "input-error" : ""}`}
-					bind:value={formData.staffData.profile.gender}
-				>
-					<option value="" selected>Select gender</option>
-					{#each GENDERS as gender}
-						<option value={gender.name}>{gender.name}</option>
-					{/each}
-				</select>
-				{#if $formErrors["staffData.profile.gender"] && (touched["staffData.profile.gender"] || formSubmitted)}
-					<p class="error-text">{$formErrors["staffData.profile.gender"]}</p>
-				{/if}
+				{@render renderSelect(
+					"staffData.profile.gender",
+					"Gender",
+					true,
+					GENDERS,
+					formData.staffData.profile.gender,
+					(val) => (formData.staffData.profile.gender = val),
+				)}
 			</div>
 
 			<!--  Marital Status -->
 			<div class="col-2">
-				<label for="maritalStatus">
-					Marital Status <span class="required">*</span></label
-				>
-				<select
-					class={`w-full`}
-					bind:value={formData.staffData.profile.maritalStatus}
-				>
-					<option value="" selected>Select Marital Status</option>
-					<!-- {#each GENDERS as gender}
-						<option value={gender.name}>{gender.name}</option>
-					{/each} -->
-				</select>
+				{@render renderSelect(
+					"staffData.profile.maritalStatus",
+					"Marital Status",
+					true,
+					MARITAL_STATUSES,
+					formData.staffData.profile.maritalStatus,
+					(val) => (formData.staffData.profile.maritalStatus = val),
+				)}
 			</div>
 
 			<!-- Email -->
@@ -314,10 +288,10 @@
 				{@render renderInput(
 					"staffData.profile.email",
 					"Email",
-					false,
+					true,
 					"text",
 					formData.staffData.profile.email ?? "",
-					(val) => (formData.staffData.profile.email = val),
+					(val) => (formData.staffData.profile.email = String(val)),
 					50,
 				)}
 			</div>
@@ -327,10 +301,10 @@
 				{@render renderInput(
 					"staffData.profile.contactNo",
 					"Contact No",
-					false,
+					true,
 					"tel",
 					formData.staffData.profile.contactNo ?? "",
-					(val) => (formData.staffData.profile.contactNo = val),
+					(val) => (formData.staffData.profile.contactNo = String(val)),
 					10,
 				)}
 			</div>
@@ -343,7 +317,7 @@
 					false,
 					"tel",
 					formData.staffData.profile.emergencyNo ?? "",
-					(val) => (formData.staffData.profile.emergencyNo = val),
+					(val) => (formData.staffData.profile.emergencyNo = String(val)),
 					10,
 				)}
 			</div>
@@ -356,7 +330,7 @@
 					false,
 					"text",
 					formData.staffData.profile.fatherName ?? "",
-					(val) => (staffData.profile.fatherName = val),
+					(val) => (formData.staffData.profile.fatherName = String(val)),
 					20,
 				)}
 			</div>
@@ -369,7 +343,7 @@
 					false,
 					"text",
 					formData.staffData.profile.motherName ?? "",
-					(val) => (staffData.profile.motherName = val),
+					(val) => (formData.staffData.profile.motherName = String(val)),
 					20,
 				)}
 			</div>
@@ -377,12 +351,12 @@
 			<!-- Spouse Name -->
 			<div class="col-2">
 				{@render renderInput(
-					"staffData.profile.motherName",
+					"staffData.profile.spouseName",
 					"Spouse Name",
 					false,
 					"text",
-					formData.staffData.profile.motherName ?? "",
-					(val) => (staffData.profile.motherName = val),
+					formData.staffData.profile.spouseName ?? "",
+					(val) => (formData.staffData.profile.spouseName = String(val)),
 					20,
 				)}
 			</div>
@@ -395,7 +369,7 @@
 					false,
 					"text",
 					formData.staffData.profile.panNumber ?? "",
-					(val) => (staffData.profile.panNumber = val),
+					(val) => (formData.staffData.profile.panNumber = String(val)),
 					20,
 				)}
 			</div>
@@ -408,7 +382,7 @@
 					false,
 					"text",
 					formData.staffData.profile.workExperience ?? "",
-					(val) => (staffData.profile.workExperience = val),
+					(val) => (formData.staffData.profile.workExperience = String(val)),
 					20,
 				)}
 			</div>
@@ -421,7 +395,7 @@
 					false,
 					"text",
 					formData.staffData.profile.note ?? "",
-					(val) => (staffData.profile.note = val),
+					(val) => (formData.staffData.profile.note = String(val)),
 					20,
 				)}
 			</div>
@@ -451,6 +425,239 @@
 		</div>
 	</div>
 
+	<!--Payroll Details -->
+	<div class="card-wrapper">
+		<h1>Payroll Details</h1>
+		<div class="grid-12">
+			<div class="col-2">
+				{@render renderInput(
+					"staffData.payroll.epfNo",
+					"EPF No",
+					false,
+					"text",
+					formData.staffData.payroll.epfNo ?? "",
+					(val) => (formData.staffData.payroll.epfNo = String(val)),
+					20,
+				)}
+			</div>
+
+			<div class="col-2">
+				{@render renderInput(
+					"staffData.payroll.basicSalary",
+					"Basic Salary",
+					false,
+					"text",
+					formData.staffData.payroll.basicSalary ?? 0,
+					(val) => (formData.staffData.payroll.basicSalary = Number(val)),
+					10,
+				)}
+			</div>
+
+			<div class="col-2">
+				{@render renderSelect(
+					"staffData.payroll.contractType",
+					"Contract Type",
+					false,
+					CONTRACT_TYPE,
+					formData.staffData.payroll.contractType,
+					(val) => (formData.staffData.payroll.contractType = val),
+				)}
+			</div>
+
+			<div class="col-2">
+				{@render renderSelect(
+					"staffData.payroll.shift",
+					"Shift",
+					false,
+					SHIFT,
+					formData.staffData.payroll.shift,
+					(val) => (formData.staffData.payroll.shift = val),
+				)}
+			</div>
+
+			<div class="col-4">
+				{@render renderInput(
+					"staffData.payroll.workLocation",
+					"Location",
+					false,
+					"text",
+					formData.staffData.payroll.workLocation ?? "",
+					(val) => (formData.staffData.payroll.workLocation = String(val)),
+					20,
+				)}
+			</div>
+		</div>
+	</div>
+
+	<!-- Leave Allotments -->
+	<div class="card-wrapper">
+		<h1>Leave Allotments</h1>
+		<div class="grid-12">
+			<div class="col-2">
+				{@render renderInput(
+					"staffData.leaveAllotments.medicalLeave",
+					"Medical Leave",
+					false,
+					"text",
+					formData.staffData.leaveAllotments.medicalLeave ?? 0,
+					(val) =>
+						(formData.staffData.leaveAllotments.medicalLeave = Number(val)),
+					10,
+				)}
+			</div>
+
+			<div class="col-2">
+				{@render renderInput(
+					"staffData.leaveAllotments.casualLeave",
+					"Casual Leave",
+					false,
+					"text",
+					formData.staffData.leaveAllotments.casualLeave ?? 0,
+					(val) =>
+						(formData.staffData.leaveAllotments.casualLeave = Number(val)),
+					10,
+				)}
+			</div>
+			<div class="col-2">
+				{@render renderInput(
+					"staffData.leaveAllotments.maternityLeave",
+					"Maternity Leave",
+					false,
+					"text",
+					formData.staffData.leaveAllotments.maternityLeave ?? 0,
+					(val) =>
+						(formData.staffData.leaveAllotments.maternityLeave = Number(val)),
+					10,
+				)}
+			</div>
+			<div class="col-2">
+				{@render renderInput(
+					"staffData.leaveAllotments.sickLeave",
+					"Sick Leave",
+					false,
+					"text",
+					formData.staffData.leaveAllotments.sickLeave ?? 0,
+					(val) => (formData.staffData.leaveAllotments.sickLeave = Number(val)),
+					10,
+				)}
+			</div>
+		</div>
+	</div>
+
+	<!-- Bank Details -->
+	<div class="card-wrapper">
+		<h1>Bank Details</h1>
+		<div class="grid-12">
+			<div class="col-2">
+				{@render renderInput(
+					"staffData.bankDetails.accountTitle",
+					"Account Title",
+					false,
+					"text",
+					formData.staffData.bankDetails.accountTitle ?? "",
+					(val) => (formData.staffData.bankDetails.accountTitle = String(val)),
+					50,
+				)}
+			</div>
+
+			<div class="col-2">
+				{@render renderInput(
+					"staffData.bankDetails.bankAccountNo",
+					"Bank Account No",
+					false,
+					"text",
+					formData.staffData.bankDetails.bankAccountNo ?? "",
+					(val) => (formData.staffData.bankDetails.bankAccountNo = String(val)),
+					30,
+				)}
+			</div>
+			<div class="col-2">
+				{@render renderInput(
+					"staffData.bankDetails.bankName",
+					"Bank Name",
+					false,
+					"text",
+					formData.staffData.bankDetails.bankName ?? "",
+					(val) => (formData.staffData.bankDetails.bankName = String(val)),
+					50,
+				)}
+			</div>
+			<div class="col-2">
+				{@render renderInput(
+					"staffData.bankDetails.ifscCode",
+					"IFSC Code",
+					false,
+					"text",
+					formData.staffData.bankDetails.ifscCode ?? "",
+					(val) => (formData.staffData.bankDetails.ifscCode = String(val)),
+					20,
+				)}
+			</div>
+			<div class="col-4">
+				{@render renderInput(
+					"staffData.bankDetails.bankBranch",
+					"Bank Branch",
+					false,
+					"text",
+					formData.staffData.bankDetails.bankBranch ?? "",
+					(val) => (formData.staffData.bankDetails.bankBranch = String(val)),
+					50,
+				)}
+			</div>
+		</div>
+	</div>
+
+	<!-- Bank Details -->
+	<div class="card-wrapper">
+		<h1>Social Links</h1>
+		<div class="grid-12">
+			<div class="col-3">
+				{@render renderInput(
+					"staffData.socialLinks.facebook",
+					"Facebook URL",
+					false,
+					"text",
+					formData.staffData.socialLinks.facebook ?? "",
+					(val) => (formData.staffData.socialLinks.facebook = String(val)),
+					100,
+				)}
+			</div>
+
+			<div class="col-3">
+				{@render renderInput(
+					"staffData.socialLinks.twitter",
+					"Twitter URL",
+					false,
+					"text",
+					formData.staffData.socialLinks.twitter ?? "",
+					(val) => (formData.staffData.socialLinks.twitter = String(val)),
+					100,
+				)}
+			</div>
+			<div class="col-3">
+				{@render renderInput(
+					"staffData.socialLinks.linkedin",
+					"LinkedIn URL",
+					false,
+					"text",
+					formData.staffData.socialLinks.linkedin ?? "",
+					(val) => (formData.staffData.socialLinks.linkedin = String(val)),
+					100,
+				)}
+			</div>
+			<div class="col-3">
+				{@render renderInput(
+					"staffData.socialLinks.instagram",
+					"Instagram URL",
+					false,
+					"text",
+					formData.staffData.socialLinks.instagram ?? "",
+					(val) => (formData.staffData.socialLinks.instagram = String(val)),
+					100,
+				)}
+			</div>
+		</div>
+	</div>
 	<!-- Upload Photo -->
 	<div class="card-wrapper">
 		<h1>Upload Photos</h1>
@@ -539,8 +746,8 @@
 	title: string,
 	isRequired = true,
 	type = "text",
-	value: string,
-	onInput: (val: string) => void,
+	value: string | number | undefined,
+	onInput: (val: string | number) => void,
 	length = 100,
 )}
 	<label for={fieldName}>
@@ -552,9 +759,10 @@
 		{type}
 		name={fieldName}
 		class={`w-full ${$formErrors[fieldName] && (touched[fieldName] || formSubmitted) ? "input-error" : ""}`}
-		{value}
+		value={value !== undefined ? String(value) : ""}
 		oninput={(e) => {
-			onInput((e.target as HTMLInputElement).value);
+			const inputValue = (e.target as HTMLInputElement).value;
+			onInput(type === "number" ? Number(inputValue) : inputValue);
 			validateForm(staffSchema, formData);
 		}}
 		onblur={() => handleBlur(fieldName)}
@@ -592,6 +800,40 @@
 		maxLength={length}
 		placeholder="Enter {title.toLowerCase()}"
 	></textarea>
+
+	{#if $formErrors[fieldName] && (touched[fieldName] || formSubmitted)}
+		<p class="error-text">{$formErrors[fieldName]}</p>
+	{/if}
+{/snippet}
+
+{#snippet renderSelect(
+	fieldName: string,
+	title: string,
+	isRequired = true,
+	options: { name: string }[],
+	value: string | undefined,
+	onChange: (val: string) => void,
+)}
+	<label for={fieldName}>
+		{title}
+		{#if isRequired}<span class="required">*</span>{/if}
+	</label>
+	<select
+		id={fieldName}
+		name={fieldName}
+		class={`w-full ${value === "" ? "placeholder-gray" : ""} ${$formErrors[fieldName] && (touched[fieldName] || formSubmitted) ? "input-error" : ""}`}
+		{value}
+		onchange={(e) => {
+			onChange((e.target as HTMLSelectElement).value);
+			validateForm(staffSchema, formData);
+		}}
+		onblur={() => handleBlur(fieldName)}
+	>
+		<option value="" selected>Select {title.toLowerCase()}</option>
+		{#each options as opt}
+			<option value={opt.name}>{opt.name}</option>
+		{/each}
+	</select>
 
 	{#if $formErrors[fieldName] && (touched[fieldName] || formSubmitted)}
 		<p class="error-text">{$formErrors[fieldName]}</p>
