@@ -3,7 +3,6 @@
 
 	import { formatDateToLocalYYYYMMDD } from "$lib/utils/utils";
 
-
 	interface Props {
 		id?: string;
 		value?: Date | string | null;
@@ -14,15 +13,30 @@
 		cls?: string;
 	}
 
-	let { id = "", value = $bindable(null), onChange = () => {}, onBlur = () => {}, onClear = () => {}, defaultToday = false, cls = "" }: Props = $props();
+	let {
+		id = "",
+		value = $bindable(null),
+		onChange = () => {},
+		onBlur = () => {},
+		onClear = () => {},
+		defaultToday = false,
+		cls = "",
+	}: Props = $props();
 
 	let showCalendar = $state(false);
-	let selectedDate: Date | null = $state(value instanceof Date ? value : value ? new Date(value) : null);
+	let selectedDate: Date | null = $state(
+		value instanceof Date ? value : value ? new Date(value) : null,
+	);
 	let calendarRef: HTMLDivElement | undefined = $state();
 
 	const today = new Date();
-	let currentMonth = $derived(selectedDate ? selectedDate.getMonth() : today.getMonth());
-	let currentYear = $derived(selectedDate ? selectedDate.getFullYear() : today.getFullYear());
+	let currentMonth = $derived(
+		selectedDate ? selectedDate.getMonth() : today.getMonth(),
+	);
+	let currentYear = $derived(
+		selectedDate ? selectedDate.getFullYear() : today.getFullYear(),
+	);
+	let showYearPicker = $state(false);
 
 	// Helper function to safely parse dates
 	function safeDateParse(date: Date | string | null): Date | null {
@@ -44,8 +58,6 @@
 		value: i,
 		name: new Date(2000, i, 1).toLocaleString("default", { month: "long" }),
 	}));
-
-	const years = Array.from({ length: 27 }, (_, i) => today.getFullYear() - 25 + i);
 
 	function toggleCalendar() {
 		showCalendar = !showCalendar;
@@ -72,7 +84,11 @@
 
 	function formatDate(date: Date | null): string {
 		if (!date) return "";
-		const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "short", day: "numeric" };
+		const options: Intl.DateTimeFormatOptions = {
+			year: "numeric",
+			month: "short",
+			day: "numeric",
+		};
 		return date.toLocaleDateString(undefined, options);
 	}
 
@@ -143,7 +159,10 @@
 		if (parsedValue !== selectedDate) {
 			if (parsedValue === null) {
 				selectedDate = null;
-			} else if (!selectedDate || parsedValue.getTime() !== selectedDate.getTime()) {
+			} else if (
+				!selectedDate ||
+				parsedValue.getTime() !== selectedDate.getTime()
+			) {
 				selectedDate = parsedValue;
 				currentMonth = parsedValue.getMonth();
 				currentYear = parsedValue.getFullYear();
@@ -152,11 +171,39 @@
 	});
 </script>
 
-<div class="datepicker-wrapper" bind:this={calendarRef} use:clickOutside={() => (showCalendar = false)}>
+<div
+	class="datepicker-wrapper"
+	bind:this={calendarRef}
+	use:clickOutside={() => (showCalendar = false)}
+>
 	<div class="input-container">
-		<input {id} type="text" readonly onclick={toggleCalendar} value={formatDate(selectedDate)} onblur={onBlur} class={cls} placeholder="Select date" />
-		<button class="calendar-icon" type="button" onclick={toggleCalendar}  aria-label="Toggle calendar">
-			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+		<input
+			{id}
+			type="text"
+			readonly
+			onclick={toggleCalendar}
+			value={formatDate(selectedDate)}
+			onblur={onBlur}
+			class={cls}
+			placeholder="Select date"
+		/>
+		<button
+			class="calendar-icon"
+			type="button"
+			onclick={toggleCalendar}
+			aria-label="Toggle calendar"
+		>
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="16"
+				height="16"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			>
 				<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
 				<line x1="16" y1="2" x2="16" y2="6"></line>
 				<line x1="8" y1="2" x2="8" y2="6"></line>
@@ -170,16 +217,51 @@
 			<div class="calendar">
 				<div class="calendar-header">
 					<div class="month-year-selectors">
-						<select class="month-selector" value={currentMonth} onchange={changeMonth}>
+						<select
+							class="month-selector"
+							value={currentMonth}
+							onchange={changeMonth}
+						>
 							{#each months as month}
 								<option value={month.value}>{month.name}</option>
 							{/each}
 						</select>
-						<select class="year-selector" value={currentYear} onchange={changeYear}>
-							{#each years as year}
-								<option value={year}>{year}</option>
-							{/each}
-						</select>
+						<div class="year-selector-wrapper">
+							<button
+								class="btn w-100"
+								type="button"
+								onclick={() => (showYearPicker = !showYearPicker)}
+							>
+								{currentYear}
+							</button>
+
+							{#if showYearPicker}
+								<div class="year-picker">
+									{#each Array(100) as _, i}
+										<div
+											role="button"
+											tabindex="0"
+											class="year-option {currentYear ===
+											today.getFullYear() - i
+												? 'selected'
+												: ''}"
+											onclick={() => {
+												currentYear = today.getFullYear() - i;
+												showYearPicker = false;
+											}}
+											onkeydown={(e) => {
+												if (e.key === "Enter" || e.key === " ") {
+													currentYear = today.getFullYear() - i;
+													showYearPicker = false;
+												}
+											}}
+										>
+											{today.getFullYear() - i}
+										</div>
+									{/each}
+								</div>
+							{/if}
+						</div>
 					</div>
 				</div>
 
@@ -200,7 +282,11 @@
 						<div
 							role="button"
 							tabindex="0"
-							class="calendar-day {selectedDate?.getDate() === i + 1 && selectedDate?.getMonth() === currentMonth && selectedDate?.getFullYear() === currentYear ? 'selected' : ''}"
+							class="calendar-day {selectedDate?.getDate() === i + 1 &&
+							selectedDate?.getMonth() === currentMonth &&
+							selectedDate?.getFullYear() === currentYear
+								? 'selected'
+								: ''}"
 							onclick={(e) => handleDayClick(i + 1, e)}
 							onkeydown={(e) => {
 								if (e.key === "Enter" || e.key === " ") {
@@ -352,13 +438,13 @@
 	}
 
 	.calendar-day.selected {
-		background: #646cff;
+		background: var(--clr-pri);
 		color: #fff;
 	}
 
 	.calendar-day.today {
 		font-weight: bold;
-		color: #646cff;
+		color: var(--clr-pri);
 	}
 
 	.calendar-day.today.selected {
@@ -374,9 +460,9 @@
 	.today-button {
 		width: 100%;
 		background: #f0f0f0;
-		border: none;
+		border: 1px solid #ccc;
 		border-radius: 4px;
-		padding: 0.5rem 1rem;
+		padding: 9px 1rem;
 		cursor: pointer;
 		font-size: 0.8rem;
 		transition: background-color 0.2s;
@@ -384,6 +470,49 @@
 
 	.today-button:hover {
 		background: #e0e0e0;
+	}
+
+	.year-selector-wrapper {
+		position: relative;
+		width: 120px;
+	}
+
+	.btn-year-display {
+		background-color: rgb(236, 236, 236);
+		border: 1px;
+	}
+
+	.year-picker {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		background: #fff;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		max-height: 200px;
+		overflow-y: auto;
+		width: 100%;
+		margin-top: 0.25rem;
+		z-index: 1002;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+	}
+
+	.year-option {
+		padding: 0.5rem;
+		text-align: center;
+		cursor: pointer;
+		font-size: 0.875rem;
+		transition: background 0.2s;
+	}
+
+	.year-option:hover {
+		background-color: #f0f0f0;
+	}
+
+	.year-option.selected {
+		background-color: var(--clr-pri);
+		color: white;
+		font-weight: bold;
 	}
 
 	@keyframes fadeIn {
