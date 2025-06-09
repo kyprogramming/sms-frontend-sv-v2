@@ -3,7 +3,6 @@ import { classList } from "$lib/stores/masterData";
 import type { LayoutServerLoad } from "./$types";
 
 const url = import.meta.env.SSR && ENV === "development" ? `${API_BASE_URL}` : `${UI_BASE_URL}${API_BASE_URL}`;
-console.log("API URL:", url);
 export const load: LayoutServerLoad = async ({ locals, cookies }) => {
 	if (!locals.user) {
 		return {

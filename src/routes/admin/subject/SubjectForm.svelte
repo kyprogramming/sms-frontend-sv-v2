@@ -16,7 +16,7 @@
 	import { SUBJECT_TYPE } from "$lib/utils/constants";
 
 	let { onRefreshPage, subjectData = null, action } = $props();
-    console.log("SubjectForm props:", {  subjectData, action });
+    
 	// Reactive form state
 	let formData: SubjectFormType = $state({ name: "", code: "", type: 0 });
 	let touched: Partial<Record<keyof SubjectFormType, boolean>> = $state({ name: false, code: false, type: false });

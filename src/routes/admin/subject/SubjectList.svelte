@@ -141,7 +141,6 @@
 
 	async function refreshAction() {
 		const params = new URLSearchParams({ search: searchText || "", page: String($currentPage), limit: String($rowsPerPage) });
-		console.log("Params:", params.toString(), $currentPage, $rowsPerPage, $totalPages, $totalItems);
 		const json = await fetchSubjects(params);
 		isModalOpen = false;
 		response = { ...json };

@@ -12,8 +12,6 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 		};
 	}
 
-
-	// console.log("locals.user", locals.user);
 	return {
 		user: locals.user,
 		role: locals.user.role,

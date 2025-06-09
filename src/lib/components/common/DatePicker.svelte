@@ -9,11 +9,12 @@
 		value?: Date | string | null;
 		onChange?: (date: Date | null) => void;
 		onClear?: (date: Date | null) => void;
+		onBlur?: () => void;
 		defaultToday?: boolean;
 		cls?: string;
 	}
 
-	let { id = "", value = $bindable(null), onChange = () => {}, onClear = () => {}, defaultToday = false, cls = "" }: Props = $props();
+	let { id = "", value = $bindable(null), onChange = () => {}, onBlur = () => {}, onClear = () => {}, defaultToday = false, cls = "" }: Props = $props();
 
 	let showCalendar = $state(false);
 	let selectedDate: Date | null = $state(value instanceof Date ? value : value ? new Date(value) : null);
@@ -153,7 +154,7 @@
 
 <div class="datepicker-wrapper" bind:this={calendarRef} use:clickOutside={() => (showCalendar = false)}>
 	<div class="input-container">
-		<input {id} type="text" readonly onclick={toggleCalendar} value={formatDate(selectedDate)} class={cls} placeholder="Select date" />
+		<input {id} type="text" readonly onclick={toggleCalendar} value={formatDate(selectedDate)} onblur={onBlur} class={cls} placeholder="Select date" />
 		<button class="calendar-icon" type="button" onclick={toggleCalendar}  aria-label="Toggle calendar">
 			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 				<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>

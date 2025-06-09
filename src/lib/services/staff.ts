@@ -24,9 +24,7 @@ export async function updateStaff(id: string, data: any) {
 
 // Fetch staff list
 export async function fetchStaffList(params: URLSearchParams) {
-    console.log("params:", params.toString());
     let res = await fetchWrapper(`${API_BASE_URL}/staff?${params.toString()}`, { method: "GET" });
-    console.log("res:", res);
 	return handleResponse(res, "Failed to fetch staff");
 }
 

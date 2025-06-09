@@ -3,35 +3,6 @@ import type { ZodSchema, z } from "zod";
 
 export type FormErrors = Partial<Record<any, any>>;
 
-// export function validateForm<T>(schema: ZodSchema<T>, data: T): boolean {
-// 	const result = schema.safeParse(data);
-
-// 	if (!result.success) {
-// 		const errors: FormErrors<T> = {};
-// 		const zodError = result.error as ZodError<T>;
-
-// 		zodError.errors.forEach((err) => {
-// 			if (err.path.length > 0) {
-// 				const key = err.path[0] as keyof T;
-// 				errors[key] = err.message;
-// 			}
-// 		});
-
-//         formErrors.set(errors);
-//         formErrors.subscribe(($formErrors) => {
-// 					console.log("formErrors", $formErrors);
-// 					// Optional: log all field names with errors
-// 					const errorKeys = Object.keys($formErrors);
-// 					console.log("Fields with errors:", errorKeys);
-//         })();
-
-// 		return false;
-// 	}
-
-// 	formErrors.set({});
-// 	return true;
-// }
-
 export function validateForm<T>(schema: ZodSchema<T>, data: T): boolean {
 	const result = schema.safeParse(data);
 
@@ -41,7 +12,7 @@ export function validateForm<T>(schema: ZodSchema<T>, data: T): boolean {
 		// Optional: log all field names with errors
 		formErrors.subscribe(($formErrors) => {
 			const errorKeys = Object.keys($formErrors);
-			console.log("Fields with errors:", errorKeys);
+			// console.log("Fields with errors:", errorKeys);
         })();
         return false;
 	}

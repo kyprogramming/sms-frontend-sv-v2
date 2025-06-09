@@ -31,7 +31,7 @@ export const staffSchema = z.object({
 				.min(1, "Email is required")
 				.email("Invalid email format"),
 			gender: z.string().min(1, "Gender is required"),
-			dob: z.string(),
+			dob: z.string().min(1, "Date of birth is required"),
 			dateOfJoining: z.string().optional(),
 			contactNo: z.string().min(1, "Contact no is required"),
 			emergencyNo: z.string().optional(),

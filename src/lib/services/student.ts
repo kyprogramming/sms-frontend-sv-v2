@@ -5,7 +5,6 @@ import { handleResponse} from "$lib/utils/utils";
 
 // Create class
 export async function createStudent(data: any) {
-    // console.log(data);
     const res = await fetchWrapper(`${API_BASE_URL}/student`, {
         method: "POST",
         body: JSON.stringify(data),
@@ -25,9 +24,7 @@ export async function updateStudent(id: string, data: any) {
 
 // Fetch student list
 export async function fetchStudentList(params: URLSearchParams) {
-    console.log("params:", params.toString());
     let res = await fetchWrapper(`${API_BASE_URL}/student?${params.toString()}`, { method: "GET" });
-    console.log("res:", res);
 	return handleResponse(res, "Failed to fetch student");
 }
 

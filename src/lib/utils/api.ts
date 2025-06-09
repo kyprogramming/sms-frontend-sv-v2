@@ -14,7 +14,7 @@ export async function apiRequest<T>(url: string, method: "GET" | "POST" | "PUT" 
 	});
 
 	const data = await res.json();
-	console.log("data::", data);
+	// console.log("Data returned from API ::", data);
 	if (!res.ok || !data.success) {
 		if (data?.formattedError) {
 			const errorMessage = Object.entries(data?.formattedError).map(([field, message]) => `${message}`).join(", ");

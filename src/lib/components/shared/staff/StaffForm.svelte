@@ -88,13 +88,9 @@
 		validateForm(staffSchema, formData);
 	}
 
-	function handleOnClear(date: Date | null) {
-		formData.staffData.profile.dob = "";
-	}
 
 	function handleBlur(field: keyof any) {
 		touched = { ...touched, [field]: true };
-		console.log("touched", touched);
 		validateForm(staffSchema, formData);
 	}
 
@@ -102,8 +98,8 @@
 		event.preventDefault();
 		formSubmitted = true;
 		const isValid = validateForm(staffSchema, formData);
-		console.log("isValid", isValid);
-		console.log("formData", formData);
+		// console.log("isValid", isValid);
+		// console.log("formData", formData);
 		if (!isValid) return;
 
 		if (action === "update" && staffData) {
@@ -189,6 +185,7 @@
 					id={"dateOfJoining"}
 					bind:value={formData.staffData.profile.dateOfJoining}
 					onChange={() => {}}
+                    onBlur={() => handleBlur("staffData.profile.dateOfJoining")}
 					defaultToday={true}
 				/>
 			</div>
@@ -251,7 +248,8 @@
 				<DatePicker
 					bind:value={formData.staffData.profile.dob}
 					onChange={handleBirthDateChange}
-					onClear={handleOnClear}
+					onClear={()=>{formData.staffData.profile.dob = "";}}
+                    onBlur={() => handleBlur("staffData.profile.dob")}
 					cls={`w-full ${$formErrors["staffData.profile.dob"] && (touched["staffData.profile.dob"] || formSubmitted) ? "input-error" : ""}`}
 				/>
 				{#if $formErrors["staffData.profile.dob"] && (touched["staffData.profile.dob"] || formSubmitted)}

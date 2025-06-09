@@ -235,7 +235,9 @@
 			<!-- Date of Birth -->
 			<div class="col-2">
 				<label for="dob">Date of Birth <span class="required">*</span></label>
-				<DatePicker bind:value={formData.studentData.profile.dob} onChange={handleBirthDateChange} onClear={handleOnClear} cls={`w-full ${$formErrors["studentData.profile.dob"] && (touched["studentData.profile.dob"] || formSubmitted) ? "input-error" : ""}`} />
+				<DatePicker bind:value={formData.studentData.profile.dob} onChange={handleBirthDateChange}  
+                onBlur={() => handleBlur("studentData.profile.dob")}
+                 onClear={handleOnClear} cls={`w-full ${$formErrors["studentData.profile.dob"] && (touched["studentData.profile.dob"] || formSubmitted) ? "input-error" : ""}`} />
 				{#if $formErrors["studentData.profile.dob"] && (touched["studentData.profile.dob"] || formSubmitted)}
 					<p class="error-text">{$formErrors["studentData.profile.dob"]}</p>
 				{/if}
@@ -325,7 +327,7 @@
 			<!-- Measurement Date -->
 			<div class="col-2">
 				<label for="measurementDate">Measurement Date</label>
-				<DatePicker id="measurementDate" bind:value={formData.studentData.medicalDetails.measurementDate} onClear={() => console.log("Date cleared")} />
+				<DatePicker id="measurementDate" bind:value={formData.studentData.medicalDetails.measurementDate} onClear={() => {formData.studentData.medicalDetails.measurementDate = "";}} />
 			</div>
 			<!-- Medical History -->
 			<div class="col-6">
