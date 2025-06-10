@@ -1,12 +1,8 @@
 <script lang="ts">
 	import DatePicker from "$lib/components/common/DatePicker.svelte";
-	import TagInput from "$lib/components/common/TagInput.svelte";
 	import {
-		BLOOD_GROUPS,
-		CASTE_CATEGORIES,
 		CONTRACT_TYPE,
 		GENDERS,
-		GUARDIAN_TYPE,
 		MARITAL_STATUSES,
 		SHIFT,
 		STAFF_DEPARTMENTS,
@@ -16,16 +12,12 @@
 	import { isLoading } from "$lib/stores/loading";
 
 	import {
-		flattenErrors,
 		initializeStaffFormData,
 		staffSchema,
 		type StaffFormData,
 	} from "./staffValidation";
-	import { slide } from "svelte/transition";
 	import { createStaff, updateStaff } from "$lib/services/staff";
-	import FileUpload from "$lib/components/common/FileUpload.svelte";
 	import { BrushCleaning, Save } from "@lucide/svelte";
-
 	import { showSnackbar } from "$lib/components/snackbar/store";
 	import { goto } from "$app/navigation";
 	import LoaderIcon from "$lib/components/common/LoaderIcon.svelte";
@@ -36,6 +28,7 @@
 	import { MESSAGES } from "$lib/utils/messages";
 	import { formatLocalDate } from "$lib/utils/formatDate";
 	import { validateForm } from "$lib/utils/validate";
+	import ImageUploader from "$lib/components/common/ImageUploader.svelte";
 
 	// Props
 	let { staffData = null, action } = $props();
@@ -46,6 +39,7 @@
 	formErrors.set({});
 	let touched: any = $state({});
 	let formSubmitted: boolean = $state(false);
+    let selectedFile: File | null = null;
 
 	// console.log("staffData:", action, staffData);
 
@@ -88,7 +82,6 @@
 		validateForm(staffSchema, formData);
 	}
 
-
 	function handleBlur(field: keyof any) {
 		touched = { ...touched, [field]: true };
 		validateForm(staffSchema, formData);
@@ -99,7 +92,7 @@
 		formSubmitted = true;
 		const isValid = validateForm(staffSchema, formData);
 		// console.log("isValid", isValid);
-		// console.log("formData", formData);
+		console.log("formData", formData);
 		if (!isValid) return;
 
 		if (action === "update" && staffData) {
@@ -117,6 +110,11 @@
 			showSnackbar({ message: "Staff created successfully", type: "success" });
 			await goto("/admin/staff/list");
 		}
+	}
+
+    function handleImageSelect(file: File | null) {
+		selectedFile = file;
+		console.log("Selected file object:", file);
 	}
 </script>
 
@@ -185,7 +183,7 @@
 					id={"dateOfJoining"}
 					bind:value={formData.staffData.profile.dateOfJoining}
 					onChange={() => {}}
-                    onBlur={() => handleBlur("staffData.profile.dateOfJoining")}
+					onBlur={() => handleBlur("staffData.profile.dateOfJoining")}
 					defaultToday={true}
 				/>
 			</div>
@@ -248,8 +246,10 @@
 				<DatePicker
 					bind:value={formData.staffData.profile.dob}
 					onChange={handleBirthDateChange}
-					onClear={()=>{formData.staffData.profile.dob = "";}}
-                    onBlur={() => handleBlur("staffData.profile.dob")}
+					onClear={() => {
+						formData.staffData.profile.dob = "";
+					}}
+					onBlur={() => handleBlur("staffData.profile.dob")}
 					cls={`w-full ${$formErrors["staffData.profile.dob"] && (touched["staffData.profile.dob"] || formSubmitted) ? "input-error" : ""}`}
 				/>
 				{#if $formErrors["staffData.profile.dob"] && (touched["staffData.profile.dob"] || formSubmitted)}
@@ -661,8 +661,14 @@
 		<h1>Upload Photos</h1>
 		<div class="grid-12">
 			<div class="col-3">
-				<label for="street">Staff Photo</label>
-				<FileUpload id="staffPhoto" />
+				<!-- <label for="street">Staff Photo</label> -->
+				<!-- <FileUpload id="staffPhoto" /> -->
+				<ImageUploader
+					label="Staff Photo"
+					bind:imageUrl={formData.staffData.profile.photoUrl}
+					required={true}
+					onSelect={handleImageSelect}
+				/>
 			</div>
 
 			<div class="col-3">

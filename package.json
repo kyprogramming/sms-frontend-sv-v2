@@ -28,6 +28,7 @@
 	},
 	"dependencies": {
 		"@lucide/svelte": "^0.507.0",
+		"uploadthing": "^7.7.2",
 		"zod": "^3.24.3"
 	}
 }

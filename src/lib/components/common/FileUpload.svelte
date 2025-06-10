@@ -22,7 +22,7 @@
 		formData.append("file", file);
 
 		const xhr = new XMLHttpRequest();
-		xhr.open("POST", "/api/upload");
+		xhr.open("POST", "http://localhost:5000/api/upload");
 
 		xhr.upload.addEventListener("progress", (e) => {
 			if (e.lengthComputable) {
