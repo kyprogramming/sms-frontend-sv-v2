@@ -1,29 +1,52 @@
 <script lang="ts">
 	import { genUploader } from "uploadthing/client";
+	import { Eye, CheckCircle } from "@lucide/svelte";
+
 	export const { uploadFiles } = genUploader<any>({
 		url: "http://localhost:5000/api/upload",
 	});
+
 	export let label: string = "Upload Image";
 	export let required: boolean = false;
 	export let imageUrl: string = "";
 	export let onSelect: (file: File | null) => void;
-	import { Eye } from "@lucide/svelte";
+
 
 	let fileInput: HTMLInputElement | null = null;
 	let previewUrl: string | null = imageUrl;
 	let showModal = false;
+	let uploadProgress = 0;
+	let isUploading = false;
+	let uploadComplete = false;
 
 	async function handleFileChange(event: Event) {
 		const target = event.target as HTMLInputElement;
 		const file = target?.files?.[0];
 		if (file) {
 			previewUrl = URL.createObjectURL(file);
-			const res = await uploadFiles("imageUploader", { files: [file] });
-			console.log("Uploaded image URL:", imageUrl);
+			isUploading = true;
+			uploadProgress = 0;
+			uploadComplete = false;
+
+			const uploadInterval = setInterval(() => {
+				// Fake progress until we get real progress support
+				if (uploadProgress < 95) {
+					uploadProgress += 3;
+				}
+			}, 150);
+
+			const res = await uploadFiles("imageUploader", {
+				files: [file],
+			});
+
+			clearInterval(uploadInterval);
+			uploadProgress = 100;
+			isUploading = false;
+			uploadComplete = true;
+
 			imageUrl = res[0]?.ufsUrl ?? "";
 			onSelect(file);
 		} else {
-			// previewUrl = null;
 			onSelect(null);
 		}
 	}
@@ -34,6 +57,9 @@
 
 	function removeImage() {
 		previewUrl = null;
+		imageUrl = "";
+		uploadComplete = false;
+		uploadProgress = 0;
 		if (fileInput) fileInput.value = "";
 		onSelect(null);
 	}
@@ -46,28 +72,29 @@
 <div class="image-upload">
 	<!-- svelte-ignore a11y_label_has_associated_control -->
 	<label class="block mb-2 font-medium">
-		{label}
-		{#if required}<span class="required">*</span>{/if}
+		{label} {#if required}<span class="required">*</span>{/if}
 	</label>
 
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div class="upload-box" on:click={triggerFileSelect}>
 		{#if previewUrl}
-			<!-- svelte-ignore a11y_img_redundant_alt -->
-			<img src={previewUrl} alt="Image preview" class="preview" />
-			<button
-				type="button"
-				on:click|stopPropagation={removeImage}
-				class="remove-btn"
-				aria-label="Remove">×</button
-			>
-			<button
-				type="button"
-				on:click|stopPropagation={toggleModal}
-				class="view-btn"
-				aria-label="View"><Eye size={18} /></button
-			>
+			<img src={previewUrl} alt="Preview" class="preview" />
+			<button type="button" class="remove-btn" on:click|stopPropagation={removeImage}>×</button>
+			<button type="button" class="view-btn" on:click|stopPropagation={toggleModal}>
+				<Eye size={18} />
+			</button>
+
+			{#if isUploading}
+				<div class="progress-overlay">
+					<div class="progress-bar" style="width: {uploadProgress}%"></div>
+					<span class="progress-text">{uploadProgress}%</span>
+				</div>
+			{:else if uploadComplete}
+				<div class="success-overlay">
+					<CheckCircle size={32} color="green" />
+				</div>
+			{/if}
 		{:else}
 			<p class="placeholder">Click to select image</p>
 		{/if}
@@ -99,7 +126,6 @@
 		flex-direction: column;
 		gap: 0.5rem;
 	}
-
 	.upload-box {
 		position: relative;
 		border: 2px dashed #ccc;
@@ -113,21 +139,17 @@
 		align-items: center;
 		justify-content: center;
 	}
-
 	.upload-box:hover {
 		border-color: #888;
 	}
-
-	.placeholder {
+    .placeholder {
 		color: #777;
 	}
-
 	.preview {
 		max-width: 100%;
 		max-height: 200px;
 		border-radius: 0.5rem;
 	}
-
 	.remove-btn,
 	.view-btn {
 		position: absolute;
@@ -142,29 +164,48 @@
 		align-items: center;
 		justify-content: center;
 		cursor: pointer;
-		padding: 0;
 	}
-
 	.remove-btn {
 		top: -1px;
 		right: -1px;
 	}
-
 	.view-btn {
 		bottom: -1px;
 		right: -1px;
 		background-color: #3182ce;
 	}
-
-	.view-btn:hover {
-		background-color: #2b6cb0;
+	.progress-overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(255, 255, 255, 0.7);
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
 	}
-
-	.remove-btn:hover {
-		background-color: #c53030;
+	.progress-bar {
+		height: 6px;
+		width: 80%;
+		background-color: #38bdf8;
+		border-radius: 4px;
+		margin-bottom: 0.5rem;
+		transition: width 0.3s ease;
 	}
-
-	/* Modal Styles */
+	.progress-text {
+		font-size: 0.9rem;
+		color: #333;
+	}
+	.success-overlay {
+		position: absolute;
+		bottom: 8px;
+		left: 8px;
+		background-color: white;
+		border-radius: 50%;
+		padding: 4px;
+	}
 	.modal-backdrop {
 		position: fixed;
 		top: 0;
@@ -177,7 +218,6 @@
 		justify-content: center;
 		z-index: 1000;
 	}
-
 	.modal-content {
 		position: relative;
 		background: white;
@@ -185,17 +225,11 @@
 		border-radius: 0.5rem;
 		max-width: 90%;
 		max-height: 90%;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
 	}
-
 	.modal-content img {
 		max-width: 100%;
 		max-height: 80vh;
-		border-radius: 0.5rem;
 	}
-
 	.close-modal {
 		position: absolute;
 		top: 8px;
@@ -208,12 +242,9 @@
 		height: 28px;
 		font-size: 18px;
 		cursor: pointer;
-		display: flex;
-		align-items: center;
-		justify-content: center;
 	}
 
-	.close-modal:hover {
+    .close-modal:hover {
 		background: #c53030;
 	}
 
@@ -240,7 +271,7 @@
 		color: white;
 		/* border: none; */
 		/* padding: 0.5rem; */
-		margin-right: 1rem;
+		/* margin-right: 1rem; */
 		cursor: pointer;
 	}
 
@@ -248,7 +279,7 @@
 		/* background-color: #1e293b; */
 		color: white;
 		border: none;
-		padding: 0.5rem 2rem;
+		/* padding: 0.5rem 2rem; */
 		height: 35px;
 		/* margin-right: 1rem; */
 		cursor: pointer;
