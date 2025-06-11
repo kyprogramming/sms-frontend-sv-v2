@@ -1,26 +1,9 @@
 <script lang="ts">
 	import { genUploader } from "uploadthing/client";
-	import { CheckCircle, Trash2, CameraOff } from "@lucide/svelte";
-	import LoaderIcon from "./LoaderIcon.svelte";
-	import { onMount } from "svelte";
-	// import { closeModal } from "$lib/stores/modalStore";
-
+	import { CheckCircle, Trash2, CameraOff, Loader } from "@lucide/svelte";
 	export const { uploadFiles } = genUploader<any>({
 		url: "http://localhost:5000/api/upload",
 	});
-
-	// let {
-	// 	label = "Upload Image",
-	// 	required = false,
-	// 	photoUrl = "",
-	// 	onSelect,
-	// } = $props<{
-	// 	label?: string;
-	// 	required?: boolean;
-	// 	photoUrl?: string;
-	// 	onSelect: (file: File | null) => void;
-	// }>();
-
 	let {
 		label = "Upload Image",
 		required = false,
@@ -35,47 +18,46 @@
 	let uploadComplete = $state(false);
 	let isLoading = $state(false);
 
-	// Reactively assign preview URL when external photoUrl changes
-	// if (photoUrl) {
-	// 	uploadComplete = true;
-	// }
-	// console.log("photoUrl:", photoUrl);
-	// console.log("photoUrl:", photoUrl);
-
 	async function handleFileChange(event: Event) {
-		const target = event.target as HTMLInputElement;
-		const file = target?.files?.[0];
-		if (file) {
-			photoUrl = URL.createObjectURL(file);
-			isUploading = true;
-			uploadProgress = 0;
-			uploadComplete = false;
+		try {
+			const target = event.target as HTMLInputElement;
+			const file = target?.files?.[0];
+			if (file) {
+				photoUrl = URL.createObjectURL(file);
+				isUploading = true;
+				uploadProgress = 0;
+				uploadComplete = false;
 
-			const uploadInterval = setInterval(() => {
-				if (uploadProgress < 95) {
-					uploadProgress += 3;
-				}
-			}, 150);
+				const uploadInterval = setInterval(() => {
+					if (uploadProgress < 95) {
+						uploadProgress += 3;
+					}
+				}, 150);
 
-			const res = await uploadFiles("imageUploader", {
-				files: [file],
-			});
+				isLoading = true;
+				const res = await uploadFiles("imageUploader", {
+					files: [file],
+				});
 
-			clearInterval(uploadInterval);
+				clearInterval(uploadInterval);
 
-			uploadProgress = 100;
-			isUploading = false;
-			uploadComplete = true;
+				uploadProgress = 100;
+				isUploading = false;
+				uploadComplete = true;
 
-			photoUrl = res[0]?.ufsUrl ?? "";
-			onSelect(file);
-		} else {
-			onSelect(null);
+				photoUrl = res[0]?.ufsUrl ?? "";
+				onSelect(file);
+			} else {
+				onSelect(null);
+			}
+		} catch (error) {
+		} finally {
+            isLoading = false;
 		}
 	}
 
 	function removeImage(e: MouseEvent) {
-        e.stopPropagation();
+		e.stopPropagation();
 		photoUrl = "";
 		uploadComplete = false;
 		uploadProgress = 0;
@@ -97,7 +79,7 @@
 </script>
 
 <div class="image-upload">
-	<label for="upload-box" class="block mb-2 font-medium">
+	<label for="upload-box">
 		{label}
 		{#if required}<span class="required">*</span>{/if}
 	</label>
@@ -111,11 +93,7 @@
 	>
 		{#if photoUrl}
 			<img src={photoUrl} alt="Preview" class="preview" />
-			<button
-				type="button"
-				class="remove-btn"
-				onclick={removeImage}
-			>
+			<button type="button" class="remove-btn" onclick={removeImage}>
 				<Trash2 color="red" />
 			</button>
 			<!-- <button
@@ -130,12 +108,13 @@
 				<div class="progress-overlay">
 					<div class="progress-bar" style="width: {uploadProgress}%"></div>
 					<span class="progress-text">{uploadProgress}%</span>
-					<!-- <LoaderIcon />
-					{#if !isLoading}
-						<LoaderIcon />
-					{/if} -->
+                    {#if isLoading}
+                    <div class="sun-spinner">
+                        <Loader />
+                    </div>
+                {/if}
 				</div>
-			{:else if uploadComplete}
+			{:else if uploadComplete || photoUrl}
 				<div class="success-overlay">
 					<CheckCircle color="green" />
 				</div>
@@ -183,7 +162,7 @@
 		position: relative;
 		border: 2px dashed #ccc;
 		border-radius: 0.5rem;
-		padding: 1rem;
+		padding: 0.25rem;
 		cursor: pointer;
 		text-align: center;
 		background-color: #f9f9f9;
@@ -195,9 +174,7 @@
 	.upload-box:hover {
 		border-color: #888;
 	}
-	.placeholder {
-		color: #777;
-	}
+
 	.preview {
 		max-width: 100%;
 		margin-top: 20px;
@@ -337,5 +314,18 @@
 	.custom-file-input::-webkit-file-upload-button:hover,
 	.custom-file-input::file-selector-button:hover {
 		background-color: #334155;
+	}
+
+	.sun-spinner {
+		/* position: relative; */
+		width: 18px;
+		height: 18px;
+		animation: rotate 1s linear infinite;
+	}
+
+	@keyframes rotate {
+		100% {
+			transform: rotate(360deg);
+		}
 	}
 </style>

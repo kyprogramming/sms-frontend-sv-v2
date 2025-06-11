@@ -666,7 +666,6 @@
 				<ImageUploader
 					label="Staff Photo"
 					bind:photoUrl={formData.staffData.profile.photoUrl}
-					required={true}
 					onSelect={handleImageSelect}
 				/>
 			</div>
