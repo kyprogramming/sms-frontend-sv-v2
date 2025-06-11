@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { run } from "svelte/legacy";
+	// import { run } from "svelte/legacy";
 
 	import { formatDateToLocalYYYYMMDD } from "$lib/utils/utils";
+	import { onMount } from "svelte";
 
 	interface Props {
 		id?: string;
@@ -46,12 +47,34 @@
 		return isNaN(parsed.getTime()) ? null : parsed;
 	}
 
-	run(() => {
-		if (value === null && selectedDate !== null) {
+	// run(() => {
+	// 	if (value === null && selectedDate !== null) {
+	// 		selectedDate = null;
+	// 		onClear(null);
+	// 	}
+	// });
+    onMount(()=>{
+        if (value === null && selectedDate !== null) {
 			selectedDate = null;
 			onClear(null);
 		}
-	});
+        if (defaultToday && !value && !selectedDate) {
+			selectToday();
+		}
+        // const parsedValue = safeDateParse(value);
+		// if (parsedValue !== selectedDate) {
+		// 	if (parsedValue === null) {
+		// 		selectedDate = null;
+		// 	} else if (
+		// 		!selectedDate ||
+		// 		parsedValue.getTime() !== selectedDate.getTime()
+		// 	) {
+		// 		selectedDate = parsedValue;
+		// 		currentMonth = parsedValue.getMonth();
+		// 		currentYear = parsedValue.getFullYear();
+		// 	}
+		// }
+    });
 
 	// Month and year dropdown options
 	const months = Array.from({ length: 12 }, (_, i) => ({
@@ -147,28 +170,28 @@
 	let daysInMonth = $derived(getDaysInMonth(currentMonth, currentYear));
 	let firstDayOfMonth = $derived(getFirstDayOfMonth(currentMonth, currentYear));
 
-	run(() => {
-		if (defaultToday && !value && !selectedDate) {
-			selectToday();
-		}
-	});
+	// run(() => {
+	// 	if (defaultToday && !value && !selectedDate) {
+	// 		selectToday();
+	// 	}
+	// });
 
 	// Sync with external value changes
-	run(() => {
-		const parsedValue = safeDateParse(value);
-		if (parsedValue !== selectedDate) {
-			if (parsedValue === null) {
-				selectedDate = null;
-			} else if (
-				!selectedDate ||
-				parsedValue.getTime() !== selectedDate.getTime()
-			) {
-				selectedDate = parsedValue;
-				currentMonth = parsedValue.getMonth();
-				currentYear = parsedValue.getFullYear();
-			}
-		}
-	});
+	// run(() => {
+	// 	const parsedValue = safeDateParse(value);
+	// 	if (parsedValue !== selectedDate) {
+	// 		if (parsedValue === null) {
+	// 			selectedDate = null;
+	// 		} else if (
+	// 			!selectedDate ||
+	// 			parsedValue.getTime() !== selectedDate.getTime()
+	// 		) {
+	// 			selectedDate = parsedValue;
+	// 			currentMonth = parsedValue.getMonth();
+	// 			currentYear = parsedValue.getFullYear();
+	// 		}
+	// 	}
+	// });
 </script>
 
 <div
@@ -182,7 +205,7 @@
 			type="text"
 			readonly
 			onclick={toggleCalendar}
-			value={formatDate(selectedDate)}
+			value={value ? formatDate(new Date(value)) : ""}
 			onblur={onBlur}
 			class={cls}
 			placeholder="Select date"

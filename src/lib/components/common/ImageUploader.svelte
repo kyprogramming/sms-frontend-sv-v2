@@ -46,7 +46,7 @@
 				uploadComplete = true;
 
 				photoUrl = res[0]?.ufsUrl ?? "";
-				onSelect(file);
+				onSelect(photoUrl);
 			} else {
 				onSelect(null);
 			}
@@ -78,6 +78,7 @@
 	}
 </script>
 
+
 <div class="image-upload">
 	<label for="upload-box">
 		{label}
@@ -93,17 +94,10 @@
 	>
 		{#if photoUrl}
 			<img src={photoUrl} alt="Preview" class="preview" />
+           
 			<button type="button" class="remove-btn" onclick={removeImage}>
 				<Trash2 color="red" />
 			</button>
-			<!-- <button
-				type="button"
-				class="view-btn"
-				on:click|stopPropagation={toggleModal}
-			>
-				<Eye color="blue" />
-			</button> -->
-
 			{#if isUploading}
 				<div class="progress-overlay">
 					<div class="progress-bar" style="width: {uploadProgress}%"></div>
@@ -162,7 +156,7 @@
 		position: relative;
 		border: 2px dashed #ccc;
 		border-radius: 0.5rem;
-		padding: 0.25rem;
+		padding: 4px;
 		cursor: pointer;
 		text-align: center;
 		background-color: #f9f9f9;
@@ -178,7 +172,7 @@
 	.preview {
 		max-width: 100%;
 		margin-top: 20px;
-		max-height: 200px;
+		max-height: 250px;
 		border-radius: 0.5rem;
 	}
 

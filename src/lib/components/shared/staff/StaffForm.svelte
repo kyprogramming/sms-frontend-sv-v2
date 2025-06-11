@@ -10,6 +10,7 @@
 		STAFF_ROLES,
 	} from "$lib/utils/constants";
 	import { isLoading } from "$lib/stores/loading";
+	import { FilePlus, FilePlus2, Plus, PlusCircle } from "@lucide/svelte";
 
 	import {
 		initializeStaffFormData,
@@ -29,6 +30,8 @@
 	import { formatLocalDate } from "$lib/utils/formatDate";
 	import { validateForm } from "$lib/utils/validate";
 	import ImageUploader from "$lib/components/common/ImageUploader.svelte";
+	import FileUpload from "$lib/components/common/FileUpload.svelte";
+	import UploadDocument from "$lib/components/common/UploadDocument.svelte";
 
 	// Props
 	let { staffData = null, action } = $props();
@@ -39,7 +42,7 @@
 	formErrors.set({});
 	let touched: any = $state({});
 	let formSubmitted: boolean = $state(false);
-    let selectedFile: File | null = null;
+	let selectedFile: File | null = null;
 
 	// console.log("staffData:", action, staffData);
 
@@ -112,9 +115,41 @@
 		}
 	}
 
-    function handleImageSelect(file: File | null) {
+	function handleImageSelect(file: File | null) {
 		selectedFile = file;
 		console.log("Selected file object:", file);
+	}
+
+	let uploadSections = $state([{ category: "", photoUrl: "" }]);
+
+	const categories = [
+		"Student ID Proof",
+		"Parent ID Proof",
+		"Teacher Certificate",
+		"Staff Resume",
+		"Marksheet",
+		"Transfer Certificate",
+		"Medical Record",
+		"Passport Size Photo",
+		"Others",
+	];
+
+	function removeSection(index: number) {
+		uploadSections = uploadSections.filter((_, i) => i !== index);
+	}
+
+	function updateSection(
+		index: number,
+		data: { category: string; photoUrl: string },
+	) {
+		uploadSections = uploadSections.map((section, i) =>
+			i === index ? data : section,
+		);
+	}
+
+	function addNewSection(e: MouseEvent) {
+		uploadSections = [...uploadSections, { category: "", photoUrl: "" }];
+		console.log("uploadSections", uploadSections);
 	}
 </script>
 
@@ -658,65 +693,38 @@
 	</div>
 	<!-- Upload Photo -->
 	<div class="card-wrapper">
-		<h1>Upload Photos</h1>
+		<h1>Upload Photo</h1>
 		<div class="grid-12">
-			<div class="col-3">
-				<!-- <label for="street">Staff Photo</label> -->
-				<!-- <FileUpload id="staffPhoto" /> -->
+			<div class="col-2">
 				<ImageUploader
 					label="Staff Photo"
 					bind:photoUrl={formData.staffData.profile.photoUrl}
 					onSelect={handleImageSelect}
 				/>
 			</div>
-
-			<div class="col-3">
-				<!-- <label for="city">Father Photo</label>
-				<FileUpload id="fatherPhoto" /> -->
-			</div>
-
-			<div class="col-3">
-				<!-- <label for="city">Mother Photo</label>
-				<FileUpload id="motherPhoto" /> -->
-			</div>
-
-			<div class="col-3">
-				<!-- <label for="city">Guardian Photo</label>
-				<FileUpload id="guardianPhoto" /> -->
-			</div>
+			<div class="col-10"></div>
 		</div>
 	</div>
 
 	<!-- Upload Documents -->
-	<!-- <div class="card-wrapper">
-		<h1>Upload Documents</h1>
-		<div class="grid-12">
-			<div class="col-12">
-				<table>
-					<thead>
-						<tr>
-							<th style="width:5%;">#</th>
-							<th style="width:20%;">Title</th>
-							<th style="width:25%;">Document</th>
-							<th>Url</th>
-						</tr>
-					</thead>
-					<tbody>
-						{#each documents as doc, index}
-							<tr>
-								<td>{index + 1}</td>
-								<td><input id="" type="text" /></td>
-								<td>
-									<FileUpload id="staffPhoto" />
-								</td>
-								<td>{doc.title}</td>
-							</tr>
-						{/each}
-					</tbody>
-				</table>
-			</div>
+	<div class="card-wrapper">
+		<div>
+			<h1>Upload Documents</h1>
 		</div>
-	</div> -->
+		<div class="grid-12">
+				{#each uploadSections as section, index}
+					<UploadDocument
+						{index}
+						{section}
+						{categories}
+						isFirst={index === 0}
+						onAdd={addNewSection}
+						onRemove={removeSection}
+						onUpdate={updateSection}
+					/>
+				{/each}
+		</div>
+	</div>
 
 	<!-- Form Actions -->
 	<div class="form-actions">
@@ -776,6 +784,7 @@
 	{#if $formErrors[fieldName] && (touched[fieldName] || formSubmitted)}
 		<p class="error-text">{$formErrors[fieldName]}</p>
 	{/if}
+
 {/snippet}
 
 {#snippet renderTextarea(
@@ -987,5 +996,11 @@
 
 	.placeholder-gray {
 		color: gray;
+	}
+	.header-bar {
+		display: flex;
+		justify-content: flex-start; /* center content horizontally */
+		align-items: center;
+		gap: 0.5rem; /* space between h1 and button */
 	}
 </style>

@@ -46,11 +46,9 @@
 		{ key: "profile.role", label: "Role", width: "10%", sortable: true, align: "center" },
 		{ key: "profile.department", label: "Department", width: "10%", sortable: true, align: "center" },
 		{ key: "profile.designation", label: "Designation", width: "10%", sortable: true, align: "center" },
+		{ key: "profile.dateOfJoining", label: "DOJ",  width: "10%", sortable: true, align: "center", format: formatDate },
 		{ key: "profile.gender", label: "Gender", width: "10%", sortable: true, align: "center" },
 		{ key: "profile.dob", label: "DOB",  width: "10%", sortable: true, align: "center", format: formatDate },
-		{ key: "profile.dateOfJoining", label: "DOJ",  width: "10%", sortable: true, align: "center", format: formatDate },
-		// { key: "academicYear", label: "Academic Year", width: "auto", sortable: true, align: "center" },
-		// { key: "admissionDate", label: "Admission Date", width: "auto", sortable: true, align: "center", format: formatDate },
 	];
 
 	// Actions configuration
