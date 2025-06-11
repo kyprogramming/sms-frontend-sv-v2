@@ -1,35 +1,57 @@
 <script lang="ts">
 	import { genUploader } from "uploadthing/client";
-	import { Eye, CheckCircle } from "@lucide/svelte";
+	import { CheckCircle, Trash2, CameraOff } from "@lucide/svelte";
+	import LoaderIcon from "./LoaderIcon.svelte";
+	import { onMount } from "svelte";
+	// import { closeModal } from "$lib/stores/modalStore";
 
 	export const { uploadFiles } = genUploader<any>({
 		url: "http://localhost:5000/api/upload",
 	});
 
-	export let label: string = "Upload Image";
-	export let required: boolean = false;
-	export let imageUrl: string = "";
-	export let onSelect: (file: File | null) => void;
+	// let {
+	// 	label = "Upload Image",
+	// 	required = false,
+	// 	photoUrl = "",
+	// 	onSelect,
+	// } = $props<{
+	// 	label?: string;
+	// 	required?: boolean;
+	// 	photoUrl?: string;
+	// 	onSelect: (file: File | null) => void;
+	// }>();
 
+	let {
+		label = "Upload Image",
+		required = false,
+		photoUrl = $bindable(""),
+		onSelect = () => {},
+	} = $props();
 
 	let fileInput: HTMLInputElement | null = null;
-	let previewUrl: string | null = imageUrl;
-	let showModal = false;
-	let uploadProgress = 0;
-	let isUploading = false;
-	let uploadComplete = false;
+	let showModal = $state(false);
+	let uploadProgress = $state(0);
+	let isUploading = $state(false);
+	let uploadComplete = $state(false);
+	let isLoading = $state(false);
+
+	// Reactively assign preview URL when external photoUrl changes
+	// if (photoUrl) {
+	// 	uploadComplete = true;
+	// }
+	// console.log("photoUrl:", photoUrl);
+	// console.log("photoUrl:", photoUrl);
 
 	async function handleFileChange(event: Event) {
 		const target = event.target as HTMLInputElement;
 		const file = target?.files?.[0];
 		if (file) {
-			previewUrl = URL.createObjectURL(file);
+			photoUrl = URL.createObjectURL(file);
 			isUploading = true;
 			uploadProgress = 0;
 			uploadComplete = false;
 
 			const uploadInterval = setInterval(() => {
-				// Fake progress until we get real progress support
 				if (uploadProgress < 95) {
 					uploadProgress += 3;
 				}
@@ -40,24 +62,21 @@
 			});
 
 			clearInterval(uploadInterval);
+
 			uploadProgress = 100;
 			isUploading = false;
 			uploadComplete = true;
 
-			imageUrl = res[0]?.ufsUrl ?? "";
+			photoUrl = res[0]?.ufsUrl ?? "";
 			onSelect(file);
 		} else {
 			onSelect(null);
 		}
 	}
 
-	function triggerFileSelect() {
-		fileInput?.click();
-	}
-
-	function removeImage() {
-		previewUrl = null;
-		imageUrl = "";
+	function removeImage(e: MouseEvent) {
+        e.stopPropagation();
+		photoUrl = "";
 		uploadComplete = false;
 		uploadProgress = 0;
 		if (fileInput) fileInput.value = "";
@@ -65,38 +84,64 @@
 	}
 
 	function toggleModal() {
-		showModal = !showModal;
+		if (photoUrl) showModal = !showModal;
+		else {
+			fileInput?.click();
+		}
+	}
+
+	function closeModal(e: MouseEvent) {
+		e.stopPropagation();
+		if (photoUrl) showModal = !showModal;
 	}
 </script>
 
 <div class="image-upload">
-	<!-- svelte-ignore a11y_label_has_associated_control -->
-	<label class="block mb-2 font-medium">
-		{label} {#if required}<span class="required">*</span>{/if}
+	<label for="upload-box" class="block mb-2 font-medium">
+		{label}
+		{#if required}<span class="required">*</span>{/if}
 	</label>
 
-	<!-- svelte-ignore a11y_click_events_have_key_events -->
-	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="upload-box" on:click={triggerFileSelect}>
-		{#if previewUrl}
-			<img src={previewUrl} alt="Preview" class="preview" />
-			<button type="button" class="remove-btn" on:click|stopPropagation={removeImage}>×</button>
-			<button type="button" class="view-btn" on:click|stopPropagation={toggleModal}>
-				<Eye size={18} />
+	<div
+		class="upload-box"
+		role="button"
+		tabindex="0"
+		onclick={toggleModal}
+		onkeydown={toggleModal}
+	>
+		{#if photoUrl}
+			<img src={photoUrl} alt="Preview" class="preview" />
+			<button
+				type="button"
+				class="remove-btn"
+				onclick={removeImage}
+			>
+				<Trash2 color="red" />
 			</button>
+			<!-- <button
+				type="button"
+				class="view-btn"
+				on:click|stopPropagation={toggleModal}
+			>
+				<Eye color="blue" />
+			</button> -->
 
 			{#if isUploading}
 				<div class="progress-overlay">
 					<div class="progress-bar" style="width: {uploadProgress}%"></div>
 					<span class="progress-text">{uploadProgress}%</span>
+					<!-- <LoaderIcon />
+					{#if !isLoading}
+						<LoaderIcon />
+					{/if} -->
 				</div>
 			{:else if uploadComplete}
 				<div class="success-overlay">
-					<CheckCircle size={32} color="green" />
+					<CheckCircle color="green" />
 				</div>
 			{/if}
 		{:else}
-			<p class="placeholder">Click to select image</p>
+			<CameraOff />
 		{/if}
 	</div>
 
@@ -104,18 +149,26 @@
 		type="file"
 		accept="image/*"
 		bind:this={fileInput}
-		class="hidden custom-file-input"
-		on:change={handleFileChange}
+		class="custom-file-input"
+		onchange={handleFileChange}
 	/>
 </div>
 
-{#if showModal && previewUrl}
-	<!-- svelte-ignore a11y_click_events_have_key_events -->
-	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="modal-backdrop" on:click={toggleModal}>
-		<div class="modal-content" on:click|stopPropagation>
-			<img src={previewUrl} alt="Large preview" />
-			<button class="close-modal" on:click={toggleModal}>×</button>
+{#if showModal && photoUrl}
+	<div
+		class="modal-backdrop"
+		role="button"
+		tabindex="0"
+		onclick={toggleModal}
+		onkeydown={(e) => {
+			if (e.key === "Enter" || e.key === " ") {
+				toggleModal();
+			}
+		}}
+	>
+		<div class="modal-content">
+			<img src={photoUrl} alt="Large preview" />
+			<button class="close-modal" onclick={closeModal}>×</button>
 		</div>
 	</div>
 {/if}
@@ -142,38 +195,33 @@
 	.upload-box:hover {
 		border-color: #888;
 	}
-    .placeholder {
+	.placeholder {
 		color: #777;
 	}
 	.preview {
 		max-width: 100%;
+		margin-top: 20px;
 		max-height: 200px;
 		border-radius: 0.5rem;
 	}
-	.remove-btn,
-	.view-btn {
+
+	.remove-btn {
 		position: absolute;
-		background-color: #e53e3e;
-		color: white;
+		background-color: transparent;
+		/* color: white; */
 		border: none;
 		border-radius: 50%;
-		width: 28px;
-		height: 28px;
-		font-size: 16px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		cursor: pointer;
 	}
 	.remove-btn {
-		top: -1px;
-		right: -1px;
+		top: 0;
+		right: 0;
+		padding: 5px;
 	}
-	.view-btn {
-		bottom: -1px;
-		right: -1px;
-		background-color: #3182ce;
-	}
+
 	.progress-overlay {
 		position: absolute;
 		top: 0;
@@ -200,9 +248,9 @@
 	}
 	.success-overlay {
 		position: absolute;
-		bottom: 8px;
-		left: 8px;
-		background-color: white;
+		top: 0;
+		left: 0;
+		background-color: transparent;
 		border-radius: 50%;
 		padding: 4px;
 	}
@@ -242,9 +290,10 @@
 		height: 28px;
 		font-size: 18px;
 		cursor: pointer;
+		padding: 0px;
 	}
 
-    .close-modal:hover {
+	.close-modal:hover {
 		background: #c53030;
 	}
 

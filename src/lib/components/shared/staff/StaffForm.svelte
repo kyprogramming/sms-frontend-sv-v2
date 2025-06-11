@@ -665,7 +665,7 @@
 				<!-- <FileUpload id="staffPhoto" /> -->
 				<ImageUploader
 					label="Staff Photo"
-					bind:imageUrl={formData.staffData.profile.photoUrl}
+					bind:photoUrl={formData.staffData.profile.photoUrl}
 					required={true}
 					onSelect={handleImageSelect}
 				/>
