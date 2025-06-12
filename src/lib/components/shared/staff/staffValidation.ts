@@ -1,13 +1,16 @@
 import { formErrors } from "$lib/stores/formStore";
 import { z } from "zod";
 
+export const documentSchema = z.object({
+	title: z.string().optional(),
+	category: z.string().optional(),
+	url: z.string().optional(),
+	uploadedAt: z.string().optional(),
+});
+
 export const staffSchema = z.object({
 	userData: z.object({
-		email: z
-			.string()
-			.email("Invalid email format")
-			.optional()
-			.or(z.literal("")),
+		email: z.string().email("Invalid email format").optional().or(z.literal("")),
 		mobile: z
 			.string()
 			.regex(/^[0-9]{10}$/, "10 digits mobile number required")
@@ -26,10 +29,7 @@ export const staffSchema = z.object({
 			fatherName: z.string().optional(),
 			motherName: z.string().optional(),
 			spouseName: z.string().optional(),
-			email: z
-				.string()
-				.min(1, "Email is required")
-				.email("Invalid email format"),
+			email: z.string().min(1, "Email is required").email("Invalid email format"),
 			gender: z.string().min(1, "Gender is required"),
 			dob: z.string().min(1, "Date of birth is required"),
 			dateOfJoining: z.string().optional(),
@@ -70,6 +70,7 @@ export const staffSchema = z.object({
 			linkedin: z.string().url().optional(),
 			instagram: z.string().url().optional(),
 		}),
+		documents: z.array(documentSchema).optional(),
 	}),
 });
 
@@ -120,6 +121,7 @@ export function initializeStaffFormData(): StaffFormData {
 			leaveAllotments: {},
 			bankDetails: {},
 			socialLinks: {},
+			documents: [{ title: "", category: "", url: "" }],
 		},
 	};
 }

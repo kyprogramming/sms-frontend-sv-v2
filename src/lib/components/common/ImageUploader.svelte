@@ -7,7 +7,7 @@
 	let {
 		label = "Upload Image",
 		required = false,
-		photoUrl = $bindable(""),
+		url = $bindable(""),
 		onSelect = () => {},
 	} = $props();
 
@@ -23,7 +23,8 @@
 			const target = event.target as HTMLInputElement;
 			const file = target?.files?.[0];
 			if (file) {
-				photoUrl = URL.createObjectURL(file);
+				url = URL.createObjectURL(file);
+                console.log("file", file)
 				isUploading = true;
 				uploadProgress = 0;
 				uploadComplete = false;
@@ -45,8 +46,8 @@
 				isUploading = false;
 				uploadComplete = true;
 
-				photoUrl = res[0]?.ufsUrl ?? "";
-				onSelect(photoUrl);
+				url = res[0]?.ufsUrl ?? "";
+				onSelect(url,file.name);
 			} else {
 				onSelect(null);
 			}
@@ -58,7 +59,7 @@
 
 	function removeImage(e: MouseEvent) {
 		e.stopPropagation();
-		photoUrl = "";
+		url = "";
 		uploadComplete = false;
 		uploadProgress = 0;
 		if (fileInput) fileInput.value = "";
@@ -66,7 +67,7 @@
 	}
 
 	function toggleModal() {
-		if (photoUrl) showModal = !showModal;
+		if (url) showModal = !showModal;
 		else {
 			fileInput?.click();
 		}
@@ -74,7 +75,7 @@
 
 	function closeModal(e: MouseEvent) {
 		e.stopPropagation();
-		if (photoUrl) showModal = !showModal;
+		if (url) showModal = !showModal;
 	}
 </script>
 
@@ -92,8 +93,8 @@
 		onclick={toggleModal}
 		onkeydown={toggleModal}
 	>
-		{#if photoUrl}
-			<img src={photoUrl} alt="Preview" class="preview" />
+		{#if url}
+			<img src={url} alt="Preview" class="preview" />
            
 			<button type="button" class="remove-btn" onclick={removeImage}>
 				<Trash2 color="red" />
@@ -108,7 +109,7 @@
                     </div>
                 {/if}
 				</div>
-			{:else if uploadComplete || photoUrl}
+			{:else if uploadComplete || url}
 				<div class="success-overlay">
 					<CheckCircle color="green" />
 				</div>
@@ -127,7 +128,7 @@
 	/>
 </div>
 
-{#if showModal && photoUrl}
+{#if showModal && url}
 	<div
 		class="modal-backdrop"
 		role="button"
@@ -140,7 +141,7 @@
 		}}
 	>
 		<div class="modal-content">
-			<img src={photoUrl} alt="Large preview" />
+			<img src={url} alt="Large preview" />
 			<button class="close-modal" onclick={closeModal}>×</button>
 		</div>
 	</div>

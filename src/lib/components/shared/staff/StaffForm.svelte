@@ -1,22 +1,8 @@
 <script lang="ts">
 	import DatePicker from "$lib/components/common/DatePicker.svelte";
-	import {
-		CONTRACT_TYPE,
-		GENDERS,
-		MARITAL_STATUSES,
-		SHIFT,
-		STAFF_DEPARTMENTS,
-		STAFF_DESIGNATIONS,
-		STAFF_ROLES,
-	} from "$lib/utils/constants";
+	import { CONTRACT_TYPE, GENDERS, MARITAL_STATUSES, SHIFT, STAFF_DEPARTMENTS, STAFF_DESIGNATIONS, STAFF_ROLES } from "$lib/utils/constants";
 	import { isLoading } from "$lib/stores/loading";
-	import { FilePlus, FilePlus2, Plus, PlusCircle } from "@lucide/svelte";
-
-	import {
-		initializeStaffFormData,
-		staffSchema,
-		type StaffFormData,
-	} from "./staffValidation";
+	import { initializeStaffFormData, staffSchema, type StaffFormData } from "./staffValidation";
 	import { createStaff, updateStaff } from "$lib/services/staff";
 	import { BrushCleaning, Save } from "@lucide/svelte";
 	import { showSnackbar } from "$lib/components/snackbar/store";
@@ -48,13 +34,23 @@
 
 	onMount(() => {
 		formErrors.set({});
-		// Initialize form data based on action
 		if (action === "update" && staffData) {
 			formData = {
 				staffData: { ...staffData.data },
 				userData: { ...staffData.data.userId },
 			};
 		}
+
+		// Ensure documents exists and has at least one valid entry
+		if (
+			!formData.staffData.documents || // if undefined or null
+			!Array.isArray(formData.staffData.documents) || // if not an array
+			formData.staffData.documents.length === 0 || // if empty array
+			formData.staffData.documents.every((doc) => !doc.title && !doc.category && !doc.url) // if all documents are blank
+		) {
+			formData.staffData.documents = [{ title: "", category: "", url: "" }];
+		}
+
 		touched = {};
 	});
 
@@ -64,6 +60,14 @@
 				staffData: { ...staffData.data },
 				userData: { ...staffData.data.userId },
 			};
+			if (
+				!formData.staffData.documents || // if undefined or null
+				!Array.isArray(formData.staffData.documents) || // if not an array
+				formData.staffData.documents.length === 0 || // if empty array
+				formData.staffData.documents.every((doc) => !doc.title && !doc.category && !doc.url) // if all documents are blank
+			) {
+				formData.staffData.documents = [{ title: "", category: "", url: "" }];
+			}
 		} else {
 			formData = initializeStaffFormData();
 		}
@@ -94,7 +98,7 @@
 		event.preventDefault();
 		formSubmitted = true;
 		const isValid = validateForm(staffSchema, formData);
-		// console.log("isValid", isValid);
+		console.log("isValid", isValid);
 		console.log("formData", formData);
 		if (!isValid) return;
 
@@ -122,34 +126,19 @@
 
 	let uploadSections = $state([{ category: "", photoUrl: "" }]);
 
-	const categories = [
-		"Student ID Proof",
-		"Parent ID Proof",
-		"Teacher Certificate",
-		"Staff Resume",
-		"Marksheet",
-		"Transfer Certificate",
-		"Medical Record",
-		"Passport Size Photo",
-		"Others",
-	];
+	const categories = ["Student ID Proof", "Parent ID Proof", "Teacher Certificate", "Staff Resume", "Marksheet", "Transfer Certificate", "Medical Record", "Passport Size Photo", "Others"];
 
-	function removeSection(index: number) {
-		uploadSections = uploadSections.filter((_, i) => i !== index);
+	function removeDocument(index: number) {
+		formData.staffData.documents = formData.staffData.documents?.filter((_, i) => i !== index);
 	}
 
-	function updateSection(
-		index: number,
-		data: { category: string; photoUrl: string },
-	) {
-		uploadSections = uploadSections.map((section, i) =>
-			i === index ? data : section,
-		);
+	function updateDocument(index: number, data: { category: string; photoUrl: string }) {
+		formData.staffData.documents = formData.staffData.documents?.map((section, i) => (i === index ? data : section));
 	}
 
-	function addNewSection(e: MouseEvent) {
-		uploadSections = [...uploadSections, { category: "", photoUrl: "" }];
-		console.log("uploadSections", uploadSections);
+	function addNewDocument(e: MouseEvent) {
+		formData.staffData.documents = [...(formData.staffData.documents ?? []), { title: "", category: "", url: "" }];
+		console.log("uploadSections", formData.staffData.documents);
 	}
 </script>
 
@@ -164,115 +153,48 @@
 		<div class="grid-12">
 			<!-- Staff ID -->
 			<div class="col-2">
-				{@render renderInput(
-					"staffData.profile.staffId",
-					"Staff ID",
-					true,
-					"text",
-					formData.staffData.profile.staffId,
-					(val) => (formData.staffData.profile.staffId = String(val)),
-					20,
-				)}
+				{@render renderInput("staffData.profile.staffId", "Staff ID", true, "text", formData.staffData.profile.staffId, (val) => (formData.staffData.profile.staffId = String(val)), 20)}
 			</div>
 
 			<!-- Role -->
 			<div class="col-2">
-				{@render renderSelect(
-					"staffData.profile.role",
-					"Role",
-					true,
-					STAFF_ROLES,
-					formData.staffData.profile.role,
-					(val) => (formData.staffData.profile.role = val),
-				)}
+				{@render renderSelect("staffData.profile.role", "Role", true, STAFF_ROLES, formData.staffData.profile.role, (val) => (formData.staffData.profile.role = val))}
 			</div>
 
 			<!-- Designation -->
 			<div class="col-2">
-				{@render renderSelect(
-					"staffData.profile.designation",
-					"Designation",
-					true,
-					STAFF_DESIGNATIONS,
-					formData.staffData.profile.designation,
-					(val) => (formData.staffData.profile.designation = val),
-				)}
+				{@render renderSelect("staffData.profile.designation", "Designation", true, STAFF_DESIGNATIONS, formData.staffData.profile.designation, (val) => (formData.staffData.profile.designation = val))}
 			</div>
 
 			<!-- Department -->
 			<div class="col-2">
-				{@render renderSelect(
-					"staffData.profile.department",
-					"Department",
-					true,
-					STAFF_DEPARTMENTS,
-					formData.staffData.profile.department,
-					(val) => (formData.staffData.profile.department = val),
-				)}
+				{@render renderSelect("staffData.profile.department", "Department", true, STAFF_DEPARTMENTS, formData.staffData.profile.department, (val) => (formData.staffData.profile.department = val))}
 			</div>
 
 			<!-- Date of Joining -->
 			<div class="col-2">
 				<label for="dateOfJoining">Date of Joining</label>
-				<DatePicker
-					id={"dateOfJoining"}
-					bind:value={formData.staffData.profile.dateOfJoining}
-					onChange={() => {}}
-					onBlur={() => handleBlur("staffData.profile.dateOfJoining")}
-					defaultToday={true}
-				/>
+				<DatePicker id={"dateOfJoining"} bind:value={formData.staffData.profile.dateOfJoining} onChange={() => {}} onBlur={() => handleBlur("staffData.profile.dateOfJoining")} defaultToday={true} />
 			</div>
 
 			<!-- Qualification -->
 			<div class="col-2">
-				{@render renderInput(
-					"staffData.profile.qualification",
-					"Highest Qualification",
-					false,
-					"text",
-					formData.staffData.profile.qualification ?? "",
-					(val) => (formData.staffData.profile.qualification = String(val)),
-					20,
-				)}
+				{@render renderInput("staffData.profile.qualification", "Highest Qualification", false, "text", formData.staffData.profile.qualification ?? "", (val) => (formData.staffData.profile.qualification = String(val)), 20)}
 			</div>
 
 			<!-- First Name -->
 			<div class="col-2">
-				{@render renderInput(
-					"staffData.profile.firstName",
-					"First Name",
-					true,
-					"text",
-					formData.staffData.profile.firstName ?? "",
-					(val) => (formData.staffData.profile.firstName = String(val)),
-					20,
-				)}
+				{@render renderInput("staffData.profile.firstName", "First Name", true, "text", formData.staffData.profile.firstName ?? "", (val) => (formData.staffData.profile.firstName = String(val)), 20)}
 			</div>
 
 			<!-- Middle Name -->
 			<div class="col-2">
-				{@render renderInput(
-					"staffData.profile.middleName",
-					"Middle Name",
-					false,
-					"text",
-					formData.staffData.profile.middleName ?? "",
-					(val) => (formData.staffData.profile.middleName = String(val)),
-					20,
-				)}
+				{@render renderInput("staffData.profile.middleName", "Middle Name", false, "text", formData.staffData.profile.middleName ?? "", (val) => (formData.staffData.profile.middleName = String(val)), 20)}
 			</div>
 
 			<!-- Last Name -->
 			<div class="col-2">
-				{@render renderInput(
-					"staffData.profile.lastName",
-					"Last Name",
-					true,
-					"text",
-					formData.staffData.profile.lastName ?? "",
-					(val) => (formData.staffData.profile.lastName = String(val)),
-					20,
-				)}
+				{@render renderInput("staffData.profile.lastName", "Last Name", true, "text", formData.staffData.profile.lastName ?? "", (val) => (formData.staffData.profile.lastName = String(val)), 20)}
 			</div>
 
 			<!-- Date of Birth -->
@@ -294,166 +216,66 @@
 
 			<!-- Gender -->
 			<div class="col-2">
-				{@render renderSelect(
-					"staffData.profile.gender",
-					"Gender",
-					true,
-					GENDERS,
-					formData.staffData.profile.gender,
-					(val) => (formData.staffData.profile.gender = val),
-				)}
+				{@render renderSelect("staffData.profile.gender", "Gender", true, GENDERS, formData.staffData.profile.gender, (val) => (formData.staffData.profile.gender = val))}
 			</div>
 
 			<!--  Marital Status -->
 			<div class="col-2">
-				{@render renderSelect(
-					"staffData.profile.maritalStatus",
-					"Marital Status",
-					true,
-					MARITAL_STATUSES,
-					formData.staffData.profile.maritalStatus,
-					(val) => (formData.staffData.profile.maritalStatus = val),
-				)}
+				{@render renderSelect("staffData.profile.maritalStatus", "Marital Status", true, MARITAL_STATUSES, formData.staffData.profile.maritalStatus, (val) => (formData.staffData.profile.maritalStatus = val))}
 			</div>
 
 			<!-- Email -->
 			<div class="col-2">
-				{@render renderInput(
-					"staffData.profile.email",
-					"Email",
-					true,
-					"text",
-					formData.staffData.profile.email ?? "",
-					(val) => (formData.staffData.profile.email = String(val)),
-					50,
-				)}
+				{@render renderInput("staffData.profile.email", "Email", true, "text", formData.staffData.profile.email ?? "", (val) => (formData.staffData.profile.email = String(val)), 50)}
 			</div>
 
 			<!-- Contact No -->
 			<div class="col-2">
-				{@render renderInput(
-					"staffData.profile.contactNo",
-					"Contact No",
-					true,
-					"tel",
-					formData.staffData.profile.contactNo ?? "",
-					(val) => (formData.staffData.profile.contactNo = String(val)),
-					10,
-				)}
+				{@render renderInput("staffData.profile.contactNo", "Contact No", true, "tel", formData.staffData.profile.contactNo ?? "", (val) => (formData.staffData.profile.contactNo = String(val)), 10)}
 			</div>
 
 			<!-- Emergency Contact -->
 			<div class="col-2">
-				{@render renderInput(
-					"staffData.profile.emergencyNo",
-					"Emergency Contact",
-					false,
-					"tel",
-					formData.staffData.profile.emergencyNo ?? "",
-					(val) => (formData.staffData.profile.emergencyNo = String(val)),
-					10,
-				)}
+				{@render renderInput("staffData.profile.emergencyNo", "Emergency Contact", false, "tel", formData.staffData.profile.emergencyNo ?? "", (val) => (formData.staffData.profile.emergencyNo = String(val)), 10)}
 			</div>
 
 			<!-- Father Name -->
 			<div class="col-2">
-				{@render renderInput(
-					"staffData.profile.fatherName",
-					"Father Name",
-					false,
-					"text",
-					formData.staffData.profile.fatherName ?? "",
-					(val) => (formData.staffData.profile.fatherName = String(val)),
-					20,
-				)}
+				{@render renderInput("staffData.profile.fatherName", "Father Name", false, "text", formData.staffData.profile.fatherName ?? "", (val) => (formData.staffData.profile.fatherName = String(val)), 20)}
 			</div>
 
 			<!-- Mother Name -->
 			<div class="col-2">
-				{@render renderInput(
-					"staffData.profile.motherName",
-					"Mother Name",
-					false,
-					"text",
-					formData.staffData.profile.motherName ?? "",
-					(val) => (formData.staffData.profile.motherName = String(val)),
-					20,
-				)}
+				{@render renderInput("staffData.profile.motherName", "Mother Name", false, "text", formData.staffData.profile.motherName ?? "", (val) => (formData.staffData.profile.motherName = String(val)), 20)}
 			</div>
 
 			<!-- Spouse Name -->
 			<div class="col-2">
-				{@render renderInput(
-					"staffData.profile.spouseName",
-					"Spouse Name",
-					false,
-					"text",
-					formData.staffData.profile.spouseName ?? "",
-					(val) => (formData.staffData.profile.spouseName = String(val)),
-					20,
-				)}
+				{@render renderInput("staffData.profile.spouseName", "Spouse Name", false, "text", formData.staffData.profile.spouseName ?? "", (val) => (formData.staffData.profile.spouseName = String(val)), 20)}
 			</div>
 
 			<!-- Pan -->
 			<div class="col-2">
-				{@render renderInput(
-					"staffData.profile.panNumber",
-					"PAN No",
-					false,
-					"text",
-					formData.staffData.profile.panNumber ?? "",
-					(val) => (formData.staffData.profile.panNumber = String(val)),
-					20,
-				)}
+				{@render renderInput("staffData.profile.panNumber", "PAN No", false, "text", formData.staffData.profile.panNumber ?? "", (val) => (formData.staffData.profile.panNumber = String(val)), 20)}
 			</div>
 
 			<!-- Work Experience -->
 			<div class="col-4">
-				{@render renderInput(
-					"staffData.profile.workExperience",
-					"Work Experience",
-					false,
-					"text",
-					formData.staffData.profile.workExperience ?? "",
-					(val) => (formData.staffData.profile.workExperience = String(val)),
-					20,
-				)}
+				{@render renderInput("staffData.profile.workExperience", "Work Experience", false, "text", formData.staffData.profile.workExperience ?? "", (val) => (formData.staffData.profile.workExperience = String(val)), 20)}
 			</div>
 
 			<!-- Note -->
 			<div class="col-6">
-				{@render renderInput(
-					"staffData.profile.note",
-					"Note",
-					false,
-					"text",
-					formData.staffData.profile.note ?? "",
-					(val) => (formData.staffData.profile.note = String(val)),
-					20,
-				)}
+				{@render renderInput("staffData.profile.note", "Note", false, "text", formData.staffData.profile.note ?? "", (val) => (formData.staffData.profile.note = String(val)), 20)}
 			</div>
 
 			<!-- Current Address -->
 			<div class="col-6">
-				{@render renderTextarea(
-					"staffData.profile.address",
-					"Current Address",
-					true,
-					formData.staffData.profile.address ?? "",
-					(val) => (formData.staffData.profile.address = val),
-					300,
-				)}
+				{@render renderTextarea("staffData.profile.address", "Current Address", true, formData.staffData.profile.address ?? "", (val) => (formData.staffData.profile.address = val), 300)}
 			</div>
 			<!-- Permanent Address -->
 			<div class="col-6">
-				{@render renderTextarea(
-					"staffData.profile.permanentAddress",
-					"Permanent Address",
-					false,
-					formData.staffData.profile.permanentAddress ?? "",
-					(val) => (formData.staffData.profile.permanentAddress = val),
-					300,
-				)}
+				{@render renderTextarea("staffData.profile.permanentAddress", "Permanent Address", false, formData.staffData.profile.permanentAddress ?? "", (val) => (formData.staffData.profile.permanentAddress = val), 300)}
 			</div>
 		</div>
 	</div>
@@ -463,61 +285,23 @@
 		<h1>Payroll Details</h1>
 		<div class="grid-12">
 			<div class="col-2">
-				{@render renderInput(
-					"staffData.payroll.epfNo",
-					"EPF No",
-					false,
-					"text",
-					formData.staffData.payroll.epfNo ?? "",
-					(val) => (formData.staffData.payroll.epfNo = String(val)),
-					20,
-				)}
+				{@render renderInput("staffData.payroll.epfNo", "EPF No", false, "text", formData.staffData.payroll.epfNo ?? "", (val) => (formData.staffData.payroll.epfNo = String(val)), 20)}
 			</div>
 
 			<div class="col-2">
-				{@render renderInput(
-					"staffData.payroll.basicSalary",
-					"Basic Salary",
-					false,
-					"text",
-					formData.staffData.payroll.basicSalary ?? 0,
-					(val) => (formData.staffData.payroll.basicSalary = Number(val)),
-					10,
-				)}
+				{@render renderInput("staffData.payroll.basicSalary", "Basic Salary", false, "text", formData.staffData.payroll.basicSalary ?? 0, (val) => (formData.staffData.payroll.basicSalary = Number(val)), 10)}
 			</div>
 
 			<div class="col-2">
-				{@render renderSelect(
-					"staffData.payroll.contractType",
-					"Contract Type",
-					false,
-					CONTRACT_TYPE,
-					formData.staffData.payroll.contractType,
-					(val) => (formData.staffData.payroll.contractType = val),
-				)}
+				{@render renderSelect("staffData.payroll.contractType", "Contract Type", false, CONTRACT_TYPE, formData.staffData.payroll.contractType, (val) => (formData.staffData.payroll.contractType = val))}
 			</div>
 
 			<div class="col-2">
-				{@render renderSelect(
-					"staffData.payroll.shift",
-					"Shift",
-					false,
-					SHIFT,
-					formData.staffData.payroll.shift,
-					(val) => (formData.staffData.payroll.shift = val),
-				)}
+				{@render renderSelect("staffData.payroll.shift", "Shift", false, SHIFT, formData.staffData.payroll.shift, (val) => (formData.staffData.payroll.shift = val))}
 			</div>
 
 			<div class="col-4">
-				{@render renderInput(
-					"staffData.payroll.workLocation",
-					"Location",
-					false,
-					"text",
-					formData.staffData.payroll.workLocation ?? "",
-					(val) => (formData.staffData.payroll.workLocation = String(val)),
-					20,
-				)}
+				{@render renderInput("staffData.payroll.workLocation", "Location", false, "text", formData.staffData.payroll.workLocation ?? "", (val) => (formData.staffData.payroll.workLocation = String(val)), 20)}
 			</div>
 		</div>
 	</div>
@@ -527,52 +311,17 @@
 		<h1>Leave Allotments</h1>
 		<div class="grid-12">
 			<div class="col-2">
-				{@render renderInput(
-					"staffData.leaveAllotments.medicalLeave",
-					"Medical Leave",
-					false,
-					"text",
-					formData.staffData.leaveAllotments.medicalLeave ?? 0,
-					(val) =>
-						(formData.staffData.leaveAllotments.medicalLeave = Number(val)),
-					10,
-				)}
+				{@render renderInput("staffData.leaveAllotments.medicalLeave", "Medical Leave", false, "text", formData.staffData.leaveAllotments.medicalLeave ?? 0, (val) => (formData.staffData.leaveAllotments.medicalLeave = Number(val)), 10)}
 			</div>
 
 			<div class="col-2">
-				{@render renderInput(
-					"staffData.leaveAllotments.casualLeave",
-					"Casual Leave",
-					false,
-					"text",
-					formData.staffData.leaveAllotments.casualLeave ?? 0,
-					(val) =>
-						(formData.staffData.leaveAllotments.casualLeave = Number(val)),
-					10,
-				)}
+				{@render renderInput("staffData.leaveAllotments.casualLeave", "Casual Leave", false, "text", formData.staffData.leaveAllotments.casualLeave ?? 0, (val) => (formData.staffData.leaveAllotments.casualLeave = Number(val)), 10)}
 			</div>
 			<div class="col-2">
-				{@render renderInput(
-					"staffData.leaveAllotments.maternityLeave",
-					"Maternity Leave",
-					false,
-					"text",
-					formData.staffData.leaveAllotments.maternityLeave ?? 0,
-					(val) =>
-						(formData.staffData.leaveAllotments.maternityLeave = Number(val)),
-					10,
-				)}
+				{@render renderInput("staffData.leaveAllotments.maternityLeave", "Maternity Leave", false, "text", formData.staffData.leaveAllotments.maternityLeave ?? 0, (val) => (formData.staffData.leaveAllotments.maternityLeave = Number(val)), 10)}
 			</div>
 			<div class="col-2">
-				{@render renderInput(
-					"staffData.leaveAllotments.sickLeave",
-					"Sick Leave",
-					false,
-					"text",
-					formData.staffData.leaveAllotments.sickLeave ?? 0,
-					(val) => (formData.staffData.leaveAllotments.sickLeave = Number(val)),
-					10,
-				)}
+				{@render renderInput("staffData.leaveAllotments.sickLeave", "Sick Leave", false, "text", formData.staffData.leaveAllotments.sickLeave ?? 0, (val) => (formData.staffData.leaveAllotments.sickLeave = Number(val)), 10)}
 			</div>
 		</div>
 	</div>
@@ -582,60 +331,20 @@
 		<h1>Bank Details</h1>
 		<div class="grid-12">
 			<div class="col-2">
-				{@render renderInput(
-					"staffData.bankDetails.accountTitle",
-					"Account Title",
-					false,
-					"text",
-					formData.staffData.bankDetails.accountTitle ?? "",
-					(val) => (formData.staffData.bankDetails.accountTitle = String(val)),
-					50,
-				)}
+				{@render renderInput("staffData.bankDetails.accountTitle", "Account Title", false, "text", formData.staffData.bankDetails.accountTitle ?? "", (val) => (formData.staffData.bankDetails.accountTitle = String(val)), 50)}
 			</div>
 
 			<div class="col-2">
-				{@render renderInput(
-					"staffData.bankDetails.bankAccountNo",
-					"Bank Account No",
-					false,
-					"text",
-					formData.staffData.bankDetails.bankAccountNo ?? "",
-					(val) => (formData.staffData.bankDetails.bankAccountNo = String(val)),
-					30,
-				)}
+				{@render renderInput("staffData.bankDetails.bankAccountNo", "Bank Account No", false, "text", formData.staffData.bankDetails.bankAccountNo ?? "", (val) => (formData.staffData.bankDetails.bankAccountNo = String(val)), 30)}
 			</div>
 			<div class="col-2">
-				{@render renderInput(
-					"staffData.bankDetails.bankName",
-					"Bank Name",
-					false,
-					"text",
-					formData.staffData.bankDetails.bankName ?? "",
-					(val) => (formData.staffData.bankDetails.bankName = String(val)),
-					50,
-				)}
+				{@render renderInput("staffData.bankDetails.bankName", "Bank Name", false, "text", formData.staffData.bankDetails.bankName ?? "", (val) => (formData.staffData.bankDetails.bankName = String(val)), 50)}
 			</div>
 			<div class="col-2">
-				{@render renderInput(
-					"staffData.bankDetails.ifscCode",
-					"IFSC Code",
-					false,
-					"text",
-					formData.staffData.bankDetails.ifscCode ?? "",
-					(val) => (formData.staffData.bankDetails.ifscCode = String(val)),
-					20,
-				)}
+				{@render renderInput("staffData.bankDetails.ifscCode", "IFSC Code", false, "text", formData.staffData.bankDetails.ifscCode ?? "", (val) => (formData.staffData.bankDetails.ifscCode = String(val)), 20)}
 			</div>
 			<div class="col-4">
-				{@render renderInput(
-					"staffData.bankDetails.bankBranch",
-					"Bank Branch",
-					false,
-					"text",
-					formData.staffData.bankDetails.bankBranch ?? "",
-					(val) => (formData.staffData.bankDetails.bankBranch = String(val)),
-					50,
-				)}
+				{@render renderInput("staffData.bankDetails.bankBranch", "Bank Branch", false, "text", formData.staffData.bankDetails.bankBranch ?? "", (val) => (formData.staffData.bankDetails.bankBranch = String(val)), 50)}
 			</div>
 		</div>
 	</div>
@@ -645,49 +354,17 @@
 		<h1>Social Links</h1>
 		<div class="grid-12">
 			<div class="col-3">
-				{@render renderInput(
-					"staffData.socialLinks.facebook",
-					"Facebook URL",
-					false,
-					"text",
-					formData.staffData.socialLinks.facebook ?? "",
-					(val) => (formData.staffData.socialLinks.facebook = String(val)),
-					100,
-				)}
+				{@render renderInput("staffData.socialLinks.facebook", "Facebook URL", false, "text", formData.staffData.socialLinks.facebook ?? "", (val) => (formData.staffData.socialLinks.facebook = String(val)), 100)}
 			</div>
 
 			<div class="col-3">
-				{@render renderInput(
-					"staffData.socialLinks.twitter",
-					"Twitter URL",
-					false,
-					"text",
-					formData.staffData.socialLinks.twitter ?? "",
-					(val) => (formData.staffData.socialLinks.twitter = String(val)),
-					100,
-				)}
+				{@render renderInput("staffData.socialLinks.twitter", "Twitter URL", false, "text", formData.staffData.socialLinks.twitter ?? "", (val) => (formData.staffData.socialLinks.twitter = String(val)), 100)}
 			</div>
 			<div class="col-3">
-				{@render renderInput(
-					"staffData.socialLinks.linkedin",
-					"LinkedIn URL",
-					false,
-					"text",
-					formData.staffData.socialLinks.linkedin ?? "",
-					(val) => (formData.staffData.socialLinks.linkedin = String(val)),
-					100,
-				)}
+				{@render renderInput("staffData.socialLinks.linkedin", "LinkedIn URL", false, "text", formData.staffData.socialLinks.linkedin ?? "", (val) => (formData.staffData.socialLinks.linkedin = String(val)), 100)}
 			</div>
 			<div class="col-3">
-				{@render renderInput(
-					"staffData.socialLinks.instagram",
-					"Instagram URL",
-					false,
-					"text",
-					formData.staffData.socialLinks.instagram ?? "",
-					(val) => (formData.staffData.socialLinks.instagram = String(val)),
-					100,
-				)}
+				{@render renderInput("staffData.socialLinks.instagram", "Instagram URL", false, "text", formData.staffData.socialLinks.instagram ?? "", (val) => (formData.staffData.socialLinks.instagram = String(val)), 100)}
 			</div>
 		</div>
 	</div>
@@ -696,11 +373,7 @@
 		<h1>Upload Photo</h1>
 		<div class="grid-12">
 			<div class="col-2">
-				<ImageUploader
-					label="Staff Photo"
-					bind:photoUrl={formData.staffData.profile.photoUrl}
-					onSelect={handleImageSelect}
-				/>
+				<ImageUploader label="Staff Photo" bind:url={formData.staffData.profile.photoUrl} onSelect={handleImageSelect} />
 			</div>
 			<div class="col-10"></div>
 		</div>
@@ -712,28 +385,15 @@
 			<h1>Upload Documents</h1>
 		</div>
 		<div class="grid-12">
-				{#each uploadSections as section, index}
-					<UploadDocument
-						{index}
-						{section}
-						{categories}
-						isFirst={index === 0}
-						onAdd={addNewSection}
-						onRemove={removeSection}
-						onUpdate={updateSection}
-					/>
-				{/each}
+			{#each formData.staffData.documents! as document, index}
+				<UploadDocument {index} {document} {categories} isFirst={index === 0} onAdd={addNewDocument} onRemove={removeDocument} onUpdate={updateDocument} />
+			{/each}
 		</div>
 	</div>
 
 	<!-- Form Actions -->
 	<div class="form-actions">
-		<button
-			type="button"
-			class="btn ripple btn-secondary"
-			onclick={handleResetForm}
-			disabled={$isLoading}
-		>
+		<button type="button" class="btn ripple btn-secondary" onclick={handleResetForm} disabled={$isLoading}>
 			<BrushCleaning />
 			<span>Reset Form</span>
 		</button>
@@ -752,15 +412,7 @@
 	</div>
 </form>
 
-{#snippet renderInput(
-	fieldName: string,
-	title: string,
-	isRequired = true,
-	type = "text",
-	value: string | number | undefined,
-	onInput: (val: string | number) => void,
-	length = 100,
-)}
+{#snippet renderInput(fieldName: string, title: string, isRequired = true, type = "text", value: string | number | undefined, onInput: (val: string | number) => void, length = 100)}
 	<label for={fieldName}>
 		{title}
 		{#if isRequired}<span class="required">*</span>{/if}
@@ -784,17 +436,9 @@
 	{#if $formErrors[fieldName] && (touched[fieldName] || formSubmitted)}
 		<p class="error-text">{$formErrors[fieldName]}</p>
 	{/if}
-
 {/snippet}
 
-{#snippet renderTextarea(
-	fieldName: string,
-	title: string,
-	isRequired = true,
-	value: string,
-	onInput: (val: string) => void,
-	length = 100,
-)}
+{#snippet renderTextarea(fieldName: string, title: string, isRequired = true, value: string, onInput: (val: string) => void, length = 100)}
 	<label for={fieldName}>
 		{title}
 		{#if isRequired}<span class="required">*</span>{/if}
@@ -818,14 +462,7 @@
 	{/if}
 {/snippet}
 
-{#snippet renderSelect(
-	fieldName: string,
-	title: string,
-	isRequired = true,
-	options: { name: string }[],
-	value: string | undefined,
-	onChange: (val: string) => void,
-)}
+{#snippet renderSelect(fieldName: string, title: string, isRequired = true, options: { name: string }[], value: string | undefined, onChange: (val: string) => void)}
 	<label for={fieldName}>
 		{title}
 		{#if isRequired}<span class="required">*</span>{/if}
