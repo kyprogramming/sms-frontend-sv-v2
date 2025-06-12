@@ -11,4 +11,9 @@ export default defineConfig({
 			},
 		},
 	},
+	resolve: {
+		alias: {
+			"pdfjs-dist/build/pdf.worker.mjs": "pdfjs-dist/build/pdf.worker.mjs",
+		},
+	},
 });

@@ -121,7 +121,7 @@ export function initializeStaffFormData(): StaffFormData {
 			leaveAllotments: {},
 			bankDetails: {},
 			socialLinks: {},
-			documents: [{ title: "", category: "", url: "" }],
+			documents: [],
 		},
 	};
 }

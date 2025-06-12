@@ -14,29 +14,15 @@
 		cls?: string;
 	}
 
-	let {
-		id = "",
-		value = $bindable(null),
-		onChange = () => {},
-		onBlur = () => {},
-		onClear = () => {},
-		defaultToday = false,
-		cls = "",
-	}: Props = $props();
+	let { id = "", value = $bindable(null), onChange = () => {}, onBlur = () => {}, onClear = () => {}, defaultToday = false, cls = "" }: Props = $props();
 
 	let showCalendar = $state(false);
-	let selectedDate: Date | null = $state(
-		value instanceof Date ? value : value ? new Date(value) : null,
-	);
+	let selectedDate: Date | null = $state(value instanceof Date ? value : value ? new Date(value) : null);
 	let calendarRef: HTMLDivElement | undefined = $state();
 
 	const today = new Date();
-	let currentMonth = $derived(
-		selectedDate ? selectedDate.getMonth() : today.getMonth(),
-	);
-	let currentYear = $derived(
-		selectedDate ? selectedDate.getFullYear() : today.getFullYear(),
-	);
+	let currentMonth = $derived(selectedDate ? selectedDate.getMonth() : today.getMonth());
+	let currentYear = $derived(selectedDate ? selectedDate.getFullYear() : today.getFullYear());
 	let showYearPicker = $state(false);
 
 	// Helper function to safely parse dates
@@ -53,15 +39,15 @@
 	// 		onClear(null);
 	// 	}
 	// });
-    onMount(()=>{
-        if (value === null && selectedDate !== null) {
+	onMount(() => {
+		if (value === null && selectedDate !== null) {
 			selectedDate = null;
 			onClear(null);
 		}
-        if (defaultToday && !value && !selectedDate) {
+		if (defaultToday && !value && !selectedDate) {
 			selectToday();
 		}
-        // const parsedValue = safeDateParse(value);
+		// const parsedValue = safeDateParse(value);
 		// if (parsedValue !== selectedDate) {
 		// 	if (parsedValue === null) {
 		// 		selectedDate = null;
@@ -74,7 +60,7 @@
 		// 		currentYear = parsedValue.getFullYear();
 		// 	}
 		// }
-    });
+	});
 
 	// Month and year dropdown options
 	const months = Array.from({ length: 12 }, (_, i) => ({
@@ -194,39 +180,11 @@
 	// });
 </script>
 
-<div
-	class="datepicker-wrapper"
-	bind:this={calendarRef}
-	use:clickOutside={() => (showCalendar = false)}
->
+<div class="datepicker-wrapper" bind:this={calendarRef} use:clickOutside={() => (showCalendar = false)}>
 	<div class="input-container">
-		<input
-			{id}
-			type="text"
-			readonly
-			onclick={toggleCalendar}
-			value={value ? formatDate(new Date(value)) : ""}
-			onblur={onBlur}
-			class={cls}
-			placeholder="Select date"
-		/>
-		<button
-			class="calendar-icon"
-			type="button"
-			onclick={toggleCalendar}
-			aria-label="Toggle calendar"
-		>
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				width="16"
-				height="16"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-			>
+		<input {id} type="text" readonly onclick={toggleCalendar} value={value ? formatDate(new Date(value)) : ""} onblur={onBlur} class={cls} placeholder="Select date" />
+		<button class="calendar-icon" type="button" onclick={toggleCalendar} aria-label="Toggle calendar">
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 				<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
 				<line x1="16" y1="2" x2="16" y2="6"></line>
 				<line x1="8" y1="2" x2="8" y2="6"></line>
@@ -240,21 +198,13 @@
 			<div class="calendar">
 				<div class="calendar-header">
 					<div class="month-year-selectors">
-						<select
-							class="month-selector"
-							value={currentMonth}
-							onchange={changeMonth}
-						>
+						<select class="month-selector" value={currentMonth} onchange={changeMonth}>
 							{#each months as month}
 								<option value={month.value}>{month.name}</option>
 							{/each}
 						</select>
 						<div class="year-selector-wrapper">
-							<button
-								class="btn w-100"
-								type="button"
-								onclick={() => (showYearPicker = !showYearPicker)}
-							>
+							<button class="btn w-100" type="button" onclick={() => (showYearPicker = !showYearPicker)}>
 								{currentYear}
 							</button>
 
@@ -264,10 +214,7 @@
 										<div
 											role="button"
 											tabindex="0"
-											class="year-option {currentYear ===
-											today.getFullYear() - i
-												? 'selected'
-												: ''}"
+											class="year-option {currentYear === today.getFullYear() - i ? 'selected' : ''}"
 											onclick={() => {
 												currentYear = today.getFullYear() - i;
 												showYearPicker = false;
@@ -305,11 +252,7 @@
 						<div
 							role="button"
 							tabindex="0"
-							class="calendar-day {selectedDate?.getDate() === i + 1 &&
-							selectedDate?.getMonth() === currentMonth &&
-							selectedDate?.getFullYear() === currentYear
-								? 'selected'
-								: ''}"
+							class="calendar-day {selectedDate?.getDate() === i + 1 && selectedDate?.getMonth() === currentMonth && selectedDate?.getFullYear() === currentYear ? 'selected' : ''}"
 							onclick={(e) => handleDayClick(i + 1, e)}
 							onkeydown={(e) => {
 								if (e.key === "Enter" || e.key === " ") {

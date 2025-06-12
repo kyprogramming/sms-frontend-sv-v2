@@ -4,12 +4,7 @@
 	export const { uploadFiles } = genUploader<any>({
 		url: "http://localhost:5000/api/upload",
 	});
-	let {
-		label = "Upload Image",
-		required = false,
-		url = $bindable(""),
-		onSelect = () => {},
-	} = $props();
+	let { label = "Upload Image", required = false, title = "", url = $bindable(""), onSelect = () => {} } = $props();
 
 	let fileInput: HTMLInputElement | null = null;
 	let showModal = $state(false);
@@ -17,6 +12,7 @@
 	let isUploading = $state(false);
 	let uploadComplete = $state(false);
 	let isLoading = $state(false);
+	let fileName = $state(title);
 
 	async function handleFileChange(event: Event) {
 		try {
@@ -24,7 +20,8 @@
 			const file = target?.files?.[0];
 			if (file) {
 				url = URL.createObjectURL(file);
-                console.log("file", file)
+				fileName = file.name;
+				console.log("file", file);
 				isUploading = true;
 				uploadProgress = 0;
 				uploadComplete = false;
@@ -47,13 +44,13 @@
 				uploadComplete = true;
 
 				url = res[0]?.ufsUrl ?? "";
-				onSelect(url,file.name);
+				onSelect(url, file.name);
 			} else {
 				onSelect(null);
 			}
 		} catch (error) {
 		} finally {
-            isLoading = false;
+			isLoading = false;
 		}
 	}
 
@@ -79,35 +76,34 @@
 	}
 </script>
 
-
 <div class="image-upload">
 	<label for="upload-box">
 		{label}
 		{#if required}<span class="required">*</span>{/if}
 	</label>
 
-	<div
-		class="upload-box"
-		role="button"
-		tabindex="0"
-		onclick={toggleModal}
-		onkeydown={toggleModal}
-	>
+	<div class="upload-box" role="button" tabindex="0" onclick={toggleModal} onkeydown={toggleModal}>
 		{#if url}
-			<img src={url} alt="Preview" class="preview" />
-           
+			{#if fileName.toLowerCase().endsWith(".pdf")}
+				<!-- <PdfViewer pdfUrl={url} /> -->
+				<iframe src={url} width="100%" class="preview"></iframe>
+			{:else}
+				<img src={url} alt="Preview" class="preview" />
+			{/if}
+
 			<button type="button" class="remove-btn" onclick={removeImage}>
 				<Trash2 color="red" />
 			</button>
+
 			{#if isUploading}
 				<div class="progress-overlay">
 					<div class="progress-bar" style="width: {uploadProgress}%"></div>
 					<span class="progress-text">{uploadProgress}%</span>
-                    {#if isLoading}
-                    <div class="sun-spinner">
-                        <Loader />
-                    </div>
-                {/if}
+					{#if isLoading}
+						<div class="sun-spinner">
+							<Loader />
+						</div>
+					{/if}
 				</div>
 			{:else if uploadComplete || url}
 				<div class="success-overlay">
@@ -118,17 +114,10 @@
 			<CameraOff />
 		{/if}
 	</div>
-
-	<input
-		type="file"
-		accept="image/*"
-		bind:this={fileInput}
-		class="custom-file-input"
-		onchange={handleFileChange}
-	/>
+	<input type="file" accept="image/*,application/pdf" bind:this={fileInput} class="custom-file-input" onchange={handleFileChange} />
 </div>
 
-{#if showModal && url}
+{#if showModal && (fileName || url)}
 	<div
 		class="modal-backdrop"
 		role="button"
@@ -141,7 +130,14 @@
 		}}
 	>
 		<div class="modal-content">
-			<img src={url} alt="Large preview" />
+			{#if fileName.toLowerCase().endsWith(".pdf")}
+				
+            <iframe src={url} width="800px" height="700px"></iframe>
+
+				
+			{:else}
+				<img src={url} alt="Large preview" />
+			{/if}
 			<button class="close-modal" onclick={closeModal}>×</button>
 		</div>
 	</div>
@@ -157,7 +153,7 @@
 		position: relative;
 		border: 2px dashed #ccc;
 		border-radius: 0.5rem;
-		padding: 4px;
+		padding: 8px;
 		cursor: pointer;
 		text-align: center;
 		background-color: #f9f9f9;
@@ -316,6 +312,11 @@
 		width: 18px;
 		height: 18px;
 		animation: rotate 1s linear infinite;
+	}
+
+	.preview {
+		width: 100%;
+		border: none;
 	}
 
 	@keyframes rotate {

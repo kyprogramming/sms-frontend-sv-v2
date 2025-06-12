@@ -1,5 +1,5 @@
 <script lang="ts">
-    	import { ChevronRight } from "@lucide/svelte";
+	import { ChevronRight } from "@lucide/svelte";
 	interface Props {
 		title?: string;
 		items?: { label: string; href?: string }[];
@@ -19,9 +19,9 @@
 				<a href={item.href}>{item.label}</a>
 				{#if i < items.length - 1}
 					<span class="separator">
-                       <ChevronRight/>
-                        <!-- → -->
-                    </span>
+						<ChevronRight />
+						<!-- → -->
+					</span>
 				{/if}
 			{:else}
 				<span>{item.label}</span>

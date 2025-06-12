@@ -61,7 +61,7 @@
 </script>
 
 <div class="form-group">
-	<input type="file" id={id} class="custom-file-input" bind:this={fileInput} onchange={handleFileChange} accept="image/*" />
+	<input type="file" {id} class="custom-file-input" bind:this={fileInput} onchange={handleFileChange} accept="image/*" />
 
 	{#if uploading}
 		<progress max="100" value={progress}>{progress}%</progress>

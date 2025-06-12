@@ -4,7 +4,7 @@
 	import { isLoading } from "$lib/stores/loading";
 	import { initializeStaffFormData, staffSchema, type StaffFormData } from "./staffValidation";
 	import { createStaff, updateStaff } from "$lib/services/staff";
-	import { BrushCleaning, Save } from "@lucide/svelte";
+	import { BrushCleaning, PlusCircle, Save } from "@lucide/svelte";
 	import { showSnackbar } from "$lib/components/snackbar/store";
 	import { goto } from "$app/navigation";
 	import LoaderIcon from "$lib/components/common/LoaderIcon.svelte";
@@ -40,17 +40,6 @@
 				userData: { ...staffData.data.userId },
 			};
 		}
-
-		// Ensure documents exists and has at least one valid entry
-		if (
-			!formData.staffData.documents || // if undefined or null
-			!Array.isArray(formData.staffData.documents) || // if not an array
-			formData.staffData.documents.length === 0 || // if empty array
-			formData.staffData.documents.every((doc) => !doc.title && !doc.category && !doc.url) // if all documents are blank
-		) {
-			formData.staffData.documents = [{ title: "", category: "", url: "" }];
-		}
-
 		touched = {};
 	});
 
@@ -60,14 +49,6 @@
 				staffData: { ...staffData.data },
 				userData: { ...staffData.data.userId },
 			};
-			if (
-				!formData.staffData.documents || // if undefined or null
-				!Array.isArray(formData.staffData.documents) || // if not an array
-				formData.staffData.documents.length === 0 || // if empty array
-				formData.staffData.documents.every((doc) => !doc.title && !doc.category && !doc.url) // if all documents are blank
-			) {
-				formData.staffData.documents = [{ title: "", category: "", url: "" }];
-			}
 		} else {
 			formData = initializeStaffFormData();
 		}
@@ -98,8 +79,8 @@
 		event.preventDefault();
 		formSubmitted = true;
 		const isValid = validateForm(staffSchema, formData);
-		console.log("isValid", isValid);
-		console.log("formData", formData);
+		// console.log("isValid", isValid);
+		// console.log("formData", formData);
 		if (!isValid) return;
 
 		if (action === "update" && staffData) {
@@ -373,7 +354,7 @@
 		<h1>Upload Photo</h1>
 		<div class="grid-12">
 			<div class="col-2">
-				<ImageUploader label="Staff Photo" bind:url={formData.staffData.profile.photoUrl} onSelect={handleImageSelect} />
+				<ImageUploader label="Staff Photo" title={""} bind:url={formData.staffData.profile.photoUrl} onSelect={handleImageSelect} />
 			</div>
 			<div class="col-10"></div>
 		</div>
@@ -381,12 +362,15 @@
 
 	<!-- Upload Documents -->
 	<div class="card-wrapper">
-		<div>
+		<div class="header-bar">
 			<h1>Upload Documents</h1>
+            <button class="plus-button" type="button" onclick={addNewDocument}>
+				<PlusCircle />
+			</button>
 		</div>
 		<div class="grid-12">
 			{#each formData.staffData.documents! as document, index}
-				<UploadDocument {index} {document} {categories} isFirst={index === 0} onAdd={addNewDocument} onRemove={removeDocument} onUpdate={updateDocument} />
+				<UploadDocument {index} {document} onRemove={removeDocument} onUpdate={updateDocument} />
 			{/each}
 		</div>
 	</div>
@@ -634,10 +618,37 @@
 	.placeholder-gray {
 		color: gray;
 	}
-	.header-bar {
+
+    .plus-button,
+	.remove-button {
+		color: green;
+		background-color: rgb(238, 237, 237);
+		border-radius: 6px;
+		border: none;
+		cursor: pointer;
 		display: flex;
-		justify-content: flex-start; /* center content horizontally */
-		align-items: center;
-		gap: 0.5rem; /* space between h1 and button */
+		align-items: start;
+		align-self: center;
+		padding: 9px;
+		margin: 0px;
 	}
+	.remove-button {
+		color: red;
+	}
+	.plus-button:hover,
+	.remove-button:hover {
+		background-color: rgb(204, 202, 202);
+	}
+    .header-bar {
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+        margin-bottom: 1rem;
+		gap: 1rem;
+	}
+    .header-bar h1 {
+	margin: 0;
+
+	}
+
 </style>
