@@ -118,9 +118,12 @@
 	}
 
 	function addNewDocument(e: MouseEvent) {
-        if(formData.staffData.documents?.length)
-		formData.staffData.documents = [...(formData.staffData.documents ?? []), { title: "", category: "", url: "" }];
-		console.log("uploadSections", formData.staffData.documents);
+		if (formData.staffData.documents?.length! < 12) {
+			formData.staffData.documents = [...(formData.staffData.documents ?? []), { title: "", category: "", url: "" }];
+			console.log("uploadSections", formData.staffData.documents);
+		} else {
+			showSnackbar({ message: "Can not add more than 12 documents", type: "info" });
+		}
 	}
 </script>
 
@@ -370,11 +373,9 @@
 			</button>
 		</div>
 		<div class="grid-12">
-			{#key formData.staffData.documents}
-				{#each formData.staffData.documents! as document, index}
-					<UploadDocument {index} {document} onRemove={removeDocument} onUpdate={updateDocument} />
-				{/each}
-			{/key}
+			{#each formData.staffData.documents! as document, index (`${index}_${document.title}`)}
+				<UploadDocument {index} {document} onRemove={removeDocument} onUpdate={updateDocument} />
+			{/each}
 		</div>
 	</div>
 
@@ -561,6 +562,12 @@
 		border-radius: 10px;
 		box-shadow: var(--shadow-sm);
 		margin-bottom: 10px;
+	}
+
+    .card-wrapper h1 {
+	  color: #000000;
+      /* font-size: 15 px; */
+      /* text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); */
 	}
 
 	.radio-group {
