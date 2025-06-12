@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { genUploader } from "uploadthing/client";
-	import { CheckCircle, Trash2, CameraOff, Loader } from "@lucide/svelte";
+	import { CheckCircle, Trash2, CameraOff, Loader, Maximize2 } from "@lucide/svelte";
 	export const { uploadFiles } = genUploader<any>({
 		url: "http://localhost:5000/api/upload",
 	});
@@ -85,10 +85,21 @@
 	<div class="upload-box" role="button" tabindex="0" onclick={toggleModal} onkeydown={toggleModal}>
 		{#if url}
 			{#if fileName.toLowerCase().endsWith(".pdf")}
-				<!-- <PdfViewer pdfUrl={url} /> -->
-				<iframe src={url} width="100%" class="preview"></iframe>
+				<div class="pdf-preview-container">
+					<iframe src={url} class="pdf-preview" title="PDF Preview"></iframe>
+					<div class="pdf-overlay">
+						<Maximize2 class="maximize-icon" />
+						<span>Click to view fullscreen</span>
+					</div>
+				</div>
 			{:else}
-				<img src={url} alt="Preview" class="preview" />
+				<div class="pdf-preview-container">
+					<img src={url} alt="Preview" class="preview" />
+					<div class="pdf-overlay">
+						<Maximize2 class="maximize-icon" />
+						<span>Click to view fullscreen</span>
+					</div>
+				</div>
 			{/if}
 
 			<button type="button" class="remove-btn" onclick={removeImage}>
@@ -131,10 +142,8 @@
 	>
 		<div class="modal-content">
 			{#if fileName.toLowerCase().endsWith(".pdf")}
-				
-            <iframe src={url} width="800px" height="700px"></iframe>
-
-				
+				<!-- <iframe src={url} width="800px" height="700px"></iframe> -->
+				<iframe src={url} class="pdf-modal-view" title="PDF Fullscreen" allowfullscreen></iframe>
 			{:else}
 				<img src={url} alt="Large preview" />
 			{/if}
@@ -161,6 +170,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		overflow: hidden;
 	}
 	.upload-box:hover {
 		border-color: #888;
@@ -171,10 +181,60 @@
 		margin-top: 20px;
 		max-height: 250px;
 		border-radius: 0.5rem;
+		object-fit: contain;
+	}
+	/* PDF Preview Styles */
+	.pdf-preview-container {
+		position: relative;
+		width: 100%;
+		height: 250px;
+		border-radius: 0.5rem;
+		overflow: hidden;
+		cursor: pointer;
+	}
+
+	.pdf-preview {
+		width: 100%;
+		height: 100%;
+		border: none;
+		margin-top: 1.5rem;
+		border-radius: 0.5rem;
+		pointer-events: none; /* Prevent iframe from intercepting clicks */
+	}
+
+	.pdf-overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, 0.3);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		color: white;
+		opacity: 0;
+		transition: opacity 0.2s ease;
+		margin-top: 1.5rem;
+        border-radius: 0.5rem;
+	}
+
+	.pdf-preview-container:hover .pdf-overlay {
+		opacity: 1;
+	}
+
+	.maximize-icon {
+		width: 24px;
+		height: 24px;
+		margin-bottom: 8px;
 	}
 
 	.remove-btn {
 		position: absolute;
+		top: 0;
+		right: 0;
+		padding: 5px;
 		background-color: transparent;
 		/* color: white; */
 		border: none;
@@ -183,11 +243,7 @@
 		align-items: center;
 		justify-content: center;
 		cursor: pointer;
-	}
-	.remove-btn {
-		top: 0;
-		right: 0;
-		padding: 5px;
+		z-index: 2;
 	}
 
 	.progress-overlay {
@@ -201,6 +257,7 @@
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
+		z-index: 1;
 	}
 	.progress-bar {
 		height: 6px;
@@ -221,6 +278,7 @@
 		background-color: transparent;
 		border-radius: 50%;
 		padding: 4px;
+		z-index: 1;
 	}
 	.modal-backdrop {
 		position: fixed;
@@ -239,12 +297,25 @@
 		background: white;
 		padding: 1rem;
 		border-radius: 0.5rem;
-		max-width: 90%;
-		max-height: 90%;
+		width: 90%;
+		height: 90%;
+		max-width: 900px;
+		max-height: 90vh;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
+
+	.pdf-modal-view {
+		width: 100%;
+		height: 100%;
+		border: none;
+	}
+
 	.modal-content img {
 		max-width: 100%;
 		max-height: 80vh;
+		object-fit: contain;
 	}
 	.close-modal {
 		position: absolute;
@@ -259,6 +330,7 @@
 		font-size: 18px;
 		cursor: pointer;
 		padding: 0px;
+		z-index: 2;
 	}
 
 	.close-modal:hover {
@@ -314,10 +386,10 @@
 		animation: rotate 1s linear infinite;
 	}
 
-	.preview {
+	/* .preview {
 		width: 100%;
 		border: none;
-	}
+	} */
 
 	@keyframes rotate {
 		100% {

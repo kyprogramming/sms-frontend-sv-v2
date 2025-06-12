@@ -118,6 +118,7 @@
 	}
 
 	function addNewDocument(e: MouseEvent) {
+        if(formData.staffData.documents?.length)
 		formData.staffData.documents = [...(formData.staffData.documents ?? []), { title: "", category: "", url: "" }];
 		console.log("uploadSections", formData.staffData.documents);
 	}
@@ -364,14 +365,16 @@
 	<div class="card-wrapper">
 		<div class="header-bar">
 			<h1>Upload Documents</h1>
-            <button class="plus-button" type="button" onclick={addNewDocument}>
+			<button class="plus-button" type="button" onclick={addNewDocument}>
 				<PlusCircle />
 			</button>
 		</div>
 		<div class="grid-12">
-			{#each formData.staffData.documents! as document, index}
-				<UploadDocument {index} {document} onRemove={removeDocument} onUpdate={updateDocument} />
-			{/each}
+			{#key formData.staffData.documents}
+				{#each formData.staffData.documents! as document, index}
+					<UploadDocument {index} {document} onRemove={removeDocument} onUpdate={updateDocument} />
+				{/each}
+			{/key}
 		</div>
 	</div>
 
@@ -619,11 +622,11 @@
 		color: gray;
 	}
 
-    .plus-button,
+	.plus-button,
 	.remove-button {
 		color: green;
 		background-color: rgb(238, 237, 237);
-		border-radius: 6px;
+		border-radius: 50%;
 		border: none;
 		cursor: pointer;
 		display: flex;
@@ -639,16 +642,14 @@
 	.remove-button:hover {
 		background-color: rgb(204, 202, 202);
 	}
-    .header-bar {
+	.header-bar {
 		display: flex;
-		justify-content: flex-start;
+		justify-content: space-between;
 		align-items: center;
-        margin-bottom: 1rem;
+		margin-bottom: 1rem;
 		gap: 1rem;
 	}
-    .header-bar h1 {
-	margin: 0;
-
+	.header-bar h1 {
+		margin: 0;
 	}
-
 </style>
