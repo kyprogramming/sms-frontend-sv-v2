@@ -2,15 +2,11 @@ import { API_BASE_URL } from "$lib/utils/env.config";
 import { fetchWrapper } from "$lib/utils/fetchWrapper";
 import { handleResponse, JSON_HEADERS } from "$lib/utils/utils";
 
-// Subject interface
-export interface ISubject {
-    id: string;
-    name: string;
-}
-
 // Payload interface for create/update
 export interface SubjectPayload {
-    name: string;
+	name: string;
+	type: string;
+	code?: string;
 }
 
 // Create subject

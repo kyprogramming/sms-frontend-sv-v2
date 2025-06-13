@@ -2,17 +2,17 @@
 	import { isLoading } from "$lib/stores/loading";
 	import { validateForm } from "$lib/utils/validate";
 	import { showSnackbar } from "$lib/components/snackbar/store";
-	import { closeModal, isUpdate } from "$lib/stores/modalStore";
+	import { closeModal } from "$lib/stores/modalStore";
 	import { createClass, updateClass } from "$lib/services/class";
 
 	import { page } from "$app/state";
 	import { BrushCleaning, Save } from "@lucide/svelte";
 	import LoaderIcon from "$lib/components/common/LoaderIcon.svelte";
 
-	import { classFormSchema, type ClassFormType } from "$lib/utils/schemas";
+	import { classFormSchema, type ClassFormDataType } from "$lib/utils/schemas";
 	import { formErrors } from "$lib/stores/formStore";
 	import { onMount } from "svelte";
-	import { areFieldsUnchanged } from "$lib/utils/utils";
+	import { isEqual } from "$lib/utils/utils";
 	import { MESSAGES } from "$lib/utils/messages";
 
 	let allSections = page.data?.sectionData || [];
@@ -20,8 +20,16 @@
 	let { onRefreshPage, classData = null, action } = $props();
 
 	// Reactive form state
-	let formData: ClassFormType = $state({ name: "", sectionIds: [] });
-	let touched: Partial<Record<keyof ClassFormType, boolean>> = $state({ name: false, sectionIds: false });
+	let formData: ClassFormDataType = $state(initializeClassFormData());
+
+	export function initializeClassFormData(): ClassFormDataType {
+		return {
+			name: "",
+			sectionIds: [],
+		};
+	}
+
+	let touched: Partial<Record<keyof ClassFormDataType, boolean>> = $state({});
 	let formSubmitted: boolean = $state(false);
 
 	onMount(() => {
@@ -41,17 +49,12 @@
 	// Populate form data based on action
 	function populateFormData() {
 		if (action === "update") {
-			formData = {
-				name: classData.name,
-				sectionIds: classData.sectionIds.map((section: { _id: string }) => section._id) || [],
-			};
-		} else {
-			formData = { name: "", sectionIds: [] };
+			formData = {...classData};
 		}
 	}
 
 	// Handle field changes
-	function handleChange(field: keyof ClassFormType, value: string | string[]): void {
+	function handleChange(field: keyof ClassFormDataType, value: string | string[]): void {
 		if (field === "name" && typeof value === "string") {
 			formData.name = value;
 		} else if (field === "sectionIds" && Array.isArray(value)) {
@@ -65,18 +68,17 @@
 	async function onSubmit(event: Event) {
 		event.preventDefault();
 		formSubmitted = true;
-
+	
 		const isValid = validateForm(classFormSchema, formData);
 		if (!isValid) return;
 
 		if (action === "update" && classData) {
 			// Check if the form data is unchanged before updating
-			const isUnChanged = areFieldsUnchanged(classData, formData, ["name", "sectionIds"]);
+            const isUnChanged = isEqual(classData, formData);
 			if (isUnChanged) {
 				showSnackbar({ message: MESSAGES.FORM.NO_CHANGES, type: "warning" });
 				return;
 			}
-
 			await updateClass(classData._id, formData);
 			showSnackbar({ message: MESSAGES.CLASS.UPDATED, type: "success" });
 		} else {

@@ -8,23 +8,26 @@
 	import { BrushCleaning, Save } from "@lucide/svelte";
 	import LoaderIcon from "$lib/components/common/LoaderIcon.svelte";
 
-	import { subjectFormSchema, type SubjectFormType } from "$lib/utils/schemas";
+	import { subjectFormSchema, type SubjectFormDataType } from "$lib/utils/schemas";
 	import { formErrors } from "$lib/stores/formStore";
 	import { onMount } from "svelte";
-	import { areFieldsUnchanged } from "$lib/utils/utils";
+	import { isEqual } from "$lib/utils/utils";
 	import { MESSAGES } from "$lib/utils/messages";
 	import { SUBJECT_TYPE } from "$lib/utils/constants";
 
 	let { onRefreshPage, subjectData = null, action } = $props();
     
+    export function initializeSubjectFormData(): SubjectFormDataType {
+		return { name: "", code: "", type: "" };
+	}
 	// Reactive form state
-	let formData: SubjectFormType = $state({ name: "", code: "", type: 0 });
-	let touched: Partial<Record<keyof SubjectFormType, boolean>> = $state({ name: false, code: false, type: false });
+    let formData: SubjectFormDataType = $state(initializeSubjectFormData());
+	let touched: Partial<Record<keyof SubjectFormDataType, boolean>> = $state({});
 	let formSubmitted: boolean = $state(false);
 
 	onMount(() => {
 		populateFormData();
-		formErrors.set({ name: "", code: "", type: 0 });
+		formErrors.set({ name: "", code: "", type: "" });
 	});
 
 	// Form reset handler
@@ -39,41 +42,26 @@
 	// Populate form data based on action
 	function populateFormData() {
 		if (action === "update") {
-			formData = {
-				name: subjectData.name || "",
-				code: subjectData.code || "",
-				type: subjectData.type || 0,
-			};
-		} else {
-			formData = { name: "", code: "", type: 0 };
+			formData = {...subjectData}
 		}
 	}
 
 	// Handle field changes
-	function handleChange(field: keyof SubjectFormType, value: string | number): void {
-		if (field === "name" && typeof value === "string") {
-			formData.name = value;
-		} else if (field === "code" && typeof value === "string") {
-			formData.code = value;
-		} else if (field === "type" && typeof value === "number") {
-			formData.type = value;
-		}
-
-		touched = { ...touched, [field]: true };
-		validateForm(subjectFormSchema, formData);
-	}
-
+    function handleChange(field: keyof SubjectFormDataType, value: string ): void {
+	formData[field] = value;
+	touched = { ...touched, [field]: true };
+	validateForm(subjectFormSchema, formData);
+}
 	// Form submission handler
 	async function onSubmit(event: Event) {
 		event.preventDefault();
 		formSubmitted = true;
-		// debugger;
+
 		const isValid = validateForm(subjectFormSchema, formData);
 		if (!isValid) return;
 
 		if (action === "update" && subjectData) {
-			// Check if the form data is unchanged before updating
-			const isUnChanged = areFieldsUnchanged(subjectData, formData, ["name", "code", "type"]);
+            const isUnChanged = isEqual(subjectData, formData);
 			if (isUnChanged) {
 				showSnackbar({ message: MESSAGES.FORM.NO_CHANGES, type: "warning" });
 				return;
@@ -97,7 +85,7 @@
 			{#each SUBJECT_TYPE as type}
 				<div class="radio-item">
 					<label class="radio-label">
-						<input name="type" type="radio" class="radio-input" value={type.id} checked={formData.type === type.id} onchange={() => handleChange("type", type.id)} onblur={() => handleChange("type", formData.type)} />
+						<input name="type" type="radio" class="radio-input" value={type.name} checked={formData.type === type.name} onchange={() => handleChange("type", type.name)} onblur={() => handleChange("type", formData.type)} />
 						<span class="radio-custom"></span>
 						<span class="radio-text">{type.name}</span>
 					</label>

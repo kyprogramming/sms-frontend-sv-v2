@@ -5,18 +5,18 @@
 	import { closeModal } from "$lib/stores/modalStore";
 	import { createSection, updateSection } from "$lib/services/section";
 	import { BrushCleaning, Save } from "@lucide/svelte";
-	import { sectionFormSchema, type SectionFormType } from "$lib/utils/schemas";
+	import { sectionFormSchema, type SectionFormDataType } from "$lib/utils/schemas";
 	import { formErrors } from "$lib/stores/formStore";
 	import LoaderIcon from "$lib/components/common/LoaderIcon.svelte";
 	import { onMount } from "svelte";
-	import { areFieldsUnchanged } from "$lib/utils/utils";
+	import { areFieldsUnchanged, isEqual } from "$lib/utils/utils";
 	import { MESSAGES } from "$lib/utils/messages";
 
 	let { onRefreshPage, sectionData = null, action } = $props();
 
 	// Reactive form state
-	let formData: SectionFormType = $state({ name: "" });
-	let touched: Partial<Record<keyof SectionFormType, boolean>> = $state({ name: false });
+	let formData: SectionFormDataType = $state({ name: "" });
+	let touched: Partial<Record<keyof SectionFormDataType, boolean>> = $state({});
 	let formSubmitted: boolean = $state(false);
 
 	onMount(() => {
@@ -41,7 +41,7 @@
 	}
 
 	// Field change handler
-	function handleChange(field: keyof SectionFormType, value: string): void {
+	function handleChange(field: keyof SectionFormDataType, value: string): void {
 		formData[field] = value;
 		touched = { ...touched, [field]: true };
 		validateForm(sectionFormSchema, formData);
@@ -56,7 +56,7 @@
 
 		if (action === "update" && sectionData) {
 			// Check if the form data is unchanged before updating
-			const isUnChanged = areFieldsUnchanged(sectionData, formData, ["name"]);
+            const isUnChanged = isEqual(sectionData, formData);
 			if (isUnChanged) {
 				showSnackbar({ message: MESSAGES.FORM.NO_CHANGES, type: "warning" });
 				return;

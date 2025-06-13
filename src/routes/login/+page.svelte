@@ -8,12 +8,12 @@
 	import { API_BASE_URL } from "$lib/utils/env.config";
 	import LoaderIcon from "$lib/components/common/LoaderIcon.svelte";
 	import { Eye, EyeOff } from "@lucide/svelte";
-	import { loginFormSchema, type LoginFormType } from "$lib/utils/schemas";
+	import { loginFormSchema, type LoginFormDataType } from "$lib/utils/schemas";
 	import { formErrors } from "$lib/stores/formStore";
 
 	formErrors.set({ email: "", password: "" });
-	let formData: LoginFormType = $state({ email: "username1@xyz.com", password: "password1" });
-	let touched: Partial<Record<keyof LoginFormType, boolean>> = $state({ email: false, password: false });
+	let formData: LoginFormDataType = $state({ email: "username1@xyz.com", password: "password1" });
+	let touched: Partial<Record<keyof LoginFormDataType, boolean>> = $state({ email: false, password: false });
 	let formSubmitted: boolean = $state(false);
 	let showPassword = $state(false);
 
@@ -39,7 +39,7 @@
 		}
 	}
 
-	function handleChange(field: keyof LoginFormType, value: string): void {
+	function handleChange(field: keyof LoginFormDataType, value: string): void {
 		formData[field] = value;
 		touched = { ...touched, [field]: true };
 		validateForm(loginFormSchema, formData);

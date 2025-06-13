@@ -7,17 +7,10 @@ export const COOKIE_OPTIONS = {
 	maxAge: 60 * 60 * 24 * 7, // 1 week
 };
 export const CASTE_CATEGORIES = [{ name: "General" }, { name: "OBC" }, { name: "SC" }, { name: "ST" }, { name: "Special" }, { name: "Physical Challenged" }];
-
 export const RELIGIONS = [{ name: "Hindu" }, { name: "Muslim" }, { name: "Other" }];
-
 export const GENDERS = [{ name: "Male" }, { name: "Female" }, { name: "Other" }];
-
 export const BLOOD_GROUPS = [{ name: "A+" }, { name: "A-" }, { name: "B+" }, { name: "B-" }, { name: "AB+" }, { name: "AB-" }, { name: "O+" }, { name: "O-" }];
-
-export const SUBJECT_TYPE = [
-	{ id: 1, name: "Theory" },
-	{ id: 2, name: "Practical" },
-];
+export const SUBJECT_TYPE = [{ name: "Theory" },{ name: "Practical" },];
 
 export const GUARDIAN_TYPE = [{ name: "Father" }, { name: "Mother" }, { name: "Other" }];
 export const STAFF_ROLES = [{ name: "Admin" }, { name: "Teacher" }, { name: "Accountant" }, { name: "Librarian" }, { name: "Receptionist" }, { name: "Super Admin" }];
