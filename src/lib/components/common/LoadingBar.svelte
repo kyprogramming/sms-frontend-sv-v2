@@ -56,6 +56,6 @@
 		left: 0;
 		right: 0;
 		transform-origin: left;
-		z-index: 9999;
+		z-index: 1000;
 	}
 </style>

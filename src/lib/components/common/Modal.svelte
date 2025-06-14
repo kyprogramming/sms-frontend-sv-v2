@@ -57,7 +57,7 @@
 		width: 90%;
 		max-width: 500px;
 		max-height: 90vh;
-		overflow-y: auto;
+		/* overflow-y: auto; */
 	}
 
 	/* Size classes */
@@ -86,10 +86,12 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+        border-radius: 8px 8px 0 0 ;
 	}
 
 	.modal-body {
 		padding: 1rem;
+        z-index: 10;
 	}
 
 	.modal-header h2 {

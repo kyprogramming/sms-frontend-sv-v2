@@ -135,7 +135,7 @@
 	let firstDayOfMonth = $derived(getFirstDayOfMonth(currentMonth, currentYear));
 </script>
 
-<div class="datepicker-wrapper" bind:this={calendarRef} use:clickOutside={() => (showCalendar = false)}>
+<div class="datepicker-wrapper" bind:this={calendarRef} use:clickOutside={() => (showCalendar = false)} >
 	<div class="input-container">
 		<input {id} type="text" readonly onclick={toggleCalendar} value={value ? formatDate(new Date(value)) : ""} onblur={onBlur} class={cls} placeholder="Select date" />
 		<button class="calendar-icon" type="button" onclick={toggleCalendar} aria-label="Toggle calendar">
@@ -282,15 +282,16 @@
 
 	.calendar-container {
 		position: relative;
-		z-index: 1000;
+        z-index: 1100;
 		min-width: 260px;
+        background-color: white;
 	}
 
 	.calendar {
 		position: absolute;
 		top: 100%;
 		left: 0;
-		z-index: 1001;
+        z-index: 1101;
 		background: #fff;
 		border: 1px solid #ddd;
 		border-radius: 8px;
@@ -415,7 +416,7 @@
 		overflow-y: auto;
 		width: 100%;
 		margin-top: 0.25rem;
-		z-index: 1002;
+        z-index: 1102;
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 	}
 
