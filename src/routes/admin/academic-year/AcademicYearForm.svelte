@@ -14,12 +14,7 @@
 	import { onMount } from "svelte";
 	import { isEqual } from "$lib/utils/utils";
 	import { MESSAGES } from "$lib/utils/messages";
-	import DatePicker from "$lib/components/common/DatePicker.svelte";
-	import DateRangePicker from "$lib/components/common/DateRangePicker.svelte";
 	import DatePicker2 from "$lib/components/common/DatePicker2.svelte";
-	import { formatDate } from "$lib/utils/formatDate";
-	let selectedDate: Date | null = null;
-	const defaultDate = new Date(2025, 6, 15); // July 15, 2025
 
 	let { onRefreshPage, academicYearData = null, action } = $props();
 
@@ -33,13 +28,12 @@
 
 	onMount(() => {
 		populateFormData();
-		formErrors.set({ name: "", code: "", type: "" });
+		formErrors.set({});
 	});
 
 	// Form reset handler
 	function handleResetForm() {
 		populateFormData();
-		// Reset form errors and touched state
 		formErrors.set({});
 		formSubmitted = false;
 		touched = {};
@@ -54,27 +48,13 @@
 		}
 	}
 
-	function handleStartDateChange(date: Date | null) {
-		if (date) {
-			const year = date.getFullYear();
-			const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
-			const day = String(date.getDate()).padStart(2, "0");
-			formData.startDate = `${year}-${month}-${day}`;
-		} else {
-			formData.startDate = "";
-		}
+	function handleStartDateChange(dateString: string) {
+		formData.startDate = dateString;
 		validateForm(academicYearFormSchema, formData);
 	}
 
-	function handleEndDateChange(date: Date | null) {
-		if (date) {
-			const year = date.getFullYear();
-			const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
-			const day = String(date.getDate()).padStart(2, "0");
-			formData.endDate = `${year}-${month}-${day}`;
-		} else {
-			formData.endDate = "";
-		}
+	function handleEndDateChange(dateString: string) {
+		formData.endDate = dateString;
 		validateForm(academicYearFormSchema, formData);
 	}
 
@@ -85,36 +65,17 @@
 		validateForm(academicYearFormSchema, formData);
 	}
 
-	// function handleBlur(field: keyof any) {
-	// 	touched = { ...touched, [field]: true };
-	// 	validateForm(academicYearFormSchema, formData);
-	// }
-
-	function handleBlur(field: keyof any) {
+	// Update blur handler
+	function handleBlur(field: keyof AcademicYearFormDataType) {
 		touched = { ...touched, [field]: true };
-		// Add your validation logic here
-		// if (!formData.startDate) {
-		// 	$formErrors = { ...$formErrors, startDate: "Start date is required" };
-		// }
-		// if (!formData.endDate) {
-		// 	$formErrors = { ...$formErrors, endDate: "End date is required" };
-		// }
-	}
-
-	function handleStartDateSelect(date: Date) {
-		formData.startDate = formatDate(date);
-		// validateForm(academicYearFormSchema, formData);
-	}
-	function handleEndDateSelect(date: Date) {
-		formData.endDate = formatDate(date);
-		// validateForm(academicYearFormSchema, formData);
+		validateForm(academicYearFormSchema, formData);
 	}
 
 	// Form submission handler
 	async function onSubmit(event: Event) {
 		event.preventDefault();
 		formSubmitted = true;
-
+		console.log(formData);
 		const isValid = validateForm(academicYearFormSchema, formData);
 		if (!isValid) return;
 
@@ -139,7 +100,7 @@
 <form onsubmit={onSubmit}>
 	<div class="input-wrapper">
 		<label for="name">Academic Year Name <span class="required"> *</span></label>
-		<input id="name" type="text" name="name" placeholder="Academic year name" class={`w-full ${$formErrors.name && (touched.name || formSubmitted) ? "input-error" : ""}`} bind:value={formData.name} oninput={(e) => handleChange("name", (e.target as HTMLInputElement).value)} onblur={() => handleChange("name", formData.name)} />
+		<input id="name" type="text" name="name" placeholder="Academic year name" class={`w-full ${$formErrors.name && (touched.name || formSubmitted) ? "input-error" : ""}`} bind:value={formData.name} oninput={(e) => handleChange("name", (e.target as HTMLInputElement).value)} onblur={() => handleBlur("name")} />
 		{#if $formErrors.name && (touched.name || formSubmitted)}
 			<p class="error-text">{$formErrors.name}</p>
 		{/if}
@@ -148,16 +109,15 @@
 	<div class="form-row">
 		<div class="input-wrapper">
 			<label for="startDate">Start Date<span class="required"> *</span></label>
-			<DatePicker2 id="startDate" title="start date" defaultValue={defaultDate} {selectedDate} bind:value={formData.startDate} onBlur={() => handleBlur("startDate")} onDateSelect={handleStartDateChange} cls={`w-full ${$formErrors["startDate"] && (touched["startDate"] || formSubmitted) ? "input-error" : ""}`} />
+			<DatePicker2 id="startDate" title="Start Date" bind:value={formData.startDate} onDateSelect={handleStartDateChange} onBlur={() => handleBlur("startDate")} cls={`w-full ${$formErrors.startDate && (touched.startDate || formSubmitted) ? "input-error" : ""}`} />
 			{#if $formErrors["startDate"] && (touched["startDate"] || formSubmitted)}
-				<p class="error-text">{$formErrors["endDate"]}</p>
+				<p class="error-text">{$formErrors["startDate"]}</p>
 			{/if}
 		</div>
 
-		<!-- End Date -->
 		<div class="input-wrapper">
 			<label for="endDate">End Date<span class="required"> *</span></label>
-			<DatePicker2 id="endDate" title="end date" defaultValue={defaultDate} {selectedDate} bind:value={formData.endDate} onBlur={() => handleBlur("endDate")} onDateSelect={handleEndDateChange} cls={`w-full ${$formErrors["endDate"] && (touched["endDate"] || formSubmitted) ? "input-error" : ""}`} />
+			<DatePicker2 id="endDate" title="Start Date" bind:value={formData.endDate} onDateSelect={handleEndDateChange} onBlur={() => handleBlur("endDate")} cls={`w-full ${$formErrors.endDate && (touched.endDate || formSubmitted) ? "input-error" : ""}`} />
 			{#if $formErrors["endDate"] && (touched["endDate"] || formSubmitted)}
 				<p class="error-text">{$formErrors["endDate"]}</p>
 			{/if}

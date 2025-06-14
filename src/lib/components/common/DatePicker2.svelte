@@ -3,45 +3,32 @@
 
 	// Types
 	type DatePickerView = "day" | "month" | "year";
-	type DateSelection = Date | null;
 
 	interface Props {
 		id?: string;
 		title?: string;
-        value?: Date | string | null;
-		defaultValue?: Date | null;
-		selectedDate?: DateSelection;
-		onDateSelect?: (date: Date) => void;
-        onBlur?: () => void;
-        onClear?: (date: Date | null) => void;
-        cls?: string;
+		value?: string | null;
+		onDateSelect?: (dateString: string) => void;
+		onBlur?: () => void;
+		cls?: string;
 	}
 
-	// Props with defaults
-	let {
-		id = "",
-		title = "",
-        value = $bindable(null),
-		defaultValue = null,
-		selectedDate = defaultValue,
-        onBlur = () => {},
-		onDateSelect = (() => {}) as (date: Date) => void,
-        onClear = () => {},
-        cls = ""
-	}:Props = $props();
+	let { id = "", title = "", value = $bindable(null), onBlur = () => {}, onDateSelect, cls = "" }: Props = $props();
+
+	// Convert value to Date for internal use
+	let dateValue = $derived(toDate(value));
 
 	// State
 	let isOpen = $state(false);
-	let showError = $state(false);
+	// let showError = $state(false);
 	let inputWidth = $state("100%");
 	let inputRef: HTMLInputElement | null = $state(null);
 	let calendarRef = $state<HTMLDivElement>();
 
-	// Reactive state
+	// Reactive state using the converted dateValue
 	let currentView = $state<DatePickerView>("day");
-	let currentDate = $state<Date>(selectedDate || new Date());
-	let currentYear = $state<number>((selectedDate || new Date()).getFullYear());
-	let currentMonth = $state<number>((selectedDate || new Date()).getMonth());
+	let currentYear = $state<number>(dateValue?.getFullYear() ?? new Date().getFullYear());
+	let currentMonth = $state<number>(dateValue?.getMonth() ?? new Date().getMonth());
 
 	// Constants
 	const DAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
@@ -50,6 +37,19 @@
 	// Helper functions
 	function getDaysInMonth(year: number, month: number): number {
 		return new Date(year, month + 1, 0).getDate();
+	}
+
+    	// Helper function to convert to Date
+	function toDate(dateString: string | null): Date | null {
+		if (!dateString) return null;
+		const date = new Date(dateString);
+		return isNaN(date.getTime()) ? null : date;
+	}
+
+	// Helper function to safely convert to Date
+	function ensureDate(input: Date | string | null): Date {
+		if (!input) return new Date();
+		return typeof input === "string" ? new Date(input) : input;
 	}
 
 	function getFirstDayOfMonth(year: number, month: number): number {
@@ -100,32 +100,56 @@
 	}
 
 	// Navigation functions
-	function prevMonth() {
+	function prevMonth(event: MouseEvent) {
+		// event.stopPropagation();
 		currentMonth = currentMonth === 0 ? 11 : currentMonth - 1;
 		if (currentMonth === 11) {
 			currentYear -= 1;
 		}
 	}
 
-	function nextMonth() {
+	function nextMonth(event: MouseEvent) {
+		// event.stopPropagation();
 		currentMonth = currentMonth === 11 ? 0 : currentMonth + 1;
 		if (currentMonth === 0) {
 			currentYear += 1;
 		}
 	}
 
-    function selectDay(day: number) {
-        const date = new Date(currentYear, currentMonth, day);
-        selectedDate = date;
-        value = date; // Make sure to update the bound value
-        onDateSelect(date);
-        isOpen = false;
-        showError = false;
-        onBlur(); // Trigger blur handler to validate
-    }
+	function prevYear(event: MouseEvent) {
+		// event.stopPropagation();
+		currentYear -= 1;
+	}
 
+	function nextYear(event: MouseEvent) {
+		// event.stopPropagation();
+		currentYear += 1;
+	}
 
-	function selectMonth(month: number) {
+	function prevYearRange(event: MouseEvent) {
+		// event.stopPropagation();
+		currentYear -= 12;
+	}
+
+	function nextYearRange(event: MouseEvent) {
+		// event.stopPropagation();
+		currentYear += 12;
+	}
+
+	// Update selectDay function
+	function selectDay(day: number, event: MouseEvent) {
+		// event.stopPropagation();
+		const date = new Date(currentYear, currentMonth, day);
+		const dateString = formatDateForStorage(date); // Use local date formatting
+		value = dateString;
+		onDateSelect?.(dateString);
+		isOpen = false;
+		// showError = false;
+		onBlur?.();
+	}
+
+	function selectMonth(month: number, event: MouseEvent) {
+		// event.stopPropagation();
 		currentMonth = month;
 		currentView = "day";
 	}
@@ -135,71 +159,93 @@
 		currentView = "month";
 	}
 
-	function navigateToMonthView() {
+	function navigateToMonthView(event: MouseEvent | KeyboardEvent) {
+		// event.stopPropagation();
 		currentView = "month";
 	}
 
-	function navigateToYearView() {
+	function navigateToYearView(event: MouseEvent | KeyboardEvent) {
+		// event.stopPropagation();
 		currentView = "year";
 	}
 
-	function toggleDatePicker() {
+	function toggleDatePicker(event: MouseEvent) {
 		isOpen = !isOpen;
 		if (isOpen && inputRef) {
 			inputWidth = `${inputRef.offsetWidth}px`;
-			if (selectedDate) {
-				currentYear = selectedDate.getFullYear();
-				currentMonth = selectedDate.getMonth();
+			if (value) {
+				// Convert string to Date if needed
+				const dateValue = typeof value === "string" ? new Date(value) : value;
+				// Check if valid date
+				if (!isNaN(dateValue.getTime())) {
+					currentYear = dateValue.getFullYear();
+					currentMonth = dateValue.getMonth();
+				}
 			}
 			currentView = "day";
 		}
 	}
 
-	function formatDate(date: Date | null): string {
+	// Modify the formatDate function to handle string inputs
+	function formatDate(date: Date | string | null): string {
 		if (!date) return "";
-		const day = date.getDate();
-		const month = MONTHS[date.getMonth()];
-		const year = date.getFullYear();
+		// If date is a string, convert to Date object first
+		const dateObj = typeof date === "string" ? new Date(date) : date;
+		// Handle invalid dates
+		if (isNaN(dateObj.getTime())) return "";
+		const day = dateObj.getDate();
+		const month = MONTHS[dateObj.getMonth()];
+		const year = dateObj.getFullYear();
 		return `${day} ${month} ${year}`;
 	}
 
-	// Quick selection functions
-	function selectToday() {
+	// Update quick selection functions similarly
+	function selectToday(event: MouseEvent) {
+		// event.stopPropagation();
 		const today = new Date();
-		selectedDate = today;
-        value = today; // Update bound value
+		const dateString = formatDateForStorage(today);
+		value = dateString;
+		onDateSelect?.(dateString);
 		currentYear = today.getFullYear();
 		currentMonth = today.getMonth();
-		onDateSelect(today);
 		isOpen = false;
-		showError = false;
-        onBlur(); // Trigger validation
+		// showError = false;
+		// onBlur?.();
 	}
-
-	function selectYesterday() {
+	function selectYesterday(event: MouseEvent) {
+		// event.stopPropagation();
 		const yesterday = new Date();
 		yesterday.setDate(yesterday.getDate() - 1);
-		selectedDate = yesterday;
-		value = yesterday;
+		const dateString = formatDateForStorage(yesterday);
+		value = dateString;
 		currentYear = yesterday.getFullYear();
 		currentMonth = yesterday.getMonth();
-		onDateSelect(yesterday);
+		onDateSelect?.(dateString);
 		isOpen = false;
-		showError = false;
-        onBlur(); // Trigger validation
+		// showError = false;
+		// onBlur?.();
 	}
 
-	function selectTomorrow() {
+	function selectTomorrow(event: MouseEvent) {
+		// event.stopPropagation();
 		const tomorrow = new Date();
 		tomorrow.setDate(tomorrow.getDate() + 1);
-		selectedDate = tomorrow;
-		value = tomorrow;
+		const dateString = formatDateForStorage(tomorrow);
+		value = dateString;
 		currentYear = tomorrow.getFullYear();
 		currentMonth = tomorrow.getMonth();
-		onDateSelect(tomorrow);
+		onDateSelect?.(dateString);
 		isOpen = false;
-		showError = false;
-        onBlur(); // Trigger validation
+		// showError = false;
+		onBlur?.();
+	}
+
+	// Update the date-to-string conversion
+	function formatDateForStorage(date: Date): string {
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, "0");
+		const day = String(date.getDate()).padStart(2, "0");
+		return `${year}-${month}-${day}`; // YYYY-MM-DD format
 	}
 
 	// Action for click outside
@@ -218,10 +264,10 @@
 	}
 </script>
 
-<div class="date-picker-container" use:clickOutside={() => (isOpen = false)} >
+<div class="date-picker-container" use:clickOutside={() => (isOpen = false)}>
 	<div class="input-container">
-		<input {id} type="text" readonly bind:this={inputRef} value={formatDate(selectedDate)} onclick={toggleDatePicker} onblur={onBlur}  class={cls} placeholder={title ? `Select ${title}` : "Select date"} aria-label={title ? `${title} date picker` : "Date picker"} />
-		<button class="calendar-button" onclick={toggleDatePicker} aria-label="Open calendar">
+		<input {id} type="text" readonly bind:this={inputRef} value={formatDate(value)} onclick={toggleDatePicker} onblur={onBlur} class={cls} placeholder={title ? `Select ${title}` : "Select date"} aria-label={title ? `${title} date picker` : "Date picker"} />
+		<button type="button" class="calendar-button" onclick={toggleDatePicker} aria-label="Open calendar">
 			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 				<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
 				<line x1="16" y1="2" x2="16" y2="6"></line>
@@ -236,12 +282,12 @@
 			<div class="date-picker">
 				{#if currentView === "day"}
 					<div class="header-date">
-						<button onclick={prevMonth}>‹</button>
+						<button type="button" onclick={prevMonth}>‹</button>
 						<div>
 							<span onclick={navigateToMonthView}>{MONTHS[currentMonth]}</span>
 							<span onclick={navigateToYearView}>{currentYear}</span>
 						</div>
-						<button onclick={nextMonth}>›</button>
+						<button type="button" onclick={nextMonth}>›</button>
 					</div>
 
 					<div class="day-names">
@@ -255,7 +301,7 @@
 							{#each generateMonthDays(currentYear, currentMonth) as week}
 								<div class="week">
 									{#each week as day}
-										<button class:current-month={day !== null} class:selected={day !== null && selectedDate?.getDate() === day && selectedDate?.getMonth() === currentMonth && selectedDate?.getFullYear() === currentYear} onclick={() => day !== null && selectDay(day)}>
+										<button type="button" class:current-month={day !== null} class:selected={day !== null && dateValue?.getDate() === day && dateValue?.getMonth() === currentMonth && dateValue?.getFullYear() === currentYear} onclick={(e) => day !== null && selectDay(day, e)}>
 											{day}
 										</button>
 									{/each}
@@ -263,37 +309,37 @@
 							{/each}
 						</div>
 						<div class="quick-selection">
-							<button onclick={selectYesterday}>Yesterday</button>
-							<button onclick={selectToday}>Today</button>
-							<button onclick={selectTomorrow}>Tomorrow</button>
+							<button type="button" onclick={selectYesterday}>Yesterday</button>
+							<button type="button" onclick={selectToday}>Today</button>
+							<button type="button" onclick={selectTomorrow}>Tomorrow</button>
 						</div>
 					</div>
 				{:else if currentView === "month"}
 					<div class="header-date">
-						<button onclick={() => (currentYear -= 1)}>‹</button>
+						<button type="button" onclick={() => (currentYear -= 1)}>‹</button>
 						<span onclick={navigateToYearView}>{currentYear}</span>
-						<button onclick={() => (currentYear += 1)}>›</button>
+						<button type="button" onclick={() => (currentYear += 1)}>›</button>
 					</div>
 
 					<div class="months-grid">
 						{#each MONTHS as month, i}
-							<button class:selected={selectedDate?.getMonth() === i && selectedDate?.getFullYear() === currentYear} onclick={() => selectMonth(i)}>
+							<button type="button" class:selected={dateValue?.getMonth() === i && dateValue?.getFullYear() === currentYear} onclick={(e) => selectMonth(i, e)}>
 								{month}
 							</button>
 						{/each}
 					</div>
 				{:else if currentView === "year"}
 					<div class="header-date">
-						<button onclick={() => (currentYear -= 12)}>‹</button>
+						<button type="button" onclick={() => (currentYear -= 12)}>‹</button>
 						<span>{Math.floor(currentYear / 10) * 10 - 1}-{Math.floor(currentYear / 10) * 10 + 10}</span>
-						<button onclick={() => (currentYear += 12)}>›</button>
+						<button type="button" onclick={() => (currentYear += 12)}>›</button>
 					</div>
 
 					<div class="years-grid">
 						{#each generateYears(Math.floor(currentYear / 10) * 10) as row}
 							<div class="year-row">
 								{#each row as year}
-									<button class:selected={selectedDate?.getFullYear() === year} onclick={() => selectYear(year)}>
+									<button type="button" class:selected={dateValue?.getFullYear() === year} onclick={(e) => selectYear(year)}>
 										{year}
 									</button>
 								{/each}
@@ -306,6 +352,7 @@
 	{/if}
 </div>
 
+<!-- Your existing styles remain exactly the same -->
 <style>
 	.date-picker-container {
 		position: relative;
@@ -318,7 +365,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: 8px;
-  
 	}
 
 	.input-container {
@@ -366,7 +412,7 @@
 	.date-picker {
 		background: white;
 		border-radius: 8px;
-        border: 1px solid #ddd;
+		border: 1px solid #ddd;
 		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 		padding: 12px;
 		padding-top: 0;
@@ -427,7 +473,7 @@
 		border-radius: 4px;
 		cursor: pointer;
 		background: none;
-        padding: 10px;
+		padding: 10px;
 	}
 
 	.days-grid button.current-month {
