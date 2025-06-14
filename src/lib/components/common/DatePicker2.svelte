@@ -226,7 +226,7 @@
 	}
 </script>
 
-<div class="date-picker-container" use:clickOutside={() => (isOpen = false)}>
+<div class="date-picker-container"  bind:this={calendarRef} use:clickOutside={() => (isOpen = false)}>
 	<div class="input-container">
 		<input {id} type="text" readonly bind:this={inputRef} value={formatDate(value)} onclick={toggleDatePicker} onblur={onBlur} class={cls} placeholder={title ? `Select ${title}` : "Select date"} aria-label={title ? `${title} date picker` : "Date picker"} />
 		<button type="button" class="calendar-button" onclick={toggleDatePicker} aria-label="Open calendar">
