@@ -44,12 +44,12 @@
 		const weeks: (number | null)[][] = [];
 		let week: (number | null)[] = [];
 
-		// Fill in days from previous month
-		for (let i = firstDay - 1; i >= 0; i--) {
+		// Fill initial empty days
+		for (let i = 0; i < firstDay; i++) {
 			week.push(null);
 		}
 
-		// Current month days
+		// Add days of month
 		for (let day = 1; day <= daysInMonth; day++) {
 			week.push(day);
 			if (week.length === 7) {
@@ -58,15 +58,13 @@
 			}
 		}
 
-		// Fill in days from next month
-		while (week.length < 7) {
-			week.push(null);
+		// Only add a final partial week if needed
+		if (week.length > 0 && week.length < 7) {
+			weeks.push(week);
 		}
-		if (week.length > 0) weeks.push(week);
 
 		return weeks;
 	}
-
 	function generateYears(startYear: number): number[][] {
 		const years: number[][] = [];
 		let row: number[] = [];
@@ -153,11 +151,10 @@
 
 	function formatDate(date: Date | null): string {
 		if (!date) return "";
-		return date.toLocaleDateString("en-US", {
-			year: "numeric",
-			month: "short",
-			day: "numeric",
-		});
+		const day = date.getDate();
+		const month = MONTHS[date.getMonth()];
+		const year = date.getFullYear();
+		return `${day} ${month} ${year}`;
 	}
 
 	// Quick selection functions
@@ -234,17 +231,18 @@
 						{/each}
 					</div>
 
-					<div class="days-grid">
-						{#each generateMonthDays($currentYear, $currentMonth) as week}
-							<div class="week">
-								{#each week as day}
-									<button class:current-month={day !== null} class:selected={day !== null && selectedDate?.getDate() === day && selectedDate?.getMonth() === $currentMonth && selectedDate?.getFullYear() === $currentYear} on:click={() => day !== null && selectDay(day)}>
-										{day}
-									</button>
-								{/each}
-							</div>
-						{/each}
-						<!-- Quick selection buttons -->
+					<div class="calendar-container">
+						<div class="days-grid">
+							{#each generateMonthDays($currentYear, $currentMonth) as week}
+								<div class="week">
+									{#each week as day}
+										<button class:current-month={day !== null} class:selected={day !== null && selectedDate?.getDate() === day && selectedDate?.getMonth() === $currentMonth && selectedDate?.getFullYear() === $currentYear} on:click={() => day !== null && selectDay(day)}>
+											{day}
+										</button>
+									{/each}
+								</div>
+							{/each}
+						</div>
 						<div class="quick-selection">
 							<button on:click={selectYesterday}>Yesterday</button>
 							<button on:click={selectToday}>Today</button>
@@ -304,6 +302,11 @@
 		font-weight: bold;
 		font-size: 14px;
 	}
+	.calendar-container {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
 
 	.input-container {
 		position: relative;
@@ -361,6 +364,7 @@
 		align-items: center;
 		padding: 8px 0;
 		margin-bottom: 12px;
+
 	}
 
 	.header-date > div {
@@ -371,6 +375,7 @@
 	.header-date span {
 		cursor: pointer;
 		font-weight: bold;
+        margin-right: 10px;
 	}
 
 	.header-date button {
@@ -392,7 +397,7 @@
 
 	.days-grid {
 		display: grid;
-		grid-template-rows: repeat(6, 1fr);
+		grid-template-rows: repeat(5, 1fr);
 		gap: 4px;
 	}
 
@@ -434,7 +439,7 @@
 	}
 
 	.months-grid button {
-		padding: 8px;
+		padding: 1rem;
 		border: none;
 		border-radius: 4px;
 		cursor: pointer;
@@ -463,7 +468,7 @@
 	}
 
 	.years-grid button {
-		padding: 8px;
+		padding: 1rem;
 		border: none;
 		border-radius: 4px;
 		cursor: pointer;
@@ -482,8 +487,8 @@
 	.quick-selection {
 		display: flex;
 		justify-content: space-between;
-		margin-top: 8px;
 		gap: 8px;
+		margin-top: 8px;
 	}
 
 	.quick-selection button {
@@ -494,7 +499,7 @@
 		background: white;
 		cursor: pointer;
 		font-size: 12px;
-        aspect-ratio: 0;
+		aspect-ratio: 0;
 	}
 
 	.quick-selection button:hover {
