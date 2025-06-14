@@ -101,7 +101,7 @@
 						{#each columns as column}
 							<td style={`width: ${column.width || "auto"}; text-align: ${column.align || "left"}; display: ${column?.visible === false ? "none" : "table-cell"};`}>
 								{#if column.format}
-									{column.format(getNestedValue(item, column.key))}
+									{@html column.format(getNestedValue(item, column.key))}
 								{:else}
 									{getNestedValue(item, column.key)}
 								{/if}

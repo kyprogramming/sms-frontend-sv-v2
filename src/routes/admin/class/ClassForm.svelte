@@ -43,7 +43,7 @@
 		// Reset form errors and touched state
 		formErrors.set({});
 		formSubmitted = false;
-		touched = { name: false, sectionIds: false };
+		touched = { };
 	}
 
 	// Populate form data based on action

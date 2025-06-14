@@ -1,6 +1,6 @@
 <script lang="ts">
 	import DatePicker from "$lib/components/common/DatePicker.svelte";
-	import { CONTRACT_TYPE, GENDERS, MARITAL_STATUSES, SHIFT, STAFF_DEPARTMENTS, STAFF_DESIGNATIONS, STAFF_ROLES } from "$lib/utils/constants";
+	import { CONTRACT_TYPE, GENDERS, MARITAL_STATUS, SHIFT, STAFF_DEPARTMENTS, STAFF_DESIGNATIONS, STAFF_ROLES } from "$lib/utils/constants";
 	import { isLoading } from "$lib/stores/loading";
 	import { initializeStaffFormData, staffSchema, type StaffFormData } from "./staffValidation";
 	import { createStaff, updateStaff } from "$lib/services/staff";
@@ -206,7 +206,7 @@
 
 			<!--  Marital Status -->
 			<div class="col-2">
-				{@render renderSelect("staffData.profile.maritalStatus", "Marital Status", true, MARITAL_STATUSES, formData.staffData.profile.maritalStatus, (val) => (formData.staffData.profile.maritalStatus = val))}
+				{@render renderSelect("staffData.profile.maritalStatus", "Marital Status", true, MARITAL_STATUS, formData.staffData.profile.maritalStatus, (val) => (formData.staffData.profile.maritalStatus = val))}
 			</div>
 
 			<!-- Email -->

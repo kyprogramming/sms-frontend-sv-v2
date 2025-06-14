@@ -1,4 +1,5 @@
 import { z } from "zod";
+const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
 // Login Form Schema
 export const loginFormSchema = z.object({
@@ -27,3 +28,22 @@ export const subjectFormSchema = z.object({
 	code: z.string().optional(),
 });
 export type SubjectFormDataType = z.infer<typeof subjectFormSchema>;
+
+
+
+// Academic Year Form Schema
+export const academicYearFormSchema = z.object({
+	name: z.string().min(1, "Academic Year Name is required"),
+	startDate: z
+		.string()
+		.min(1, "Start date is required"),
+		// .regex(dateRegex, "Date must be in YYYY-MM-DD format"),
+		// .transform((val) => new Date(val)),
+	endDate: z
+		.string()
+		.min(1, "End date is required"),
+		// .regex(dateRegex, "Date must be in YYYY-MM-DD format"),
+		// .transform((val) => new Date(val)),
+	active: z.boolean().optional(),
+});
+export type AcademicYearFormDataType = z.infer<typeof academicYearFormSchema>;

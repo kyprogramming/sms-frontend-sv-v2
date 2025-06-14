@@ -1,6 +1,4 @@
 <script lang="ts">
-	// import { run } from "svelte/legacy";
-
 	import { formatDateToLocalYYYYMMDD } from "$lib/utils/utils";
 	import { onMount } from "svelte";
 
@@ -33,12 +31,6 @@
 		return isNaN(parsed.getTime()) ? null : parsed;
 	}
 
-	// run(() => {
-	// 	if (value === null && selectedDate !== null) {
-	// 		selectedDate = null;
-	// 		onClear(null);
-	// 	}
-	// });
 	onMount(() => {
 		if (value === null && selectedDate !== null) {
 			selectedDate = null;
@@ -47,19 +39,6 @@
 		if (defaultToday && !value && !selectedDate) {
 			selectToday();
 		}
-		// const parsedValue = safeDateParse(value);
-		// if (parsedValue !== selectedDate) {
-		// 	if (parsedValue === null) {
-		// 		selectedDate = null;
-		// 	} else if (
-		// 		!selectedDate ||
-		// 		parsedValue.getTime() !== selectedDate.getTime()
-		// 	) {
-		// 		selectedDate = parsedValue;
-		// 		currentMonth = parsedValue.getMonth();
-		// 		currentYear = parsedValue.getFullYear();
-		// 	}
-		// }
 	});
 
 	// Month and year dropdown options
@@ -152,32 +131,8 @@
 			},
 		};
 	}
-
 	let daysInMonth = $derived(getDaysInMonth(currentMonth, currentYear));
 	let firstDayOfMonth = $derived(getFirstDayOfMonth(currentMonth, currentYear));
-
-	// run(() => {
-	// 	if (defaultToday && !value && !selectedDate) {
-	// 		selectToday();
-	// 	}
-	// });
-
-	// Sync with external value changes
-	// run(() => {
-	// 	const parsedValue = safeDateParse(value);
-	// 	if (parsedValue !== selectedDate) {
-	// 		if (parsedValue === null) {
-	// 			selectedDate = null;
-	// 		} else if (
-	// 			!selectedDate ||
-	// 			parsedValue.getTime() !== selectedDate.getTime()
-	// 		) {
-	// 			selectedDate = parsedValue;
-	// 			currentMonth = parsedValue.getMonth();
-	// 			currentYear = parsedValue.getFullYear();
-	// 		}
-	// 	}
-	// });
 </script>
 
 <div class="datepicker-wrapper" bind:this={calendarRef} use:clickOutside={() => (showCalendar = false)}>
@@ -286,6 +241,7 @@
 		position: relative;
 		width: 100%;
 		font-family: sans-serif;
+       
 	}
 
 	.input-container {

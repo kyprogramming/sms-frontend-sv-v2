@@ -16,7 +16,7 @@ export const GUARDIAN_TYPE = [{ name: "Father" }, { name: "Mother" }, { name: "O
 export const STAFF_ROLES = [{ name: "Admin" }, { name: "Teacher" }, { name: "Accountant" }, { name: "Librarian" }, { name: "Receptionist" }, { name: "Super Admin" }];
 export const STAFF_DESIGNATIONS = [{ name: "Faculty" }, { name: "Accountant" }, { name: "Admin" }, { name: "Receptionist" }, { name: "Principal" }, { name: "Director" }, { name: "Librarian" }, { name: "Technical Head" }, { name: "Vice Principal" }];
 export const STAFF_DEPARTMENTS = [{ name: "Academic" }, { name: "Library" }, { name: "Sports" }, { name: "Science" }, { name: "Commerce" }, { name: "Arts" }, { name: "Exam" }, { name: "Admin" }, { name: "Finance" }, { name: "Maths" }];
-export const MARITAL_STATUSES = [{ name: "Single" }, { name: "Married" }, { name: "Widowed" }, { name: "Separated" }, { name: "Not Specified" }];
+export const MARITAL_STATUS = [{ name: "Single" }, { name: "Married" }, { name: "Widowed" }, { name: "Separated" }, { name: "Not Specified" }];
 export const SHIFT = [{ name: "Morning" }, { name: "Afternoon" }, { name: "Evening" }, { name: "Night" }];
 export const CONTRACT_TYPE = [{ name: "Permanent" }, { name: "Probation" }];
 
@@ -114,6 +114,7 @@ export const MENU_GROUPS = [
 			// },
 			// { title: "Promote Students", link: "/admin/stdtransfer" },
 			// { title: "Subject Group", link: "/admin/subjectgroup" },
+			{ title: "Academic Years", link: "/admin/academic-year" },
 			{ title: "Sections", link: "/admin/section" },
 			{ title: "Class", link: "/admin/class" },
 			{ title: "Subjects", link: "/admin/subject" },

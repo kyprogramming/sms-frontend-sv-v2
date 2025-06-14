@@ -1320,9 +1320,24 @@ button {
     height: 35px;
 }
 
-.btn-secondary {
+/* .btn-secondary {
     color: white;
     background-color: var(--clr-bg-5);
+} */
+
+.btn-secondary {
+    background-color: white;
+    color: #4f46e5;
+    border: 1px solid #d1d5db;
+}
+
+.btn-secondary:hover {
+    background-color: #f5f3ff !important;
+}
+
+.btn-secondary:disabled {
+    color: #a5b4fc;
+    cursor: not-allowed;
 }
 
 
@@ -1404,3 +1419,6 @@ button {
     color: #6b7280;
     font-size: 0.875rem;
 }
+
+.active, .inactive{color: green; background-color:lightgray; padding:5px 10px; border-radius:8px; font-weight: 500;}
+.inactive{color: red;}
