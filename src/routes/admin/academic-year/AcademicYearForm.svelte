@@ -15,6 +15,7 @@
 	import { isEqual } from "$lib/utils/utils";
 	import { MESSAGES } from "$lib/utils/messages";
 	import DatePicker from "$lib/components/common/DatePicker.svelte";
+	import DateRangePicker from "$lib/components/common/DateRangePicker.svelte";
 
 	let { onRefreshPage, academicYearData = null, action } = $props();
 
@@ -112,6 +113,29 @@
 		closeModal();
 		onRefreshPage();
 	}
+
+	import moment from "moment";
+	import DatePicker2 from "$lib/components/common/DatePicker2.svelte";
+
+	let start = moment().subtract(7, "days");
+	let end = moment();
+
+	// You can still override the default ranges if needed
+	const customRanges = {
+		"Last Week": [moment().subtract(1, "week").startOf("week"), moment().subtract(1, "week").endOf("week")],
+		"Last Quarter": [moment().subtract(1, "quarter").startOf("quarter"), moment().subtract(1, "quarter").endOf("quarter")],
+	};
+
+	function handleApply() {
+		console.log("Selected range:", start.format("YYYY-MM-DD"), "to", end.format("YYYY-MM-DD"));
+	}
+
+	let selectedDate: Date | null = null;
+    const defaultDate = new Date(2025, 6, 15); // July 15, 2025
+	function handleDateSelect2(date: Date) {
+		selectedDate = date;
+		console.log("Selected date:", date);
+	}
 </script>
 
 <form onsubmit={onSubmit}>
@@ -140,8 +164,21 @@
 				<p class="error-text">{$formErrors["endDate"]}</p>
 			{/if}
 		</div>
+
+        <DatePicker2 
+        id="birthday"
+        title="Date of Birth"
+        required={true}
+        errorMessage="Please select your birth date"
+        defaultValue={defaultDate}
+        selectedDate={selectedDate}
+        onDateSelect={handleDateSelect2}
+      />
 	</div>
 
+	<div class="form-row">
+		<DateRangePicker bind:startDate={start} bind:endDate={end} on:apply={handleApply} />
+	</div>
 	<div class="form-actions">
 		<button type="button" class="btn ripple btn-secondary" onclick={handleResetForm} disabled={$isLoading}>
 			<BrushCleaning />
