@@ -1,29 +1,47 @@
 <script lang="ts">
-	import { writable } from "svelte/store";
-	import { fade } from "svelte/transition";
+	import { slide } from "svelte/transition";
 
 	// Types
 	type DatePickerView = "day" | "month" | "year";
 	type DateSelection = Date | null;
 
-	// Props
-	export let id = "";
-	export let title = "";
-	export let required = false;
-	export let errorMessage = "This field is required";
-	export let defaultValue: Date | null = null;
-	export let selectedDate: DateSelection = defaultValue;
-	export let onDateSelect: (date: Date) => void = () => {};
+	interface Props {
+		id?: string;
+		title?: string;
+        value?: Date | string | null;
+		defaultValue?: Date | null;
+		selectedDate?: DateSelection;
+		onDateSelect?: (date: Date) => void;
+        onBlur?: () => void;
+        onClear?: (date: Date | null) => void;
+        cls?: string;
+	}
+
+	// Props with defaults
+	let {
+		id = "",
+		title = "",
+        value = $bindable(null),
+		defaultValue = null,
+		selectedDate = defaultValue,
+        onBlur = () => {},
+		onDateSelect = (() => {}) as (date: Date) => void,
+        onClear = () => {},
+        cls = ""
+	}:Props = $props();
 
 	// State
-	let isOpen = false;
-	let showError = false;
-	let inputWidth = "100%";
-	let inputRef: HTMLInputElement;
-	let currentView = writable<DatePickerView>("day");
-	let currentDate = writable<Date>(selectedDate || new Date());
-	let currentYear = writable<number>((selectedDate || new Date()).getFullYear());
-	let currentMonth = writable<number>((selectedDate || new Date()).getMonth());
+	let isOpen = $state(false);
+	let showError = $state(false);
+	let inputWidth = $state("100%");
+	let inputRef: HTMLInputElement | null = $state(null);
+	let calendarRef = $state<HTMLDivElement>();
+
+	// Reactive state
+	let currentView = $state<DatePickerView>("day");
+	let currentDate = $state<Date>(selectedDate || new Date());
+	let currentYear = $state<number>((selectedDate || new Date()).getFullYear());
+	let currentMonth = $state<number>((selectedDate || new Date()).getMonth());
 
 	// Constants
 	const DAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
@@ -59,12 +77,13 @@
 		}
 
 		// Only add a final partial week if needed
-		if (week.length > 0 && week.length < 7) {
+		if (week.length > 0) {
 			weeks.push(week);
 		}
 
 		return weeks;
 	}
+
 	function generateYears(startYear: number): number[][] {
 		const years: number[][] = [];
 		let row: number[] = [];
@@ -82,70 +101,57 @@
 
 	// Navigation functions
 	function prevMonth() {
-		currentMonth.update((m) => {
-			if (m === 0) {
-				currentYear.update((y) => y - 1);
-				return 11;
-			}
-			return m - 1;
-		});
+		currentMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+		if (currentMonth === 11) {
+			currentYear -= 1;
+		}
 	}
 
 	function nextMonth() {
-		currentMonth.update((m) => {
-			if (m === 11) {
-				currentYear.update((y) => y + 1);
-				return 0;
-			}
-			return m + 1;
-		});
+		currentMonth = currentMonth === 11 ? 0 : currentMonth + 1;
+		if (currentMonth === 0) {
+			currentYear += 1;
+		}
 	}
 
-	function selectDay(day: number) {
-		const date = new Date($currentYear, $currentMonth, day);
-		selectedDate = date;
-		onDateSelect(date);
-		isOpen = false;
-		showError = false;
-	}
+    function selectDay(day: number) {
+        const date = new Date(currentYear, currentMonth, day);
+        selectedDate = date;
+        value = date; // Make sure to update the bound value
+        onDateSelect(date);
+        isOpen = false;
+        showError = false;
+        onBlur(); // Trigger blur handler to validate
+    }
+
 
 	function selectMonth(month: number) {
-		currentMonth.set(month);
-		currentView.set("day");
+		currentMonth = month;
+		currentView = "day";
 	}
 
 	function selectYear(year: number) {
-		currentYear.set(year);
-		currentView.set("month");
+		currentYear = year;
+		currentView = "month";
 	}
 
 	function navigateToMonthView() {
-		currentView.set("month");
+		currentView = "month";
 	}
 
 	function navigateToYearView() {
-		currentView.set("year");
+		currentView = "year";
 	}
 
 	function toggleDatePicker() {
 		isOpen = !isOpen;
-		if (isOpen) {
-			// Set width to match input
+		if (isOpen && inputRef) {
 			inputWidth = `${inputRef.offsetWidth}px`;
-
 			if (selectedDate) {
-				currentYear.set(selectedDate.getFullYear());
-				currentMonth.set(selectedDate.getMonth());
+				currentYear = selectedDate.getFullYear();
+				currentMonth = selectedDate.getMonth();
 			}
-			currentView.set("day");
-		}
-	}
-
-	function handleBlur() {
-		if (required && !selectedDate) {
-			showError = true;
-		} else {
-			showError = false;
+			currentView = "day";
 		}
 	}
 
@@ -161,45 +167,62 @@
 	function selectToday() {
 		const today = new Date();
 		selectedDate = today;
-		currentYear.set(today.getFullYear());
-		currentMonth.set(today.getMonth());
+        value = today; // Update bound value
+		currentYear = today.getFullYear();
+		currentMonth = today.getMonth();
 		onDateSelect(today);
 		isOpen = false;
 		showError = false;
+        onBlur(); // Trigger validation
 	}
 
 	function selectYesterday() {
 		const yesterday = new Date();
 		yesterday.setDate(yesterday.getDate() - 1);
 		selectedDate = yesterday;
-		currentYear.set(yesterday.getFullYear());
-		currentMonth.set(yesterday.getMonth());
+		value = yesterday;
+		currentYear = yesterday.getFullYear();
+		currentMonth = yesterday.getMonth();
 		onDateSelect(yesterday);
 		isOpen = false;
 		showError = false;
+        onBlur(); // Trigger validation
 	}
 
 	function selectTomorrow() {
 		const tomorrow = new Date();
 		tomorrow.setDate(tomorrow.getDate() + 1);
 		selectedDate = tomorrow;
-		currentYear.set(tomorrow.getFullYear());
-		currentMonth.set(tomorrow.getMonth());
+		value = tomorrow;
+		currentYear = tomorrow.getFullYear();
+		currentMonth = tomorrow.getMonth();
 		onDateSelect(tomorrow);
 		isOpen = false;
 		showError = false;
+        onBlur(); // Trigger validation
+	}
+
+	// Action for click outside
+	function clickOutside(node: HTMLElement, callback: () => void) {
+		const handleClick = (event: MouseEvent) => {
+			if (!node.contains(event.target as Node)) {
+				callback();
+			}
+		};
+		document.addEventListener("click", handleClick, true);
+		return {
+			destroy() {
+				document.removeEventListener("click", handleClick, true);
+			},
+		};
 	}
 </script>
 
-<div class="date-picker-container">
-	{#if title}
-		<label for={id} class="title">{title}</label>
-	{/if}
-
+<div class="date-picker-container" use:clickOutside={() => (isOpen = false)} >
 	<div class="input-container">
-		<input {id} type="text" readonly bind:this={inputRef} value={formatDate(selectedDate)} on:click={toggleDatePicker} on:blur={handleBlur} class:error={showError} placeholder="Select date" />
-		<button class="calendar-button" on:click={toggleDatePicker}>
-			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+		<input {id} type="text" readonly bind:this={inputRef} value={formatDate(selectedDate)} onclick={toggleDatePicker} onblur={onBlur}  class={cls} placeholder={title ? `Select ${title}` : "Select date"} aria-label={title ? `${title} date picker` : "Date picker"} />
+		<button class="calendar-button" onclick={toggleDatePicker} aria-label="Open calendar">
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 				<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
 				<line x1="16" y1="2" x2="16" y2="6"></line>
 				<line x1="8" y1="2" x2="8" y2="6"></line>
@@ -208,21 +231,17 @@
 		</button>
 	</div>
 
-	{#if showError}
-		<div class="error-message">{errorMessage}</div>
-	{/if}
-
 	{#if isOpen}
-		<div class="date-picker-popup" style="width: {inputWidth}" transition:fade={{ duration: 200 }}>
+		<div class="date-picker-popup" style="width: {inputWidth}" transition:slide={{ duration: 70 }} bind:this={calendarRef}>
 			<div class="date-picker">
-				{#if $currentView === "day"}
+				{#if currentView === "day"}
 					<div class="header-date">
-						<button on:click={prevMonth}>‹</button>
+						<button onclick={prevMonth}>‹</button>
 						<div>
-							<span on:click={navigateToMonthView}>{MONTHS[$currentMonth]}</span>
-							<span on:click={navigateToYearView}>{$currentYear}</span>
+							<span onclick={navigateToMonthView}>{MONTHS[currentMonth]}</span>
+							<span onclick={navigateToYearView}>{currentYear}</span>
 						</div>
-						<button on:click={nextMonth}>›</button>
+						<button onclick={nextMonth}>›</button>
 					</div>
 
 					<div class="day-names">
@@ -233,10 +252,10 @@
 
 					<div class="calendar-container">
 						<div class="days-grid">
-							{#each generateMonthDays($currentYear, $currentMonth) as week}
+							{#each generateMonthDays(currentYear, currentMonth) as week}
 								<div class="week">
 									{#each week as day}
-										<button class:current-month={day !== null} class:selected={day !== null && selectedDate?.getDate() === day && selectedDate?.getMonth() === $currentMonth && selectedDate?.getFullYear() === $currentYear} on:click={() => day !== null && selectDay(day)}>
+										<button class:current-month={day !== null} class:selected={day !== null && selectedDate?.getDate() === day && selectedDate?.getMonth() === currentMonth && selectedDate?.getFullYear() === currentYear} onclick={() => day !== null && selectDay(day)}>
 											{day}
 										</button>
 									{/each}
@@ -244,37 +263,37 @@
 							{/each}
 						</div>
 						<div class="quick-selection">
-							<button on:click={selectYesterday}>Yesterday</button>
-							<button on:click={selectToday}>Today</button>
-							<button on:click={selectTomorrow}>Tomorrow</button>
+							<button onclick={selectYesterday}>Yesterday</button>
+							<button onclick={selectToday}>Today</button>
+							<button onclick={selectTomorrow}>Tomorrow</button>
 						</div>
 					</div>
-				{:else if $currentView === "month"}
+				{:else if currentView === "month"}
 					<div class="header-date">
-						<button on:click={() => currentYear.update((y) => y - 1)}>‹</button>
-						<span on:click={navigateToYearView}>{$currentYear}</span>
-						<button on:click={() => currentYear.update((y) => y + 1)}>›</button>
+						<button onclick={() => (currentYear -= 1)}>‹</button>
+						<span onclick={navigateToYearView}>{currentYear}</span>
+						<button onclick={() => (currentYear += 1)}>›</button>
 					</div>
 
 					<div class="months-grid">
 						{#each MONTHS as month, i}
-							<button class:selected={selectedDate?.getMonth() === i && selectedDate?.getFullYear() === $currentYear} on:click={() => selectMonth(i)}>
+							<button class:selected={selectedDate?.getMonth() === i && selectedDate?.getFullYear() === currentYear} onclick={() => selectMonth(i)}>
 								{month}
 							</button>
 						{/each}
 					</div>
-				{:else if $currentView === "year"}
+				{:else if currentView === "year"}
 					<div class="header-date">
-						<button on:click={() => currentYear.update((y) => y - 12)}>‹</button>
-						<span>{Math.floor($currentYear / 10) * 10 - 1}-{Math.floor($currentYear / 10) * 10 + 10}</span>
-						<button on:click={() => currentYear.update((y) => y + 12)}>›</button>
+						<button onclick={() => (currentYear -= 12)}>‹</button>
+						<span>{Math.floor(currentYear / 10) * 10 - 1}-{Math.floor(currentYear / 10) * 10 + 10}</span>
+						<button onclick={() => (currentYear += 12)}>›</button>
 					</div>
 
 					<div class="years-grid">
-						{#each generateYears(Math.floor($currentYear / 10) * 10) as row}
+						{#each generateYears(Math.floor(currentYear / 10) * 10) as row}
 							<div class="year-row">
 								{#each row as year}
-									<button class:selected={selectedDate?.getFullYear() === year} on:click={() => selectYear(year)}>
+									<button class:selected={selectedDate?.getFullYear() === year} onclick={() => selectYear(year)}>
 										{year}
 									</button>
 								{/each}
@@ -291,21 +310,15 @@
 	.date-picker-container {
 		position: relative;
 		width: 100%;
-		max-width: 300px;
+		min-width: 300px;
 		font-family: Arial, sans-serif;
-		margin-bottom: 16px;
 	}
 
-	.title {
-		display: block;
-		margin-bottom: 8px;
-		font-weight: bold;
-		font-size: 14px;
-	}
 	.calendar-container {
 		display: flex;
 		flex-direction: column;
 		gap: 8px;
+  
 	}
 
 	.input-container {
@@ -347,14 +360,16 @@
 	.date-picker-popup {
 		position: absolute;
 		z-index: 1000;
-		margin-top: 4px;
+		margin-top: 2px;
 	}
 
 	.date-picker {
 		background: white;
 		border-radius: 8px;
+        border: 1px solid #ddd;
 		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 		padding: 12px;
+		padding-top: 0;
 		width: 100%;
 	}
 
@@ -364,7 +379,6 @@
 		align-items: center;
 		padding: 8px 0;
 		margin-bottom: 12px;
-
 	}
 
 	.header-date > div {
@@ -375,7 +389,7 @@
 	.header-date span {
 		cursor: pointer;
 		font-weight: bold;
-        margin-right: 10px;
+		margin-right: 10px;
 	}
 
 	.header-date button {
@@ -397,22 +411,23 @@
 
 	.days-grid {
 		display: grid;
-		grid-template-rows: repeat(5, 1fr);
+		grid-template-rows: repeat(4, 1fr);
 		gap: 4px;
 	}
 
 	.week {
 		display: grid;
-		grid-template-columns: repeat(7, 1fr);
-		gap: 4px;
+		grid-template-columns: repeat(7, 0.5fr);
+		gap: 2px;
 	}
 
 	.days-grid button {
-		aspect-ratio: 1;
+		/* aspect-ratio: 1; */
 		border: none;
 		border-radius: 4px;
 		cursor: pointer;
 		background: none;
+        padding: 10px;
 	}
 
 	.days-grid button.current-month {

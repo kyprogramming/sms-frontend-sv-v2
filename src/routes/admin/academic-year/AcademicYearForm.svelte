@@ -16,6 +16,10 @@
 	import { MESSAGES } from "$lib/utils/messages";
 	import DatePicker from "$lib/components/common/DatePicker.svelte";
 	import DateRangePicker from "$lib/components/common/DateRangePicker.svelte";
+	import DatePicker2 from "$lib/components/common/DatePicker2.svelte";
+	import { formatDate } from "$lib/utils/formatDate";
+	let selectedDate: Date | null = null;
+	const defaultDate = new Date(2025, 6, 15); // July 15, 2025
 
 	let { onRefreshPage, academicYearData = null, action } = $props();
 
@@ -45,6 +49,8 @@
 	function populateFormData() {
 		if (action === "update") {
 			formData = { ...academicYearData };
+		} else {
+			formData = initializeAcademicYearFormData();
 		}
 	}
 
@@ -79,14 +85,29 @@
 		validateForm(academicYearFormSchema, formData);
 	}
 
+	// function handleBlur(field: keyof any) {
+	// 	touched = { ...touched, [field]: true };
+	// 	validateForm(academicYearFormSchema, formData);
+	// }
+
 	function handleBlur(field: keyof any) {
 		touched = { ...touched, [field]: true };
-		validateForm(academicYearFormSchema, formData);
+		// Add your validation logic here
+		// if (!formData.startDate) {
+		// 	$formErrors = { ...$formErrors, startDate: "Start date is required" };
+		// }
+		// if (!formData.endDate) {
+		// 	$formErrors = { ...$formErrors, endDate: "End date is required" };
+		// }
 	}
 
-	function handleOnClear(date: Date | null) {
-		formData.startDate = "";
-		formData.endDate = "";
+	function handleStartDateSelect(date: Date) {
+		formData.startDate = formatDate(date);
+		// validateForm(academicYearFormSchema, formData);
+	}
+	function handleEndDateSelect(date: Date) {
+		formData.endDate = formatDate(date);
+		// validateForm(academicYearFormSchema, formData);
 	}
 
 	// Form submission handler
@@ -113,29 +134,6 @@
 		closeModal();
 		onRefreshPage();
 	}
-
-	import moment from "moment";
-	import DatePicker2 from "$lib/components/common/DatePicker2.svelte";
-
-	let start = moment().subtract(7, "days");
-	let end = moment();
-
-	// You can still override the default ranges if needed
-	const customRanges = {
-		"Last Week": [moment().subtract(1, "week").startOf("week"), moment().subtract(1, "week").endOf("week")],
-		"Last Quarter": [moment().subtract(1, "quarter").startOf("quarter"), moment().subtract(1, "quarter").endOf("quarter")],
-	};
-
-	function handleApply() {
-		console.log("Selected range:", start.format("YYYY-MM-DD"), "to", end.format("YYYY-MM-DD"));
-	}
-
-	let selectedDate: Date | null = null;
-    const defaultDate = new Date(2025, 6, 15); // July 15, 2025
-	function handleDateSelect2(date: Date) {
-		selectedDate = date;
-		console.log("Selected date:", date);
-	}
 </script>
 
 <form onsubmit={onSubmit}>
@@ -148,37 +146,24 @@
 	</div>
 
 	<div class="form-row">
-		<!-- Start Date -->
 		<div class="input-wrapper">
-			<label for="dob">Start Date<span class="required"> *</span></label>
-			<DatePicker bind:value={formData.startDate} onChange={handleStartDateChange} onBlur={() => handleBlur("startDate")} onClear={handleOnClear} cls={`w-full ${$formErrors["startDate"] && (touched["startDate"] || formSubmitted) ? "input-error" : ""}`} />
+			<label for="startDate">Start Date<span class="required"> *</span></label>
+			<DatePicker2 id="startDate" title="start date" defaultValue={defaultDate} {selectedDate} bind:value={formData.startDate} onBlur={() => handleBlur("startDate")} onDateSelect={handleStartDateChange} cls={`w-full ${$formErrors["startDate"] && (touched["startDate"] || formSubmitted) ? "input-error" : ""}`} />
 			{#if $formErrors["startDate"] && (touched["startDate"] || formSubmitted)}
-				<p class="error-text">{$formErrors["startDate"]}</p>
-			{/if}
-		</div>
-		<!-- End Date -->
-		<div class="input-wrapper">
-			<label for="dob">Start Date<span class="required"> *</span></label>
-			<DatePicker bind:value={formData.endDate} onChange={handleEndDateChange} onBlur={() => handleBlur("endDate")} onClear={handleOnClear} cls={`w-full ${$formErrors["endDate"] && (touched["endDate"] || formSubmitted) ? "input-error" : ""}`} />
-			{#if $formErrors["endDate"] && (touched["endDate"] || formSubmitted)}
 				<p class="error-text">{$formErrors["endDate"]}</p>
 			{/if}
 		</div>
 
-        <DatePicker2 
-        id="birthday"
-        title="Date of Birth"
-        required={true}
-        errorMessage="Please select your birth date"
-        defaultValue={defaultDate}
-        selectedDate={selectedDate}
-        onDateSelect={handleDateSelect2}
-      />
+		<!-- End Date -->
+		<div class="input-wrapper">
+			<label for="endDate">End Date<span class="required"> *</span></label>
+			<DatePicker2 id="endDate" title="end date" defaultValue={defaultDate} {selectedDate} bind:value={formData.endDate} onBlur={() => handleBlur("endDate")} onDateSelect={handleEndDateChange} cls={`w-full ${$formErrors["endDate"] && (touched["endDate"] || formSubmitted) ? "input-error" : ""}`} />
+			{#if $formErrors["endDate"] && (touched["endDate"] || formSubmitted)}
+				<p class="error-text">{$formErrors["endDate"]}</p>
+			{/if}
+		</div>
 	</div>
 
-	<div class="form-row">
-		<DateRangePicker bind:startDate={start} bind:endDate={end} on:apply={handleApply} />
-	</div>
 	<div class="form-actions">
 		<button type="button" class="btn ripple btn-secondary" onclick={handleResetForm} disabled={$isLoading}>
 			<BrushCleaning />

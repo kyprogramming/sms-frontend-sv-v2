@@ -16,12 +16,12 @@
 	import { SUBJECT_TYPE } from "$lib/utils/constants";
 
 	let { onRefreshPage, subjectData = null, action } = $props();
-    
-    export function initializeSubjectFormData(): SubjectFormDataType {
+
+	export function initializeSubjectFormData(): SubjectFormDataType {
 		return { name: "", code: "", type: "" };
 	}
 	// Reactive form state
-    let formData: SubjectFormDataType = $state(initializeSubjectFormData());
+	let formData: SubjectFormDataType = $state(initializeSubjectFormData());
 	let touched: Partial<Record<keyof SubjectFormDataType, boolean>> = $state({});
 	let formSubmitted: boolean = $state(false);
 
@@ -42,16 +42,18 @@
 	// Populate form data based on action
 	function populateFormData() {
 		if (action === "update") {
-			formData = {...subjectData}
+			formData = { ...subjectData };
+		} else {
+			formData = initializeSubjectFormData();
 		}
 	}
 
 	// Handle field changes
-    function handleChange(field: keyof SubjectFormDataType, value: string ): void {
-	formData[field] = value;
-	touched = { ...touched, [field]: true };
-	validateForm(subjectFormSchema, formData);
-}
+	function handleChange(field: keyof SubjectFormDataType, value: string): void {
+		formData[field] = value;
+		touched = { ...touched, [field]: true };
+		validateForm(subjectFormSchema, formData);
+	}
 	// Form submission handler
 	async function onSubmit(event: Event) {
 		event.preventDefault();
@@ -61,7 +63,7 @@
 		if (!isValid) return;
 
 		if (action === "update" && subjectData) {
-            const isUnChanged = isEqual(subjectData, formData);
+			const isUnChanged = isEqual(subjectData, formData);
 			if (isUnChanged) {
 				showSnackbar({ message: MESSAGES.FORM.NO_CHANGES, type: "warning" });
 				return;
@@ -110,7 +112,7 @@
 		<input id="code" type="text" name="code" class={`w-full`} placeholder="Subject code" bind:value={formData.code} oninput={(e) => handleChange("code", (e.target as HTMLInputElement).value)} onblur={() => handleChange("code", String(formData.code))} />
 	</div>
 
-    <div class="form-actions">
+	<div class="form-actions">
 		<button type="button" class="btn ripple btn-secondary" onclick={handleResetForm} disabled={$isLoading}>
 			<BrushCleaning />
 			<span>Reset Form</span>
