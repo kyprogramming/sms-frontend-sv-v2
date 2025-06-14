@@ -15,20 +15,19 @@
 
 	let { id = "", title = "", value = $bindable(null), onBlur = () => {}, onDateSelect, cls = "" }: Props = $props();
 
-	// Convert value to Date for internal use
-	let dateValue = $derived(toDate(value));
-
 	// State
 	let isOpen = $state(false);
-	// let showError = $state(false);
 	let inputWidth = $state("100%");
 	let inputRef: HTMLInputElement | null = $state(null);
 	let calendarRef = $state<HTMLDivElement>();
 
+	// Convert value to Date for internal use
+	let dateValue = $derived(toDate(value));
+
 	// Reactive state using the converted dateValue
 	let currentView = $state<DatePickerView>("day");
-	let currentYear = $state<number>(dateValue?.getFullYear() ?? new Date().getFullYear());
-	let currentMonth = $state<number>(dateValue?.getMonth() ?? new Date().getMonth());
+	let currentYear = $derived(dateValue?.getFullYear() ?? new Date().getFullYear());
+	let currentMonth = $derived(dateValue?.getMonth() ?? new Date().getMonth());
 
 	// Constants
 	const DAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
@@ -39,7 +38,7 @@
 		return new Date(year, month + 1, 0).getDate();
 	}
 
-    	// Helper function to convert to Date
+	// Helper function to convert to Date
 	function toDate(dateString: string | null): Date | null {
 		if (!dateString) return null;
 		const date = new Date(dateString);
@@ -87,7 +86,6 @@
 	function generateYears(startYear: number): number[][] {
 		const years: number[][] = [];
 		let row: number[] = [];
-
 		for (let year = startYear - 1; year <= startYear + 10; year++) {
 			row.push(year);
 			if (row.length === 4) {
@@ -95,13 +93,11 @@
 				row = [];
 			}
 		}
-
 		return years;
 	}
 
 	// Navigation functions
 	function prevMonth(event: MouseEvent) {
-		// event.stopPropagation();
 		currentMonth = currentMonth === 0 ? 11 : currentMonth - 1;
 		if (currentMonth === 11) {
 			currentYear -= 1;
@@ -109,47 +105,23 @@
 	}
 
 	function nextMonth(event: MouseEvent) {
-		// event.stopPropagation();
 		currentMonth = currentMonth === 11 ? 0 : currentMonth + 1;
 		if (currentMonth === 0) {
 			currentYear += 1;
 		}
 	}
 
-	function prevYear(event: MouseEvent) {
-		// event.stopPropagation();
-		currentYear -= 1;
-	}
-
-	function nextYear(event: MouseEvent) {
-		// event.stopPropagation();
-		currentYear += 1;
-	}
-
-	function prevYearRange(event: MouseEvent) {
-		// event.stopPropagation();
-		currentYear -= 12;
-	}
-
-	function nextYearRange(event: MouseEvent) {
-		// event.stopPropagation();
-		currentYear += 12;
-	}
-
 	// Update selectDay function
 	function selectDay(day: number, event: MouseEvent) {
-		// event.stopPropagation();
 		const date = new Date(currentYear, currentMonth, day);
 		const dateString = formatDateForStorage(date); // Use local date formatting
 		value = dateString;
 		onDateSelect?.(dateString);
 		isOpen = false;
-		// showError = false;
 		onBlur?.();
 	}
 
-	function selectMonth(month: number, event: MouseEvent) {
-		// event.stopPropagation();
+	function selectMonth(month: number) {
 		currentMonth = month;
 		currentView = "day";
 	}
@@ -159,17 +131,15 @@
 		currentView = "month";
 	}
 
-	function navigateToMonthView(event: MouseEvent | KeyboardEvent) {
-		// event.stopPropagation();
+	function navigateToMonthView() {
 		currentView = "month";
 	}
 
-	function navigateToYearView(event: MouseEvent | KeyboardEvent) {
-		// event.stopPropagation();
+	function navigateToYearView() {
 		currentView = "year";
 	}
 
-	function toggleDatePicker(event: MouseEvent) {
+	function toggleDatePicker() {
 		isOpen = !isOpen;
 		if (isOpen && inputRef) {
 			inputWidth = `${inputRef.offsetWidth}px`;
@@ -200,8 +170,7 @@
 	}
 
 	// Update quick selection functions similarly
-	function selectToday(event: MouseEvent) {
-		// event.stopPropagation();
+	function selectToday() {
 		const today = new Date();
 		const dateString = formatDateForStorage(today);
 		value = dateString;
@@ -209,11 +178,8 @@
 		currentYear = today.getFullYear();
 		currentMonth = today.getMonth();
 		isOpen = false;
-		// showError = false;
-		// onBlur?.();
 	}
-	function selectYesterday(event: MouseEvent) {
-		// event.stopPropagation();
+	function selectYesterday() {
 		const yesterday = new Date();
 		yesterday.setDate(yesterday.getDate() - 1);
 		const dateString = formatDateForStorage(yesterday);
@@ -222,12 +188,9 @@
 		currentMonth = yesterday.getMonth();
 		onDateSelect?.(dateString);
 		isOpen = false;
-		// showError = false;
-		// onBlur?.();
 	}
 
-	function selectTomorrow(event: MouseEvent) {
-		// event.stopPropagation();
+	function selectTomorrow() {
 		const tomorrow = new Date();
 		tomorrow.setDate(tomorrow.getDate() + 1);
 		const dateString = formatDateForStorage(tomorrow);
@@ -236,7 +199,6 @@
 		currentMonth = tomorrow.getMonth();
 		onDateSelect?.(dateString);
 		isOpen = false;
-		// showError = false;
 		onBlur?.();
 	}
 
@@ -245,7 +207,7 @@
 		const year = date.getFullYear();
 		const month = String(date.getMonth() + 1).padStart(2, "0");
 		const day = String(date.getDate()).padStart(2, "0");
-		return `${year}-${month}-${day}`; // YYYY-MM-DD format
+		return `${year}-${month}-${day}`;
 	}
 
 	// Action for click outside
@@ -323,7 +285,7 @@
 
 					<div class="months-grid">
 						{#each MONTHS as month, i}
-							<button type="button" class:selected={dateValue?.getMonth() === i && dateValue?.getFullYear() === currentYear} onclick={(e) => selectMonth(i, e)}>
+							<button type="button" class:selected={dateValue?.getMonth() === i && dateValue?.getFullYear() === currentYear} onclick={() => selectMonth(i)}>
 								{month}
 							</button>
 						{/each}
