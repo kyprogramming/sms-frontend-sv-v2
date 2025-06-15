@@ -18,9 +18,10 @@ export const load: LayoutServerLoad = async ({ locals, cookies }) => {
 		Cookie: `session_token=${authToken}`,
 	};
 
-	const [resClasses, resSections] = await Promise.all([
+	const [resClasses, resSections, resFeeCategories] = await Promise.all([
 		fetch(`${url}/class/list`, { method: "GET", headers }),
-		fetch(`${url}/section/list`, { method: "GET", headers }),
+        fetch(`${url}/section/list`, { method: "GET", headers }),
+        fetch(`${url}/fee-category/list`, { method: "GET", headers }),
 	]);
 
 	if (resClasses.status === 401 || resSections.status === 401) {
@@ -29,11 +30,13 @@ export const load: LayoutServerLoad = async ({ locals, cookies }) => {
 
 	const classData = await resClasses.json();
 	const sectionData = await resSections.json();
+	const feeCategoryData = await resFeeCategories.json();
 
 	return {
 		user: locals.user,
 		role: locals.user.role,
 		classData: classData?.data || [],
 		sectionData: sectionData?.data || [],
+		feeCategoryData: feeCategoryData?.data || [],
 	};
 };

@@ -75,7 +75,7 @@
 			showSnackbar({ message: "Fee category created successfully", type: "success" });
 		}
 
-		closeModal();
+		// closeModal();
 		onRefreshPage();
 	}
 </script>
@@ -154,7 +154,7 @@
 
 	.checkbox-input:checked + .checkbox-custom::after {
 		content: "✓";
-        font-size: 20px;
+        font-size: 18px;
 		color: #00bd23;
 		position: absolute;
 		top: 50%;

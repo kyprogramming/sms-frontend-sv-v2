@@ -50,3 +50,22 @@ export const feeCategoryFormSchema = z.object({
 });
 
 export type FeeCategoryFormDataType = z.infer<typeof feeCategoryFormSchema>;
+
+// Fee Head Form Schema
+export const feeHeadFormSchema = z.object({
+	title: z.string().min(1, "Title is required"),
+	categoryId: z.string().min(1, "Category is required"),
+	amount: z.union([
+		z.number().min(0, "Amount must be positive"),
+		z
+			.string()
+			.min(1, "Amount is required")
+			.refine((val) => /^\d*\.?\d*$/.test(val), "Must be a valid number")
+			.transform((val) => parseFloat(val))
+			.refine((val) => !isNaN(val), "Invalid number")
+			.refine((val) => val >= 0, "Amount must be positive"),
+	]),
+	description: z.string().optional(),
+});
+
+export type FeeHeadFormDataType = z.infer<typeof feeHeadFormSchema>;
