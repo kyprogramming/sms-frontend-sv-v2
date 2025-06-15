@@ -70,6 +70,15 @@
 		touched = { ...touched, [field]: true };
 		validateForm(academicYearFormSchema, formData);
 	}
+    function handleDatePickerBlur(field: keyof AcademicYearFormDataType, isOpen:boolean) {
+        // Only validate if the date picker isn't open
+        setTimeout(() => {
+            if (!isOpen) {
+                touched = { ...touched, [field]: true };
+                validateForm(academicYearFormSchema, formData);
+            }
+        }, 100);
+    }
 
 	// Form submission handler
 	async function onSubmit(event: Event) {
@@ -109,7 +118,7 @@
 	<div class="form-row">
 		<div class="input-wrapper">
 			<label for="startDate">Start Date<span class="required"> *</span></label>
-			<DatePicker2 id="startDate" title="Start Date" bind:value={formData.startDate} onDateSelect={handleStartDateChange} onBlur={() => setTimeout(()=>{handleBlur("startDate")},100)} cls={`w-full ${$formErrors.startDate && (touched.startDate || formSubmitted) ? "input-error" : ""}`} />
+			<DatePicker2 id="startDate" title="Start Date" bind:value={formData.startDate} onDateSelect={handleStartDateChange} onBlur={(isOpen)=>handleDatePickerBlur('startDate',isOpen )} cls={`w-full ${$formErrors.startDate && (touched.startDate || formSubmitted) ? "input-error" : ""}`} />
 			{#if $formErrors["startDate"] && (touched["startDate"] || formSubmitted)}
 				<p class="error-text">{$formErrors["startDate"]}</p>
 			{/if}
@@ -117,7 +126,7 @@
 
 		<div class="input-wrapper">
 			<label for="endDate">End Date<span class="required"> *</span></label>
-			<DatePicker2 id="endDate" title="Start Date" bind:value={formData.endDate} onDateSelect={handleEndDateChange} onBlur={() => setTimeout(()=>{handleBlur("endDate")},100)} cls={`w-full ${$formErrors.endDate && (touched.endDate || formSubmitted) ? "input-error" : ""}`} />
+			<DatePicker2 id="endDate" title="Start Date" bind:value={formData.endDate} onDateSelect={handleEndDateChange} onBlur={(isOpen)=>handleDatePickerBlur('endDate',isOpen )}  cls={`w-full ${$formErrors.endDate && (touched.endDate || formSubmitted) ? "input-error" : ""}`} />
 			{#if $formErrors["endDate"] && (touched["endDate"] || formSubmitted)}
 				<p class="error-text">{$formErrors["endDate"]}</p>
 			{/if}

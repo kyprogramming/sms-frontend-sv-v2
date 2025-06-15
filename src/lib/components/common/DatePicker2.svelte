@@ -9,11 +9,11 @@
 		title?: string;
 		value?: string | null;
 		onDateSelect?: (dateString: string) => void;
-		onBlur?: () => void;
+		onBlur?: (isOpen: boolean) => void;
 		cls?: string;
 	}
 
-	let { id = "", title = "", value = $bindable(null), onBlur = () => {}, onDateSelect, cls = "" }: Props = $props();
+	let { id = "", title = "", value = $bindable(null), onBlur, onDateSelect, cls = "" }: Props = $props();
 
 	// State
 	let isOpen = $state(false);
@@ -34,21 +34,14 @@
 	const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 	// Helper functions
-	function getDaysInMonth(year: number, month: number): number {
-		return new Date(year, month + 1, 0).getDate();
-	}
-
-	// Helper function to convert to Date
 	function toDate(dateString: string | null): Date | null {
 		if (!dateString) return null;
 		const date = new Date(dateString);
 		return isNaN(date.getTime()) ? null : date;
 	}
 
-	// Helper function to safely convert to Date
-	function ensureDate(input: Date | string | null): Date {
-		if (!input) return new Date();
-		return typeof input === "string" ? new Date(input) : input;
+	function getDaysInMonth(year: number, month: number): number {
+		return new Date(year, month + 1, 0).getDate();
 	}
 
 	function getFirstDayOfMonth(year: number, month: number): number {
@@ -96,6 +89,25 @@
 		return years;
 	}
 
+	function formatDate(date: Date | string | null): string {
+		if (!date) return "";
+		// If date is a string, convert to Date object first
+		const dateObj = typeof date === "string" ? new Date(date) : date;
+		// Handle invalid dates
+		if (isNaN(dateObj.getTime())) return "";
+		const day = dateObj.getDate();
+		const month = MONTHS[dateObj.getMonth()];
+		const year = dateObj.getFullYear();
+		return `${day} ${month} ${year}`;
+	}
+
+	function formatDateForStorage(date: Date): string {
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, "0");
+		const day = String(date.getDate()).padStart(2, "0");
+		return `${year}-${month}-${day}`;
+	}
+
 	// Navigation functions
 	function prevMonth(event: MouseEvent) {
 		currentMonth = currentMonth === 0 ? 11 : currentMonth - 1;
@@ -109,16 +121,6 @@
 		if (currentMonth === 0) {
 			currentYear += 1;
 		}
-	}
-
-	// Update selectDay function
-	function selectDay(day: number, event: MouseEvent) {
-		const date = new Date(currentYear, currentMonth, day);
-		const dateString = formatDateForStorage(date); // Use local date formatting
-		value = dateString;
-		onDateSelect?.(dateString);
-		isOpen = false;
-		onBlur?.();
 	}
 
 	function selectMonth(month: number) {
@@ -139,37 +141,16 @@
 		currentView = "year";
 	}
 
-	function toggleDatePicker() {
-		isOpen = !isOpen;
-		if (isOpen && inputRef) {
-			inputWidth = `${inputRef.offsetWidth}px`;
-			if (value) {
-				// Convert string to Date if needed
-				const dateValue = typeof value === "string" ? new Date(value) : value;
-				// Check if valid date
-				if (!isNaN(dateValue.getTime())) {
-					currentYear = dateValue.getFullYear();
-					currentMonth = dateValue.getMonth();
-				}
-			}
-			currentView = "day";
-		}
+	// Update selection functions similarly
+	function selectDay(day: number, event: MouseEvent) {
+		const date = new Date(currentYear, currentMonth, day);
+		const dateString = formatDateForStorage(date); // Use local date formatting
+		value = dateString;
+		onDateSelect?.(dateString);
+		isOpen = false;
+		onBlur?.(isOpen);
 	}
 
-	// Modify the formatDate function to handle string inputs
-	function formatDate(date: Date | string | null): string {
-		if (!date) return "";
-		// If date is a string, convert to Date object first
-		const dateObj = typeof date === "string" ? new Date(date) : date;
-		// Handle invalid dates
-		if (isNaN(dateObj.getTime())) return "";
-		const day = dateObj.getDate();
-		const month = MONTHS[dateObj.getMonth()];
-		const year = dateObj.getFullYear();
-		return `${day} ${month} ${year}`;
-	}
-
-	// Update quick selection functions similarly
 	function selectToday() {
 		const today = new Date();
 		const dateString = formatDateForStorage(today);
@@ -179,6 +160,7 @@
 		currentMonth = today.getMonth();
 		isOpen = false;
 	}
+
 	function selectYesterday() {
 		const yesterday = new Date();
 		yesterday.setDate(yesterday.getDate() - 1);
@@ -199,22 +181,51 @@
 		currentMonth = tomorrow.getMonth();
 		onDateSelect?.(dateString);
 		isOpen = false;
-		onBlur?.();
+		onBlur?.(isOpen);
 	}
 
-	// Update the date-to-string conversion
-	function formatDateForStorage(date: Date): string {
-		const year = date.getFullYear();
-		const month = String(date.getMonth() + 1).padStart(2, "0");
-		const day = String(date.getDate()).padStart(2, "0");
-		return `${year}-${month}-${day}`;
+	// Update toggle date picker
+
+	function toggleDatePicker() {
+		isOpen = !isOpen;
+		if (isOpen && inputRef) {
+			inputWidth = `${inputRef.offsetWidth}px`;
+			if (value) {
+				// Convert string to Date if needed
+				const dateValue = typeof value === "string" ? new Date(value) : value;
+				// Check if valid date
+				if (!isNaN(dateValue.getTime())) {
+					currentYear = dateValue.getFullYear();
+					currentMonth = dateValue.getMonth();
+				}
+			}
+			currentView = "day";
+		}
 	}
 
-	// Action for click outside
-	function clickOutside(node: HTMLElement, callback: () => void) {
+	// Handler action for click outside
+	function handleMonthKeyDown(e: KeyboardEvent) {
+		if (e.key === "Enter" || e.key === " ") {
+			e.preventDefault();
+			navigateToMonthView();
+		}
+	}
+
+	function handleYearKeyDown(e: KeyboardEvent) {
+		if (e.key === "Enter" || e.key === " ") {
+			e.preventDefault();
+			navigateToYearView();
+		}
+	}
+
+	function handleClickOutside(node: HTMLElement, callback: () => void) {
 		const handleClick = (event: MouseEvent) => {
 			if (!node.contains(event.target as Node)) {
-				callback();
+				if (isOpen) {
+					callback();
+					// Trigger validation when picker closes
+					onBlur?.(isOpen);
+				}
 			}
 		};
 		document.addEventListener("click", handleClick, true);
@@ -226,9 +237,22 @@
 	}
 </script>
 
-<div class="date-picker-container"  bind:this={calendarRef} use:clickOutside={() => (isOpen = false)}>
+<div class="date-picker-container" bind:this={calendarRef} use:handleClickOutside={() => (isOpen = false)}>
 	<div class="input-container">
-		<input {id} type="text" readonly bind:this={inputRef} value={formatDate(value)} onclick={toggleDatePicker} onblur={onBlur} class={cls} placeholder={title ? `Select ${title}` : "Select date"} aria-label={title ? `${title} date picker` : "Date picker"} />
+		<input
+			{id}
+			type="text"
+			readonly
+			bind:this={inputRef}
+			value={formatDate(value)}
+			onclick={toggleDatePicker}
+			onblur={() => {
+				onBlur?.(isOpen);
+			}}
+			class={cls}
+			placeholder={title ? `Select ${title}` : "Select date"}
+			aria-label={title ? `${title} date picker` : "Date picker"}
+		/>
 		<button type="button" class="calendar-button" onclick={toggleDatePicker} aria-label="Open calendar">
 			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 				<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -244,12 +268,19 @@
 			<div class="date-picker">
 				{#if currentView === "day"}
 					<div class="header-date">
-						<button type="button" onclick={prevMonth}>‹</button>
+						<button type="button" class="navigate" onclick={prevMonth}>‹</button>
 						<div>
-							<span onclick={navigateToMonthView}>{MONTHS[currentMonth]}</span>
-							<span onclick={navigateToYearView}>{currentYear}</span>
+							<!-- <span onclick={navigateToMonthView}>{MONTHS[currentMonth]}</span>
+							<span onclick={navigateToYearView}>{currentYear}</span> -->
+							<button type="button" class="date-navigation-button" onclick={navigateToMonthView} onkeydown={handleMonthKeyDown} aria-label={`Change month view, current month: ${MONTHS[currentMonth]}`}>
+								{MONTHS[currentMonth]}
+							</button>
+
+							<button type="button" class="date-navigation-button" onclick={navigateToYearView} onkeydown={handleYearKeyDown} aria-label={`Change year view, current year: ${currentYear}`}>
+								{currentYear}
+							</button>
 						</div>
-						<button type="button" onclick={nextMonth}>›</button>
+						<button type="button" class="navigate" onclick={nextMonth}>›</button>
 					</div>
 
 					<div class="day-names">
@@ -279,7 +310,9 @@
 				{:else if currentView === "month"}
 					<div class="header-date">
 						<button type="button" onclick={() => (currentYear -= 1)}>‹</button>
-						<span onclick={navigateToYearView}>{currentYear}</span>
+						<button type="button" class="date-navigation-button" onclick={navigateToYearView} onkeydown={handleYearKeyDown} aria-label={`Change year view, current year: ${currentYear}`}>
+							{currentYear}
+						</button>
 						<button type="button" onclick={() => (currentYear += 1)}>›</button>
 					</div>
 
@@ -386,18 +419,18 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: 8px 0;
-		margin-bottom: 12px;
+		margin-bottom: 6px;
 	}
 
 	.header-date > div {
 		display: flex;
-		gap: 8px;
+		/* gap: px; */
 	}
 
 	.header-date span {
 		cursor: pointer;
 		font-weight: bold;
-		margin-right: 10px;
+		/* margin-right: 10px; */
 	}
 
 	.header-date button {
@@ -405,7 +438,18 @@
 		border: none;
 		cursor: pointer;
 		font-size: 16px;
-		padding: 4px 8px;
+		padding: 0px 10px;
+	}
+
+    .header-date button.navigate {
+		border: none;
+		cursor: pointer;
+		font-size: 25px;
+        border-radius: 8px;
+	}
+    .header-date button.navigate:hover {
+		background-color: #f0f0f0;
+		outline: none;
 	}
 
 	.day-names {
@@ -426,7 +470,7 @@
 	.week {
 		display: grid;
 		grid-template-columns: repeat(7, 0.5fr);
-		gap: 2px;
+		gap: 1px;
 	}
 
 	.days-grid button {
@@ -435,7 +479,7 @@
 		border-radius: 4px;
 		cursor: pointer;
 		background: none;
-		padding: 10px;
+		padding: 6px;
 	}
 
 	.days-grid button.current-month {
@@ -462,7 +506,7 @@
 	}
 
 	.months-grid button {
-		padding: 1rem;
+		padding: 0.75rem;
 		border: none;
 		border-radius: 4px;
 		cursor: pointer;
@@ -491,7 +535,7 @@
 	}
 
 	.years-grid button {
-		padding: 1rem;
+		padding: 0.75rem;
 		border: none;
 		border-radius: 4px;
 		cursor: pointer;
@@ -527,5 +571,27 @@
 
 	.quick-selection button:hover {
 		background: #f0f0f0;
+	}
+
+	.date-navigation-button {
+		background: none;
+		border: none;
+		padding: 6px 0.5rem !important;
+		cursor: pointer;
+		font: inherit;
+		color: inherit;
+        font-size: 14px !important;
+        font-weight: bold;
+		border-radius: 4px;
+	}
+
+	.date-navigation-button:hover,
+	.date-navigation-button:focus {
+		background-color: #f0f0f0;
+		outline: none;
+	}
+
+	.date-navigation-button:active {
+		background-color: #e0e0e0;
 	}
 </style>
