@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from "svelte";
 	import { slide } from "svelte/transition";
 
 	// Types
@@ -8,12 +9,13 @@
 		id?: string;
 		title?: string;
 		value?: string | null;
+        defaultToday?: boolean;
 		onDateSelect?: (dateString: string) => void;
 		onBlur?: (isOpen: boolean) => void;
 		cls?: string;
 	}
 
-	let { id = "", title = "", value = $bindable(null), onBlur, onDateSelect, cls = "" }: Props = $props();
+	let { id = "", title = "", value = $bindable(null), onBlur, onDateSelect, defaultToday = false, cls = "" }: Props = $props();
 
 	// State
 	let isOpen = $state(false);
@@ -33,6 +35,12 @@
 	const DAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 	const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+    onMount(() => {
+		if (defaultToday && !value) {
+			selectToday();
+		}
+	});
+    
 	// Helper functions
 	function toDate(dateString: string | null): Date | null {
 		if (!dateString) return null;
@@ -352,7 +360,7 @@
 	.date-picker-container {
 		position: relative;
 		width: 100%;
-		min-width: 300px;
+		/* min-width: 300px; */
 		font-family: Arial, sans-serif;
 	}
 

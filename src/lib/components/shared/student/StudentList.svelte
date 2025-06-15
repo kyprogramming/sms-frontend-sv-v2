@@ -43,10 +43,10 @@
 		{ key: "profile.fullName", label: "Name", width: "25%", sortable: true, align: "center" },
 		{ key: "className", label: "Class", width: "auto", sortable: true, align: "center" },
 		{ key: "sectionName", label: "Section", width: "auto", sortable: true, align: "center" },
-		{ key: "profile.dob", label: "DOB", width: "auto", sortable: true, align: "center", format: formatDate },
-		// { key: "academicYear", label: "Academic Year", width: "auto", sortable: true, align: "center" },
 		{ key: "admissionDate", label: "Admission Date", width: "auto", sortable: true, align: "center", format: formatDate },
 		{ key: "profile.gender", label: "Gender", width: "auto", sortable: true, align: "center" },
+		{ key: "profile.dob", label: "DOB", width: "auto", sortable: true, align: "center", format: formatDate },
+		// { key: "academicYear", label: "Academic Year", width: "auto", sortable: true, align: "center" },
 	];
 
 	// Actions configuration

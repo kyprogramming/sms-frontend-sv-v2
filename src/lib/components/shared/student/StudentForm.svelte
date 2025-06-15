@@ -19,6 +19,7 @@
 	import { isEqual } from "$lib/utils/utils";
 	import { MESSAGES } from "$lib/utils/messages";
 	import { formatLocalDate } from "$lib/utils/formatDate";
+	import DatePicker2 from "$lib/components/common/DatePicker2.svelte";
 
 	// Props
 	let { studentData = null, action } = $props();
@@ -109,6 +110,16 @@
 		validateStudentForm(formData);
 	}
 
+    function handleDatePickerBlur(field: keyof any, isOpen: boolean) {
+		// Only validate if the date picker isn't open
+		setTimeout(() => {
+			if (!isOpen) {
+				touched = { ...touched, [field]: true };
+				validateStudentForm(formData);
+			}
+		}, 100);
+	}
+
 	async function onSubmit(event: Event) {
 		event.preventDefault();
 		formSubmitted = true;
@@ -167,8 +178,11 @@
 			</div>
 			<!-- Admission Date -->
 			<div class="col-2">
-				<label for="admissionDate">Admission Date</label>
-				<DatePicker bind:value={formData.studentData.admissionDate} onChange={handleAdmissionDateChange} defaultToday={true} />
+				<!-- <label for="admissionDate">Admission Date</label>
+				<DatePicker bind:value={formData.studentData.admissionDate} onChange={handleAdmissionDateChange} defaultToday={true} /> -->
+
+                <label for="studentData.admissionDate">Admission Date</label>
+				<DatePicker2 id="studentData.admissionDate" title="date of joining" bind:value={formData.studentData.admissionDate} onBlur={(isOpen) => handleDatePickerBlur("staffData.profile.dateOfJoining", isOpen)} defaultToday={true} />
 			</div>
 			<!-- Student Class -->
 			<div class="col-2">
@@ -234,13 +248,20 @@
 			</div>
 			<!-- Date of Birth -->
 			<div class="col-2">
-				<label for="dob">Date of Birth <span class="required">*</span></label>
+				<!-- <label for="dob">Date of Birth <span class="required">*</span></label>
 				<DatePicker bind:value={formData.studentData.profile.dob} onChange={handleBirthDateChange}  
                 onBlur={() => handleBlur("studentData.profile.dob")}
                  onClear={handleOnClear} cls={`w-full ${$formErrors["studentData.profile.dob"] && (touched["studentData.profile.dob"] || formSubmitted) ? "input-error" : ""}`} />
 				{#if $formErrors["studentData.profile.dob"] && (touched["studentData.profile.dob"] || formSubmitted)}
 					<p class="error-text">{$formErrors["studentData.profile.dob"]}</p>
+				{/if} -->
+
+                <label for="studentData.profile.dob">Date of Birth <span class="required">*</span></label>
+				<DatePicker2 id="studentData.profile.dob" title="date of birth" bind:value={formData.studentData.profile.dob} onBlur={(isOpen) => handleDatePickerBlur("studentData.profile.dob", isOpen)} cls={`w-full ${$formErrors["studentData.profile.dob"] && (touched["studentData.profile.dob"] || formSubmitted) ? "input-error" : ""}`} />
+				{#if $formErrors["studentData.profile.dob"] && (touched["studentData.profile.dob"] || formSubmitted)}
+					<p class="error-text">{$formErrors["studentData.profile.dob"]}</p>
 				{/if}
+
 			</div>
 			<!-- Category -->
 			<div class="col-2">

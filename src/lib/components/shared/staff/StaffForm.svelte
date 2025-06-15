@@ -18,6 +18,7 @@
 	import ImageUploader from "$lib/components/common/ImageUploader.svelte";
 	import FileUpload from "$lib/components/common/FileUpload.svelte";
 	import UploadDocument from "$lib/components/common/UploadDocument.svelte";
+	import DatePicker2 from "$lib/components/common/DatePicker2.svelte";
 
 	// Props
 	let { staffData = null, action } = $props();
@@ -73,6 +74,16 @@
 	function handleBlur(field: keyof any) {
 		touched = { ...touched, [field]: true };
 		validateForm(staffSchema, formData);
+	}
+
+	function handleDatePickerBlur(field: keyof any, isOpen: boolean) {
+		// Only validate if the date picker isn't open
+		setTimeout(() => {
+			if (!isOpen) {
+				touched = { ...touched, [field]: true };
+				validateForm(staffSchema, formData);
+			}
+		}, 100);
 	}
 
 	async function onSubmit(event: Event) {
@@ -158,8 +169,11 @@
 
 			<!-- Date of Joining -->
 			<div class="col-2">
-				<label for="dateOfJoining">Date of Joining</label>
+				<!-- <label for="dateOfJoining">Date of Joining</label>
 				<DatePicker id={"dateOfJoining"} bind:value={formData.staffData.profile.dateOfJoining} onChange={() => {}} onBlur={() => handleBlur("staffData.profile.dateOfJoining")} defaultToday={true} />
+			 -->
+				<label for="dateOfJoining">Date of Joining</label>
+				<DatePicker2 id="startDate" title="date of joining" bind:value={formData.staffData.profile.dateOfJoining} onBlur={(isOpen) => handleDatePickerBlur("staffData.profile.dateOfJoining", isOpen)} />
 			</div>
 
 			<!-- Qualification -->
@@ -184,7 +198,7 @@
 
 			<!-- Date of Birth -->
 			<div class="col-2">
-				<label for="dob">Date of Birth <span class="required">*</span></label>
+				<!-- <label for="dob">Date of Birth <span class="required">*</span></label>
 				<DatePicker
 					bind:value={formData.staffData.profile.dob}
 					onChange={handleBirthDateChange}
@@ -194,6 +208,12 @@
 					onBlur={() => handleBlur("staffData.profile.dob")}
 					cls={`w-full ${$formErrors["staffData.profile.dob"] && (touched["staffData.profile.dob"] || formSubmitted) ? "input-error" : ""}`}
 				/>
+				{#if $formErrors["staffData.profile.dob"] && (touched["staffData.profile.dob"] || formSubmitted)}
+					<p class="error-text">{$formErrors["staffData.profile.dob"]}</p>
+				{/if} -->
+
+                <label for="staffData.profile.dob">Date of Birth <span class="required">*</span></label>
+				<DatePicker2 id="staffData.profile.dob" title="date of birth" bind:value={formData.staffData.profile.dob} onBlur={(isOpen) => handleDatePickerBlur("staffData.profile.dob", isOpen)} cls={`w-full ${$formErrors["staffData.profile.dob"] && (touched["staffData.profile.dob"] || formSubmitted) ? "input-error" : ""}`} />
 				{#if $formErrors["staffData.profile.dob"] && (touched["staffData.profile.dob"] || formSubmitted)}
 					<p class="error-text">{$formErrors["staffData.profile.dob"]}</p>
 				{/if}
@@ -564,10 +584,10 @@
 		margin-bottom: 10px;
 	}
 
-    .card-wrapper h1 {
-	  color: #000000;
-      /* font-size: 15 px; */
-      /* text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); */
+	.card-wrapper h1 {
+		color: #000000;
+		/* font-size: 15 px; */
+		/* text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); */
 	}
 
 	.radio-group {

@@ -1043,6 +1043,7 @@ tr:hover {
 .required {
     color: red;
     font-weight: bolder;
+    margin-left: 3px;
 }
 
 /* utilities classes */
