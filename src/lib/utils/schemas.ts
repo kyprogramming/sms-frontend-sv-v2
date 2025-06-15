@@ -23,27 +23,30 @@ export type ClassFormDataType = z.infer<typeof classFormSchema>;
 
 // Subject Form Schema
 export const subjectFormSchema = z.object({
-    name: z.string().min(1, "Subject name is required"),
-    type: z.string().min(1, "Please select a subject type"),
+	name: z.string().min(1, "Subject name is required"),
+	type: z.string().min(1, "Please select a subject type"),
 	code: z.string().optional(),
 });
 export type SubjectFormDataType = z.infer<typeof subjectFormSchema>;
 
-
-
 // Academic Year Form Schema
 export const academicYearFormSchema = z.object({
 	name: z.string().min(1, "Academic Year Name is required"),
-	startDate: z
-		.string()
-		.min(1, "Start date is required"),
-		// .regex(dateRegex, "Date must be in YYYY-MM-DD format"),
-		// .transform((val) => new Date(val)),
-	endDate: z
-		.string()
-		.min(1, "End date is required"),
-		// .regex(dateRegex, "Date must be in YYYY-MM-DD format"),
-		// .transform((val) => new Date(val)),
+	startDate: z.string().min(1, "Start date is required"),
+	// .regex(dateRegex, "Date must be in YYYY-MM-DD format"),
+	// .transform((val) => new Date(val)),
+	endDate: z.string().min(1, "End date is required"),
+	// .regex(dateRegex, "Date must be in YYYY-MM-DD format"),
+	// .transform((val) => new Date(val)),
 	active: z.boolean().optional(),
 });
 export type AcademicYearFormDataType = z.infer<typeof academicYearFormSchema>;
+
+// Academic Year Form Schema
+export const feeCategoryFormSchema = z.object({
+	name: z.string().min(1, "Fee category name is required").max(100, "Fee category name must be less than 100 characters"),
+	description: z.string().max(500, "Description must be less than 500 characters").optional(),
+	active: z.boolean().optional().default(true),
+});
+
+export type FeeCategoryFormDataType = z.infer<typeof feeCategoryFormSchema>;
