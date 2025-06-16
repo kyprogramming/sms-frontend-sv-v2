@@ -1,9 +1,9 @@
-import type { Handle, HandleServerError } from "@sveltejs/kit";
-import { decodeJwt } from "$lib/utils/utils";
+import type { Handle, HandleServerError } from '@sveltejs/kit';
+import { decodeJwt } from '$lib/utils/utils';
 
 export const handle: Handle = async ({ event, resolve }) => {
 	try {
-		const sessionToken = event.cookies.get("session_token");
+		const sessionToken = event.cookies.get('session_token');
 
 		if (sessionToken) {
 			const decoded = decodeJwt(sessionToken);
@@ -20,22 +20,22 @@ export const handle: Handle = async ({ event, resolve }) => {
 		const response = await resolve(event);
 		return response;
 	} catch (error) {
-		console.error("Error caught in handle():", error);
+		console.error('Error caught in handle():', error);
 		throw error; // optional: you can customize this if needed
 	}
 };
 
 export const handleError: HandleServerError = ({ error, event }) => {
-	let message = "An unexpected error occurred. Please try again.";
-	let code = "UNKNOWN";
+	let message = 'An unexpected error occurred. Please try again.';
+	let code = 'UNKNOWN';
 
 	if (error instanceof Error) {
-		console.error("Global error:", error.message);
+		console.error('Global error:', error.message);
 		message = error.message;
 		code = error.name;
 	} else {
-		console.error("Global error:", error);
+		console.error('Global error:', error);
 	}
-	console.error("At route:", event.url.pathname);
+	console.error('At route:', event.url.pathname);
 	return { message, code };
 };

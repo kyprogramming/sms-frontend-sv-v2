@@ -136,7 +136,8 @@
 						if (value === 'string' || value === 'number' || value === 'boolean' || value === 'json') {
 							handleTypeChange(value);
 						}
-					}}>
+					}}
+				>
 					<!-- <option value="" selected>Select Type</option> -->
 					<option value="string">String</option>
 					<option value="number">Number</option>
@@ -173,7 +174,8 @@
 							} catch {
 								handleChange('value', (e.target as HTMLTextAreaElement).value);
 							}
-						}}></textarea>
+						}}
+					></textarea>
 				{/if}
 
 				{#if $formErrors.value && (touched.value || formSubmitted)}

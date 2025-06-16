@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { Menu, ListCollapseIcon, Search, AlignJustify } from "@lucide/svelte";
-	import type { User } from "$lib/utils/types";
-	import SessionMenu from "./SessionMenu.svelte";
-	import { fade } from "svelte/transition";
+	import { Menu, ListCollapseIcon, Search, AlignJustify } from '@lucide/svelte';
+	import type { User } from '$lib/utils/types';
+	import SessionMenu from './SessionMenu.svelte';
+	import { fade } from 'svelte/transition';
 	interface Props {
 		user: User | null;
 		sidebarOpen: boolean;
@@ -18,7 +18,7 @@
 			{#if sidebarOpen}
 				<Menu />
 			{:else}
-				<ListCollapseIcon  />
+				<ListCollapseIcon />
 			{/if}
 		</button>
 		<h1>School Management System</h1>
@@ -30,5 +30,10 @@
 </header>
 
 <style>
-	.flex-container h1 {margin: 0px;padding: 0px;font-size: 20px;gap: 2rem;}
+	.flex-container h1 {
+		margin: 0px;
+		padding: 0px;
+		font-size: 20px;
+		gap: 2rem;
+	}
 </style>

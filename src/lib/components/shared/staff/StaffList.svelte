@@ -1,54 +1,54 @@
 <script lang="ts">
 	// Imports
-	import { env } from "$env/dynamic/public";
-	import { currentPage, rowsPerPage, totalItems, totalPages } from "$lib/stores/paginationStore";
-	import { deleteSectionById, fetchSectionById, fetchSections } from "$lib/services/section";
-	import { formatDate, formatLocalDate } from "$lib/utils/formatDate";
+	import { env } from '$env/dynamic/public';
+	import { currentPage, rowsPerPage, totalItems, totalPages } from '$lib/stores/paginationStore';
+	import { deleteSectionById, fetchSectionById, fetchSections } from '$lib/services/section';
+	import { formatDate, formatLocalDate } from '$lib/utils/formatDate';
 
-	import DataTable from "$lib/components/common/DataTable.svelte";
-	import ModalDelete from "$lib/components/common/ModalDelete.svelte";
+	import DataTable from '$lib/components/common/DataTable.svelte';
+	import ModalDelete from '$lib/components/common/ModalDelete.svelte';
 
-	import { Eye, Pencil, Trash2, Plus, RefreshCw, Search } from "@lucide/svelte";
+	import { Eye, Pencil, Trash2, Plus, RefreshCw, Search } from '@lucide/svelte';
 
-	import type { ColumnConfig } from "$lib/interfaces/table.interface";
-	import { page } from "$app/state";
-	import { goto } from "$app/navigation";
-	import { fetchStaffList } from "$lib/services/staff";
-	import { showSnackbar } from "$lib/components/snackbar/store";
-	import { STAFF_DEPARTMENTS, STAFF_DESIGNATIONS, STAFF_ROLES } from "$lib/utils/constants";
+	import type { ColumnConfig } from '$lib/interfaces/table.interface';
+	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
+	import { fetchStaffList } from '$lib/services/staff';
+	import { showSnackbar } from '$lib/components/snackbar/store';
+	import { STAFF_DEPARTMENTS, STAFF_DESIGNATIONS, STAFF_ROLES } from '$lib/utils/constants';
 
 	// Props
-	const schoolName = env.PUBLIC_SCHOOL_NAME || "Default School";
+	const schoolName = env.PUBLIC_SCHOOL_NAME || 'Default School';
 	let { response } = $props();
 
 	// States
-	let searchText = $state("");
+	let searchText = $state('');
 	let sectionData: any | null = $state(null);
 
 	let isModalOpen = $state(false);
 	let isDeleteModalOpen = $state(false);
 
-	let selectedId = $state("");
-	let selectedName = $state("");
+	let selectedId = $state('');
+	let selectedName = $state('');
 
 	let classData = page.data?.classData || [];
 	let classSections: { _id: string; name: string }[] = $state([]);
-	let selectedRole = $state("");
-	let selectedDepartment = $state("");
-	let selectedDesignation = $state("");
+	let selectedRole = $state('');
+	let selectedDepartment = $state('');
+	let selectedDesignation = $state('');
 	let formattedStaff = $state(formattedStaffs(response));
 
 	// Column configuration
 	const columns: ColumnConfig[] = [
-		{ key: "_id", label: "Id", visible: false },
-		{ key: "serialNo", label: "Sr #", width: "80px", sortable: true, align: "center" },
-		{ key: "profile.fullName", label: "Name", width: "15%", sortable: true, align: "center" },
-		{ key: "profile.role", label: "Role", width: "10%", sortable: true, align: "center" },
-		{ key: "profile.department", label: "Department", width: "10%", sortable: true, align: "center" },
-		{ key: "profile.designation", label: "Designation", width: "10%", sortable: true, align: "center" },
-		{ key: "profile.dateOfJoining", label: "DOJ",  width: "10%", sortable: true, align: "center", format: formatDate },
-		{ key: "profile.gender", label: "Gender", width: "10%", sortable: true, align: "center" },
-		{ key: "profile.dob", label: "DOB",  width: "10%", sortable: true, align: "center", format: formatDate },
+		{ key: '_id', label: 'Id', visible: false },
+		{ key: 'serialNo', label: 'Sr #', width: '80px', sortable: true, align: 'center' },
+		{ key: 'profile.fullName', label: 'Name', width: '15%', sortable: true, align: 'center' },
+		{ key: 'profile.role', label: 'Role', width: '10%', sortable: true, align: 'center' },
+		{ key: 'profile.department', label: 'Department', width: '10%', sortable: true, align: 'center' },
+		{ key: 'profile.designation', label: 'Designation', width: '10%', sortable: true, align: 'center' },
+		{ key: 'profile.dateOfJoining', label: 'DOJ', width: '10%', sortable: true, align: 'center', format: formatDate },
+		{ key: 'profile.gender', label: 'Gender', width: '10%', sortable: true, align: 'center' },
+		{ key: 'profile.dob', label: 'DOB', width: '10%', sortable: true, align: 'center', format: formatDate },
 	];
 
 	// Actions configuration
@@ -57,7 +57,7 @@
 		iconActions: [
 			{
 				icon: Eye,
-				class: "view",
+				class: 'view',
 				show: true,
 				action: (item: { _id: any }) => {
 					alert(`View ${item._id}`);
@@ -65,7 +65,7 @@
 			},
 			{
 				icon: Pencil,
-				class: "edit",
+				class: 'edit',
 				show: true,
 				action: async (item: { _id: any }) => {
 					handleUpdate(item._id);
@@ -73,7 +73,7 @@
 			},
 			{
 				icon: Trash2,
-				class: "delete",
+				class: 'delete',
 				show: true,
 				action: (item: any) => {
 					selectedId = item._id;
@@ -90,7 +90,7 @@
 	}
 
 	async function handleRefresh() {
-		searchText = "";
+		searchText = '';
 		currentPage.set(1);
 		await refreshAction();
 	}
@@ -104,7 +104,7 @@
 	}
 
 	async function handleAdd() {
-		await goto("/admin/staff/create");
+		await goto('/admin/staff/create');
 	}
 
 	async function handleUpdate(id: string) {
@@ -112,7 +112,7 @@
 	}
 
 	function handleRoleChange(e: Event) {
-		selectedRole = (e.target as HTMLSelectElement).value || "";
+		selectedRole = (e.target as HTMLSelectElement).value || '';
 	}
 
 	async function handleDelete() {
@@ -154,7 +154,7 @@
 	}
 
 	async function refreshAction() {
-		selectedRole = selectedDepartment = selectedDesignation = searchText = "";
+		selectedRole = selectedDepartment = selectedDesignation = searchText = '';
 		const params = new URLSearchParams({ role: selectedRole, department: selectedDepartment, designation: selectedDesignation, search: searchText, page: String($currentPage), limit: String($rowsPerPage) });
 		const json = await fetchStaffList(params);
 		response = { ...json };
@@ -172,9 +172,9 @@
 	async function deleteAction(id: string) {
 		const json = await deleteSectionById(id);
 		if (json.success) {
-			showSnackbar({ message: `Section ${json.message}`, type: "success" });
+			showSnackbar({ message: `Section ${json.message}`, type: 'success' });
 			isDeleteModalOpen = false;
-		} else showSnackbar({ message: `${json.message}`, type: "error" });
+		} else showSnackbar({ message: `${json.message}`, type: 'error' });
 
 		if ($totalItems % $rowsPerPage === 1 && $currentPage > 1) {
 			currentPage.set($currentPage - 1);
@@ -189,21 +189,21 @@
 
 <div class="class-container">
 	<div class="search-container">
-		<select id="role" style="width:150px;" bind:value={selectedRole} onchange={(e)=> selectedRole = (e.target as HTMLSelectElement).value || ""}>
+		<select id="role" style="width:150px;" bind:value={selectedRole} onchange={(e) => (selectedRole = (e.target as HTMLSelectElement).value || '')}>
 			<option value="" selected>Select Role</option>
 			{#each STAFF_ROLES as role}
 				<option value={role.name}>{role.name}</option>
 			{/each}
 		</select>
 
-		<select id="department" style="width:150px;" bind:value={selectedDepartment} onchange={(e)=> selectedDepartment = (e.target as HTMLSelectElement).value || ""}>
+		<select id="department" style="width:150px;" bind:value={selectedDepartment} onchange={(e) => (selectedDepartment = (e.target as HTMLSelectElement).value || '')}>
 			<option value="" selected>Select Department</option>
 			{#each STAFF_DEPARTMENTS as department}
 				<option value={department.name}>{department.name}</option>
 			{/each}
 		</select>
 
-        <select id="designation" style="width:150px;" bind:value={selectedDesignation} onchange={(e)=> selectedDesignation = (e.target as HTMLSelectElement).value || ""}>
+		<select id="designation" style="width:150px;" bind:value={selectedDesignation} onchange={(e) => (selectedDesignation = (e.target as HTMLSelectElement).value || '')}>
 			<option value="" selected>Select Designation</option>
 			{#each STAFF_DESIGNATIONS as designation}
 				<option value={designation.name}>{designation.name}</option>
@@ -216,7 +216,7 @@
 			placeholder="Search staff..."
 			bind:value={searchText}
 			onkeydown={(e) => {
-				if (e.key === "Enter") {
+				if (e.key === 'Enter') {
 					handleSearch();
 				}
 			}}
@@ -264,7 +264,7 @@
 		gap: 8px;
 	}
 
-	input[name="search"] {
+	input[name='search'] {
 		width: 300px;
 	}
 </style>

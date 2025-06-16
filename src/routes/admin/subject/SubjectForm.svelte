@@ -1,24 +1,24 @@
 <script lang="ts">
-	import { isLoading } from "$lib/stores/loading";
-	import { validateForm } from "$lib/utils/validate";
-	import { showSnackbar } from "$lib/components/snackbar/store";
-	import { closeModal } from "$lib/stores/modalStore";
-	import { createSubject, updateSubject } from "$lib/services/subject";
+	import { isLoading } from '$lib/stores/loading';
+	import { validateForm } from '$lib/utils/validate';
+	import { showSnackbar } from '$lib/components/snackbar/store';
+	import { closeModal } from '$lib/stores/modalStore';
+	import { createSubject, updateSubject } from '$lib/services/subject';
 
-	import { BrushCleaning, Save } from "@lucide/svelte";
-	import LoaderIcon from "$lib/components/common/LoaderIcon.svelte";
+	import { BrushCleaning, Save } from '@lucide/svelte';
+	import LoaderIcon from '$lib/components/common/LoaderIcon.svelte';
 
-	import { subjectFormSchema, type SubjectFormDataType } from "$lib/utils/schemas";
-	import { formErrors } from "$lib/stores/formStore";
-	import { onMount } from "svelte";
-	import { isEqual } from "$lib/utils/utils";
-	import { MESSAGES } from "$lib/utils/messages";
-	import { SUBJECT_TYPE } from "$lib/utils/constants";
+	import { subjectFormSchema, type SubjectFormDataType } from '$lib/utils/schemas';
+	import { formErrors } from '$lib/stores/formStore';
+	import { onMount } from 'svelte';
+	import { isEqual } from '$lib/utils/utils';
+	import { MESSAGES } from '$lib/utils/messages';
+	import { SUBJECT_TYPE } from '$lib/utils/constants';
 
 	let { onRefreshPage, subjectData = null, action } = $props();
 
 	export function initializeSubjectFormData(): SubjectFormDataType {
-		return { name: "", code: "", type: "" };
+		return { name: '', code: '', type: '' };
 	}
 	// Reactive form state
 	let formData: SubjectFormDataType = $state(initializeSubjectFormData());
@@ -27,7 +27,7 @@
 
 	onMount(() => {
 		populateFormData();
-		formErrors.set({ name: "", code: "", type: "" });
+		formErrors.set({ name: '', code: '', type: '' });
 	});
 
 	// Form reset handler
@@ -41,7 +41,7 @@
 
 	// Populate form data based on action
 	function populateFormData() {
-		if (action === "update") {
+		if (action === 'update') {
 			formData = { ...subjectData };
 		} else {
 			formData = initializeSubjectFormData();
@@ -62,17 +62,17 @@
 		const isValid = validateForm(subjectFormSchema, formData);
 		if (!isValid) return;
 
-		if (action === "update" && subjectData) {
+		if (action === 'update' && subjectData) {
 			const isUnChanged = isEqual(subjectData, formData);
 			if (isUnChanged) {
-				showSnackbar({ message: MESSAGES.FORM.NO_CHANGES, type: "warning" });
+				showSnackbar({ message: MESSAGES.FORM.NO_CHANGES, type: 'warning' });
 				return;
 			}
 			await updateSubject(subjectData._id, formData);
-			showSnackbar({ message: "Subject updated successfully", type: "success" });
+			showSnackbar({ message: 'Subject updated successfully', type: 'success' });
 		} else {
 			await createSubject(formData);
-			showSnackbar({ message: "Subject created successfully", type: "success" });
+			showSnackbar({ message: 'Subject created successfully', type: 'success' });
 		}
 
 		closeModal();
@@ -87,7 +87,7 @@
 			{#each SUBJECT_TYPE as type}
 				<div class="radio-item">
 					<label class="radio-label">
-						<input name="type" type="radio" class="radio-input" value={type.name} checked={formData.type === type.name} onchange={() => handleChange("type", type.name)} onblur={() => handleChange("type", formData.type)} />
+						<input name="type" type="radio" class="radio-input" value={type.name} checked={formData.type === type.name} onchange={() => handleChange('type', type.name)} onblur={() => handleChange('type', formData.type)} />
 						<span class="radio-custom"></span>
 						<span class="radio-text">{type.name}</span>
 					</label>
@@ -101,7 +101,7 @@
 
 	<div class="input-wrapper">
 		<label for="name">Subject Name <span class="required">*</span></label>
-		<input id="name" type="text" name="name" placeholder="Subject name" class={`w-full ${$formErrors.name && (touched.name || formSubmitted) ? "input-error" : ""}`} bind:value={formData.name} oninput={(e) => handleChange("name", (e.target as HTMLInputElement).value)} onblur={() => handleChange("name", formData.name)} />
+		<input id="name" type="text" name="name" placeholder="Subject name" class={`w-full ${$formErrors.name && (touched.name || formSubmitted) ? 'input-error' : ''}`} bind:value={formData.name} oninput={(e) => handleChange('name', (e.target as HTMLInputElement).value)} onblur={() => handleChange('name', formData.name)} />
 		{#if $formErrors.name && (touched.name || formSubmitted)}
 			<p class="error-text">{$formErrors.name}</p>
 		{/if}
@@ -109,7 +109,7 @@
 
 	<div class="input-wrapper">
 		<label for="code">Subject Code</label>
-		<input id="code" type="text" name="code" class={`w-full`} placeholder="Subject code" bind:value={formData.code} oninput={(e) => handleChange("code", (e.target as HTMLInputElement).value)} onblur={() => handleChange("code", String(formData.code))} />
+		<input id="code" type="text" name="code" class={`w-full`} placeholder="Subject code" bind:value={formData.code} oninput={(e) => handleChange('code', (e.target as HTMLInputElement).value)} onblur={() => handleChange('code', String(formData.code))} />
 	</div>
 
 	<div class="form-actions">
@@ -123,7 +123,7 @@
 			{#if !$isLoading}
 				<Save />
 			{/if}
-			{#if action === "update"}
+			{#if action === 'update'}
 				Update Subject
 			{:else}
 				Save Subject
@@ -174,7 +174,7 @@
 	}
 
 	.radio-input:checked + .radio-custom::after {
-		content: "";
+		content: '';
 		width: 0.6rem;
 		height: 0.6rem;
 		background: #007bff;

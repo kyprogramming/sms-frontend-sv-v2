@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { isLoading } from "$lib/stores/loading";
-	import { CircleX, Trash2 } from "@lucide/svelte";
-	import { fade, fly } from "svelte/transition";
-	import LoaderIcon from "./LoaderIcon.svelte";
+	import { isLoading } from '$lib/stores/loading';
+	import { CircleX, Trash2 } from '@lucide/svelte';
+	import { fade, fly } from 'svelte/transition';
+	import LoaderIcon from './LoaderIcon.svelte';
 
-	let { title = "Confirm Delete", size = "md", selectedName, onDelete, onCancel } = $props();
+	let { title = 'Confirm Delete', size = 'md', selectedName, onDelete, onCancel } = $props();
 
 	function handleModalClick(event: MouseEvent | KeyboardEvent) {
 		event.stopPropagation();
@@ -26,7 +26,7 @@
 		class="modal-content {size}"
 		onclick={handleModalClick}
 		onkeydown={(e) => {
-			if (e.key === "Enter" || e.key === " ") {
+			if (e.key === 'Enter' || e.key === ' ') {
 				handleModalClick(e);
 			}
 		}}

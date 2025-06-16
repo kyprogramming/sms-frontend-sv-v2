@@ -1,28 +1,28 @@
 <script lang="ts">
-	import { genUploader } from "uploadthing/client";
+	import { genUploader } from 'uploadthing/client';
 
 	export const { uploadFiles } = genUploader<any>({
-		url: "http://localhost:5000/api/upload",
+		url: 'http://localhost:5000/api/upload',
 	});
 
 	let fileInput: HTMLInputElement;
-	let uploadedUrl = "";
-	let errorMessage = "";
+	let uploadedUrl = '';
+	let errorMessage = '';
 
 	async function handleUpload() {
 		const file = fileInput.files?.[0];
 		if (!file) {
-			errorMessage = "No file selected.";
+			errorMessage = 'No file selected.';
 			return;
 		}
 
 		try {
-			const res = await uploadFiles("imageUploader", { files: [file] });
-			uploadedUrl = res[0]?.url ?? "";
-			errorMessage = "";
+			const res = await uploadFiles('imageUploader', { files: [file] });
+			uploadedUrl = res[0]?.url ?? '';
+			errorMessage = '';
 		} catch (err) {
 			console.error(err);
-			errorMessage = "Upload failed.";
+			errorMessage = 'Upload failed.';
 		}
 	}
 </script>

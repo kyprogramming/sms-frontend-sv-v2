@@ -1,47 +1,47 @@
 <script lang="ts">
-	import { env } from "$env/dynamic/public";
-	import { currentPage, rowsPerPage, totalItems, totalPages } from "$lib/stores/paginationStore";
-	import { formatDate } from "$lib/utils/formatDate";
-	import { RefreshCw, Search } from "@lucide/svelte";
+	import { env } from '$env/dynamic/public';
+	import { currentPage, rowsPerPage, totalItems, totalPages } from '$lib/stores/paginationStore';
+	import { formatDate } from '$lib/utils/formatDate';
+	import { RefreshCw, Search } from '@lucide/svelte';
 
-	import DataTable from "$lib/components/common/DataTable.svelte";
-	import ModalDelete from "$lib/components/common/ModalDelete.svelte";
-	import Modal from "$lib/components/common/Modal.svelte";
-	import ClassForm from "./ClassForm.svelte";
+	import DataTable from '$lib/components/common/DataTable.svelte';
+	import ModalDelete from '$lib/components/common/ModalDelete.svelte';
+	import Modal from '$lib/components/common/Modal.svelte';
+	import ClassForm from './ClassForm.svelte';
 
-	import { Pencil, Eye, Trash2, Plus } from "@lucide/svelte";
+	import { Pencil, Eye, Trash2, Plus } from '@lucide/svelte';
 
-	import type { ColumnConfig } from "$lib/interfaces/table.interface";
-	import { showSnackbar } from "$lib/components/snackbar/store";
-	import { deleteClassById, fetchClassById, fetchClasses } from "$lib/services/class";
+	import type { ColumnConfig } from '$lib/interfaces/table.interface';
+	import { showSnackbar } from '$lib/components/snackbar/store';
+	import { deleteClassById, fetchClassById, fetchClasses } from '$lib/services/class';
 
 	// Props
-	const schoolName = env.PUBLIC_SCHOOL_NAME || "Default School";
+	const schoolName = env.PUBLIC_SCHOOL_NAME || 'Default School';
 	let { response } = $props();
 
 	// States
-	let searchText = $state("");
+	let searchText = $state('');
 	let classData: any | null = $state(null);
 
 	let isModalOpen = $state(false);
 	let isDeleteModalOpen = $state(false);
 	let isUpdate = $state(false);
 
-	let selectedId = $state("");
-	let selectedName = $state("");
+	let selectedId = $state('');
+	let selectedName = $state('');
 
 	// Column configuration
 	const columns: ColumnConfig[] = [
-		{ key: "_id", label: "Id", visible: false },
-		{ key: "serialNo", label: "Sr #", width: "80px", sortable: true, align: "center" },
-		{ key: "name", label: "Name", sortable: true, width: "auto", align: "center" },
+		{ key: '_id', label: 'Id', visible: false },
+		{ key: 'serialNo', label: 'Sr #', width: '80px', sortable: true, align: 'center' },
+		{ key: 'name', label: 'Name', sortable: true, width: 'auto', align: 'center' },
 		{
-			key: "createdAt",
-			label: "Created At",
-			width: "15%",
+			key: 'createdAt',
+			label: 'Created At',
+			width: '15%',
 			sortable: true,
 			format: formatDate,
-			align: "center",
+			align: 'center',
 		},
 	];
 
@@ -51,7 +51,7 @@
 		iconActions: [
 			{
 				icon: Eye,
-				class: "view",
+				class: 'view',
 				show: true,
 				action: (item: { _id: any }) => {
 					alert(`View ${item._id}`);
@@ -59,7 +59,7 @@
 			},
 			{
 				icon: Pencil,
-				class: "edit",
+				class: 'edit',
 				show: true,
 				action: async (item: { _id: any }) => {
 					isUpdate = true;
@@ -68,7 +68,7 @@
 			},
 			{
 				icon: Trash2,
-				class: "delete",
+				class: 'delete',
 				show: true,
 				action: (item: { _id: any; name: string }) => {
 					selectedId = item._id;
@@ -86,7 +86,7 @@
 	}
 
 	async function handleRefresh() {
-		searchText = "";
+		searchText = '';
 		currentPage.set(1);
 		await refreshAction();
 	}
@@ -121,9 +121,9 @@
 	async function deleteAction(id: string) {
 		const json = await deleteClassById(id);
 		if (json.success) {
-			showSnackbar({ message: `${json.message}`, type: "success" });
+			showSnackbar({ message: `${json.message}`, type: 'success' });
 			isDeleteModalOpen = false;
-		} else showSnackbar({ message: `${json.message}`, type: "error" });
+		} else showSnackbar({ message: `${json.message}`, type: 'error' });
 
 		if ($totalItems % $rowsPerPage === 1 && $currentPage > 1) {
 			currentPage.set($currentPage - 1);
@@ -139,7 +139,7 @@
 	}
 
 	async function refreshAction() {
-		const params = new URLSearchParams({ search: searchText || "", page: String($currentPage), limit: String($rowsPerPage) });
+		const params = new URLSearchParams({ search: searchText || '', page: String($currentPage), limit: String($rowsPerPage) });
 		const json = await fetchClasses(params);
 		isModalOpen = false;
 		response = { ...json };
@@ -158,7 +158,7 @@
 			placeholder="Search class..."
 			bind:value={searchText}
 			onkeydown={(e) => {
-				if (e.key === "Enter") {
+				if (e.key === 'Enter') {
 					handleSearch();
 				}
 			}}
@@ -186,7 +186,7 @@
 
 {#if isModalOpen}
 	<Modal
-		title={isUpdate ? "Update Class" : "Add Class"}
+		title={isUpdate ? 'Update Class' : 'Add Class'}
 		size="lg"
 		onClose={() => {
 			isModalOpen = false;
@@ -195,7 +195,7 @@
 			isModalOpen = false;
 		}}
 	>
-		<ClassForm onRefreshPage={refreshAction} {classData} action={isUpdate ? "update" : "create"} />
+		<ClassForm onRefreshPage={refreshAction} {classData} action={isUpdate ? 'update' : 'create'} />
 	</Modal>
 {/if}
 
@@ -224,7 +224,7 @@
 		flex: 1;
 	}
 
-	input[name="search"] {
+	input[name='search'] {
 		width: 300px;
 	}
 </style>

@@ -1,25 +1,25 @@
 <script lang="ts">
-	import { onMount } from "svelte";
-	import { slide } from "svelte/transition";
+	import { onMount } from 'svelte';
+	import { slide } from 'svelte/transition';
 
 	// Types
-	type DatePickerView = "day" | "month" | "year";
+	type DatePickerView = 'day' | 'month' | 'year';
 
 	interface Props {
 		id?: string;
 		title?: string;
 		value?: string | null;
-        defaultToday?: boolean;
+		defaultToday?: boolean;
 		onDateSelect?: (dateString: string) => void;
 		onBlur?: (isOpen: boolean) => void;
 		cls?: string;
 	}
 
-	let { id = "", title = "", value = $bindable(null), onBlur, onDateSelect, defaultToday = false, cls = "" }: Props = $props();
+	let { id = '', title = '', value = $bindable(null), onBlur, onDateSelect, defaultToday = false, cls = '' }: Props = $props();
 
 	// State
 	let isOpen = $state(false);
-	let inputWidth = $state("100%");
+	let inputWidth = $state('100%');
 	let inputRef: HTMLInputElement | null = $state(null);
 	let calendarRef = $state<HTMLDivElement>();
 
@@ -27,20 +27,20 @@
 	let dateValue = $derived(toDate(value));
 
 	// Reactive state using the converted dateValue
-	let currentView = $state<DatePickerView>("day");
+	let currentView = $state<DatePickerView>('day');
 	let currentYear = $derived(dateValue?.getFullYear() ?? new Date().getFullYear());
 	let currentMonth = $derived(dateValue?.getMonth() ?? new Date().getMonth());
 
 	// Constants
-	const DAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
-	const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+	const DAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+	const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-    onMount(() => {
+	onMount(() => {
 		if (defaultToday && !value) {
 			selectToday();
 		}
 	});
-    
+
 	// Helper functions
 	function toDate(dateString: string | null): Date | null {
 		if (!dateString) return null;
@@ -98,11 +98,11 @@
 	}
 
 	function formatDate(date: Date | string | null): string {
-		if (!date) return "";
+		if (!date) return '';
 		// If date is a string, convert to Date object first
-		const dateObj = typeof date === "string" ? new Date(date) : date;
+		const dateObj = typeof date === 'string' ? new Date(date) : date;
 		// Handle invalid dates
-		if (isNaN(dateObj.getTime())) return "";
+		if (isNaN(dateObj.getTime())) return '';
 		const day = dateObj.getDate();
 		const month = MONTHS[dateObj.getMonth()];
 		const year = dateObj.getFullYear();
@@ -111,8 +111,8 @@
 
 	function formatDateForStorage(date: Date): string {
 		const year = date.getFullYear();
-		const month = String(date.getMonth() + 1).padStart(2, "0");
-		const day = String(date.getDate()).padStart(2, "0");
+		const month = String(date.getMonth() + 1).padStart(2, '0');
+		const day = String(date.getDate()).padStart(2, '0');
 		return `${year}-${month}-${day}`;
 	}
 
@@ -133,20 +133,20 @@
 
 	function selectMonth(month: number) {
 		currentMonth = month;
-		currentView = "day";
+		currentView = 'day';
 	}
 
 	function selectYear(year: number) {
 		currentYear = year;
-		currentView = "month";
+		currentView = 'month';
 	}
 
 	function navigateToMonthView() {
-		currentView = "month";
+		currentView = 'month';
 	}
 
 	function navigateToYearView() {
-		currentView = "year";
+		currentView = 'year';
 	}
 
 	// Update selection functions similarly
@@ -200,27 +200,27 @@
 			inputWidth = `${inputRef.offsetWidth}px`;
 			if (value) {
 				// Convert string to Date if needed
-				const dateValue = typeof value === "string" ? new Date(value) : value;
+				const dateValue = typeof value === 'string' ? new Date(value) : value;
 				// Check if valid date
 				if (!isNaN(dateValue.getTime())) {
 					currentYear = dateValue.getFullYear();
 					currentMonth = dateValue.getMonth();
 				}
 			}
-			currentView = "day";
+			currentView = 'day';
 		}
 	}
 
 	// Handler action for click outside
 	function handleMonthKeyDown(e: KeyboardEvent) {
-		if (e.key === "Enter" || e.key === " ") {
+		if (e.key === 'Enter' || e.key === ' ') {
 			e.preventDefault();
 			navigateToMonthView();
 		}
 	}
 
 	function handleYearKeyDown(e: KeyboardEvent) {
-		if (e.key === "Enter" || e.key === " ") {
+		if (e.key === 'Enter' || e.key === ' ') {
 			e.preventDefault();
 			navigateToYearView();
 		}
@@ -236,10 +236,10 @@
 				}
 			}
 		};
-		document.addEventListener("click", handleClick, true);
+		document.addEventListener('click', handleClick, true);
 		return {
 			destroy() {
-				document.removeEventListener("click", handleClick, true);
+				document.removeEventListener('click', handleClick, true);
 			},
 		};
 	}
@@ -258,8 +258,8 @@
 				onBlur?.(isOpen);
 			}}
 			class={cls}
-			placeholder={title ? `Select ${title}` : "Select date"}
-			aria-label={title ? `${title} date picker` : "Date picker"}
+			placeholder={title ? `Select ${title}` : 'Select date'}
+			aria-label={title ? `${title} date picker` : 'Date picker'}
 		/>
 		<button type="button" class="calendar-button" onclick={toggleDatePicker} aria-label="Open calendar">
 			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -274,7 +274,7 @@
 	{#if isOpen}
 		<div class="date-picker-popup" style="width: {inputWidth}" transition:slide={{ duration: 70 }} bind:this={calendarRef}>
 			<div class="date-picker">
-				{#if currentView === "day"}
+				{#if currentView === 'day'}
 					<div class="header-date">
 						<button type="button" class="navigate" onclick={prevMonth}>‹</button>
 						<div>
@@ -315,7 +315,7 @@
 							<button type="button" onclick={selectTomorrow}>Tomorrow</button>
 						</div>
 					</div>
-				{:else if currentView === "month"}
+				{:else if currentView === 'month'}
 					<div class="header-date">
 						<button type="button" onclick={() => (currentYear -= 1)}>‹</button>
 						<button type="button" class="date-navigation-button" onclick={navigateToYearView} onkeydown={handleYearKeyDown} aria-label={`Change year view, current year: ${currentYear}`}>
@@ -331,7 +331,7 @@
 							</button>
 						{/each}
 					</div>
-				{:else if currentView === "year"}
+				{:else if currentView === 'year'}
 					<div class="header-date">
 						<button type="button" onclick={() => (currentYear -= 12)}>‹</button>
 						<span>{Math.floor(currentYear / 10) * 10 - 1}-{Math.floor(currentYear / 10) * 10 + 10}</span>
@@ -449,13 +449,13 @@
 		padding: 0px 10px;
 	}
 
-    .header-date button.navigate {
+	.header-date button.navigate {
 		border: none;
 		cursor: pointer;
 		font-size: 25px;
-        border-radius: 8px;
+		border-radius: 8px;
 	}
-    .header-date button.navigate:hover {
+	.header-date button.navigate:hover {
 		background-color: #f0f0f0;
 		outline: none;
 	}
@@ -588,8 +588,8 @@
 		cursor: pointer;
 		font: inherit;
 		color: inherit;
-        font-size: 14px !important;
-        font-weight: bold;
+		font-size: 14px !important;
+		font-weight: bold;
 		border-radius: 4px;
 	}
 

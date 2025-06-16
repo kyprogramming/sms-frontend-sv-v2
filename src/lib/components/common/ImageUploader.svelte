@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { genUploader } from "uploadthing/client";
-	import { CheckCircle, Trash2, CameraOff, Loader, Maximize2 } from "@lucide/svelte";
+	import { genUploader } from 'uploadthing/client';
+	import { CheckCircle, Trash2, CameraOff, Loader, Maximize2 } from '@lucide/svelte';
 	export const { uploadFiles } = genUploader<any>({
-		url: "http://localhost:5000/api/upload",
+		url: 'http://localhost:5000/api/upload',
 	});
-	let { label = "Upload Image", required = false, title = "", url = $bindable(""), onSelect = () => {} } = $props();
+	let { label = 'Upload Image', required = false, title = '', url = $bindable(''), onSelect = () => {} } = $props();
 
 	let fileInput: HTMLInputElement | null = null;
 	let showModal = $state(false);
@@ -21,7 +21,7 @@
 			if (file) {
 				url = URL.createObjectURL(file);
 				fileName = file.name;
-				console.log("file", file);
+				console.log('file', file);
 				isUploading = true;
 				uploadProgress = 0;
 				uploadComplete = false;
@@ -33,7 +33,7 @@
 				}, 150);
 
 				isLoading = true;
-				const res = await uploadFiles("imageUploader", {
+				const res = await uploadFiles('imageUploader', {
 					files: [file],
 				});
 
@@ -43,7 +43,7 @@
 				isUploading = false;
 				uploadComplete = true;
 
-				url = res[0]?.ufsUrl ?? "";
+				url = res[0]?.ufsUrl ?? '';
 				onSelect(url, file.name);
 			} else {
 				onSelect(null);
@@ -56,10 +56,10 @@
 
 	function removeImage(e: MouseEvent) {
 		e.stopPropagation();
-		url = "";
+		url = '';
 		uploadComplete = false;
 		uploadProgress = 0;
-		if (fileInput) fileInput.value = "";
+		if (fileInput) fileInput.value = '';
 		onSelect(null);
 	}
 
@@ -84,7 +84,7 @@
 
 	<div class="upload-box" role="button" tabindex="0" onclick={toggleModal} onkeydown={toggleModal}>
 		{#if url}
-			{#if fileName.toLowerCase().endsWith(".pdf")}
+			{#if fileName.toLowerCase().endsWith('.pdf')}
 				<div class="pdf-preview-container">
 					<iframe src={url} class="pdf-preview" title="PDF Preview"></iframe>
 					<div class="pdf-overlay">
@@ -135,13 +135,13 @@
 		tabindex="0"
 		onclick={toggleModal}
 		onkeydown={(e) => {
-			if (e.key === "Enter" || e.key === " ") {
+			if (e.key === 'Enter' || e.key === ' ') {
 				toggleModal();
 			}
 		}}
 	>
 		<div class="modal-content">
-			{#if fileName.toLowerCase().endsWith(".pdf")}
+			{#if fileName.toLowerCase().endsWith('.pdf')}
 				<!-- <iframe src={url} width="800px" height="700px"></iframe> -->
 				<iframe src={url} class="pdf-modal-view" title="PDF Fullscreen" allowfullscreen></iframe>
 			{:else}
@@ -217,7 +217,7 @@
 		opacity: 0;
 		transition: opacity 0.2s ease;
 		margin-top: 1.5rem;
-        border-radius: 0.5rem;
+		border-radius: 0.5rem;
 	}
 
 	.pdf-preview-container:hover .pdf-overlay {

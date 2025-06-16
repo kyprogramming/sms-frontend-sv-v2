@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from "$app/state";
+	import { page } from '$app/state';
 	const status = page.status;
 	const message = page?.error?.message;
 	// console.log("Error Page:", { message, status });
@@ -49,7 +49,7 @@
 		text-align: center;
 		padding: 2rem;
 		box-sizing: border-box;
-		font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+		font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 	}
 
 	.title {

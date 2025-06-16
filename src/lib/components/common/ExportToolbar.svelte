@@ -1,5 +1,5 @@
 <script lang="ts">
-	let searchQuery = "";
+	let searchQuery = '';
 
 	function handleSearch(e: Event) {
 		const input = e.target as HTMLInputElement;

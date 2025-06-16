@@ -1,4 +1,4 @@
-import { writable } from "svelte/store";
+import { writable } from 'svelte/store';
 
 export const isModalOpen = writable(false);
 export const isDeleteModalOpen = writable(false);
@@ -20,7 +20,7 @@ export function closeModal() {
 }
 
 export function openDeleteModal(data: any = null) {
-    // isDeleteModalOpen.set(true);
+	// isDeleteModalOpen.set(true);
 	// modalData.set(data);
 }
 

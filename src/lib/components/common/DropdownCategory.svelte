@@ -1,13 +1,13 @@
 <script lang="ts">
-	export let role: "student" | "teacher" | "staff" | "parent" = "student";
-	export let selected: string = "";
+	export let role: 'student' | 'teacher' | 'staff' | 'parent' = 'student';
+	export let selected: string = '';
 	export let onChange: (value: string) => void = () => {};
 
 	const categoriesByRole: Record<string, string[]> = {
-		student: ["Identity", "Academic", "Health", "Consent", "Address", "Other"],
-		parent: ["Identity", "Relationship Proof", "Address", "Income", "Consent", "Other"],
-		teacher: ["Identity", "Academic Qualification", "Professional Qualification", "Employment", "Bank", "Health", "Other"],
-		staff: ["Identity", "Qualification", "Employment", "Bank", "Health", "Other"],
+		student: ['Identity', 'Academic', 'Health', 'Consent', 'Address', 'Other'],
+		parent: ['Identity', 'Relationship Proof', 'Address', 'Income', 'Consent', 'Other'],
+		teacher: ['Identity', 'Academic Qualification', 'Professional Qualification', 'Employment', 'Bank', 'Health', 'Other'],
+		staff: ['Identity', 'Qualification', 'Employment', 'Bank', 'Health', 'Other'],
 	};
 
 	$: categories = categoriesByRole[role] ?? [];

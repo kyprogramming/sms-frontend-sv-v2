@@ -1,7 +1,7 @@
-import { API_BASE_URL } from "$lib/utils/env.config";
-import { classList } from "$lib/stores/masterData";
-import type { PageServerLoad } from "./$types";
-import { redirect } from "@sveltejs/kit";
+import { API_BASE_URL } from '$lib/utils/env.config';
+import { classList } from '$lib/stores/masterData';
+import type { PageServerLoad } from './$types';
+import { redirect } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (locals.user?.authenticated) {
@@ -11,7 +11,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	// const [resClasses] = await Promise.all([fetch(`${API_BASE_URL}/class/list`, { method: "GET", headers: { "Content-Type": "application/json" }, credentials: "include" })]);
 	// const [classData] = await Promise.all([resClasses.json()]);
 
-    // console.log("classData for store:", classData);
+	// console.log("classData for store:", classData);
 	// // Save to store
 	// classList.set(classData);
 	return {};

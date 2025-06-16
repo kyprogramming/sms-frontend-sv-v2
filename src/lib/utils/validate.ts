@@ -1,5 +1,5 @@
-import { formErrors } from "$lib/stores/formStore";
-import type { ZodSchema, z } from "zod";
+import { formErrors } from '$lib/stores/formStore';
+import type { ZodSchema, z } from 'zod';
 
 export type FormErrors = Partial<Record<any, any>>;
 
@@ -13,8 +13,8 @@ export function validateForm<T>(schema: ZodSchema<T>, data: T): boolean {
 		// formErrors.subscribe(($formErrors) => {
 		// 	const errorKeys = Object.keys($formErrors);
 		// console.log("Fields with errors:", errorKeys);
-        // })();
-        return false;
+		// })();
+		return false;
 	}
 
 	formErrors.set({});
@@ -26,13 +26,13 @@ export function flattenErrors<T>(error: z.ZodFormattedError<T>): FormErrors {
 
 	function recurse(err: z.ZodFormattedError<any> | { _errors: any[] }, path: any[] = []) {
 		// Only proceed with objects
-		if (typeof err !== "object" || err === null) return;
+		if (typeof err !== 'object' || err === null) return;
 
 		for (const key in err) {
-			if (key === "_errors") {
+			if (key === '_errors') {
 				const messages = (err as { _errors: any[] })._errors;
 				if (messages.length > 0) {
-					const fullPath = path.join(".");
+					const fullPath = path.join('.');
 					result[fullPath] = messages[0];
 				}
 			} else {

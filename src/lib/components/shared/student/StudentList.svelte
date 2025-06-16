@@ -1,51 +1,51 @@
 <script lang="ts">
 	// Imports
-	import { env } from "$env/dynamic/public";
-	import { currentPage, rowsPerPage, totalItems, totalPages } from "$lib/stores/paginationStore";
-	import { deleteSectionById, fetchSectionById, fetchSections } from "$lib/services/section";
-	import { formatDate, formatLocalDate } from "$lib/utils/formatDate";
+	import { env } from '$env/dynamic/public';
+	import { currentPage, rowsPerPage, totalItems, totalPages } from '$lib/stores/paginationStore';
+	import { deleteSectionById, fetchSectionById, fetchSections } from '$lib/services/section';
+	import { formatDate, formatLocalDate } from '$lib/utils/formatDate';
 
-	import DataTable from "$lib/components/common/DataTable.svelte";
-	import ModalDelete from "$lib/components/common/ModalDelete.svelte";
+	import DataTable from '$lib/components/common/DataTable.svelte';
+	import ModalDelete from '$lib/components/common/ModalDelete.svelte';
 
-	import { Eye, Pencil, Trash2, Plus, RefreshCw, Search } from "@lucide/svelte";
+	import { Eye, Pencil, Trash2, Plus, RefreshCw, Search } from '@lucide/svelte';
 
-	import type { ColumnConfig } from "$lib/interfaces/table.interface";
-	import { page } from "$app/state";
-	import { goto } from "$app/navigation";
-	import { fetchStudentList } from "$lib/services/student";
-	import { showSnackbar } from "$lib/components/snackbar/store";
+	import type { ColumnConfig } from '$lib/interfaces/table.interface';
+	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
+	import { fetchStudentList } from '$lib/services/student';
+	import { showSnackbar } from '$lib/components/snackbar/store';
 
 	// Props
-	const schoolName = env.PUBLIC_SCHOOL_NAME || "Default School";
+	const schoolName = env.PUBLIC_SCHOOL_NAME || 'Default School';
 	let { response } = $props();
 
 	// States
-	let searchText = $state("");
+	let searchText = $state('');
 	let sectionData: any | null = $state(null);
 
 	let isModalOpen = $state(false);
 	let isDeleteModalOpen = $state(false);
 
-	let selectedId = $state("");
-	let selectedName = $state("");
+	let selectedId = $state('');
+	let selectedName = $state('');
 
 	let classData = page.data?.classData || [];
 	let classSections: { _id: string; name: string }[] = $state([]);
-	let selectedClassId = $state("");
-	let selectedSectionId = $state("");
+	let selectedClassId = $state('');
+	let selectedSectionId = $state('');
 	let formattedStudent = $state(formattedStudents(response));
 
 	// Column configuration
 	const columns: ColumnConfig[] = [
-		{ key: "_id", label: "Id", visible: false },
-		{ key: "serialNo", label: "Sr #", width: "80px", sortable: true, align: "center" },
-		{ key: "profile.fullName", label: "Name", width: "25%", sortable: true, align: "center" },
-		{ key: "className", label: "Class", width: "auto", sortable: true, align: "center" },
-		{ key: "sectionName", label: "Section", width: "auto", sortable: true, align: "center" },
-		{ key: "admissionDate", label: "Admission Date", width: "auto", sortable: true, align: "center", format: formatDate },
-		{ key: "profile.gender", label: "Gender", width: "auto", sortable: true, align: "center" },
-		{ key: "profile.dob", label: "DOB", width: "auto", sortable: true, align: "center", format: formatDate },
+		{ key: '_id', label: 'Id', visible: false },
+		{ key: 'serialNo', label: 'Sr #', width: '80px', sortable: true, align: 'center' },
+		{ key: 'profile.fullName', label: 'Name', width: '25%', sortable: true, align: 'center' },
+		{ key: 'className', label: 'Class', width: 'auto', sortable: true, align: 'center' },
+		{ key: 'sectionName', label: 'Section', width: 'auto', sortable: true, align: 'center' },
+		{ key: 'admissionDate', label: 'Admission Date', width: 'auto', sortable: true, align: 'center', format: formatDate },
+		{ key: 'profile.gender', label: 'Gender', width: 'auto', sortable: true, align: 'center' },
+		{ key: 'profile.dob', label: 'DOB', width: 'auto', sortable: true, align: 'center', format: formatDate },
 		// { key: "academicYear", label: "Academic Year", width: "auto", sortable: true, align: "center" },
 	];
 
@@ -55,7 +55,7 @@
 		iconActions: [
 			{
 				icon: Eye,
-				class: "view",
+				class: 'view',
 				show: true,
 				action: (item: { _id: any }) => {
 					alert(`View ${item._id}`);
@@ -63,7 +63,7 @@
 			},
 			{
 				icon: Pencil,
-				class: "edit",
+				class: 'edit',
 				show: true,
 				action: async (item: { _id: any }) => {
 					handleUpdate(item._id);
@@ -71,7 +71,7 @@
 			},
 			{
 				icon: Trash2,
-				class: "delete",
+				class: 'delete',
 				show: true,
 				action: (item: any) => {
 					selectedId = item._id;
@@ -88,7 +88,7 @@
 	}
 
 	async function handleRefresh() {
-		searchText = "";
+		searchText = '';
 		currentPage.set(1);
 		await refreshAction();
 	}
@@ -102,7 +102,7 @@
 	}
 
 	async function handleAdd() {
-		await goto("/admin/student/create");
+		await goto('/admin/student/create');
 	}
 
 	async function handleUpdate(id: string) {
@@ -110,8 +110,8 @@
 	}
 
 	function handleClassChange(e: Event) {
-		selectedSectionId = "";
-		const selected = (e.target as HTMLSelectElement).value || "";
+		selectedSectionId = '';
+		const selected = (e.target as HTMLSelectElement).value || '';
 		const selectedClass = classData.find((cls: any) => cls._id === selected);
 		classSections = selectedClass?.sectionIds || [];
 	}
@@ -155,7 +155,7 @@
 	}
 
 	async function refreshAction() {
-		selectedClassId = selectedSectionId = searchText = "";
+		selectedClassId = selectedSectionId = searchText = '';
 		const params = new URLSearchParams({ classId: selectedClassId, sectionId: selectedSectionId, search: searchText, page: String($currentPage), limit: String($rowsPerPage) });
 		const json = await fetchStudentList(params);
 		response = { ...json };
@@ -173,9 +173,9 @@
 	async function deleteAction(id: string) {
 		const json = await deleteSectionById(id);
 		if (json.success) {
-			showSnackbar({ message: `Section ${json.message}`, type: "success" });
+			showSnackbar({ message: `Section ${json.message}`, type: 'success' });
 			isDeleteModalOpen = false;
-		} else showSnackbar({ message: `${json.message}`, type: "error" });
+		} else showSnackbar({ message: `${json.message}`, type: 'error' });
 
 		if ($totalItems % $rowsPerPage === 1 && $currentPage > 1) {
 			currentPage.set($currentPage - 1);
@@ -197,7 +197,7 @@
 			{/each}
 		</select>
 
-		<select id="sectionId" style="width:150px;" bind:value={selectedSectionId} disabled={selectedClassId === ""}>
+		<select id="sectionId" style="width:150px;" bind:value={selectedSectionId} disabled={selectedClassId === ''}>
 			<option value="" disabled selected>Select Section</option>
 			{#each classSections as section}
 				<option value={section._id}>{section.name}</option>
@@ -210,7 +210,7 @@
 			placeholder="Search student..."
 			bind:value={searchText}
 			onkeydown={(e) => {
-				if (e.key === "Enter") {
+				if (e.key === 'Enter') {
 					handleSearch();
 				}
 			}}
@@ -258,7 +258,7 @@
 		gap: 8px;
 	}
 
-	input[name="search"] {
+	input[name='search'] {
 		width: 300px;
 	}
 </style>

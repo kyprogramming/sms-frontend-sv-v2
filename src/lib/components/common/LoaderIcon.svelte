@@ -1,12 +1,12 @@
 <script>
-	import { isLoading } from "$lib/stores/loading";
-	import { Loader } from "@lucide/svelte";
+	import { isLoading } from '$lib/stores/loading';
+	import { Loader } from '@lucide/svelte';
 </script>
 
 {#if $isLoading}
-    <div class="sun-spinner">
-        <Loader />
-    </div>
+	<div class="sun-spinner">
+		<Loader />
+	</div>
 {/if}
 
 <style>

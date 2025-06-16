@@ -1,14 +1,13 @@
 <script lang="ts">
-
-	import "../app.css";
-	import "../app-input.css";
+	import '../app.css';
+	import '../app-input.css';
 	// import "../shared.css";
-	import LoadingBar from "$lib/components/common/LoadingBar.svelte";
-	import Snackbar from "$lib/components/snackbar/Snackbar.svelte";
+	import LoadingBar from '$lib/components/common/LoadingBar.svelte';
+	import Snackbar from '$lib/components/snackbar/Snackbar.svelte';
 
 	// export let data;
 	// export let children;
-    let {data, children} = $props();
+	let { data, children } = $props();
 </script>
 
 <LoadingBar />

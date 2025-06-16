@@ -1,23 +1,23 @@
 <script lang="ts">
 	import { preventDefault } from 'svelte/legacy';
 
-	import { goto, invalidateAll } from "$app/navigation";
+	import { goto, invalidateAll } from '$app/navigation';
 
-	let name = $state("");
-	let email = $state("");
-	let password = $state("");
+	let name = $state('');
+	let email = $state('');
+	let password = $state('');
 
 	async function handleRegister() {
-		const res = await fetch("/api/auth/register", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
+		const res = await fetch('/api/auth/register', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ name, email, password }),
 		});
 
 		const data = await res.json();
 		if (res.ok) {
-            await invalidateAll(); 
-			await goto("/login");
+			await invalidateAll();
+			await goto('/login');
 		} else {
 			alert(data.message);
 		}

@@ -7,13 +7,7 @@
 		className?: string; // Custom class prop
 	}
 
-	let {
-		title = "Total Users",
-		value = 277,
-		change = 95,
-		period = "Last Month",
-		className = ""
-	}: Props = $props();
+	let { title = 'Total Users', value = 277, change = 95, period = 'Last Month', className = '' }: Props = $props();
 </script>
 
 <div class={`stats-card ${className}`}>

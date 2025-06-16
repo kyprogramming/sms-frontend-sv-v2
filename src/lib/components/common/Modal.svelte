@@ -1,11 +1,11 @@
 <script lang="ts" module>
-	export type ModalSize = "sm" | "md" | "lg" | "xl" | "full";
+	export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
 </script>
 
 <script lang="ts">
-	import { fade, fly } from "svelte/transition";
+	import { fade, fly } from 'svelte/transition';
 
-	let { title = "Title", size = "md", children, onClose, onCancel } = $props();
+	let { title = 'Title', size = 'md', children, onClose, onCancel } = $props();
 
 	function handleModalClick(event: MouseEvent | KeyboardEvent) {
 		event.stopPropagation();
@@ -17,14 +17,23 @@
 </script>
 
 <div class="modal-overlay" transition:fade={{ duration: 150 }}>
-	<div role="button" 	tabindex="0" class="modal-content" class:sm={size === "sm"} class:md={size === "md"} class:lg={size === "lg"} class:xl={size === "xl"} class:full={size === "full"} 
-    onclick={handleModalClick} 
-    onkeydown={(e) => {
-		if (e.key === 'Enter' || e.key === ' ') {
-			handleModalClick(e);
-		}
-	}}
-    transition:fly={{ y: -20, duration: 150 }}>
+	<div
+		role="button"
+		tabindex="0"
+		class="modal-content"
+		class:sm={size === 'sm'}
+		class:md={size === 'md'}
+		class:lg={size === 'lg'}
+		class:xl={size === 'xl'}
+		class:full={size === 'full'}
+		onclick={handleModalClick}
+		onkeydown={(e) => {
+			if (e.key === 'Enter' || e.key === ' ') {
+				handleModalClick(e);
+			}
+		}}
+		transition:fly={{ y: -20, duration: 150 }}
+	>
 		<div class="modal-header">
 			<h2>{title}</h2>
 			<button class="close-button" onclick={handleCancel}>&times;</button>
@@ -86,12 +95,12 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-        border-radius: 8px 8px 0 0 ;
+		border-radius: 8px 8px 0 0;
 	}
 
 	.modal-body {
 		padding: 1rem;
-        z-index: 10;
+		z-index: 10;
 	}
 
 	.modal-header h2 {

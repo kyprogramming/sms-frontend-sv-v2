@@ -6,89 +6,21 @@ export const COOKIE_OPTIONS = {
 	sameSite: 'strict' as const,
 	maxAge: 60 * 60 * 24 * 7, // 1 week
 };
-export const CASTE_CATEGORIES = [
-	{ name: 'General' },
-	{ name: 'OBC' },
-	{ name: 'SC' },
-	{ name: 'ST' },
-	{ name: 'Special' },
-	{ name: 'Physical Challenged' },
-];
+export const CASTE_CATEGORIES = [{ name: 'General' }, { name: 'OBC' }, { name: 'SC' }, { name: 'ST' }, { name: 'Special' }, { name: 'Physical Challenged' }];
 export const RELIGIONS = [{ name: 'Hindu' }, { name: 'Muslim' }, { name: 'Other' }];
 export const GENDERS = [{ name: 'Male' }, { name: 'Female' }, { name: 'Other' }];
-export const BLOOD_GROUPS = [
-	{ name: 'A+' },
-	{ name: 'A-' },
-	{ name: 'B+' },
-	{ name: 'B-' },
-	{ name: 'AB+' },
-	{ name: 'AB-' },
-	{ name: 'O+' },
-	{ name: 'O-' },
-];
+export const BLOOD_GROUPS = [{ name: 'A+' }, { name: 'A-' }, { name: 'B+' }, { name: 'B-' }, { name: 'AB+' }, { name: 'AB-' }, { name: 'O+' }, { name: 'O-' }];
 export const SUBJECT_TYPE = [{ name: 'Theory' }, { name: 'Practical' }];
 
 export const GUARDIAN_TYPE = [{ name: 'Father' }, { name: 'Mother' }, { name: 'Other' }];
-export const STAFF_ROLES = [
-	{ name: 'Admin' },
-	{ name: 'Teacher' },
-	{ name: 'Accountant' },
-	{ name: 'Librarian' },
-	{ name: 'Receptionist' },
-	{ name: 'Super Admin' },
-];
-export const STAFF_DESIGNATIONS = [
-	{ name: 'Faculty' },
-	{ name: 'Accountant' },
-	{ name: 'Admin' },
-	{ name: 'Receptionist' },
-	{ name: 'Principal' },
-	{ name: 'Director' },
-	{ name: 'Librarian' },
-	{ name: 'Technical Head' },
-	{ name: 'Vice Principal' },
-];
-export const STAFF_DEPARTMENTS = [
-	{ name: 'Academic' },
-	{ name: 'Library' },
-	{ name: 'Sports' },
-	{ name: 'Science' },
-	{ name: 'Commerce' },
-	{ name: 'Arts' },
-	{ name: 'Exam' },
-	{ name: 'Admin' },
-	{ name: 'Finance' },
-	{ name: 'Maths' },
-];
-export const MARITAL_STATUS = [
-	{ name: 'Single' },
-	{ name: 'Married' },
-	{ name: 'Widowed' },
-	{ name: 'Separated' },
-	{ name: 'Not Specified' },
-];
-export const SHIFT = [
-	{ name: 'Morning' },
-	{ name: 'Afternoon' },
-	{ name: 'Evening' },
-	{ name: 'Night' },
-];
+export const STAFF_ROLES = [{ name: 'Admin' }, { name: 'Teacher' }, { name: 'Accountant' }, { name: 'Librarian' }, { name: 'Receptionist' }, { name: 'Super Admin' }];
+export const STAFF_DESIGNATIONS = [{ name: 'Faculty' }, { name: 'Accountant' }, { name: 'Admin' }, { name: 'Receptionist' }, { name: 'Principal' }, { name: 'Director' }, { name: 'Librarian' }, { name: 'Technical Head' }, { name: 'Vice Principal' }];
+export const STAFF_DEPARTMENTS = [{ name: 'Academic' }, { name: 'Library' }, { name: 'Sports' }, { name: 'Science' }, { name: 'Commerce' }, { name: 'Arts' }, { name: 'Exam' }, { name: 'Admin' }, { name: 'Finance' }, { name: 'Maths' }];
+export const MARITAL_STATUS = [{ name: 'Single' }, { name: 'Married' }, { name: 'Widowed' }, { name: 'Separated' }, { name: 'Not Specified' }];
+export const SHIFT = [{ name: 'Morning' }, { name: 'Afternoon' }, { name: 'Evening' }, { name: 'Night' }];
 export const CONTRACT_TYPE = [{ name: 'Permanent' }, { name: 'Probation' }];
 
-export const CONSTANT_CATEGORIES = [
-	{ name: 'CASTE' },
-	{ name: 'RELIGIONS' },
-	{ name: 'GENDERS' },
-	{ name: 'BLOOD_GROUPS' },
-	{ name: 'SUBJECT_TYPE' },
-	{ name: 'GUARDIAN_TYPE' },
-	{ name: 'STAFF_ROLES' },
-	{ name: 'STAFF_DESIGNATIONS' },
-	{ name: 'STAFF_DEPARTMENTS' },
-	{ name: 'MARITAL_STATUS' },
-	{ name: 'SHIFT' },
-	{ name: 'CONTRACT_TYPE' },
-];
+export const CONSTANT_CATEGORIES = [{ name: 'CASTE' }, { name: 'RELIGIONS' }, { name: 'GENDERS' }, { name: 'BLOOD_GROUPS' }, { name: 'SUBJECT_TYPE' }, { name: 'GUARDIAN_TYPE' }, { name: 'STAFF_ROLES' }, { name: 'STAFF_DESIGNATIONS' }, { name: 'STAFF_DEPARTMENTS' }, { name: 'MARITAL_STATUS' }, { name: 'SHIFT' }, { name: 'CONTRACT_TYPE' }];
 
 export const MENU_GROUPS = [
 	// {

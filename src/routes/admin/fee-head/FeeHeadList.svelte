@@ -177,7 +177,8 @@
 		}}
 		onCancel={() => {
 			isModalOpen = false;
-		}}>
+		}}
+	>
 		<FeeHeadForm onRefreshPage={refreshAction} {feeHeadData} action={isUpdate ? 'update' : 'create'} />
 	</Modal>
 {/if}

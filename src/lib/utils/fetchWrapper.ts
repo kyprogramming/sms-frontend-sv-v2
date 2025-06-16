@@ -1,5 +1,5 @@
-import { showSnackbar } from "$lib/components/snackbar/store";
-import { isLoading } from "$lib/stores/loading";
+import { showSnackbar } from '$lib/components/snackbar/store';
+import { isLoading } from '$lib/stores/loading';
 
 export interface FetchOptions extends RequestInit {
 	showError?: boolean;
@@ -12,10 +12,10 @@ export async function fetchWrapper<T = any>(url: string, options: FetchOptions =
 		const res = await fetch(url, {
 			...options,
 			headers: {
-				"Content-Type": "application/json",
+				'Content-Type': 'application/json',
 				...(options.headers || {}),
 			},
-			credentials: "include",
+			credentials: 'include',
 		});
 
 		if (!res.ok) {
@@ -32,16 +32,16 @@ export async function fetchWrapper<T = any>(url: string, options: FetchOptions =
 		const data = await res.json();
 		return data as T;
 	} catch (err: any) {
-		console.error("Fetch error:", err);
+		console.error('Fetch error:', err);
 
 		if (options.showError !== false) {
 			showSnackbar({
-				message: "Failed to perform the request. Please try again.",
-				type: "error",
+				message: 'Failed to perform the request. Please try again.',
+				type: 'error',
 			});
 		}
 
-		throw err instanceof Error ? err : new Error("Unexpected fetch error");
+		throw err instanceof Error ? err : new Error('Unexpected fetch error');
 	} finally {
 		isLoading.set(false);
 	}

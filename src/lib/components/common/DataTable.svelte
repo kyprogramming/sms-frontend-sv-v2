@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { run } from "svelte/legacy";
+	import { run } from 'svelte/legacy';
 
-	import { ACTION_COLUMN_WIDTH, DEFAULT_PAGE_LIMIT } from "$lib/utils/env.config";
-	import Pagination from "./Pagination.svelte";
-	import { currentPage, rowsPerPage, totalPages, totalItems } from "$lib/stores/paginationStore";
-	import type { ActionConfig, ColumnConfig } from "$lib/interfaces/table.interface";
+	import { ACTION_COLUMN_WIDTH, DEFAULT_PAGE_LIMIT } from '$lib/utils/env.config';
+	import Pagination from './Pagination.svelte';
+	import { currentPage, rowsPerPage, totalPages, totalItems } from '$lib/stores/paginationStore';
+	import type { ActionConfig, ColumnConfig } from '$lib/interfaces/table.interface';
 
 	interface Props {
 		response: any;
@@ -20,8 +20,8 @@
 
 	let {
 		response,
-		dataKey = "data",
-		paginationKey = "pagination",
+		dataKey = 'data',
+		paginationKey = 'pagination',
 		onPaginationChange,
 		onPageLimitChange,
 		// onDeleteRefresh,
@@ -33,7 +33,7 @@
 	}: Props = $props();
 
 	// STATE
-	let sortColumn = $state("");
+	let sortColumn = $state('');
 	let sortDirection = $state(1);
 
 	function sortBy(column: string) {
@@ -46,7 +46,7 @@
 	}
 
 	function getNestedValue(obj: any, path: string): any {
-		return path.split(".").reduce((acc, part) => acc && acc[part], obj);
+		return path.split('.').reduce((acc, part) => acc && acc[part], obj);
 	}
 	// console.log("DATA TABLE- response:", response);
 	// Extract data and pagination dynamically
@@ -69,8 +69,8 @@
 	let visibleData = $derived(
 		[...dataArray].sort((a, b) => {
 			if (!sortColumn) return 0;
-			const valA = getNestedValue(a, sortColumn)?.toString().toLowerCase() || "";
-			const valB = getNestedValue(b, sortColumn)?.toString().toLowerCase() || "";
+			const valA = getNestedValue(a, sortColumn)?.toString().toLowerCase() || '';
+			const valB = getNestedValue(b, sortColumn)?.toString().toLowerCase() || '';
 			return valA > valB ? sortDirection : valA < valB ? -sortDirection : 0;
 		}),
 	);
@@ -83,10 +83,10 @@
 			<thead>
 				<tr>
 					{#each columns as column}
-						<th onclick={() => column.sortable && sortBy(column.key)} class:sortable={column.sortable} style={`width: ${column.width || "auto"}; text-align: ${column.align || "left"}; display: ${column.visible === false ? "none" : "table-cell"};`}>
+						<th onclick={() => column.sortable && sortBy(column.key)} class:sortable={column.sortable} style={`width: ${column.width || 'auto'}; text-align: ${column.align || 'left'}; display: ${column.visible === false ? 'none' : 'table-cell'};`}>
 							{column.label}
 							{#if column.sortable && sortColumn === column.key}
-								<span>{sortDirection === 1 ? "▲" : "▼"}</span>
+								<span>{sortDirection === 1 ? '▲' : '▼'}</span>
 							{/if}
 						</th>
 					{/each}
@@ -99,7 +99,7 @@
 				{#each visibleData as item}
 					<tr>
 						{#each columns as column}
-							<td style={`width: ${column.width || "auto"}; text-align: ${column.align || "left"}; display: ${column?.visible === false ? "none" : "table-cell"};`}>
+							<td style={`width: ${column.width || 'auto'}; text-align: ${column.align || 'left'}; display: ${column?.visible === false ? 'none' : 'table-cell'};`}>
 								{#if column.format}
 									{@html column.format(getNestedValue(item, column.key))}
 								{:else}
@@ -117,10 +117,10 @@
 													role="button"
 													tabindex="0"
 													class={`icon-circle ${action.class}`}
-													aria-label={"Perform action"}
+													aria-label={'Perform action'}
 													onclick={() => action?.action(item)}
 													onkeydown={(e) => {
-														if (e.key === "Enter" || e.key === " ") {
+														if (e.key === 'Enter' || e.key === ' ') {
 															e.preventDefault();
 															action?.action(item);
 														}
@@ -149,7 +149,7 @@
 								{/if}
 							</div>
 						{:else}
-							<p style="margin: 0;text-align: left; font-weight: bold; margin: 5px;">{response.message || "No records found"}.</p>
+							<p style="margin: 0;text-align: left; font-weight: bold; margin: 5px;">{response.message || 'No records found'}.</p>
 						{/if}
 					</td>
 				</tr>

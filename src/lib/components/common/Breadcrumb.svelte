@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { ChevronRight } from "@lucide/svelte";
+	import { ChevronRight } from '@lucide/svelte';
 	interface Props {
 		title?: string;
 		items?: { label: string; href?: string }[];
 	}
 
-	let { title = "", items = [] }: Props = $props();
+	let { title = '', items = [] }: Props = $props();
 </script>
 
 <div class="container-breadcrumb">

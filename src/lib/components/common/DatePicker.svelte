@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { formatDateToLocalYYYYMMDD } from "$lib/utils/utils";
-	import { onMount } from "svelte";
+	import { formatDateToLocalYYYYMMDD } from '$lib/utils/utils';
+	import { onMount } from 'svelte';
 
 	interface Props {
 		id?: string;
@@ -12,7 +12,7 @@
 		cls?: string;
 	}
 
-	let { id = "", value = $bindable(null), onChange = () => {}, onBlur = () => {}, onClear = () => {}, defaultToday = false, cls = "" }: Props = $props();
+	let { id = '', value = $bindable(null), onChange = () => {}, onBlur = () => {}, onClear = () => {}, defaultToday = false, cls = '' }: Props = $props();
 
 	let showCalendar = $state(false);
 	let selectedDate: Date | null = $state(value instanceof Date ? value : value ? new Date(value) : null);
@@ -44,7 +44,7 @@
 	// Month and year dropdown options
 	const months = Array.from({ length: 12 }, (_, i) => ({
 		value: i,
-		name: new Date(2000, i, 1).toLocaleString("default", { month: "long" }),
+		name: new Date(2000, i, 1).toLocaleString('default', { month: 'long' }),
 	}));
 
 	function toggleCalendar() {
@@ -71,11 +71,11 @@
 	}
 
 	function formatDate(date: Date | null): string {
-		if (!date) return "";
+		if (!date) return '';
 		const options: Intl.DateTimeFormatOptions = {
-			year: "numeric",
-			month: "short",
-			day: "numeric",
+			year: 'numeric',
+			month: 'short',
+			day: 'numeric',
 		};
 		return date.toLocaleDateString(undefined, options);
 	}
@@ -123,11 +123,11 @@
 			}
 		};
 
-		document.addEventListener("click", handleClick, true);
+		document.addEventListener('click', handleClick, true);
 
 		return {
 			destroy() {
-				document.removeEventListener("click", handleClick, true);
+				document.removeEventListener('click', handleClick, true);
 			},
 		};
 	}
@@ -135,9 +135,9 @@
 	let firstDayOfMonth = $derived(getFirstDayOfMonth(currentMonth, currentYear));
 </script>
 
-<div class="datepicker-wrapper" bind:this={calendarRef} use:clickOutside={() => (showCalendar = false)} >
+<div class="datepicker-wrapper" bind:this={calendarRef} use:clickOutside={() => (showCalendar = false)}>
 	<div class="input-container">
-		<input {id} type="text" readonly onclick={toggleCalendar} value={value ? formatDate(new Date(value)) : ""} onblur={onBlur} class={cls} placeholder="Select date" />
+		<input {id} type="text" readonly onclick={toggleCalendar} value={value ? formatDate(new Date(value)) : ''} onblur={onBlur} class={cls} placeholder="Select date" />
 		<button class="calendar-icon" type="button" onclick={toggleCalendar} aria-label="Toggle calendar">
 			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 				<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -175,7 +175,7 @@
 												showYearPicker = false;
 											}}
 											onkeydown={(e) => {
-												if (e.key === "Enter" || e.key === " ") {
+												if (e.key === 'Enter' || e.key === ' ') {
 													currentYear = today.getFullYear() - i;
 													showYearPicker = false;
 												}
@@ -191,7 +191,7 @@
 				</div>
 
 				<div class="calendar-weekdays">
-					{#each ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"] as day}
+					{#each ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'] as day}
 						<div class="weekday">{day}</div>
 					{/each}
 				</div>
@@ -210,7 +210,7 @@
 							class="calendar-day {selectedDate?.getDate() === i + 1 && selectedDate?.getMonth() === currentMonth && selectedDate?.getFullYear() === currentYear ? 'selected' : ''}"
 							onclick={(e) => handleDayClick(i + 1, e)}
 							onkeydown={(e) => {
-								if (e.key === "Enter" || e.key === " ") {
+								if (e.key === 'Enter' || e.key === ' ') {
 									handleDayClick(i + 1, e);
 								}
 							}}
@@ -241,7 +241,6 @@
 		position: relative;
 		width: 100%;
 		font-family: sans-serif;
-       
 	}
 
 	.input-container {
@@ -282,16 +281,16 @@
 
 	.calendar-container {
 		position: relative;
-        z-index: 1100;
+		z-index: 1100;
 		min-width: 260px;
-        background-color: white;
+		background-color: white;
 	}
 
 	.calendar {
 		position: absolute;
 		top: 100%;
 		left: 0;
-        z-index: 1101;
+		z-index: 1101;
 		background: #fff;
 		border: 1px solid #ddd;
 		border-radius: 8px;
@@ -416,7 +415,7 @@
 		overflow-y: auto;
 		width: 100%;
 		margin-top: 0.25rem;
-        z-index: 1102;
+		z-index: 1102;
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 	}
 

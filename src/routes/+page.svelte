@@ -1,11 +1,10 @@
 <script lang="ts">
-
-	import bg_1 from "$lib/assets/images/bg_1.jpg";
-	import bg_2 from "$lib/assets/images/bg_2.jpg";
-	import bg_3 from "$lib/assets/images/bg_3.jpg";
-	import bg_4 from "$lib/assets/images/bg_4.jpg";
-	import Carousel from "$lib/components/common/Carousel.svelte";
-	import Header from "$lib/components/layouts/Header.svelte";
+	import bg_1 from '$lib/assets/images/bg_1.jpg';
+	import bg_2 from '$lib/assets/images/bg_2.jpg';
+	import bg_3 from '$lib/assets/images/bg_3.jpg';
+	import bg_4 from '$lib/assets/images/bg_4.jpg';
+	import Carousel from '$lib/components/common/Carousel.svelte';
+	import Header from '$lib/components/layouts/Header.svelte';
 
 	const images = [bg_1, bg_2, bg_3, bg_4];
 </script>

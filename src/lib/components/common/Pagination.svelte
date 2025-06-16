@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { currentPage, rowsPerPage, totalPages, totalItems } from "$lib/stores/paginationStore";
-	import { ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight } from "@lucide/svelte";
+	import { currentPage, rowsPerPage, totalPages, totalItems } from '$lib/stores/paginationStore';
+	import { ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight } from '@lucide/svelte';
 
 	interface Props {
 		onPaginationChange: () => void;
 		onPageLimitChange: () => void;
 	}
 
-	let { onPaginationChange, onPageLimitChange  }: Props = $props();
+	let { onPaginationChange, onPageLimitChange }: Props = $props();
 
 	// Reactive values from stores
 	let page = $derived($currentPage);

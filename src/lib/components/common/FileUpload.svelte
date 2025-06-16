@@ -5,11 +5,11 @@
 		onFileSelect?: (file: File) => void;
 	}
 
-	let { id = "", filePath = $bindable(""), onFileSelect = () => {} }: Props = $props();
+	let { id = '', filePath = $bindable(''), onFileSelect = () => {} }: Props = $props();
 
 	let fileInput: HTMLInputElement | undefined = $state();
 	let file: File | null = $state(null);
-	let previewUrl: string = $state("");
+	let previewUrl: string = $state('');
 	let uploading = $state(false);
 	let progress = $state(0);
 
@@ -19,12 +19,12 @@
 		progress = 0;
 
 		const formData = new FormData();
-		formData.append("file", file);
+		formData.append('file', file);
 
 		const xhr = new XMLHttpRequest();
-		xhr.open("POST", "http://localhost:5000/api/upload");
+		xhr.open('POST', 'http://localhost:5000/api/upload');
 
-		xhr.upload.addEventListener("progress", (e) => {
+		xhr.upload.addEventListener('progress', (e) => {
 			if (e.lengthComputable) {
 				progress = Math.round((e.loaded / e.total) * 100);
 			}
@@ -79,7 +79,7 @@
 			<img src={previewUrl} alt="Preview" class="preview-img" />
 			<div class="file-info">
 				<p style="font-size: 11px;"><strong>Name:</strong> {file?.name.substring(0, 35)}</p>
-				<p style="font-size: 11px;"><strong>Size:</strong> {file ? (file.size / 1024).toFixed(2) + " KB" : ""}</p>
+				<p style="font-size: 11px;"><strong>Size:</strong> {file ? (file.size / 1024).toFixed(2) + ' KB' : ''}</p>
 			</div>
 		</div>
 	{/if}

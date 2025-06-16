@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { slide } from "svelte/transition";
+	import { slide } from 'svelte/transition';
 
 	import {
 		Home,
@@ -38,13 +38,13 @@
 		LayoutDashboardIcon,
 		UserPen,
 		UserPlus,
-	} from "@lucide/svelte";
-	import { MENU_GROUPS } from  "$lib/utils/constants";
+	} from '@lucide/svelte';
+	import { MENU_GROUPS } from '$lib/utils/constants';
 	interface Props {
 		cls?: string;
 	}
 
-	let { cls = "" }: Props = $props();
+	let { cls = '' }: Props = $props();
 
 	const iconComponents: any = {
 		LayoutDashboard,
@@ -124,7 +124,7 @@
 						tabindex="0"
 						onclick={() => toggleGroup(group.title)}
 						onkeydown={(e) => {
-							if (e.key === "Enter" || e.key === " ") {
+							if (e.key === 'Enter' || e.key === ' ') {
 								e.preventDefault();
 								toggleGroup(group.title);
 							}
@@ -145,11 +145,11 @@
 								<a
 									class="menu-item {activeMenuItem === item.title ? 'active' : ''}"
 									href={item.link}
-									aria-current={activeMenuItem === item.title ? "page" : undefined}
+									aria-current={activeMenuItem === item.title ? 'page' : undefined}
 									onclick={() => {
 										activeMenuItem = item.title;
 									}}
-                                    data-sveltekit-preload-data="tap" 
+									data-sveltekit-preload-data="tap"
 								>
 									<span>{item.title}</span>
 								</a>

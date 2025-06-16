@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { onMount } from "svelte";
+	import { onMount } from 'svelte';
 
 	interface Props {
 		// Props
 		images?: string[];
 	}
 
-	let { images = ["https://picsum.photos/id/1018/1200/400", "https://picsum.photos/id/1020/1200/400", "https://picsum.photos/id/1033/1200/400"] }: Props = $props();
+	let { images = ['https://picsum.photos/id/1018/1200/400', 'https://picsum.photos/id/1020/1200/400', 'https://picsum.photos/id/1033/1200/400'] }: Props = $props();
 
 	// State
 	let currentIndex = $state(0);

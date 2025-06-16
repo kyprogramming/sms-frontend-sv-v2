@@ -4,7 +4,7 @@
 // 	BACKEND_API_BASE_URL: import.meta.env.PUBLIC_BACKENd_API_BASE_URL,
 // 	ACTION_COLUMN_WIDTH: import.meta.env.PUBLIC_ACTION_COLUMN_WIDTH,
 // };
-import { env } from "$env/dynamic/public";
+import { env } from '$env/dynamic/public';
 export const ENV = env.PUBLIC_NODE_ENV;
 export const ACTION_COLUMN_WIDTH = env.PUBLIC_ACTION_COLUMN_WIDTH;
 export const DEFAULT_PAGE_LIMIT = env.PUBLIC_DEFAULT_PAGE_LIMIT;

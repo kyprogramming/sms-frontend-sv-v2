@@ -1,7 +1,7 @@
 // +layout.ts
-import { API_BASE_URL } from "$lib/utils/env.config";
-import { classList } from "$lib/stores/masterData";
-import type { LayoutServerLoad } from "./$types";
+import { API_BASE_URL } from '$lib/utils/env.config';
+import { classList } from '$lib/stores/masterData';
+import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async ({ locals }) => {
 	if (!locals.user) {

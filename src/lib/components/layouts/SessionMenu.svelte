@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { stopPropagation } from "svelte/legacy";
+	import { stopPropagation } from 'svelte/legacy';
 
-	import { isLoading } from "$lib/stores/loading";
-	import { apiRequest } from "$lib/utils/api";
-	import type { User } from "$lib/utils/types";
-	import { showSnackbar } from "../snackbar/store";
-	import { goto } from "$app/navigation";
-	import { LogOut, Settings, UserCog } from "@lucide/svelte";
-	import { API_BASE_URL } from "$lib/utils/env.config";
+	import { isLoading } from '$lib/stores/loading';
+	import { apiRequest } from '$lib/utils/api';
+	import type { User } from '$lib/utils/types';
+	import { showSnackbar } from '../snackbar/store';
+	import { goto } from '$app/navigation';
+	import { LogOut, Settings, UserCog } from '@lucide/svelte';
+	import { API_BASE_URL } from '$lib/utils/env.config';
 
 	interface Props {
 		user: User | null;
@@ -27,30 +27,32 @@
 	async function onSubmit() {
 		try {
 			isLoading.set(true);
-			const response = await apiRequest<any>(`${API_BASE_URL}/auth/logout`, "POST", {});
+			const response = await apiRequest<any>(`${API_BASE_URL}/auth/logout`, 'POST', {});
 			if (response.success) {
-				showSnackbar({ message: response?.message, type: "success" });
-				await goto("/login");
+				showSnackbar({ message: response?.message, type: 'success' });
+				await goto('/login');
 			}
 		} catch (err: any) {
-			await goto("/login");
+			await goto('/login');
 		} finally {
 			isLoading.set(false);
 		}
 	}
 </script>
 
-
-<div class="user-profile" role="button"
-tabindex="0"
-aria-haspopup="true"
-aria-expanded={isOpen} onclick={toggleMenu}
-onkeydown={(e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        toggleMenu();
-    }
-}}
+<div
+	class="user-profile"
+	role="button"
+	tabindex="0"
+	aria-haspopup="true"
+	aria-expanded={isOpen}
+	onclick={toggleMenu}
+	onkeydown={(e) => {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			toggleMenu();
+		}
+	}}
 >
 	<div class="profile-img">{user?.name?.charAt(0).toUpperCase()}</div>
 	<div class="user-info">

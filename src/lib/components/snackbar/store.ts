@@ -1,8 +1,8 @@
 // src/lib/components/snackbar/store.ts
-import { writable } from "svelte/store";
+import { writable } from 'svelte/store';
 
 // src/lib/components/snackbar/types.ts
-export type SnackbarType = "success" | "error" | "info" | "warning";
+export type SnackbarType = 'success' | 'error' | 'info' | 'warning';
 
 export interface Snackbar {
 	id: string;
@@ -13,10 +13,10 @@ export interface Snackbar {
 
 export const snackbars = writable<Snackbar[]>([]);
 
-export function showSnackbar(snackbar: Omit<Snackbar, "id">) {
+export function showSnackbar(snackbar: Omit<Snackbar, 'id'>) {
 	// Set default type as 'success' if not provided
 	const id = crypto.randomUUID();
-	const type = snackbar.type || "success"; // Default to 'success'
+	const type = snackbar.type || 'success'; // Default to 'success'
 
 	// Add the snackbar to the store
 	snackbars.update((all) => [...all, { id, ...snackbar, type }]);

@@ -10,8 +10,9 @@
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"format": "npx prettier --write . && npm run format:css",
+		"format": "npx prettier --write .",
 		"format:css": "node format-css.mjs",
+		"format-all": "npx prettier --write . && npm run format:css",
 		"format:css2": "cross-env find . -name '*.svelte' -exec sed -i'' -e '/<style>/,/</style>/ { /^[[:space:]]*\\..*{/ { :a; N; /}/!ba; s/\\n[[:space:]]*/ /g; } }' {} \\;"
 	},
 	"devDependencies": {

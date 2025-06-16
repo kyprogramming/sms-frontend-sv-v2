@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { snackbars } from "./store";
-	import { fly, fade } from "svelte/transition";
-	import { CheckCircle, AlertTriangle, Info, XCircle } from "@lucide/svelte";
+	import { snackbars } from './store';
+	import { fly, fade } from 'svelte/transition';
+	import { CheckCircle, AlertTriangle, Info, XCircle } from '@lucide/svelte';
 
 	const icons = {
 		success: CheckCircle,
@@ -52,7 +52,7 @@
 		overflow: hidden;
 	}
 
-    .close-btn {
+	.close-btn {
 		position: absolute;
 		top: 0;
 		right: 5px;
@@ -67,8 +67,8 @@
 
 	.close-btn:hover {
 		/* color: rgba(255, 255, 255, 0.8); */
-        color: #000000;
-        border-radius: 50%;
+		color: #000000;
+		border-radius: 50%;
 	}
 
 	.snackbar.success {
@@ -102,6 +102,4 @@
 			width: 100%;
 		}
 	}
-
-	
 </style>

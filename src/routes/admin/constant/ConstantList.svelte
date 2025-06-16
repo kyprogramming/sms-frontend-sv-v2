@@ -189,7 +189,8 @@
 		onClose={() => (isModalOpen = false)}
 		onCancel={() => {
 			isModalOpen = false;
-		}}>
+		}}
+	>
 		<ConstantForm onRefreshPage={refreshAction} {constantData} action={isUpdate ? 'update' : 'create'} />
 	</Modal>
 {/if}

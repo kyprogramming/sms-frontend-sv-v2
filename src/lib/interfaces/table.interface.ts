@@ -2,10 +2,10 @@ export interface ColumnConfig {
 	key: string;
 	label: string;
 	sortable?: boolean;
-	type?: "text" | "number" | "date";
+	type?: 'text' | 'number' | 'date';
 	format?: (value: any) => string;
 	width?: string;
-	align?: "left" | "center" | "right";
+	align?: 'left' | 'center' | 'right';
 	visible?: boolean;
 }
 

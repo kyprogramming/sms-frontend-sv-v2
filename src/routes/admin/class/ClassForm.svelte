@@ -1,19 +1,19 @@
 <script lang="ts">
-	import { isLoading } from "$lib/stores/loading";
-	import { validateForm } from "$lib/utils/validate";
-	import { showSnackbar } from "$lib/components/snackbar/store";
-	import { closeModal } from "$lib/stores/modalStore";
-	import { createClass, updateClass } from "$lib/services/class";
+	import { isLoading } from '$lib/stores/loading';
+	import { validateForm } from '$lib/utils/validate';
+	import { showSnackbar } from '$lib/components/snackbar/store';
+	import { closeModal } from '$lib/stores/modalStore';
+	import { createClass, updateClass } from '$lib/services/class';
 
-	import { page } from "$app/state";
-	import { BrushCleaning, Save } from "@lucide/svelte";
-	import LoaderIcon from "$lib/components/common/LoaderIcon.svelte";
+	import { page } from '$app/state';
+	import { BrushCleaning, Save } from '@lucide/svelte';
+	import LoaderIcon from '$lib/components/common/LoaderIcon.svelte';
 
-	import { classFormSchema, type ClassFormDataType } from "$lib/utils/schemas";
-	import { formErrors } from "$lib/stores/formStore";
-	import { onMount } from "svelte";
-	import { isEqual } from "$lib/utils/utils";
-	import { MESSAGES } from "$lib/utils/messages";
+	import { classFormSchema, type ClassFormDataType } from '$lib/utils/schemas';
+	import { formErrors } from '$lib/stores/formStore';
+	import { onMount } from 'svelte';
+	import { isEqual } from '$lib/utils/utils';
+	import { MESSAGES } from '$lib/utils/messages';
 
 	let allSections = page.data?.sectionData || [];
 
@@ -24,7 +24,7 @@
 
 	export function initializeClassFormData(): ClassFormDataType {
 		return {
-			name: "",
+			name: '',
 			sectionIds: [],
 		};
 	}
@@ -34,7 +34,7 @@
 
 	onMount(() => {
 		populateFormData();
-		formErrors.set({ name: "" });
+		formErrors.set({ name: '' });
 	});
 
 	// Form reset handler
@@ -43,21 +43,21 @@
 		// Reset form errors and touched state
 		formErrors.set({});
 		formSubmitted = false;
-		touched = { };
+		touched = {};
 	}
 
 	// Populate form data based on action
 	function populateFormData() {
-		if (action === "update") {
-			formData = {...classData};
+		if (action === 'update') {
+			formData = { ...classData };
 		}
 	}
 
 	// Handle field changes
 	function handleChange(field: keyof ClassFormDataType, value: string | string[]): void {
-		if (field === "name" && typeof value === "string") {
+		if (field === 'name' && typeof value === 'string') {
 			formData.name = value;
-		} else if (field === "sectionIds" && Array.isArray(value)) {
+		} else if (field === 'sectionIds' && Array.isArray(value)) {
 			formData.sectionIds = value;
 		}
 		touched = { ...touched, [field]: true };
@@ -68,22 +68,22 @@
 	async function onSubmit(event: Event) {
 		event.preventDefault();
 		formSubmitted = true;
-	
+
 		const isValid = validateForm(classFormSchema, formData);
 		if (!isValid) return;
 
-		if (action === "update" && classData) {
+		if (action === 'update' && classData) {
 			// Check if the form data is unchanged before updating
-            const isUnChanged = isEqual(classData, formData);
+			const isUnChanged = isEqual(classData, formData);
 			if (isUnChanged) {
-				showSnackbar({ message: MESSAGES.FORM.NO_CHANGES, type: "warning" });
+				showSnackbar({ message: MESSAGES.FORM.NO_CHANGES, type: 'warning' });
 				return;
 			}
 			await updateClass(classData._id, formData);
-			showSnackbar({ message: MESSAGES.CLASS.UPDATED, type: "success" });
+			showSnackbar({ message: MESSAGES.CLASS.UPDATED, type: 'success' });
 		} else {
 			await createClass(formData);
-			showSnackbar({ message: MESSAGES.CLASS.CREATED, type: "success" });
+			showSnackbar({ message: MESSAGES.CLASS.CREATED, type: 'success' });
 		}
 
 		closeModal();
@@ -94,7 +94,7 @@
 <form onsubmit={onSubmit}>
 	<div class="input-wrapper">
 		<label for="name">Name *</label>
-		<input id="name" type="text" name="name" placeholder="Enter class name" class={`w-full ${$formErrors.name && (touched.name || formSubmitted) ? "input-error" : ""}`} bind:value={formData.name} oninput={(e) => handleChange("name", (e.target as HTMLInputElement).value)} onblur={(e) => handleChange("name", (e.target as HTMLInputElement).value)} />
+		<input id="name" type="text" name="name" placeholder="Enter class name" class={`w-full ${$formErrors.name && (touched.name || formSubmitted) ? 'input-error' : ''}`} bind:value={formData.name} oninput={(e) => handleChange('name', (e.target as HTMLInputElement).value)} onblur={(e) => handleChange('name', (e.target as HTMLInputElement).value)} />
 		{#if $formErrors.name && (touched.name || formSubmitted)}
 			<p class="error-text">{$formErrors.name}</p>
 		{/if}
@@ -145,7 +145,7 @@
 			{#if !$isLoading}
 				<Save />
 			{/if}
-			{#if action === "update"}
+			{#if action === 'update'}
 				Update Class
 			{:else}
 				Save Class
@@ -209,7 +209,7 @@
 	}
 
 	.checkbox-input:checked ~ .checkbox-custom::after {
-		content: "";
+		content: '';
 		position: absolute;
 		left: 5px;
 		top: 1px;

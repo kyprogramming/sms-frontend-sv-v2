@@ -7,11 +7,10 @@ export type User = {
 	authenticated: boolean;
 };
 
-
 type FieldMeta = {
 	name: string;
 	label: string;
-	type: "text" | "email" | "tel" | "date" | "textarea" | "select" | "tags";
+	type: 'text' | 'email' | 'tel' | 'date' | 'textarea' | 'select' | 'tags';
 	required?: boolean;
 	minLength?: number;
 	maxLength?: number;

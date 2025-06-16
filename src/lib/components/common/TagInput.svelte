@@ -6,18 +6,18 @@
 	}
 
 	let { id, tags = $bindable([]), fieldName }: Props = $props();
-	let input = $state("");
+	let input = $state('');
 
 	function addTag() {
 		const trimmed = input.trim();
 		if (trimmed && !tags.includes(trimmed) && tags.length < 10) {
 			tags = [...tags, trimmed];
 		}
-		input = "";
+		input = '';
 	}
 
 	function handleKey(e: KeyboardEvent) {
-		if (e.key === "Enter" || e.key === ",") {
+		if (e.key === 'Enter' || e.key === ',') {
 			e.preventDefault();
 			addTag();
 		}

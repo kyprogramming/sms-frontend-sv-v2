@@ -3,16 +3,8 @@ const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
 // Login Form Schema
 export const loginFormSchema = z.object({
-	email: z
-		.string()
-		.trim()
-		.email('Please enter a valid email address')
-		.min(1, 'Username is required'),
-	password: z
-		.string()
-		.trim()
-		.min(6, 'Password must be at least 6 characters')
-		.min(1, 'Password is required'),
+	email: z.string().trim().email('Please enter a valid email address').min(1, 'Username is required'),
+	password: z.string().trim().min(6, 'Password must be at least 6 characters').min(1, 'Password is required'),
 });
 export type LoginFormDataType = z.infer<typeof loginFormSchema>;
 
@@ -52,10 +44,7 @@ export type AcademicYearFormDataType = z.infer<typeof academicYearFormSchema>;
 
 // Academic Year Form Schema
 export const feeCategoryFormSchema = z.object({
-	name: z
-		.string()
-		.min(1, 'Fee category name is required')
-		.max(100, 'Fee category name must be less than 100 characters'),
+	name: z.string().min(1, 'Fee category name is required').max(100, 'Fee category name must be less than 100 characters'),
 	description: z.string().max(500, 'Description must be less than 500 characters').optional(),
 	active: z.boolean().optional().default(true),
 });
@@ -84,12 +73,7 @@ export type FeeHeadFormDataType = z.infer<typeof feeHeadFormSchema>;
 // Constant Form Schema
 export const constantFormSchema = z.object({
 	key: z.string().min(1, 'Key is required'),
-	value: z.union([
-		z.string().min(1, 'Value is required'),
-		z.number().min(0),
-		z.boolean(),
-		z.record(z.any()),
-	]),
+	value: z.union([z.string().min(1, 'Value is required'), z.number().min(0), z.boolean(), z.record(z.any())]),
 	type: z.enum(['string', 'number', 'boolean', 'json']),
 	category: z.string().optional(),
 	description: z.string().optional(),
