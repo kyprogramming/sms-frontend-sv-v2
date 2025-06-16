@@ -189,8 +189,7 @@
 		onClose={() => (isModalOpen = false)}
 		onCancel={() => {
 			isModalOpen = false;
-		}}
-	>
+		}}>
 		<ConstantForm onRefreshPage={refreshAction} {constantData} action={isUpdate ? 'update' : 'create'} />
 	</Modal>
 {/if}
@@ -199,10 +198,18 @@
 	<ModalDelete title="Delete Constant" size="md" {selectedName} onDelete={handleDelete} onCancel={() => (isDeleteModalOpen = false)} />
 {/if}
 
-<style lang="css">
-<!-- prettier-ignore-start -->
-	.search-container{display: flex; align-items: center; gap: 8px;}
-	.search-container input{padding: 6px 10px; font-size: 14px; flex: 1;}
-	input[name='search']{width: 300px;}
-<!-- prettier-ignore-end -->
+<style>
+	.search-container {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+	.search-container input {
+		padding: 6px 10px;
+		font-size: 14px;
+		flex: 1;
+	}
+	input[name='search'] {
+		width: 300px;
+	}
 </style>

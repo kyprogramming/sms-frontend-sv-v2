@@ -43,7 +43,7 @@
 			sortable: true,
 			align: "center",
 			format: (value) => {
-				return value ? "<span class=active>Active</span>" : "<span class=inactive>Inactive</span>";
+				return value ? "<span class=active-status>Active</span>" : "<span class=inactive-status>Inactive</span>";
 			},
 		},
 		{

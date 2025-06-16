@@ -1,25 +1,94 @@
 // src/lib/constants.ts
 export const COOKIE_OPTIONS = {
-	path: "/",
+	path: '/',
 	httpOnly: true,
 	secure: import.meta.env.PROD, // false in dev for localhost HTTP
-	sameSite: "strict" as const,
+	sameSite: 'strict' as const,
 	maxAge: 60 * 60 * 24 * 7, // 1 week
 };
-export const CASTE_CATEGORIES = [{ name: "General" }, { name: "OBC" }, { name: "SC" }, { name: "ST" }, { name: "Special" }, { name: "Physical Challenged" }];
-export const RELIGIONS = [{ name: "Hindu" }, { name: "Muslim" }, { name: "Other" }];
-export const GENDERS = [{ name: "Male" }, { name: "Female" }, { name: "Other" }];
-export const BLOOD_GROUPS = [{ name: "A+" }, { name: "A-" }, { name: "B+" }, { name: "B-" }, { name: "AB+" }, { name: "AB-" }, { name: "O+" }, { name: "O-" }];
-export const SUBJECT_TYPE = [{ name: "Theory" },{ name: "Practical" },];
+export const CASTE_CATEGORIES = [
+	{ name: 'General' },
+	{ name: 'OBC' },
+	{ name: 'SC' },
+	{ name: 'ST' },
+	{ name: 'Special' },
+	{ name: 'Physical Challenged' },
+];
+export const RELIGIONS = [{ name: 'Hindu' }, { name: 'Muslim' }, { name: 'Other' }];
+export const GENDERS = [{ name: 'Male' }, { name: 'Female' }, { name: 'Other' }];
+export const BLOOD_GROUPS = [
+	{ name: 'A+' },
+	{ name: 'A-' },
+	{ name: 'B+' },
+	{ name: 'B-' },
+	{ name: 'AB+' },
+	{ name: 'AB-' },
+	{ name: 'O+' },
+	{ name: 'O-' },
+];
+export const SUBJECT_TYPE = [{ name: 'Theory' }, { name: 'Practical' }];
 
-export const GUARDIAN_TYPE = [{ name: "Father" }, { name: "Mother" }, { name: "Other" }];
-export const STAFF_ROLES = [{ name: "Admin" }, { name: "Teacher" }, { name: "Accountant" }, { name: "Librarian" }, { name: "Receptionist" }, { name: "Super Admin" }];
-export const STAFF_DESIGNATIONS = [{ name: "Faculty" }, { name: "Accountant" }, { name: "Admin" }, { name: "Receptionist" }, { name: "Principal" }, { name: "Director" }, { name: "Librarian" }, { name: "Technical Head" }, { name: "Vice Principal" }];
-export const STAFF_DEPARTMENTS = [{ name: "Academic" }, { name: "Library" }, { name: "Sports" }, { name: "Science" }, { name: "Commerce" }, { name: "Arts" }, { name: "Exam" }, { name: "Admin" }, { name: "Finance" }, { name: "Maths" }];
-export const MARITAL_STATUS = [{ name: "Single" }, { name: "Married" }, { name: "Widowed" }, { name: "Separated" }, { name: "Not Specified" }];
-export const SHIFT = [{ name: "Morning" }, { name: "Afternoon" }, { name: "Evening" }, { name: "Night" }];
-export const CONTRACT_TYPE = [{ name: "Permanent" }, { name: "Probation" }];
+export const GUARDIAN_TYPE = [{ name: 'Father' }, { name: 'Mother' }, { name: 'Other' }];
+export const STAFF_ROLES = [
+	{ name: 'Admin' },
+	{ name: 'Teacher' },
+	{ name: 'Accountant' },
+	{ name: 'Librarian' },
+	{ name: 'Receptionist' },
+	{ name: 'Super Admin' },
+];
+export const STAFF_DESIGNATIONS = [
+	{ name: 'Faculty' },
+	{ name: 'Accountant' },
+	{ name: 'Admin' },
+	{ name: 'Receptionist' },
+	{ name: 'Principal' },
+	{ name: 'Director' },
+	{ name: 'Librarian' },
+	{ name: 'Technical Head' },
+	{ name: 'Vice Principal' },
+];
+export const STAFF_DEPARTMENTS = [
+	{ name: 'Academic' },
+	{ name: 'Library' },
+	{ name: 'Sports' },
+	{ name: 'Science' },
+	{ name: 'Commerce' },
+	{ name: 'Arts' },
+	{ name: 'Exam' },
+	{ name: 'Admin' },
+	{ name: 'Finance' },
+	{ name: 'Maths' },
+];
+export const MARITAL_STATUS = [
+	{ name: 'Single' },
+	{ name: 'Married' },
+	{ name: 'Widowed' },
+	{ name: 'Separated' },
+	{ name: 'Not Specified' },
+];
+export const SHIFT = [
+	{ name: 'Morning' },
+	{ name: 'Afternoon' },
+	{ name: 'Evening' },
+	{ name: 'Night' },
+];
+export const CONTRACT_TYPE = [{ name: 'Permanent' }, { name: 'Probation' }];
 
+export const CONSTANT_CATEGORIES = [
+	{ name: 'CASTE' },
+	{ name: 'RELIGIONS' },
+	{ name: 'GENDERS' },
+	{ name: 'BLOOD_GROUPS' },
+	{ name: 'SUBJECT_TYPE' },
+	{ name: 'GUARDIAN_TYPE' },
+	{ name: 'STAFF_ROLES' },
+	{ name: 'STAFF_DESIGNATIONS' },
+	{ name: 'STAFF_DEPARTMENTS' },
+	{ name: 'MARITAL_STATUS' },
+	{ name: 'SHIFT' },
+	{ name: 'CONTRACT_TYPE' },
+];
 
 export const MENU_GROUPS = [
 	// {
@@ -47,16 +116,16 @@ export const MENU_GROUPS = [
 	// },
 
 	{
-		title: "Dashboard",
-		icon: "LayoutDashboardIcon",
-		link: "/admin/dashboard",
+		title: 'Dashboard',
+		icon: 'LayoutDashboardIcon',
+		link: '/admin/dashboard',
 	},
 	{
-		title: "Student",
-		icon: "Users",
+		title: 'Student',
+		icon: 'Users',
 		items: [
-			{ title: "Student List", link: "/admin/student/list" },
-			{ title: "Student Registration", link: "/admin/student/create" },
+			{ title: 'Student List', link: '/admin/student/list' },
+			{ title: 'Student Registration', link: '/admin/student/create' },
 			// { title: "Student Delete", link: "/admin/student/delete"},
 			// { title: "Student View", link: "/admin/student/view"},
 			// { title: "Online Admission", link: "/admin/onlinestudent" },
@@ -69,11 +138,11 @@ export const MENU_GROUPS = [
 		],
 	},
 	{
-		title: "Staff",
-		icon: "UserPlus",
+		title: 'Staff',
+		icon: 'UserPlus',
 		items: [
-			{ title: "Staff List", link: "/admin/staff/list" },
-			{ title: "Staff Registration", link: "/admin/staff/create" },
+			{ title: 'Staff List', link: '/admin/staff/list' },
+			{ title: 'Staff Registration', link: '/admin/staff/create' },
 			// { title: "Student Delete", link: "/admin/student/delete"},
 			// { title: "Student View", link: "/admin/student/view"},
 			// { title: "Online Admission", link: "/admin/onlinestudent" },
@@ -103,8 +172,8 @@ export const MENU_GROUPS = [
 	// 	],
 	// },
 	{
-		title: "Academics",
-		icon: "GraduationCap",
+		title: 'Academics',
+		icon: 'GraduationCap',
 		items: [
 			// { title: "Class Timetable", link: "/admin/timetable/classreport" },
 			// { title: "Teachers Timetable", link: "/admin/timetable/mytimetable" },
@@ -114,19 +183,19 @@ export const MENU_GROUPS = [
 			// },
 			// { title: "Promote Students", link: "/admin/stdtransfer" },
 			// { title: "Subject Group", link: "/admin/subjectgroup" },
-			{ title: "Academic Years", link: "/admin/academic-year" },
-			{ title: "Sections", link: "/admin/section" },
-			{ title: "Class", link: "/admin/class" },
-			{ title: "Subjects", link: "/admin/subject" },
+			{ title: 'Academic Years', link: '/admin/academic-year' },
+			{ title: 'Sections', link: '/admin/section' },
+			{ title: 'Class', link: '/admin/class' },
+			{ title: 'Subjects', link: '/admin/subject' },
 		],
 	},
 	{
-		title: "Fees Collection",
-		icon: "IndianRupee",
+		title: 'Fees Collection',
+		icon: 'IndianRupee',
 		items: [
-			{ title: "Fees Category", link: "/admin/fee-category" },
-			{ title: "Fees Head", link: "/admin/fee-head" },
-			{ title: "Collect Fees", link: "/studentfee" },
+			{ title: 'Fees Category', link: '/admin/fee-category' },
+			{ title: 'Fees Head', link: '/admin/fee-head' },
+			{ title: 'Collect Fees', link: '/studentfee' },
 			// { title: "Offline Bank Payments", link: "/admin/offlinepayment" },
 			// { title: "Search Fees Payment", link: "/studentfee/searchpayment" },
 			// { title: "Search Due Fees", link: "/studentfee/feesearch" },
@@ -138,6 +207,40 @@ export const MENU_GROUPS = [
 			// { title: "Fees Reminder", link: "/admin/feereminder/setting" },
 		],
 	},
+	{
+		title: 'System Setting',
+		icon: 'Settings',
+		items: [
+			{ title: 'General Setting', link: '/admin/constant' },
+			// { title: 'Session Setting', link: '/sessions' },.active
+			// { title: "Notification Setting", link: "/admin/notification/setting" },
+			// { title: "SMS Setting", link: "/smsconfig" },
+			// { title: "Email Setting", link: "/emailconfig" },
+			// { title: "Payment Methods", link: "/admin/paymentsettings" },
+			// { title: "Thermal Print", link: "/admin/thermalprint/index" },
+			// { title: "Print Header Footer", link: "/admin/print_headerfooter" },
+			// { title: "Front CMS Setting", link: "/admin/frontcms" },
+			// { title: "Roles Permissions", link: "/admin/roles" },
+			// { title: "Backup Restore", link: "/admin/admin/backup" },
+			// { title: "Languages", link: "/admin/language" },
+			// { title: "Currency", link: "/admin/currency" },
+			// { title: "Users", link: "/admin/users" },
+			// { title: "Addons", link: "/admin/addons" },
+			// { title: "Modules", link: "/admin/module" },
+			// { title: "Custom Fields", link: "/admin/customfield" },
+			// { title: "Captcha Setting", link: "/admin/captcha" },
+			// { title: "System Fields", link: "/admin/systemfield" },
+			// { title: "Student Profile Update", link: "/student/profilesetting" },
+			// {
+			// 	title: "Online Admission",
+			// 	link: "/admin/onlineadmission/admissionsetting",
+			// },
+			// { title: "File Types", link: "/admin/admin/filetype" },
+			// { title: "Sidebar Menu", link: "/admin/sidemenu" },
+			// { title: "System Update", link: "/admin/updater" },
+		],
+	},
+
 	// {
 	// 	title: "Online Course",
 	// 	icon: "MonitorPlay",
