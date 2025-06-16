@@ -14,25 +14,25 @@ async function formatSvelteCSS() {
 				const filePath = join(process.cwd(), file);
 				let content = readFileSync(filePath, 'utf8');
 
-				content = content.replace(
-					/(<style([^>]*)>)([\s\S]*?)(<\/style>)/gi,
-					(_, openingTag, attrs, css, closingTag) => {
-						const normalizedOpening = `<style${attrs}>`;
-						const hasIgnore = css.includes('prettier-ignore');
-						const cleanCSS = removeIgnoreComments(css).trim();
+				content = content.replace(/(\n*)(<!--\s*prettier-ignore\s*-->)?\s*(<style[^>]*>)([\s\S]*?)(<\/style>)/gi, (_, existingNewlines, existingIgnore, openingTag, cssContent, closingTag) => {
+					const processedCSS = processCSSContent(cssContent);
 
-						if (!cleanCSS) return `${normalizedOpening}${closingTag}`;
+					// Determine if we need to add ignore comment
+					const needsIgnore = !existingIgnore;
 
-						const formattedCSS = formatEachRuleToSingleLine(cleanCSS);
+					// Ensure exactly one newline before ignore comment
+					const newline = existingNewlines.includes('\n') ? '' : '\n';
 
-						return reconstructStyleBlock({
-							openingTag: normalizedOpening,
-							css: formattedCSS,
-							closingTag,
-							hasIgnore,
-						});
-					},
-				);
+					// Build the output
+					let output = '';
+					if (needsIgnore) {
+						output = `${newline}<!-- prettier-ignore -->\n${openingTag}\n${processedCSS}\n${closingTag}`;
+					} else {
+						output = `${existingNewlines}${existingIgnore}\n${openingTag}\n${processedCSS}\n${closingTag}`;
+					}
+
+					return output;
+				});
 
 				writeFileSync(filePath, content);
 				console.log(`✅ Processed: ${file}`);
@@ -47,14 +47,9 @@ async function formatSvelteCSS() {
 	}
 }
 
-function removeIgnoreComments(css) {
-	return typeof css === 'string'
-		? css.replace(/<!--\s*prettier-ignore-(start|end)\s*-->/g, '')
-		: '';
-}
-
-function formatEachRuleToSingleLine(css) {
+function processCSSContent(css) {
 	return css
+		.trim()
 		.split('}')
 		.map((rule) => {
 			const [selector = '', declarations = ''] = rule.split('{');
@@ -63,27 +58,17 @@ function formatEachRuleToSingleLine(css) {
 
 			if (!cleanSelector || !cleanDeclarations) return null;
 
-			// Format declarations with one space after each property
-			const singleLineDeclarations = cleanDeclarations
-				.replace(/[\r\n]+/g, ' ') // Remove newlines
-				.replace(/\s+/g, ' ') // Collapse multiple spaces
-				.replace(/([^:]+):\s*/g, '$1: ') // Ensure one space after colon
-				.replace(/;\s*/g, '; ') // Ensure one space after semicolon
+			const formattedDeclarations = cleanDeclarations
+				.replace(/\s*:\s*/g, ': ')
+				.replace(/\s*;\s*/g, '; ')
+				.replace(/\s+/g, ' ')
 				.trim()
-				.replace(/; $/, ';'); // Remove trailing space if last char is semicolon
+				.replace(/; $/, '');
 
-			return `\t${cleanSelector} { ${singleLineDeclarations} }`;
+			return `\t${cleanSelector} { ${formattedDeclarations} }`;
 		})
 		.filter(Boolean)
 		.join('\n');
-}
-
-function reconstructStyleBlock({ openingTag, css, closingTag, hasIgnore }) {
-	const content = hasIgnore
-		? `\n<!-- prettier-ignore-start -->\n${css}\n<!-- prettier-ignore-end -->\n`
-		: `\n${css}\n`;
-
-	return `${openingTag}${content}${closingTag}`;
 }
 
 formatSvelteCSS().catch(console.error);
