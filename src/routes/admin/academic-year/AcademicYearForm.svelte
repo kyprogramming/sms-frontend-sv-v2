@@ -153,16 +153,8 @@
 	</div>
 </form>
 
+<!-- prettier-ignore -->
 <style>
-	.form-row {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-		gap: 1.5rem;
-		margin-bottom: 1rem;
-	}
-
-	.form-error {
-		margin-top: 2px;
-		color: #e53e3e;
-	}
+    .form-row {display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 1rem}
+    .form-error {margin-top: 2px; color: #e53e3e}
 </style>

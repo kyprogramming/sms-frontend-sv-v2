@@ -122,43 +122,12 @@
 	</div>
 </form>
 
+<!-- prettier-ignore -->
 <style>
-	label {
-		display: block;
-		font-weight: bold;
-		margin-bottom: 0.5rem;
-	}
-
-	.required {
-		color: red;
-	}
-
-	.checkbox-label {
-		display: flex;
-		align-items: center;
-		cursor: pointer;
-	}
-
-	.checkbox-input {
-		display: none;
-	}
-
-	.checkbox-custom {
-		width: 1.25rem;
-		height: 1.25rem;
-		border: 2px solid #ccc;
-		border-radius: 4px;
-		position: relative;
-		background-color: #f5f5f5;
-	}
-
-	.checkbox-input:checked + .checkbox-custom::after {
-		content: '✓';
-		font-size: 18px;
-		color: #00bd23;
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-	}
+    label {display: block; font-weight: bold; margin-bottom: 0.5rem}
+	.required {color: red}
+	.checkbox-label {display: flex; align-items: center; cursor: pointer}
+	.checkbox-input {display: none}
+	.checkbox-custom {width: 1.25rem; height: 1.25rem; border: 2px solid #ccc; border-radius: 4px; position: relative; background-color: #f5f5f5}
+	.checkbox-input:checked + .checkbox-custom::after {content: '✓'; font-size: 18px; color: #00bd23; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)}
 </style>

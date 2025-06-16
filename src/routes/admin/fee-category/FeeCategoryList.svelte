@@ -178,8 +178,7 @@
 				if (e.key === 'Enter') {
 					handleSearch();
 				}
-			}}
-		/>
+			}} />
 
 		<button type="button" class="btn ripple" onclick={handleSearch}>
 			<Search />
@@ -210,8 +209,7 @@
 		}}
 		onCancel={() => {
 			isModalOpen = false;
-		}}
-	>
+		}}>
 		<FeeCategoryForm onRefreshPage={refreshAction} {feeCategoryData} action={isUpdate ? 'update' : 'create'} />
 	</Modal>
 {/if}
@@ -224,24 +222,12 @@
 		onDelete={handleDelete}
 		onCancel={() => {
 			isDeleteModalOpen = false;
-		}}
-	/>
+		}} />
 {/if}
 
+<!-- prettier-ignore -->
 <style>
-	.search-container {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-	}
-
-	.search-container input {
-		padding: 6px 10px;
-		font-size: 14px;
-		flex: 1;
-	}
-
-	input[name='search'] {
-		width: 300px;
-	}
+    .search-container {display: flex; align-items: center; gap: 8px}
+	.search-container input {padding: 6px 10px; font-size: 14px; flex: 1}
+	input[name='search'] {width: 300px}
 </style>

@@ -4,7 +4,7 @@ import { join } from 'path';
 
 async function formatSvelteCSS() {
 	try {
-		const files = globSync('src/lib/components/snackbar/*.svelte', {
+		const files = globSync('src/routes/admin/fee-category/*.svelte', {
 			ignore: ['node_modules/**', 'dist/**', 'build/**'],
 			nodir: true,
 		});
@@ -39,34 +39,44 @@ async function formatSvelteCSS() {
 }
 
 function processCSSContent(css) {
-	// Process nested blocks first (media queries, keyframes, etc.)
-	const processed = css.replace(/(@[^{]+\{)([\s\S]+?)(?=\})/g, (match, atRuleStart, content) => {
-		// Process the nested content while preserving the structure
-		const processedContent = content.replace(/([^{]+\{)([^}]+)(\})/g, (_, selector, declarations, close) => {
-			const formattedDeclarations = declarations
+	// Remove leading/trailing whitespace and normalize line breaks
+	css = css.trim().replace(/\r\n/g, '\n');
+
+	// Process nested blocks (e.g., @media, @keyframes)
+	css = css.replace(/(@[^{]+\{)([\s\S]+?})(\s*)}/g, (_, atRuleStart, innerBlock) => {
+		const processedInner = innerBlock.replace(/([^{]+\{)([^}]+)(\})/g, (_, selector, declarations, close) => {
+			const formatted = declarations
 				.replace(/\s*:\s*/g, ': ')
 				.replace(/\s*;\s*/g, '; ')
 				.replace(/\s+/g, ' ')
 				.trim()
-				.replace(/; $/, '');
+				.replace(/;$/, ''); // remove last semicolon if exists
 
-			return `${selector}${formattedDeclarations}${close}`;
+			return `${selector}${formatted}${close}`;
 		});
-
-		return `${atRuleStart}${processedContent}`;
+		return `${atRuleStart}${processedInner}\n}`;
 	});
 
-	// Then process top-level rules
-	return processed.replace(/([^{]+\{)([^}]+)(\})/g, (_, selector, declarations, close) => {
-		const formattedDeclarations = declarations
+	// Format top-level rules
+	css = css.replace(/([^{]+\{)([^}]+)(\})/g, (_, selector, declarations, close) => {
+		const formatted = declarations
 			.replace(/\s*:\s*/g, ': ')
 			.replace(/\s*;\s*/g, '; ')
 			.replace(/\s+/g, ' ')
 			.trim()
-			.replace(/; $/, '');
+			.replace(/;$/, '');
 
-		return `${selector}${formattedDeclarations}${close}`;
+		return `${selector}${formatted}${close}`;
 	});
+
+	// Remove multiple blank lines between rules
+	css = css.replace(/\}\s*\n\s*\n+/g, '}\n');
+
+	// Optional: Add a single line break between each rule
+	css = css.replace(/\}([^\n])/g, '}\n$1');
+
+	return css.trim();
 }
+
 
 formatSvelteCSS().catch(console.error);

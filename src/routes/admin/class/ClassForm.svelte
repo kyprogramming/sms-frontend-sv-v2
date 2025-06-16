@@ -120,8 +120,7 @@
 									formData.sectionIds = formData.sectionIds.filter((id) => id !== section._id);
 								}
 								// handleChange("sectionIds", formData.sectionIds);
-							}}
-						/>
+							}} />
 						<!-- onblur={() => handleChange("sectionIds", formData.sectionIds)} -->
 						<span class="checkbox-custom"></span>
 						<span class="checkbox-text">{section.name}</span>
@@ -154,79 +153,16 @@
 	</div>
 </form>
 
+<!-- prettier-ignore -->
 <style>
-	.checkbox-section {
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-		padding: 16px;
-		background: #f8f9fa;
-		border-radius: 8px;
-		max-height: 300px;
-		overflow-y: auto;
-	}
-
-	.checkbox-item {
-		display: flex;
-		align-items: center;
-	}
-
-	.checkbox-label {
-		display: flex;
-		align-items: center;
-		cursor: pointer;
-		gap: 8px;
-		font-size: 14px;
-		color: #333;
-		transition: all 0.2s ease;
-	}
-
-	.checkbox-label:hover {
-		color: #0066cc;
-	}
-
-	.checkbox-input {
-		position: absolute;
-		opacity: 0;
-		cursor: pointer;
-		height: 0;
-		width: 0;
-	}
-
-	.checkbox-custom {
-		position: relative;
-		height: 18px;
-		width: 18px;
-		background-color: #fff;
-		border: 2px solid #ddd;
-		border-radius: 4px;
-		transition: all 0.2s ease;
-	}
-
-	.checkbox-input:checked ~ .checkbox-custom {
-		background-color: #0066cc;
-		border-color: #0066cc;
-	}
-
-	.checkbox-input:checked ~ .checkbox-custom::after {
-		content: '';
-		position: absolute;
-		left: 5px;
-		top: 1px;
-		width: 5px;
-		height: 10px;
-		border: solid white;
-		border-width: 0 2px 2px 0;
-		transform: rotate(45deg);
-	}
-
-	.checkbox-text {
-		margin-left: 4px;
-	}
-
-	.has-error {
-		padding: 15px;
-		border-radius: 4px;
-		box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
-	}
+    .checkbox-section {display: flex; flex-direction: column; gap: 12px; padding: 16px; background: #f8f9fa; border-radius: 8px; max-height: 300px; overflow-y: auto}
+	.checkbox-item {display: flex; align-items: center}
+	.checkbox-label {display: flex; align-items: center; cursor: pointer; gap: 8px; font-size: 14px; color: #333; transition: all 0.2s ease}
+	.checkbox-label:hover {color: #0066cc}
+	.checkbox-input {position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0}
+	.checkbox-custom {position: relative; height: 18px; width: 18px; background-color: #fff; border: 2px solid #ddd; border-radius: 4px; transition: all 0.2s ease}
+	.checkbox-input:checked ~ .checkbox-custom {background-color: #0066cc; border-color: #0066cc}
+	.checkbox-input:checked ~ .checkbox-custom::after {content: ''; position: absolute; left: 5px; top: 1px; width: 5px; height: 10px; border: solid white; border-width: 0 2px 2px 0; transform: rotate(45deg)}
+	.checkbox-text {margin-left: 4px}
+	.has-error {padding: 15px; border-radius: 4px; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3)}
 </style>
