@@ -702,8 +702,13 @@ tr:hover {
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    background-color: var(--clr-bg-5);
+    background-color: var(--clr-bg-4);
     color: #fff;
+    transition: all 0.2s linear;
+}
+
+.icon-circle svg:hover {
+    color: #fff !important;
 }
 
 .icon-circle:hover {
