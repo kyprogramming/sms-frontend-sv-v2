@@ -52,8 +52,7 @@
 			e.preventDefault();
 			toggleMenu();
 		}
-	}}
->
+	}}>
 	<div class="profile-img">{user?.name?.charAt(0).toUpperCase()}</div>
 	<div class="user-info">
 		<div class="user-name">{user?.name.toUpperCase()}</div>
@@ -75,8 +74,7 @@
 					onclick={(event) => {
 						event.stopPropagation();
 						onSubmit();
-					}}
-				>
+					}}>
 					<div class="logout-container">
 						<LogOut color="red" />
 						Logout
@@ -87,48 +85,11 @@
 	{/if}
 </div>
 
+<!-- prettier-ignore -->
 <style>
-	.menu-item {
-		padding: 0.65rem 1rem;
-		margin: 2px;
-		cursor: pointer;
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-	}
-
-	.dropdown {
-		position: absolute;
-		right: 0;
-		margin-top: 10.8rem;
-		margin-right: 1rem;
-		background: white;
-		border-radius: 0.5rem;
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-		width: 200px;
-		z-index: 10;
-	}
-
-	.logout-container {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		color: #ff0000;
-	}
-
-	.logout-button {
-		background: none;
-		border: none;
-		padding: 0;
-		margin: 0;
-		font: inherit;
-		color: currentColor;
-		cursor: pointer;
-		text-decoration: none;
-	}
-
-	.logout-button:disabled {
-		opacity: 0.6;
-		cursor: not-allowed;
-	}
+	.menu-item { padding: 0.65rem 1rem; margin: 2px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; }
+	.dropdown { position: absolute; right: 0; margin-top: 10.8rem; margin-right: 1rem; background: white; border-radius: 0.5rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); width: 200px; z-index: 10; }
+	.logout-container { display: flex; align-items: center; gap: 8px; color: #ff0000; }
+	.logout-button { background: none; border: none; padding: 0; margin: 0; font: inherit; color: currentColor; cursor: pointer; text-decoration: none; }
+	.logout-button:disabled { opacity: 0.6; cursor: not-allowed; }
 </style>

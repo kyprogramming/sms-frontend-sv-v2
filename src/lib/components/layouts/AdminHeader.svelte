@@ -29,11 +29,7 @@
 	{/if}
 </header>
 
+<!-- prettier-ignore -->
 <style>
-	.flex-container h1 {
-		margin: 0px;
-		padding: 0px;
-		font-size: 20px;
-		gap: 2rem;
-	}
+	.flex-container h1 { margin: 0px; padding: 0px; font-size: 20px; gap: 2rem; }
 </style>
