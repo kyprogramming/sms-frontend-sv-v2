@@ -2,65 +2,88 @@ import { readFileSync, writeFileSync } from 'fs';
 import { globSync } from 'glob';
 import { join } from 'path';
 
-function formatCSSInSvelteFiles() {
-	const files = globSync('**/*.svelte', { ignore: 'node_modules/**' });
-
-	files.forEach((file) => {
-		const filePath = join(process.cwd(), file);
-		let content = readFileSync(filePath, 'utf8');
-
-		content = content.replace(/(<style(?:[^>]*)>)([\s\S]*?)(<\/style>)/gi, (match, openingTag, css, closingTag) => {
-			// Ensure lang attribute exists
-			const processedOpeningTag = openingTag.includes('lang=') ? openingTag : openingTag.replace('<style', '<style lang="css"');
-
-			// Check for existing ignore comments
-			const hasIgnore = css.includes('<!-- prettier-ignore-start -->');
-
-			// Format CSS content
-			let formattedCSS = css.replace(/<!-- prettier-ignore-start -->|<!-- prettier-ignore-end -->/g, '').trim();
-
-			// Skip processing if empty
-			if (!formattedCSS) return `${processedOpeningTag}${closingTag}`;
-
-			// Fix malformed keyframes
-			formattedCSS = formattedCSS.replace(/@keyframes\s+([^{]+)\s*{([^}]*)}/g, (match, name, content) => {
-				return `@keyframes ${name.trim()} {${content.replace(/(from|to)([^{]*{)/g, '$1 $2')}}`;
-			});
-
-			// Add ignore comments back if they existed
-			if (hasIgnore) {
-				formattedCSS = `<!-- prettier-ignore-start -->\n${formattedCSS}\n<!-- prettier-ignore-end -->`;
-			}
-
-			return `${processedOpeningTag}\n${formattedCSS}\n${closingTag}`;
+async function formatSvelteCSS() {
+	try {
+		const files = globSync('**/FeeHeadList.svelte', {
+			ignore: ['node_modules/**', 'dist/**', 'build/**'],
+			nodir: true,
 		});
 
-		writeFileSync(filePath, content);
-	});
+		for (const file of files) {
+			try {
+				const filePath = join(process.cwd(), file);
+				let content = readFileSync(filePath, 'utf8');
+
+				content = content.replace(
+					/(<style([^>]*)>)([\s\S]*?)(<\/style>)/gi,
+					(_, openingTag, attrs, css, closingTag) => {
+						const normalizedOpening = `<style${attrs}>`;
+						const hasIgnore = css.includes('prettier-ignore');
+						const cleanCSS = removeIgnoreComments(css).trim();
+
+						if (!cleanCSS) return `${normalizedOpening}${closingTag}`;
+
+						const formattedCSS = formatEachRuleToSingleLine(cleanCSS);
+
+						return reconstructStyleBlock({
+							openingTag: normalizedOpening,
+							css: formattedCSS,
+							closingTag,
+							hasIgnore,
+						});
+					},
+				);
+
+				writeFileSync(filePath, content);
+				console.log(`✅ Processed: ${file}`);
+			} catch (fileError) {
+				console.error(`⚠️ Error processing ${file}:`, fileError.message);
+			}
+		}
+		console.log('🎉 CSS formatting complete!');
+	} catch (error) {
+		console.error('❌ Critical error:', error.message);
+		process.exit(1);
+	}
 }
 
-formatCSSInSvelteFiles();
-// import { readFileSync, writeFileSync } from 'fs';
-// import { globSync } from 'glob';
-// import { join } from 'path';
+function removeIgnoreComments(css) {
+	return typeof css === 'string'
+		? css.replace(/<!--\s*prettier-ignore-(start|end)\s*-->/g, '')
+		: '';
+}
 
-// function formatCSSInSvelteFiles() {
-// 	const files = globSync('**/*.svelte', { ignore: 'node_modules/**' });
+function formatEachRuleToSingleLine(css) {
+	return css
+		.split('}')
+		.map((rule) => {
+			const [selector = '', declarations = ''] = rule.split('{');
+			const cleanSelector = selector.trim();
+			const cleanDeclarations = declarations.trim();
 
-// 	files.forEach((file) => {
-// 		const filePath = join(process.cwd(), file);
-// 		let content = readFileSync(filePath, 'utf8');
+			if (!cleanSelector || !cleanDeclarations) return null;
 
-// 		content = content.replace(/<style>([\s\S]*?)<\/style>/g, (match, css) => {
-// 			// Process ALL CSS rules (including IDs, elements, and attribute selectors)
-// 			const formattedCSS = css.replace(/([^{]+{)([\s\S]*?)}/g, (fullMatch, selector, declarations) => {
-// 				return `${selector}${declarations.replace(/[\r\n\s]+/g, ' ').trim()} }`;
-// 			});
-// 			return `<style>${formattedCSS}</style>`;
-// 		});
+			// Format declarations with one space after each property
+			const singleLineDeclarations = cleanDeclarations
+				.replace(/[\r\n]+/g, ' ') // Remove newlines
+				.replace(/\s+/g, ' ') // Collapse multiple spaces
+				.replace(/([^:]+):\s*/g, '$1: ') // Ensure one space after colon
+				.replace(/;\s*/g, '; ') // Ensure one space after semicolon
+				.trim()
+				.replace(/; $/, ';'); // Remove trailing space if last char is semicolon
 
-// 		writeFileSync(filePath, content);
-// 	});
-// }
+			return `\t${cleanSelector} { ${singleLineDeclarations} }`;
+		})
+		.filter(Boolean)
+		.join('\n');
+}
 
-// formatCSSInSvelteFiles();
+function reconstructStyleBlock({ openingTag, css, closingTag, hasIgnore }) {
+	const content = hasIgnore
+		? `\n<!-- prettier-ignore-start -->\n${css}\n<!-- prettier-ignore-end -->\n`
+		: `\n${css}\n`;
+
+	return `${openingTag}${content}${closingTag}`;
+}
+
+formatSvelteCSS().catch(console.error);
