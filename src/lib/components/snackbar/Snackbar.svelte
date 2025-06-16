@@ -28,78 +28,18 @@
 	{/each}
 </div>
 
+<!-- prettier-ignore -->
 <style>
-	.snackbar-container {
-		position: fixed;
-		bottom: 1rem;
-		right: 1rem;
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-		z-index: 1000;
-	}
-
-	.snackbar {
-		min-width: 320px;
-		padding: 1rem;
-		border-radius: 6px;
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-		color: white;
-		position: relative;
-		overflow: hidden;
-	}
-
-	.close-btn {
-		position: absolute;
-		top: 0;
-		right: 5px;
-		background: transparent;
-		border: none;
-		color: white;
-		font-size: 1rem;
-		cursor: pointer;
-		padding: 0;
-		line-height: 1;
-	}
-
-	.close-btn:hover {
-		/* color: rgba(255, 255, 255, 0.8); */
-		color: #000000;
-		border-radius: 50%;
-	}
-
-	.snackbar.success {
-		background: #16a34a;
-	} /* green */
-	.snackbar.error {
-		background: #dc2626;
-	} /* red */
-	.snackbar.info {
-		background: #2563eb;
-	} /* blue */
-	.snackbar.warning {
-		background: #f59e0b;
-	} /* yellow */
-
-	.progress-bar {
-		position: absolute;
-		bottom: 0;
-		left: 0;
-		height: 4px;
-		background: rgba(255, 255, 255, 0.6);
-		width: 0%;
-		animation: growRight linear forwards;
-	}
-
-	@keyframes growRight {
-		from {
-			width: 0%;
-		}
-		to {
-			width: 100%;
-		}
+	.snackbar-container {position: fixed; bottom: 1rem; right: 1rem; display: flex; flex-direction: column; gap: 10px; z-index: 1000;}
+	.snackbar {min-width: 320px; padding: 1rem; border-radius: 6px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); color: white; position: relative; overflow: hidden;}
+	.close-btn {position: absolute; top: 0; right: 5px; background: transparent; border: none; color: white; font-size: 1rem; cursor: pointer; padding: 0; line-height: 1;}
+	.close-btn:hover {/* color: rgba(255, 255, 255, 0.8); */ color: #000000; border-radius: 50%;}
+	.snackbar.success {background: #16a34a;} /* green */
+	.snackbar.error {background: #dc2626;} /* red */
+	.snackbar.info {background: #2563eb;} /* blue */
+	.snackbar.warning {background: #f59e0b;} /* yellow */
+	.progress-bar {position: absolute; bottom: 0; left: 0; height: 4px; background: rgba(255, 255, 255, 0.6); width: 0%; animation: growRight linear forwards;}
+	@keyframes growRight {from { width: 0%;}
+		to {width: 100%;}
 	}
 </style>
