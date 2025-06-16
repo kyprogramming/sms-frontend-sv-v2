@@ -4,7 +4,7 @@ import { join } from 'path';
 
 async function formatSvelteCSS() {
 	try {
-		const files = globSync('src/lib/components/layouts/*.svelte', {
+		const files = globSync('src/lib/components/shared/**/*.svelte', {
 			ignore: ['node_modules/**', 'dist/**', 'build/**'],
 			nodir: true,
 		});
@@ -17,19 +17,10 @@ async function formatSvelteCSS() {
 				content = content.replace(/(\n*)(<!--\s*prettier-ignore\s*-->)?\s*(<style[^>]*>)([\s\S]*?)(<\/style>)/gi, (_, existingNewlines, existingIgnore, openingTag, cssContent, closingTag) => {
 					const processedCSS = processCSSContent(cssContent);
 
-					// Determine if we need to add ignore comment
 					const needsIgnore = !existingIgnore;
-
-					// Ensure exactly one newline before ignore comment
 					const newline = existingNewlines.includes('\n') ? '' : '\n';
 
-					// Build the output
-					let output = '';
-					if (needsIgnore) {
-						output = `${newline}<!-- prettier-ignore -->\n${openingTag}\n${processedCSS}\n${closingTag}`;
-					} else {
-						output = `${existingNewlines}${existingIgnore}\n${openingTag}\n${processedCSS}\n${closingTag}`;
-					}
+					let output = needsIgnore ? `${newline}<!-- prettier-ignore -->\n${openingTag}\n${processedCSS}\n${closingTag}` : `${existingNewlines}${existingIgnore}\n${openingTag}\n${processedCSS}\n${closingTag}`;
 
 					return output;
 				});
@@ -48,27 +39,34 @@ async function formatSvelteCSS() {
 }
 
 function processCSSContent(css) {
-	return css
-		.trim()
-		.split('}')
-		.map((rule) => {
-			const [selector = '', declarations = ''] = rule.split('{');
-			const cleanSelector = selector.trim();
-			const cleanDeclarations = declarations.trim();
-
-			if (!cleanSelector || !cleanDeclarations) return null;
-
-			const formattedDeclarations = cleanDeclarations
+	// Process nested blocks first (media queries, keyframes, etc.)
+	const processed = css.replace(/(@[^{]+\{)([\s\S]+?)(?=\})/g, (match, atRuleStart, content) => {
+		// Process the nested content while preserving the structure
+		const processedContent = content.replace(/([^{]+\{)([^}]+)(\})/g, (_, selector, declarations, close) => {
+			const formattedDeclarations = declarations
 				.replace(/\s*:\s*/g, ': ')
 				.replace(/\s*;\s*/g, '; ')
 				.replace(/\s+/g, ' ')
 				.trim()
 				.replace(/; $/, '');
 
-			return `\t${cleanSelector} { ${formattedDeclarations} }`;
-		})
-		.filter(Boolean)
-		.join('\n');
+			return `${selector}${formattedDeclarations}${close}`;
+		});
+
+		return `${atRuleStart}${processedContent}`;
+	});
+
+	// Then process top-level rules
+	return processed.replace(/([^{]+\{)([^}]+)(\})/g, (_, selector, declarations, close) => {
+		const formattedDeclarations = declarations
+			.replace(/\s*:\s*/g, ': ')
+			.replace(/\s*;\s*/g, '; ')
+			.replace(/\s+/g, ' ')
+			.trim()
+			.replace(/; $/, '');
+
+		return `${selector}${formattedDeclarations}${close}`;
+	});
 }
 
 formatSvelteCSS().catch(console.error);

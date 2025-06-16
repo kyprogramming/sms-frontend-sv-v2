@@ -352,8 +352,7 @@
 					bind:value={formData.studentData.medicalDetails.measurementDate}
 					onClear={() => {
 						formData.studentData.medicalDetails.measurementDate = '';
-					}}
-				/>
+					}} />
 			</div>
 			<!-- Medical History -->
 			<div class="col-6">
@@ -530,10 +529,10 @@
 				<table>
 					<thead>
 						<tr>
-							<th style="width:5%;">#</th>
-							<th style="width:20%;">Title</th>
-							<th style="width:25%;">Document</th>
-							<th>Url</th>
+                                    <th style="width:5%;">#</th>
+                                    <th style="width:20%;">Title</th>
+                                    <th style="width:25%;">Document</th>
+                                    <th>Url</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -591,8 +590,7 @@
 		}}
 		onblur={() => handleBlur(fieldName)}
 		maxLength={length}
-		placeholder="Enter {title.toLowerCase()}"
-	/>
+		placeholder="Enter {title.toLowerCase()}" />
 
 	{#if $formErrors[fieldName] && (touched[fieldName] || formSubmitted)}
 		<p class="error-text">{$formErrors[fieldName]}</p>
@@ -615,157 +613,48 @@
 		}}
 		onblur={() => handleBlur(fieldName)}
 		maxLength={length}
-		placeholder="Enter {title.toLowerCase()}"
-	></textarea>
+		placeholder="Enter {title.toLowerCase()}"></textarea>
 
 	{#if $formErrors[fieldName] && (touched[fieldName] || formSubmitted)}
 		<p class="error-text">{$formErrors[fieldName]}</p>
 	{/if}
 {/snippet}
 
+<!-- prettier-ignore -->
 <style>
 	/* Base styles */
-	label {
-		display: block;
-		margin-bottom: 0.5rem;
-		font-weight: 500;
-		color: var(--text-primary);
-	}
-
+	label {display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-primary);}
 	/* Section styles */
-	.section {
-		border: 1px solid var(--border);
-		border-radius: 0.5rem;
-		margin-bottom: 1.5rem;
-		/* overflow: hidden; */
-	}
-
-	.section-header {
-		cursor: pointer;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 1rem;
-		background-color: var(--clr-bg-2);
-		font-weight: 600;
-		transition: background-color 0.2s;
-	}
-
-	.section-header:hover {
-		background-color: var(--clr-bg-3);
-	}
-
-	.arrow-icon {
-		transition: transform 0.2s ease;
-	}
-
-	.section-body {
-		padding: 1rem;
-		transition: all 0.2s ease;
-	}
-
-	.section-body.collapsed {
-		display: none;
-	}
+	.section {border: 1px solid var(--border); border-radius: 0.5rem; margin-bottom: 1.5rem; /* overflow: hidden; */}
+	.section-header {cursor: pointer; display: flex; align-items: center; justify-content: space-between; padding: 1rem; background-color: var(--clr-bg-2); font-weight: 600; transition: background-color 0.2s;}
+	.section-header:hover {background-color: var(--clr-bg-3);}
+	.arrow-icon {transition: transform 0.2s ease;}
+	.section-body {padding: 1rem; transition: all 0.2s ease;}
+	.section-body.collapsed {display: none;}
 
 	/* Grid layout */
-	.grid-5 {
-		display: grid;
-		grid-template-columns: repeat(5, 1fr);
-		gap: 1.5rem;
-	}
+	.grid-5 {display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.5rem;}
 
 	/* Responsive styles */
-	@media (max-width: 1024px) {
-		.grid-5 {
-			grid-template-columns: repeat(3, 1fr);
-		}
-	}
+	@media (max-width: 1024px) {.grid-5 { grid-template-columns: repeat(3, 1fr);}}
 
-	@media (max-width: 768px) {
-		.grid-5 {
-			grid-template-columns: repeat(2, 1fr);
-		}
-	}
+	@media (max-width: 768px) {.grid-5 { grid-template-columns: repeat(2, 1fr);}}
 
 	@media (max-width: 480px) {
-		.grid-5 {
-			grid-template-columns: 1fr;
-		}
-
-		.form-actions {
-			flex-direction: column;
-		}
-
-		.btn {
-			width: 100%;
-		}
+        .grid-5 { grid-template-columns: 1fr;}
+		.form-actions {flex-direction: column;}
+		.btn {width: 100%;}
 	}
 
-	.card-wrapper {
-		padding: 15px;
-		background-color: #ffffff;
-		border-radius: 10px;
-		box-shadow: var(--shadow-sm);
-		margin-bottom: 10px;
-	}
-
-	.radio-group {
-		display: flex;
-		flex-direction: row;
-		gap: 1rem;
-	}
-	input[type='radio'] {
-		cursor: pointer;
-	}
-
-	.radio-section {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 1rem;
-	}
-
-	.radio-item {
-		display: flex;
-		align-items: center;
-	}
-
-	.radio-label {
-		display: flex;
-		align-items: center;
-		cursor: pointer;
-	}
-
-	.radio-input {
-		display: none;
-	}
-
-	.radio-custom {
-		width: 1rem;
-		height: 1rem;
-		border: 2px solid #ccc;
-		border-radius: 50%;
-		margin-right: 0.5rem;
-		position: relative;
-	}
-
-	.radio-input:checked + .radio-custom::after {
-		content: '';
-		width: 0.6rem;
-		height: 0.6rem;
-		background: #007bff;
-		border-radius: 50%;
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-	}
-
-	.has-error .radio-custom {
-		border-color: red;
-	}
-
-	.placeholder-gray {
-		color: gray;
-	}
+	.card-wrapper {padding: 15px; background-color: #ffffff; border-radius: 10px; box-shadow: var(--shadow-sm); margin-bottom: 10px;}
+	.radio-group {display: flex; flex-direction: row; gap: 1rem;}
+	input[type='radio'] {cursor: pointer;}
+	.radio-section {display: flex; flex-wrap: wrap; gap: 1rem;}
+	.radio-item {display: flex; align-items: center;}
+	.radio-label {display: flex; align-items: center; cursor: pointer;}
+	.radio-input {display: none;}
+	.radio-custom {width: 1rem; height: 1rem; border: 2px solid #ccc; border-radius: 50%; margin-right: 0.5rem; position: relative;}
+	.radio-input:checked + .radio-custom::after {content: ''; width: 0.6rem; height: 0.6rem; background: #007bff; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);}
+	.has-error .radio-custom {border-color: red;}
+	.placeholder-gray {color: gray;}
 </style>

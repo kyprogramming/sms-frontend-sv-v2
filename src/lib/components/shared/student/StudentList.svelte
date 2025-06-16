@@ -213,8 +213,7 @@
 				if (e.key === 'Enter') {
 					handleSearch();
 				}
-			}}
-		/>
+			}} />
 
 		<button type="button" class="btn ripple" onclick={handleSearch}>
 			<Search />
@@ -247,18 +246,11 @@
 		onDelete={handleDelete}
 		onCancel={() => {
 			isDeleteModalOpen = false;
-		}}
-	/>
+		}} />
 {/if}
 
+<!-- prettier-ignore -->
 <style>
-	.search-container {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-	}
-
-	input[name='search'] {
-		width: 300px;
-	}
+	.search-container {display: flex; align-items: center; gap: 8px;}
+	input[name='search'] {width: 300px;}
 </style>
