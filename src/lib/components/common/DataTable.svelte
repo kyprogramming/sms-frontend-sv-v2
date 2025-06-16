@@ -160,51 +160,18 @@
 
 <!-- prettier-ignore -->
 <style>
-	.sortable {
-		cursor: pointer;
-	}
-	.sortable:hover {
-		background-color: #f5f5f5;
-	}
-	.action-icons {display: flex; gap: 0.5rem; }
-	/* .icon-wrapper {
-		cursor: pointer;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		padding: 4px;
-		border-radius: 4px;
-	} */
-	.icon-wrapper:hover {
-		background-color: #f0f0f0;
-	}
-
-	.table-container {
-		display: flex;
-		flex-direction: column;
-		max-height: 800px;
-		overflow: hidden;
-		border: 1px solid #ddd;
-	}
-
-	.table-container table {
-		width: 100%;
-		border-collapse: collapse;
-	}
-
-	.table-body-scroll {
-		overflow-y: auto;
-		max-height: 600px; /* Adjust as needed */
-	}
-
-	/* .table-body-scroll table {
-		width: 100%;
-		table-layout: fixed;
-	} */
+	.sortable { cursor: pointer; }
+	.sortable:hover { background-color: #f5f5f5; }
+	.action-icons { display: flex; gap: 0.5rem; }
+	/* .icon-wrapper { cursor: pointer; display: inline-flex; align-items: center; justify-content: center; padding: 4px; border-radius: 4px; }
+	*/
+	.icon-wrapper:hover { background-color: #f0f0f0; }
+	.table-container { display: flex; flex-direction: column; max-height: 800px; overflow: hidden; border: 1px solid #ddd; }
+	.table-container table { width: 100%; border-collapse: collapse; }
+	.table-body-scroll { overflow-y: auto; max-height: 600px; /* Adjust as needed */ }
+	/* .table-body-scroll table { width: 100%; table-layout: fixed; }
+	*/
 
 	/* .table-body-scroll td,
-	th {
-		padding: 8px;
-		 border: 1px solid #ddd;
-	} */
+	th { padding: 8px; border: 1px solid #ddd; } */
 </style>

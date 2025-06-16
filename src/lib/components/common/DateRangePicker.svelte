@@ -419,109 +419,23 @@
 	{/if}
 </div>
 
+<!-- prettier-ignore -->
 <style>
-	.daterangepicker {
-		position: relative;
-		display: inline-block;
-		font-family: inherit;
-	}
-
-	.daterangepicker-input {
-		padding: 6px 12px;
-		border: 1px solid #ccc;
-		border-radius: 4px;
-		cursor: pointer;
-		width: 100%;
-		box-sizing: border-box;
-	}
-
-	.daterangepicker-dropdown {
-		position: absolute;
-		z-index: 3001;
-		background: #fff;
-		border: 1px solid #ddd;
-		border-radius: 4px;
-		box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-		padding: 10px;
-		margin-top: 5px;
-		display: flex;
-		flex-direction: column;
-	}
-
-	.calendar-container {
-		display: flex;
-		gap: 20px;
-	}
-
-	.calendar {
-		margin: 0;
-	}
-
-	.calendar-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-bottom: 10px;
-	}
-
-	.month-year {
-		font-weight: bold;
-		text-align: center;
-		flex-grow: 1;
-	}
-
-	.calendar-table {
-		/* Calendar grid styles */
-	}
-
-	.ranges {
-		margin: 10px 0;
-	}
-
-	.ranges ul {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-	}
-
-	.ranges li {
-		padding: 8px 12px;
-		cursor: pointer;
-		border-radius: 4px;
-		margin-bottom: 2px;
-	}
-
-	.ranges li:hover {
-		background-color: #f5f5f5;
-	}
-
-	.ranges li.active {
-		background-color: #428bca;
-		color: white;
-	}
-
-	.buttons {
-		display: flex;
-		justify-content: flex-end;
-		margin-top: 10px;
-		gap: 5px;
-	}
-
-	.buttons button {
-		padding: 6px 12px;
-		border-radius: 4px;
-		cursor: pointer;
-		border: 1px solid transparent;
-	}
-
-	.buttons .cancel {
-		background-color: #fff;
-		border-color: #ccc;
-	}
-
-	.buttons .apply {
-		color: #fff;
-		background-color: #5cb85c;
-		border-color: #4cae4c;
-	}
+	.daterangepicker { position: relative; display: inline-block; font-family: inherit; }
+	.daterangepicker-input { padding: 6px 12px; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; width: 100%; box-sizing: border-box; }
+	.daterangepicker-dropdown { position: absolute; z-index: 3001; background: #fff; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175); padding: 10px; margin-top: 5px; display: flex; flex-direction: column; }
+	.calendar-container { display: flex; gap: 20px; }
+	.calendar { margin: 0; }
+	.calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+	.month-year { font-weight: bold; text-align: center; flex-grow: 1; }
+	.calendar-table { /* Calendar grid styles */ }
+	.ranges { margin: 10px 0; }
+	.ranges ul { list-style: none; padding: 0; margin: 0; }
+	.ranges li { padding: 8px 12px; cursor: pointer; border-radius: 4px; margin-bottom: 2px; }
+	.ranges li:hover { background-color: #f5f5f5; }
+	.ranges li.active { background-color: #428bca; color: white; }
+	.buttons { display: flex; justify-content: flex-end; margin-top: 10px; gap: 5px; }
+	.buttons button { padding: 6px 12px; border-radius: 4px; cursor: pointer; border: 1px solid transparent; }
+	.buttons .cancel { background-color: #fff; border-color: #ccc; }
+	.buttons .apply { color: #fff; background-color: #5cb85c; border-color: #4cae4c; }
 </style>

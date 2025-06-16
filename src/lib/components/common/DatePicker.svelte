@@ -179,8 +179,7 @@
 													currentYear = today.getFullYear() - i;
 													showYearPicker = false;
 												}
-											}}
-										>
+											}}>
 											{today.getFullYear() - i}
 										</div>
 									{/each}
@@ -213,8 +212,7 @@
 								if (e.key === 'Enter' || e.key === ' ') {
 									handleDayClick(i + 1, e);
 								}
-							}}
-						>
+							}}>
 							{i + 1}
 						</div>
 					{/each}
@@ -226,8 +224,7 @@
 						onclick={(e) => {
 							e.preventDefault();
 							selectToday();
-						}}
-					>
+						}}>
 						Today
 					</button>
 				</div>
@@ -236,208 +233,39 @@
 	{/if}
 </div>
 
+<!-- prettier-ignore -->
 <style>
-	.datepicker-wrapper {
-		position: relative;
-		width: 100%;
-		font-family: sans-serif;
-	}
-
-	.input-container {
-		position: relative;
-		display: flex;
-		align-items: center;
-	}
-
-	.input-container input {
-		width: 100%;
-		padding: 0.5rem 2rem 0.5rem 0.75rem;
-		border: 1px solid #ddd;
-		border-radius: 4px;
-		font-size: 0.875rem;
-	}
-
-	.calendar-icon {
-		position: absolute;
-		right: 0.75rem;
-		background: none;
-		border: none;
-		cursor: pointer;
-		padding: 0.25rem;
-		color: #666;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.calendar-icon:hover {
-		color: #333;
-	}
-
-	.calendar-icon svg {
-		width: 1rem;
-		height: 1rem;
-	}
-
-	.calendar-container {
-		position: relative;
-		z-index: 1100;
-		min-width: 260px;
-		background-color: white;
-	}
-
-	.calendar {
-		position: absolute;
-		top: 100%;
-		left: 0;
-		z-index: 1101;
-		background: #fff;
-		border: 1px solid #ddd;
-		border-radius: 8px;
-		padding: 1rem;
-		margin-top: 0.1rem;
-		width: 100%;
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-		animation: fadeIn 0.2s ease-out;
-		min-width: 260px;
-	}
-
-	.calendar-header {
-		display: flex;
-		justify-content: center;
-		margin-bottom: 1rem;
-	}
-
-	.month-year-selectors {
-		display: flex;
-		gap: 0.5rem;
-	}
-
+	.datepicker-wrapper { position: relative; width: 100%; font-family: sans-serif; }
+	.input-container { position: relative; display: flex; align-items: center; }
+	.input-container input { width: 100%; padding: 0.5rem 2rem 0.5rem 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 0.875rem; }
+	.calendar-icon { position: absolute; right: 0.75rem; background: none; border: none; cursor: pointer; padding: 0.25rem; color: #666; display: flex; align-items: center; justify-content: center; }
+	.calendar-icon:hover { color: #333; }
+	.calendar-icon svg { width: 1rem; height: 1rem; }
+	.calendar-container { position: relative; z-index: 1100; min-width: 260px; background-color: white; }
+	.calendar { position: absolute; top: 100%; left: 0; z-index: 1101; background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 1rem; margin-top: 0.1rem; width: 100%; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); animation: fadeIn 0.2s ease-out; min-width: 260px; }
+	.calendar-header { display: flex; justify-content: center; margin-bottom: 1rem; }
+	.month-year-selectors { display: flex; gap: 0.5rem; }
 	.month-selector,
-	.year-selector {
-		padding: 0.25rem 0.5rem;
-		border: 1px solid #ddd;
-		width: 120px;
-		border-radius: 4px;
-		font-size: 0.875rem;
-	}
-
-	.calendar-weekdays {
-		display: grid;
-		grid-template-columns: repeat(7, 1fr);
-		gap: 0.5rem;
-		margin-bottom: 0.5rem;
-	}
-
-	.weekday {
-		text-align: center;
-		font-size: 0.8rem;
-		font-weight: 500;
-		color: #666;
-	}
-
-	.calendar-grid {
-		display: grid;
-		grid-template-columns: repeat(7, 1fr);
-		gap: 0.25rem;
-	}
-
-	.calendar-day {
-		padding: 0.5rem;
-		text-align: center;
-		cursor: pointer;
-		border-radius: 4px;
-		transition: all 0.2s;
-		font-size: 0.8rem;
-	}
-
-	.calendar-day.empty {
-		visibility: hidden;
-	}
-
-	.calendar-day:hover {
-		background: #f0f0f0;
-	}
-
-	.calendar-day.selected {
-		background: var(--clr-pri);
-		color: #fff;
-	}
-
-	.calendar-day.today {
-		font-weight: bold;
-		color: var(--clr-pri);
-	}
-
-	.calendar-day.today.selected {
-		color: #fff;
-	}
-
-	.calendar-footer {
-		display: flex;
-		justify-content: center;
-		margin-top: 1rem;
-	}
-
-	.today-button {
-		width: 100%;
-		background: #f0f0f0;
-		border: 1px solid #ccc;
-		border-radius: 4px;
-		padding: 9px 1rem;
-		cursor: pointer;
-		font-size: 0.8rem;
-		transition: background-color 0.2s;
-	}
-
-	.today-button:hover {
-		background: #e0e0e0;
-	}
-
-	.year-selector-wrapper {
-		position: relative;
-		width: 120px;
-	}
-
-	.btn-year-display {
-		background-color: rgb(236, 236, 236);
-		border: 1px;
-	}
-
-	.year-picker {
-		position: absolute;
-		top: 100%;
-		left: 0;
-		background: #fff;
-		border: 1px solid #ccc;
-		border-radius: 4px;
-		max-height: 200px;
-		overflow-y: auto;
-		width: 100%;
-		margin-top: 0.25rem;
-		z-index: 1102;
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-	}
-
-	.year-option {
-		padding: 0.5rem;
-		text-align: center;
-		cursor: pointer;
-		font-size: 0.875rem;
-		transition: background 0.2s;
-	}
-
-	.year-option:hover {
-		background-color: #f0f0f0;
-	}
-
-	.year-option.selected {
-		background-color: var(--clr-pri);
-		color: white;
-		font-weight: bold;
-	}
-
-	@keyframes fadeIn {
+	.year-selector { padding: 0.25rem 0.5rem; border: 1px solid #ddd; width: 120px; border-radius: 4px; font-size: 0.875rem; }
+	.calendar-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; margin-bottom: 0.5rem; }
+	.weekday { text-align: center; font-size: 0.8rem; font-weight: 500; color: #666; }
+	.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.25rem; }
+	.calendar-day { padding: 0.5rem; text-align: center; cursor: pointer; border-radius: 4px; transition: all 0.2s; font-size: 0.8rem; }
+	.calendar-day.empty { visibility: hidden; }
+	.calendar-day:hover { background: #f0f0f0; }
+	.calendar-day.selected { background: var(--clr-pri); color: #fff; }
+	.calendar-day.today { font-weight: bold; color: var(--clr-pri); }
+	.calendar-day.today.selected { color: #fff; }
+	.calendar-footer { display: flex; justify-content: center; margin-top: 1rem; }
+	.today-button { width: 100%; background: #f0f0f0; border: 1px solid #ccc; border-radius: 4px; padding: 9px 1rem; cursor: pointer; font-size: 0.8rem; transition: background-color 0.2s; }
+	.today-button:hover { background: #e0e0e0; }
+	.year-selector-wrapper { position: relative; width: 120px; }
+	.btn-year-display { background-color: rgb(236, 236, 236); border: 1px; }
+	.year-picker { position: absolute; top: 100%; left: 0; background: #fff; border: 1px solid #ccc; border-radius: 4px; max-height: 200px; overflow-y: auto; width: 100%; margin-top: 0.25rem; z-index: 1102; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); }
+	.year-option { padding: 0.5rem; text-align: center; cursor: pointer; font-size: 0.875rem; transition: background 0.2s; }
+	.year-option:hover { background-color: #f0f0f0; }
+	.year-option.selected { background-color: var(--clr-pri); color: white; font-weight: bold; }
+    @keyframes fadeIn {
 		from {
 			opacity: 0;
 			transform: translateY(-10px);
@@ -446,5 +274,5 @@
 			opacity: 1;
 			transform: translateY(0);
 		}
-	}
+    }
 </style>

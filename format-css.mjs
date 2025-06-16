@@ -4,7 +4,7 @@ import { join } from 'path';
 
 async function formatSvelteCSS() {
 	try {
-		const files = globSync('**/FeeHeadForm.svelte', {
+		const files = globSync('src/lib/components/common/*.svelte', {
 			ignore: ['node_modules/**', 'dist/**', 'build/**'],
 			nodir: true,
 		});
