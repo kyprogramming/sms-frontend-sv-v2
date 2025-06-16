@@ -76,8 +76,7 @@
 						bind:value={formData.password}
 						class={`w-full pr-10 ${$formErrors.password && (touched.password || formSubmitted) ? 'input-error' : ''}`}
 						oninput={(e) => handleChange('password', (e.target as HTMLInputElement).value)}
-						onblur={(e) => handleChange('password', (e.target as HTMLInputElement).value)}
-					/>
+						onblur={(e) => handleChange('password', (e.target as HTMLInputElement).value)} />
 
 					<span
 						class="eye-icon"
@@ -92,8 +91,7 @@
 								e.preventDefault();
 								showPassword = !showPassword;
 							}
-						}}
-					>
+						}}>
 						{#if showPassword}
 							<EyeOff size={18} />
 						{:else}
@@ -118,43 +116,12 @@
 	</div>
 </div>
 
+<!-- prettier-ignore -->
 <style>
-	.form-container {
-		display: flex;
-		flex-direction: row;
-		justify-content: center;
-		align-items: center;
-		border-radius: 10px;
-		height: 90vh;
-	}
-
-	.forgot-password {
-		text-align: center;
-		margin-top: 8px;
-	}
-
-	.forgot-password a {
-		color: #2563eb;
-		text-decoration: none;
-	}
-
-	.position-relative {
-		position: relative;
-	}
-
-	.eye-icon {
-		position: absolute;
-		top: 25%;
-		left: auto;
-		right: 12px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		z-index: 10;
-		color: #666;
-	}
-
-	.eye-icon:hover {
-		opacity: 0.8;
-	}
+    .form-container {display: flex; flex-direction: row; justify-content: center; align-items: center; border-radius: 10px; height: 90vh}
+	.forgot-password {text-align: center; margin-top: 8px}
+	.forgot-password a {color: #2563eb; text-decoration: none}
+	.position-relative {position: relative}
+	.eye-icon {position: absolute; top: 25%; left: auto; right: 12px; display: flex; align-items: center; justify-content: center; z-index: 10; color: #666}
+	.eye-icon:hover {opacity: 0.8}
 </style>

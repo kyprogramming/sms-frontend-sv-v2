@@ -189,7 +189,7 @@
 
 <!-- prettier-ignore -->
 <style>
-	.search-container { display: flex; gap: 0.5rem; align-items: center; }
-	.search-container input { padding: 0.5rem; min-width: 300px; }
-	input[name="search"] { width: 300px; }
+    .search-container {display: flex; gap: 0.5rem; align-items: center}
+	.search-container input {padding: 0.5rem; min-width: 300px}
+	input[name="search"] {width: 300px}
 </style>
