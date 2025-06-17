@@ -3,7 +3,7 @@ import { fetchWrapper } from '$lib/utils/fetchWrapper';
 import { handleResponse, JSON_HEADERS } from '$lib/utils/utils';
 
 export interface FeeHeadPayload {
-	title: string;
+	name: string;
 	categoryId: string;
 	amount: number;
 	description?: string;

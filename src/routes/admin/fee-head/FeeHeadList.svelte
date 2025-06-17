@@ -24,7 +24,7 @@
 	const columns: ColumnConfig[] = [
 		{ key: '_id', label: 'ID', visible: false },
 		{ key: 'serialNo', label: 'Sr #', width: '80px', sortable: true, align: 'center' },
-		{ key: 'title', label: 'Title', width: 'auto', sortable: true, align: 'center' },
+		{ key: 'name', label: 'Name', width: 'auto', sortable: true, align: 'center' },
 		{ key: 'categoryId.name', label: 'Category Name', width: 'auto', sortable: true, align: 'center' },
 		{ key: 'amount', label: 'Amount', width: 'auto', sortable: true, align: 'center', format: (val) => `$${val.toFixed(2)}` },
 		{

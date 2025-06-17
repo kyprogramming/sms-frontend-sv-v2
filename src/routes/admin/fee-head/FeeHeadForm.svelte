@@ -3,7 +3,6 @@
 	import { formErrors } from '$lib/stores/formStore';
 	import { validateForm } from '$lib/utils/validate';
 	import { showSnackbar } from '$lib/components/snackbar/store';
-	import { closeModal } from '$lib/stores/modalStore';
 	import { createFeeHead, updateFeeHead } from '$lib/services/fee-head';
 	import { onMount } from 'svelte';
 	import { isEqual } from '$lib/utils/utils';
@@ -17,7 +16,7 @@
 	let feeCategoryData = page.data?.feeCategoryData || [];
 
 	export function initializeFeeHeadFormData(): FeeHeadFormDataType {
-		return { title: '', categoryId: '', amount: 0, description: '' };
+		return { name: '', categoryId: '', amount: 0, description: '' };
 	}
 
 	let formData: FeeHeadFormDataType = $state(initializeFeeHeadFormData());
@@ -78,10 +77,10 @@
 
 <form onsubmit={onSubmit}>
 	<div class="input-wrapper">
-		<label for="title">Title <span class="required">*</span></label>
-		<input id="title" type="text" name="title" placeholder="Fee head title" class={`w-full ${$formErrors.title && (touched.title || formSubmitted) ? 'input-error' : ''}`} bind:value={formData.title} oninput={(e) => handleChange('title', (e.target as HTMLInputElement).value)} onblur={() => handleChange('title', formData.title)} />
-		{#if $formErrors.title && (touched.title || formSubmitted)}
-			<p class="error-text">{$formErrors.title}</p>
+		<label for="name">Name <span class="required">*</span></label>
+		<input id="name" type="text" name="name" placeholder="Fee head name" class={`w-full ${$formErrors.name && (touched.name || formSubmitted) ? 'input-error' : ''}`} bind:value={formData.name} oninput={(e) => handleChange('name', (e.target as HTMLInputElement).value)} onblur={() => handleChange('name', formData.name)} />
+		{#if $formErrors.name && (touched.name || formSubmitted)}
+			<p class="error-text">{$formErrors.name}</p>
 		{/if}
 	</div>
 
@@ -114,8 +113,7 @@
 				// Handle both integer and decimal inputs
 				handleChange('amount', value === '' ? 0 : parseFloat(value));
 			}}
-			onblur={() => handleChange('amount', formData.amount)}
-		/>
+			onblur={() => handleChange('amount', formData.amount)} />
 		{#if $formErrors.amount && (touched.amount || formSubmitted)}
 			<p class="error-text">{$formErrors.amount}</p>
 		{/if}

@@ -53,7 +53,7 @@ export type FeeCategoryFormDataType = z.infer<typeof feeCategoryFormSchema>;
 
 // Fee Head Form Schema
 export const feeHeadFormSchema = z.object({
-	title: z.string().min(1, 'Title is required'),
+	name: z.string().min(1, 'Name is required'),
 	categoryId: z.string().min(1, 'Category is required'),
 	amount: z.union([
 		z.number().min(0, 'Amount must be positive'),
