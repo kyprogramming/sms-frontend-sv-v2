@@ -76,7 +76,8 @@
 						bind:value={formData.password}
 						class={`w-full pr-10 ${$formErrors.password && (touched.password || formSubmitted) ? 'input-error' : ''}`}
 						oninput={(e) => handleChange('password', (e.target as HTMLInputElement).value)}
-						onblur={(e) => handleChange('password', (e.target as HTMLInputElement).value)} />
+						onblur={(e) => handleChange('password', (e.target as HTMLInputElement).value)}
+					/>
 
 					<span
 						class="eye-icon"
@@ -91,7 +92,8 @@
 								e.preventDefault();
 								showPassword = !showPassword;
 							}
-						}}>
+						}}
+					>
 						{#if showPassword}
 							<EyeOff size={18} />
 						{:else}

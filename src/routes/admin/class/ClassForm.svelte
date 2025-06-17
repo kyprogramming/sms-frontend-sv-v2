@@ -120,7 +120,8 @@
 									formData.sectionIds = formData.sectionIds.filter((id) => id !== section._id);
 								}
 								// handleChange("sectionIds", formData.sectionIds);
-							}} />
+							}}
+						/>
 						<!-- onblur={() => handleChange("sectionIds", formData.sectionIds)} -->
 						<span class="checkbox-custom"></span>
 						<span class="checkbox-text">{section.name}</span>

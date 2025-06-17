@@ -172,7 +172,8 @@
 				if (e.key === 'Enter') {
 					handleSearch();
 				}
-			}} />
+			}}
+		/>
 
 		<button type="button" class="btn ripple" onclick={handleSearch}>
 			<Search />
@@ -203,7 +204,8 @@
 		}}
 		onCancel={() => {
 			isModalOpen = false;
-		}}>
+		}}
+	>
 		<AcademicYearForm onRefreshPage={refreshAction} {academicYearData} action={isUpdate ? 'update' : 'create'} />
 	</Modal>
 {/if}
@@ -216,7 +218,8 @@
 		onDelete={handleDelete}
 		onCancel={() => {
 			isDeleteModalOpen = false;
-		}} />
+		}}
+	/>
 {/if}
 
 <!-- prettier-ignore -->

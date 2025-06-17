@@ -150,7 +150,9 @@
 			<button class="close-modal" onclick={closeModal}>×</button>
 		</div>
 	</div>
-{/if}<!-- prettier-ignore -->
+{/if}
+
+<!-- prettier-ignore -->
 <style>
 	.image-upload { display: flex; flex-direction: column; gap: 0.5rem; }
 	.upload-box { position: relative; border: 2px dashed #ccc; border-radius: 0.5rem; padding: 8px; cursor: pointer; text-align: center; background-color: #f9f9f9; min-height: 160px; display: flex; align-items: center; justify-content: center; overflow: hidden; }

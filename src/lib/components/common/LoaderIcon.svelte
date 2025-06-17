@@ -7,7 +7,9 @@
 	<div class="sun-spinner">
 		<Loader />
 	</div>
-{/if}<!-- prettier-ignore -->
+{/if}
+
+<!-- prettier-ignore -->
 <style>
 	.sun-spinner { /* position: relative; */ width: 18px; height: 18px; animation: rotate 1s linear infinite; }
     @keyframes rotate {

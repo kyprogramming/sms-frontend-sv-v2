@@ -113,7 +113,8 @@
 				// Handle both integer and decimal inputs
 				handleChange('amount', value === '' ? 0 : parseFloat(value));
 			}}
-			onblur={() => handleChange('amount', formData.amount)} />
+			onblur={() => handleChange('amount', formData.amount)}
+		/>
 		{#if $formErrors.amount && (touched.amount || formSubmitted)}
 			<p class="error-text">{$formErrors.amount}</p>
 		{/if}

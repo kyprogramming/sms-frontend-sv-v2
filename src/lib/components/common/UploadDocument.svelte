@@ -22,7 +22,9 @@
 		{document.title?.split('.')[0]}
 		<!-- {document.title} -->
 	</span>
-</div><!-- prettier-ignore -->
+</div>
+
+<!-- prettier-ignore -->
 <style>
 	.doc-title { display: block; text-align: center; margin-top: 0.5rem; font-weight: 500; text-transform: lowercase; /* First character uppercase */ }
 	/* .doc-title::first-letter { text-transform: uppercase; }

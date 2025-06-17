@@ -438,7 +438,8 @@
 		}}
 		onblur={() => handleBlur(fieldName)}
 		maxLength={length}
-		placeholder="Enter {title.toLowerCase()}" />
+		placeholder="Enter {title.toLowerCase()}"
+	/>
 
 	{#if $formErrors[fieldName] && (touched[fieldName] || formSubmitted)}
 		<p class="error-text">{$formErrors[fieldName]}</p>
@@ -461,7 +462,8 @@
 		}}
 		onblur={() => handleBlur(fieldName)}
 		maxLength={length}
-		placeholder="Enter {title.toLowerCase()}"></textarea>
+		placeholder="Enter {title.toLowerCase()}"
+	></textarea>
 
 	{#if $formErrors[fieldName] && (touched[fieldName] || formSubmitted)}
 		<p class="error-text">{$formErrors[fieldName]}</p>
@@ -482,7 +484,8 @@
 			onChange((e.target as HTMLSelectElement).value);
 			validateForm(staffSchema, formData);
 		}}
-		onblur={() => handleBlur(fieldName)}>
+		onblur={() => handleBlur(fieldName)}
+	>
 		<option value="" selected>Select {title.toLowerCase()}</option>
 		{#each options as opt}
 			<option value={opt.name}>{opt.name}</option>

@@ -179,7 +179,8 @@
 													currentYear = today.getFullYear() - i;
 													showYearPicker = false;
 												}
-											}}>
+											}}
+										>
 											{today.getFullYear() - i}
 										</div>
 									{/each}
@@ -212,7 +213,8 @@
 								if (e.key === 'Enter' || e.key === ' ') {
 									handleDayClick(i + 1, e);
 								}
-							}}>
+							}}
+						>
 							{i + 1}
 						</div>
 					{/each}
@@ -224,7 +226,8 @@
 						onclick={(e) => {
 							e.preventDefault();
 							selectToday();
-						}}>
+						}}
+					>
 						Today
 					</button>
 				</div>

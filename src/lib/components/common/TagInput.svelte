@@ -39,7 +39,9 @@
 	{#if tags.length < 10}
 		<input class="tag-input" type="text" bind:value={input} placeholder={`Enter ${fieldName} and press Enter`} onkeydown={handleKey} />
 	{/if}
-</div><!-- prettier-ignore -->
+</div>
+
+<!-- prettier-ignore -->
 <style>
 	.tag-input-wrapper { display: flex; flex-wrap: wrap; align-items: center; border-radius: 6px; gap: 0.5rem; }
 	.tag { display: flex; align-items: center; background-color: #f0f0f0; border-radius: 6px; padding-left: 6px; /* padding: 4px 8px; */ font-size: 14px; }

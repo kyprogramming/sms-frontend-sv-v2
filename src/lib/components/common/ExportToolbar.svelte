@@ -36,6 +36,7 @@
 		<button onclick={exportPDF} class="btn-export">PDF</button>
 	</div>
 </div>
+
 <!-- prettier-ignore -->
 <style>
 	 .btn-export { @apply bg-blue-500 hover: bg-blue-600 text-white text-sm px-4 py-2 rounded transition; }

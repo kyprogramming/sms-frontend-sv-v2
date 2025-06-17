@@ -259,7 +259,8 @@
 			}}
 			class={cls}
 			placeholder={title ? `Select ${title}` : 'Select date'}
-			aria-label={title ? `${title} date picker` : 'Date picker'} />
+			aria-label={title ? `${title} date picker` : 'Date picker'}
+		/>
 		<button type="button" class="calendar-button" onclick={toggleDatePicker} aria-label="Open calendar">
 			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 				<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>

@@ -161,7 +161,8 @@
 				if (e.key === 'Enter') {
 					handleSearch();
 				}
-			}} />
+			}}
+		/>
 
 		<button type="button" class="btn ripple" onclick={handleSearch}>
 			<Search />
@@ -192,7 +193,8 @@
 		}}
 		onCancel={() => {
 			isModalOpen = false;
-		}}>
+		}}
+	>
 		<SectionForm onRefreshPage={refreshAction} {sectionData} action={isUpdate ? 'update' : 'create'} />
 	</Modal>
 {/if}
@@ -205,7 +207,8 @@
 		onDelete={handleDelete}
 		onCancel={() => {
 			isDeleteModalOpen = false;
-		}} />
+		}}
+	/>
 {/if}
 
 <!-- prettier-ignore -->

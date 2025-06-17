@@ -106,7 +106,8 @@
 							activeMenuItem = group.title;
 							activeGroup = null;
 						}}
-						data-sveltekit-preload-data="off">
+						data-sveltekit-preload-data="off"
+					>
 						<SvelteComponent size={18} class="lucide-icon" />
 						{#if !sidebarCollapsed}
 							<div class="header-content">
@@ -127,7 +128,8 @@
 								e.preventDefault();
 								toggleGroup(group.title);
 							}
-						}}>
+						}}
+					>
 						<SvelteComponent_1 size={18} class="lucide-icon" />
 						{#if !sidebarCollapsed}
 							{@const SvelteComponent_2 = activeGroup === group.title ? ChevronDown : ChevronRight}
@@ -147,7 +149,8 @@
 									onclick={() => {
 										activeMenuItem = item.title;
 									}}
-									data-sveltekit-preload-data="tap">
+									data-sveltekit-preload-data="tap"
+								>
 									<span>{item.title}</span>
 								</a>
 							{/each}

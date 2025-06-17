@@ -352,7 +352,8 @@
 					bind:value={formData.studentData.medicalDetails.measurementDate}
 					onClear={() => {
 						formData.studentData.medicalDetails.measurementDate = '';
-					}} />
+					}}
+				/>
 			</div>
 			<!-- Medical History -->
 			<div class="col-6">
@@ -590,7 +591,8 @@
 		}}
 		onblur={() => handleBlur(fieldName)}
 		maxLength={length}
-		placeholder="Enter {title.toLowerCase()}" />
+		placeholder="Enter {title.toLowerCase()}"
+	/>
 
 	{#if $formErrors[fieldName] && (touched[fieldName] || formSubmitted)}
 		<p class="error-text">{$formErrors[fieldName]}</p>
@@ -613,7 +615,8 @@
 		}}
 		onblur={() => handleBlur(fieldName)}
 		maxLength={length}
-		placeholder="Enter {title.toLowerCase()}"></textarea>
+		placeholder="Enter {title.toLowerCase()}"
+	></textarea>
 
 	{#if $formErrors[fieldName] && (touched[fieldName] || formSubmitted)}
 		<p class="error-text">{$formErrors[fieldName]}</p>

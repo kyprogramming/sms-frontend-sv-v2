@@ -36,7 +36,9 @@
 	{:else if activeTab === 'tab5'}
 		<p>This is the Documents content. Tab 5</p>
 	{/if}
-</div><!-- prettier-ignore -->
+</div>
+
+<!-- prettier-ignore -->
 <style>
 	.tab-header { display: flex; border-bottom: 2px solid #e2e8f0; margin-bottom: 1rem; }
 	.tab-button { padding: 0.75rem 1.5rem; cursor: pointer; background: none; border: none; border-bottom: 2px solid transparent; font-weight: 500; color: #4a5568; }

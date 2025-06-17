@@ -78,5 +78,4 @@ function processCSSContent(css) {
 	return css.trim();
 }
 
-
 formatSvelteCSS().catch(console.error);

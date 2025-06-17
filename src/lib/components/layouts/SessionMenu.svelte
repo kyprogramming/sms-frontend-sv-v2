@@ -52,7 +52,8 @@
 			e.preventDefault();
 			toggleMenu();
 		}
-	}}>
+	}}
+>
 	<div class="profile-img">{user?.name?.charAt(0).toUpperCase()}</div>
 	<div class="user-info">
 		<div class="user-name">{user?.name.toUpperCase()}</div>
@@ -74,7 +75,8 @@
 					onclick={(event) => {
 						event.stopPropagation();
 						onSubmit();
-					}}>
+					}}
+				>
 					<div class="logout-container">
 						<LogOut color="red" />
 						Logout
