@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { constantFormSchema, type ConstantFormDataType } from '$lib/utils/schemas';
+	import { constantFormSchema, type ConstantPayload } from '$lib/utils/schemas';
 	import { formErrors } from '$lib/stores/formStore';
 	import { validateForm } from '$lib/utils/validate';
 	import { showSnackbar } from '$lib/components/snackbar/store';
@@ -15,7 +15,7 @@
 
 	let { onRefreshPage, constantData = null, action } = $props();
 
-	export function initializeConstantFormData(): ConstantFormDataType {
+	export function initializeConstantFormData(): ConstantPayload {
 		return {
 			key: '',
 			value: '',
@@ -25,8 +25,8 @@
 		};
 	}
 
-	let formData: ConstantFormDataType = $state(initializeConstantFormData());
-	let touched: Partial<Record<keyof ConstantFormDataType, boolean>> = $state({});
+	let formData: ConstantPayload = $state(initializeConstantFormData());
+	let touched: Partial<Record<keyof ConstantPayload, boolean>> = $state({});
 	let formSubmitted: boolean = $state(false);
 
 	// console.log("constantData: ", constantData);
@@ -51,7 +51,7 @@
 		}
 	}
 
-	function handleChange(field: keyof ConstantFormDataType, value: any) {
+	function handleChange(field: keyof ConstantPayload, value: any) {
 		formData[field] = value;
 		touched = { ...touched, [field]: true };
 		// console.log("formData", formData);
@@ -136,8 +136,7 @@
 						if (value === 'string' || value === 'number' || value === 'boolean' || value === 'json') {
 							handleTypeChange(value);
 						}
-					}}
-				>
+					}}>
 					<!-- <option value="" selected>Select Type</option> -->
 					<option value="string">String</option>
 					<option value="number">Number</option>
@@ -174,8 +173,7 @@
 							} catch {
 								handleChange('value', (e.target as HTMLTextAreaElement).value);
 							}
-						}}
-					></textarea>
+						}}></textarea>
 				{/if}
 
 				{#if $formErrors.value && (touched.value || formSubmitted)}

@@ -3,18 +3,18 @@
 	import { formatDate } from '$lib/utils/formatDate';
 
 	import ModalDelete from '$lib/components/common/ModalDelete.svelte';
-	import FeeHeadForm from './FeeHeadForm.svelte';
+	import FeeGroupForm from './FeeGroupForm.svelte';
 	import { Pencil, Eye, Trash2, Plus, Search, RefreshCw } from '@lucide/svelte';
 	import type { ColumnConfig } from '$lib/interfaces/table.interface';
 	import { showSnackbar } from '$lib/components/snackbar/store';
-	import { deleteFeeHeadById, fetchFeeHeadById, fetchFeeHeads } from '$lib/services/fee-group';
+	import { deleteFeeGroupById, fetchFeeGroupById, fetchFeeGroups } from '$lib/services/fee-group';
 	import { currentPage, rowsPerPage, totalItems, totalPages } from '$lib/stores/paginationStore';
 	import DataTable from '$lib/components/common/DataTable.svelte';
 	import Modal from '$lib/components/common/Modal.svelte';
 
 	let { response } = $props();
 	let searchText = $state('');
-	let feeHeadData: any | null = $state(null);
+	let feeGroupData: any | null = $state(null);
 	let isModalOpen = $state(false);
 	let isDeleteModalOpen = $state(false);
 	let isUpdate = $state(false);
@@ -85,7 +85,7 @@
 	}
 
 	function handleAdd() {
-		feeHeadData = null;
+		feeGroupData = null;
 		isUpdate = false;
 		isModalOpen = true;
 	}
@@ -95,14 +95,14 @@
 	}
 
 	async function updateAction(id: string) {
-		feeHeadData = null;
-		const res = await fetchFeeHeadById(id);
-		feeHeadData = res.data;
+		feeGroupData = null;
+		const res = await fetchFeeGroupById(id);
+		feeGroupData = res.data;
 		isModalOpen = true;
 	}
 
 	async function deleteAction(id: string) {
-		const json = await deleteFeeHeadById(id);
+		const json = await deleteFeeGroupById(id);
 		if (json.success) {
 			showSnackbar({ message: json.message, type: 'success' });
 			isDeleteModalOpen = false;
@@ -118,7 +118,7 @@
 			page: String($currentPage),
 			limit: String($rowsPerPage),
 		});
-		const json = await fetchFeeHeads(params);
+		const json = await fetchFeeGroups(params);
 		response = { ...json };
 	}
 
@@ -128,7 +128,7 @@
 			page: String($currentPage),
 			limit: String($rowsPerPage),
 		});
-		const json = await fetchFeeHeads(params);
+		const json = await fetchFeeGroups(params);
 		isModalOpen = false;
 		response = { ...json };
 	}
@@ -143,12 +143,12 @@
 </script>
 
 <svelte:head>
-	<title>{env.PUBLIC_SCHOOL_NAME} - Fee Heads</title>
+	<title>{env.PUBLIC_SCHOOL_NAME} - Fee Groups</title>
 </svelte:head>
 
 <div class="class-container">
 	<div class="search-container">
-		<input name="search" type="text" placeholder="Search fee heads..." bind:value={searchText} onkeydown={(e) => e.key === 'Enter' && handleSearch()} />
+		<input name="search" type="text" placeholder="Search fee groups..." bind:value={searchText} onkeydown={(e) => e.key === 'Enter' && handleSearch()} />
 		<button type="button" class="btn ripple" onclick={handleSearch}>
 			<Search />
 			<span>Search</span>
@@ -161,7 +161,7 @@
 	<div class="action-buttons">
 		<button type="button" class="btn ripple" onclick={handleAdd}>
 			<Plus size={16} />
-			<span>Add Fee Head</span>
+			<span>Add Fee Group</span>
 		</button>
 	</div>
 </div>
@@ -170,7 +170,7 @@
 
 {#if isModalOpen}
 	<Modal
-		title={isUpdate ? 'Update Fee Head' : 'Add Fee Head'}
+		title={isUpdate ? 'Update Fee Group' : 'Add Fee Group'}
 		size="lg"
 		onClose={() => {
 			isModalOpen = false;
@@ -178,17 +178,15 @@
 		onCancel={() => {
 			isModalOpen = false;
 		}}>
-		<FeeHeadForm onRefreshPage={refreshAction} {feeHeadData} action={isUpdate ? 'update' : 'create'} />
+		<FeeGroupForm onRefreshPage={refreshAction} {feeGroupData} action={isUpdate ? 'update' : 'create'} />
 	</Modal>
 {/if}
 
 {#if isDeleteModalOpen}
-	<ModalDelete title="Delete Fee Head" size="md" selectedName={`Title: ${selectedName}`} onDelete={handleDelete} onCancel={() => (isDeleteModalOpen = false)} />
+	<ModalDelete title="Delete Fee Group" size="md" selectedName={`Title: ${selectedName}`} onDelete={handleDelete} onCancel={() => (isDeleteModalOpen = false)} />
 {/if}
 
 <!-- prettier-ignore -->
 <style>
-    .search-container {display: flex; gap: 0.5rem; align-items: center}
-	.search-container input {padding: 0.5rem; min-width: 300px}
-	input[name="search"] {width: 300px}
+
 </style>

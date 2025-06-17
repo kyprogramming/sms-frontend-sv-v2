@@ -1426,5 +1426,98 @@ button {
     font-size: 0.875rem;
 }
 
-.active-status, .inactive-status{color: green; background-color:lightgray; padding:5px 10px; border-radius:8px; font-weight: 500;}
-.inactive-status{color: red;}
+.active-status,
+.inactive-status {
+    display: inline-block;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+    border: 1px solid transparent;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.active-status {
+    color: #28a745;
+    border-color: rgba(40, 167, 69, 0.3);
+    box-shadow: 0 0 4px rgba(40, 167, 69, 0.3);
+    /* Reduced blur radius */
+}
+
+.inactive-status {
+    color: #dc3545;
+    border-color: rgba(220, 53, 69, 0.3);
+    box-shadow: 0 0 4px rgba(220, 53, 69, 0.3);
+    /* Reduced blur radius */
+}
+
+
+
+
+/* Checkbox Active CSS */
+.checkbox-container {
+    display: inline-flex;
+    width: auto !important;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.checkbox-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.checkbox-custom {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+/* Green blur border effect when checked */
+.checkbox-input:checked+.checkbox-custom {
+    box-shadow: 0 0 0 2px rgba(0, 189, 35, 0.3);
+    border-color: #00bd23;
+    animation: pulse 0.5s ease;
+}
+
+/* Checkmark */
+.checkbox-input:checked+.checkbox-custom::after {
+    content: '✓';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: #00bd23;
+    font-size: 14px;
+}
+
+/* Pulse animation */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 189, 35, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 6px rgba(0, 189, 35, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 189, 35, 0);
+    }
+}
+
+.checkbox-text {
+    pointer-events: none;
+    user-select: none;
+}
+
+/* SEARCH CONTAINER FOR LIST PAGE */
+.search-container {display: flex; align-items: center; gap: 8px}
+.search-container input[name='search'] {padding: 6px 10px; font-size: 14px; flex: 1; width: 300px}

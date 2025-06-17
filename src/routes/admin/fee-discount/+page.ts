@@ -11,7 +11,7 @@ export const load: PageLoad = async ({ fetch }) => {
 			page: '1',
 			limit: DEFAULT_PAGE_LIMIT,
 		});
-		const res = await fetch(`${API_BASE_URL}/fee-group?${params.toString()}`, {
+		const res = await fetch(`${API_BASE_URL}/fee-discount?${params.toString()}`, {
 			method: 'GET',
 			headers: { 'Content-Type': 'application/json' },
 			credentials: 'include',
@@ -19,7 +19,7 @@ export const load: PageLoad = async ({ fetch }) => {
 
 		if (!res.ok) {
 			const message = await res.text();
-			throw error(res.status, message || 'Failed to fetch fee groups');
+			throw error(res.status, message || 'Failed to fetch fee discounts');
 		}
 
 		const data = await res.json();

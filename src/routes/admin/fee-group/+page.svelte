@@ -1,13 +1,13 @@
 <script lang="ts">
 	import Breadcrumb from '$lib/components/common/Breadcrumb.svelte';
-	import FeeHeadList from './FeeHeadList.svelte';
+	import FeeGroupList from './FeeGroupList.svelte';
 
 	let { data } = $props();
 	let response: any = $state(data.data);
 
-	const breadcrumbItems = [{ label: 'Dashboard', href: '/admin/dashboard' }, { label: 'Fee Management' }, { label: 'Fee Heads' }];
+	const breadcrumbItems = [{ label: 'Dashboard', href: '/admin/dashboard' }, { label: 'Fee Management' }, { label: 'Fee Groups' }];
 </script>
 
-<Breadcrumb title="Fee Head Management" items={breadcrumbItems} />
+<Breadcrumb title="Fee Group List" items={breadcrumbItems} />
 
-<FeeHeadList {response} />
+<FeeGroupList {response} />

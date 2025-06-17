@@ -9,7 +9,7 @@
 	import LoaderIcon from '$lib/components/common/LoaderIcon.svelte';
 	import { createAcademicYear, updateAcademicYear } from '$lib/services/academic-year';
 
-	import { academicYearFormSchema, type AcademicYearFormDataType } from '$lib/utils/schemas';
+	import { academicYearFormSchema, type AcademicYearPayload } from '$lib/utils/schemas';
 	import { formErrors } from '$lib/stores/formStore';
 	import { onMount } from 'svelte';
 	import { isEqual } from '$lib/utils/utils';
@@ -18,12 +18,12 @@
 
 	let { onRefreshPage, academicYearData = null, action } = $props();
 
-	export function initializeAcademicYearFormData(): AcademicYearFormDataType {
+	export function initializeAcademicYearFormData(): AcademicYearPayload {
 		return { name: '', startDate: '', endDate: '' };
 	}
 	// Reactive form state
-	let formData: AcademicYearFormDataType = $state(initializeAcademicYearFormData());
-	let touched: Partial<Record<keyof AcademicYearFormDataType, boolean>> = $state({});
+	let formData: AcademicYearPayload = $state(initializeAcademicYearFormData());
+	let touched: Partial<Record<keyof AcademicYearPayload, boolean>> = $state({});
 	let formSubmitted: boolean = $state(false);
 
 	onMount(() => {
@@ -59,18 +59,18 @@
 	}
 
 	// Handle field changes
-	function handleChange<K extends keyof AcademicYearFormDataType>(field: K, value: AcademicYearFormDataType[K]) {
+	function handleChange<K extends keyof AcademicYearPayload>(field: K, value: AcademicYearPayload[K]) {
 		formData[field] = value;
 		touched = { ...touched, [field]: true };
 		validateForm(academicYearFormSchema, formData);
 	}
 
 	// Update blur handler
-	function handleBlur(field: keyof AcademicYearFormDataType) {
+	function handleBlur(field: keyof AcademicYearPayload) {
 		touched = { ...touched, [field]: true };
 		validateForm(academicYearFormSchema, formData);
 	}
-	function handleDatePickerBlur(field: keyof AcademicYearFormDataType, isOpen: boolean) {
+	function handleDatePickerBlur(field: keyof AcademicYearPayload, isOpen: boolean) {
 		// Only validate if the date picker isn't open
 		setTimeout(() => {
 			if (!isOpen) {

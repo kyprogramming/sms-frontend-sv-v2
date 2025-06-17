@@ -47,14 +47,6 @@
 				return value ? '<span class=active>Active</span>' : '<span class=inactive>Inactive</span>';
 			},
 		},
-		// {
-		// 	key: "createdAt",
-		// 	label: "Created At",
-		// 	width: "auto",
-		// 	sortable: true,
-		// 	format: formatDate,
-		// 	align: "center",
-		// },
 	];
 
 	const actions = {
@@ -221,10 +213,3 @@
 		}}
 	/>
 {/if}
-
-<!-- prettier-ignore -->
-<style>
-    .search-container {display: flex; align-items: center; gap: 8px}
-	.search-container input {padding: 6px 10px; font-size: 14px; flex: 1}
-	input[name='search'] {width: 300px}
-</style>

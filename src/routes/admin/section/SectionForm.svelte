@@ -5,7 +5,7 @@
 	import { closeModal } from '$lib/stores/modalStore';
 	import { createSection, updateSection } from '$lib/services/section';
 	import { BrushCleaning, Save } from '@lucide/svelte';
-	import { sectionFormSchema, type SectionFormDataType } from '$lib/utils/schemas';
+	import { sectionFormSchema, type SectionFormPayload } from '$lib/utils/schemas';
 	import { formErrors } from '$lib/stores/formStore';
 	import LoaderIcon from '$lib/components/common/LoaderIcon.svelte';
 	import { onMount } from 'svelte';
@@ -15,8 +15,8 @@
 	let { onRefreshPage, sectionData = null, action } = $props();
 
 	// Reactive form state
-	let formData: SectionFormDataType = $state({ name: '' });
-	let touched: Partial<Record<keyof SectionFormDataType, boolean>> = $state({});
+	let formData: SectionFormPayload = $state({ name: '' });
+	let touched: Partial<Record<keyof SectionFormPayload, boolean>> = $state({});
 	let formSubmitted: boolean = $state(false);
 
 	onMount(() => {
@@ -41,7 +41,7 @@
 	}
 
 	// Field change handler
-	function handleChange(field: keyof SectionFormDataType, value: string): void {
+	function handleChange(field: keyof SectionFormPayload, value: string): void {
 		formData[field] = value;
 		touched = { ...touched, [field]: true };
 		validateForm(sectionFormSchema, formData);

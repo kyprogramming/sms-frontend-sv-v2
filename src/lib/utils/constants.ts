@@ -126,7 +126,8 @@ export const MENU_GROUPS = [
 		icon: 'IndianRupee',
 		items: [
 			{ title: 'Fees Category', link: '/admin/fee-category' },
-			{ title: 'Fees Head', link: '/admin/fee-group' },
+			{ title: 'Fees Group', link: '/admin/fee-group' },
+			{ title: 'Fees Discount', link: '/admin/fee-discount' },
 			// { title: 'Collect Fees', link: '/studentfee' },
 			// { title: "Offline Bank Payments", link: "/admin/offlinepayment" },
 			// { title: "Search Fees Payment", link: "/studentfee/searchpayment" },

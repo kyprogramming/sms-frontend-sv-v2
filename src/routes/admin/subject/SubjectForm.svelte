@@ -8,7 +8,7 @@
 	import { BrushCleaning, Save } from '@lucide/svelte';
 	import LoaderIcon from '$lib/components/common/LoaderIcon.svelte';
 
-	import { subjectFormSchema, type SubjectFormDataType } from '$lib/utils/schemas';
+	import { subjectFormSchema, type SubjectFormPayload } from '$lib/utils/schemas';
 	import { formErrors } from '$lib/stores/formStore';
 	import { onMount } from 'svelte';
 	import { isEqual } from '$lib/utils/utils';
@@ -17,12 +17,12 @@
 
 	let { onRefreshPage, subjectData = null, action } = $props();
 
-	export function initializeSubjectFormData(): SubjectFormDataType {
+	export function initializeSubjectFormData(): SubjectFormPayload {
 		return { name: '', code: '', type: '' };
 	}
 	// Reactive form state
-	let formData: SubjectFormDataType = $state(initializeSubjectFormData());
-	let touched: Partial<Record<keyof SubjectFormDataType, boolean>> = $state({});
+	let formData: SubjectFormPayload = $state(initializeSubjectFormData());
+	let touched: Partial<Record<keyof SubjectFormPayload, boolean>> = $state({});
 	let formSubmitted: boolean = $state(false);
 
 	onMount(() => {
@@ -49,7 +49,7 @@
 	}
 
 	// Handle field changes
-	function handleChange(field: keyof SubjectFormDataType, value: string): void {
+	function handleChange(field: keyof SubjectFormPayload, value: string): void {
 		formData[field] = value;
 		touched = { ...touched, [field]: true };
 		validateForm(subjectFormSchema, formData);
