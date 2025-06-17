@@ -3,7 +3,7 @@
 	import { formErrors } from '$lib/stores/formStore';
 	import { validateForm } from '$lib/utils/validate';
 	import { showSnackbar } from '$lib/components/snackbar/store';
-	import { createFeeHead, updateFeeHead } from '$lib/services/fee-head';
+	import { createFeeHead, updateFeeHead } from '$lib/services/fee-group';
 	import { onMount } from 'svelte';
 	import { isEqual } from '$lib/utils/utils';
 	import { MESSAGES } from '$lib/utils/messages';
@@ -113,8 +113,7 @@
 				// Handle both integer and decimal inputs
 				handleChange('amount', value === '' ? 0 : parseFloat(value));
 			}}
-			onblur={() => handleChange('amount', formData.amount)}
-		/>
+			onblur={() => handleChange('amount', formData.amount)} />
 		{#if $formErrors.amount && (touched.amount || formSubmitted)}
 			<p class="error-text">{$formErrors.amount}</p>
 		{/if}

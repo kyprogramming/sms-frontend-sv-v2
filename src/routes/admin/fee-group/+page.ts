@@ -11,7 +11,7 @@ export const load: PageLoad = async ({ fetch }) => {
 			page: '1',
 			limit: DEFAULT_PAGE_LIMIT,
 		});
-		const res = await fetch(`${API_BASE_URL}/fee-head?${params.toString()}`, {
+		const res = await fetch(`${API_BASE_URL}/fee-group?${params.toString()}`, {
 			method: 'GET',
 			headers: { 'Content-Type': 'application/json' },
 			credentials: 'include',

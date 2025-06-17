@@ -7,7 +7,7 @@
 	import { Pencil, Eye, Trash2, Plus, Search, RefreshCw } from '@lucide/svelte';
 	import type { ColumnConfig } from '$lib/interfaces/table.interface';
 	import { showSnackbar } from '$lib/components/snackbar/store';
-	import { deleteFeeHeadById, fetchFeeHeadById, fetchFeeHeads } from '$lib/services/fee-head';
+	import { deleteFeeHeadById, fetchFeeHeadById, fetchFeeHeads } from '$lib/services/fee-group';
 	import { currentPage, rowsPerPage, totalItems, totalPages } from '$lib/stores/paginationStore';
 	import DataTable from '$lib/components/common/DataTable.svelte';
 	import Modal from '$lib/components/common/Modal.svelte';
@@ -177,8 +177,7 @@
 		}}
 		onCancel={() => {
 			isModalOpen = false;
-		}}
-	>
+		}}>
 		<FeeHeadForm onRefreshPage={refreshAction} {feeHeadData} action={isUpdate ? 'update' : 'create'} />
 	</Modal>
 {/if}

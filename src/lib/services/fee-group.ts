@@ -10,7 +10,7 @@ export interface FeeHeadPayload {
 }
 
 export async function createFeeHead(data: FeeHeadPayload) {
-	const res = await fetchWrapper(`${API_BASE_URL}/fee-head`, {
+	const res = await fetchWrapper(`${API_BASE_URL}/fee-group`, {
 		method: 'POST',
 		headers: JSON_HEADERS,
 		body: JSON.stringify(data),
@@ -19,7 +19,7 @@ export async function createFeeHead(data: FeeHeadPayload) {
 }
 
 export async function fetchFeeHeads(params: URLSearchParams) {
-	const res = await fetchWrapper(`${API_BASE_URL}/fee-head?${params.toString()}`, {
+	const res = await fetchWrapper(`${API_BASE_URL}/fee-group?${params.toString()}`, {
 		method: 'GET',
 		headers: JSON_HEADERS,
 	});
@@ -27,7 +27,7 @@ export async function fetchFeeHeads(params: URLSearchParams) {
 }
 
 export async function fetchFeeHeadById(id: string) {
-	const res = await fetchWrapper(`${API_BASE_URL}/fee-head/${id}`, {
+	const res = await fetchWrapper(`${API_BASE_URL}/fee-group/${id}`, {
 		method: 'GET',
 		headers: JSON_HEADERS,
 	});
@@ -35,7 +35,7 @@ export async function fetchFeeHeadById(id: string) {
 }
 
 export async function updateFeeHead(id: string, data: FeeHeadPayload) {
-	const res = await fetchWrapper(`${API_BASE_URL}/fee-head/${id}`, {
+	const res = await fetchWrapper(`${API_BASE_URL}/fee-group/${id}`, {
 		method: 'PUT',
 		headers: JSON_HEADERS,
 		body: JSON.stringify(data),
@@ -44,7 +44,7 @@ export async function updateFeeHead(id: string, data: FeeHeadPayload) {
 }
 
 export async function deleteFeeHeadById(id: string) {
-	const res = await fetchWrapper(`${API_BASE_URL}/fee-head/${id}`, {
+	const res = await fetchWrapper(`${API_BASE_URL}/fee-group/${id}`, {
 		method: 'DELETE',
 		headers: JSON_HEADERS,
 	});
