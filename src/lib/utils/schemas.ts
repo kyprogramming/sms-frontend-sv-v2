@@ -50,13 +50,14 @@ export const academicYearFormSchema = z.object({
 export type AcademicYearPayload = z.infer<typeof academicYearFormSchema>;
 
 // Academic Year Form Schema
-export const feeCategoryFormSchema = z.object({
-	name: z.string().min(1, 'Fee category name is required').max(100, 'Fee category name must be less than 100 characters'),
+export const feeTypeFormSchema = z.object({
+	name: z.string().min(1, 'Fee Type name is required').max(100, 'Fee Type name must be less than 100 characters'),
+	code: z.string().optional(),
 	description: z.string().max(500, 'Description must be less than 500 characters').optional(),
 	active: z.boolean().optional().default(true),
 });
 
-export type FeeCategoryPayload = z.infer<typeof feeCategoryFormSchema>;
+export type FeeTypePayload = z.infer<typeof feeTypeFormSchema>;
 
 // Fee Group Form Schema
 // --------------------------------------------------------------------------------------------

@@ -18,7 +18,7 @@ export const load: LayoutServerLoad = async ({ locals, cookies }) => {
 		Cookie: `session_token=${authToken}`,
 	};
 
-	const [resClasses, resSections, resFeeCategories] = await Promise.all([fetch(`${url}/class/list`, { method: 'GET', headers }), fetch(`${url}/section/list`, { method: 'GET', headers }), fetch(`${url}/fee-category/list`, { method: 'GET', headers })]);
+	const [resClasses, resSections, resFeeTypes] = await Promise.all([fetch(`${url}/class/list`, { method: 'GET', headers }), fetch(`${url}/section/list`, { method: 'GET', headers }), fetch(`${url}/fee-type/list`, { method: 'GET', headers })]);
 
 	if (resClasses.status === 401 || resSections.status === 401) {
 		console.error('Unauthorized request');
@@ -26,13 +26,13 @@ export const load: LayoutServerLoad = async ({ locals, cookies }) => {
 
 	const classData = await resClasses.json();
 	const sectionData = await resSections.json();
-	const feeCategoryData = await resFeeCategories.json();
+	const feeTypeData = await resFeeTypes.json();
 
 	return {
 		user: locals.user,
 		role: locals.user.role,
 		classData: classData?.data || [],
 		sectionData: sectionData?.data || [],
-		feeCategoryData: feeCategoryData?.data || [],
+		feeTypeData: feeTypeData?.data || [],
 	};
 };

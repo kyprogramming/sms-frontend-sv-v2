@@ -7,13 +7,13 @@
 	import DataTable from '$lib/components/common/DataTable.svelte';
 	import ModalDelete from '$lib/components/common/ModalDelete.svelte';
 	import Modal from '$lib/components/common/Modal.svelte';
-	import FeeCategoryForm from './FeeCategoryForm.svelte';
+	import FeeTypeForm from './FeeTypeForm.svelte';
 
 	import { Pencil, Eye, Trash2, Plus } from '@lucide/svelte';
 
 	import type { ColumnConfig } from '$lib/interfaces/table.interface';
 	import { showSnackbar } from '$lib/components/snackbar/store';
-	import { deleteFeeCategoryById, fetchFeeCategories, fetchFeeCategoryById } from '$lib/services/fee-category.service';
+	import { deleteFeeTypeById, fetchFeeTypes, fetchFeeTypeById } from '$lib/services/fee-type.service';
 
 	// Props
 	const schoolName = env.PUBLIC_SCHOOL_NAME || 'Default School';
@@ -21,7 +21,7 @@
 
 	// States
 	let searchText = $state('');
-	let feeCategoryData: any | null = $state(null);
+	let feeTypeData: any | null = $state(null);
 
 	let isModalOpen = $state(false);
 	let isDeleteModalOpen = $state(false);
@@ -35,6 +35,7 @@
 		{ key: '_id', label: 'Id', visible: false },
 		{ key: 'serialNo', label: 'Sr #', width: '80px', sortable: true, align: 'center' },
 		{ key: 'name', label: 'Name', width: 'auto', sortable: true, align: 'center' },
+		{ key: 'code', label: 'Code', width: 'auto', sortable: true, align: 'center' },
 		{ key: 'description', label: 'Description', width: 'auto', sortable: true, align: 'center' },
 		{
 			key: 'createdAt',
@@ -102,7 +103,7 @@
 	}
 
 	function handleAdd() {
-		feeCategoryData = null;
+		feeTypeData = null;
 		isUpdate = false;
 		isModalOpen = true;
 	}
@@ -121,15 +122,15 @@
 
 	// Server actions
 	async function updateAction(id: string) {
-		feeCategoryData = null;
-		const res = await fetchFeeCategoryById(id);
+		feeTypeData = null;
+		const res = await fetchFeeTypeById(id);
 		const { data } = res;
-		feeCategoryData = data;
+		feeTypeData = data;
 		if (res.success) isModalOpen = true;
 	}
 
 	async function deleteAction(id: string) {
-		const json = await deleteFeeCategoryById(id);
+		const json = await deleteFeeTypeById(id);
 		if (json.success) {
 			showSnackbar({ message: `${json.message}`, type: 'success' });
 			isDeleteModalOpen = false;
@@ -147,7 +148,7 @@
 			page: String($currentPage),
 			limit: String($rowsPerPage),
 		});
-		const json = await fetchFeeCategories(params);
+		const json = await fetchFeeTypes(params);
 		response = { ...json };
 	}
 
@@ -157,7 +158,7 @@
 			page: String($currentPage),
 			limit: String($rowsPerPage),
 		});
-		const json = await fetchFeeCategories(params);
+		const json = await fetchFeeTypes(params);
 		isModalOpen = false;
 		response = { ...json };
 	}
@@ -193,7 +194,7 @@
 	<div class="action-buttons">
 		<button type="button" class="btn ripple" onclick={handleAdd}>
 			<Plus size={16} />
-			<span>Add Fee Category</span>
+			<span>Add Fee Type</span>
 		</button>
 	</div>
 </div>
@@ -202,7 +203,7 @@
 
 {#if isModalOpen}
 	<Modal
-		title={isUpdate ? 'Update Fee Category' : 'Add Fee Category'}
+		title={isUpdate ? 'Update Fee Type' : 'Add Fee Type'}
 		size="lg"
 		onClose={() => {
 			isModalOpen = false;
@@ -210,13 +211,13 @@
 		onCancel={() => {
 			isModalOpen = false;
 		}}>
-		<FeeCategoryForm onRefreshPage={refreshAction} {feeCategoryData} action={isUpdate ? 'update' : 'create'} />
+		<FeeTypeForm onRefreshPage={refreshAction} {feeTypeData} action={isUpdate ? 'update' : 'create'} />
 	</Modal>
 {/if}
 
 {#if isDeleteModalOpen}
 	<ModalDelete
-		title="Delete Fee Category"
+		title="Delete Fee Type"
 		size="md"
 		selectedName={`Name: ${selectedName}`}
 		onDelete={handleDelete}

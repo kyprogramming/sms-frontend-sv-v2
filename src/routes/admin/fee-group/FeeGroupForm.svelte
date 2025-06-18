@@ -13,7 +13,7 @@
 	import { page } from '$app/state';
 
 	let { onRefreshPage, feeGroupData = null, action } = $props();
-	let feeCategoryData = page.data?.feeCategoryData || [];
+	let feeTypeData = page.data?.feeTypeData || [];
 
 	export function initializeFeeGroupFormData(): FeeGroupPayload {
 		return { name: '', categoryId: '', amount: '', description: '', active: true };
@@ -88,8 +88,8 @@
 			<label for="categoryId">Category <span class="required">*</span></label>
 			<select id="categoryId" name="categoryId" class={`w-full ${$formErrors.categoryId && (touched.categoryId || formSubmitted) ? 'input-error' : ''}`} bind:value={formData.categoryId} onchange={(e) => handleChange('categoryId', (e.target as HTMLInputElement).value)} onblur={() => handleChange('categoryId', formData.categoryId)}>
 				<option value="" selected>Select Category</option>
-				{#each feeCategoryData as feeCategory}
-					<option value={feeCategory._id}>{feeCategory.name}</option>
+				{#each feeTypeData as feeType}
+					<option value={feeType._id}>{feeType.name}</option>
 				{/each}
 			</select>
 			{#if $formErrors.categoryId && (touched.categoryId || formSubmitted)}
