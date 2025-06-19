@@ -61,50 +61,49 @@ export type FeeTypePayload = z.infer<typeof feeTypeFormSchema>;
 
 // Fee Group Form Schema
 // --------------------------------------------------------------------------------------------
-export const feeGroupFormSchema = z
-	.object({
-		name: z.string().min(1, 'Name is required'),
-		categoryId: z.string().min(1, 'Category is required'),
-		amount: z.union([z.string().min(1, 'Amount is required'), z.number()]).transform((val) => {
-			if (typeof val === 'string') {
-				const num = parseFloat(val);
-				return isNaN(num) ? val : num;
-			}
-			return val;
-		}),
-		description: z.string().optional(),
-		active: z.boolean().optional().default(true),
-	})
-	.superRefine((data, ctx) => {
-		const val = data.amount;
-		if (val === '') {
-			ctx.addIssue({
-				code: z.ZodIssueCode.custom,
-				message: 'Amount is required',
-				path: ['amount'],
-			});
-			return;
-		}
-		if (typeof val === 'number') {
-			if (val <= 0) {
-				ctx.addIssue({
-					code: z.ZodIssueCode.custom,
-					message: 'Amount must be positive',
-					path: ['amount'],
-				});
-			} else {
-				if (val > 99999) {
-					ctx.addIssue({
-						code: z.ZodIssueCode.custom,
-						message: 'Amount cannot exceed 99,999',
-						path: ['amount'],
-					});
-				}
-			}
-		}
-	});
+export const feeGroupFormSchema = z.object({
+	name: z.string().min(1, 'Group name is required'),
+	code: z.string().optional(),
+	// categoryId: z.string().min(1, 'Category is required'),
+	// amount: z.union([z.string().min(1, 'Amount is required'), z.number()]).transform((val) => {
+	// 	if (typeof val === 'string') {
+	// 		const num = parseFloat(val);
+	// 		return isNaN(num) ? val : num;
+	// 	}
+	// 	return val;
+	// }),
+	description: z.string().optional(),
+	active: z.boolean().optional().default(true),
+});
+// .superRefine((data, ctx) => {
+// 	const val = data.amount;
+// 	if (val === '') {
+// 		ctx.addIssue({
+// 			code: z.ZodIssueCode.custom,
+// 			message: 'Amount is required',
+// 			path: ['amount'],
+// 		});
+// 		return;
+// 	}
+// 	if (typeof val === 'number') {
+// 		if (val <= 0) {
+// 			ctx.addIssue({
+// 				code: z.ZodIssueCode.custom,
+// 				message: 'Amount must be positive',
+// 				path: ['amount'],
+// 			});
+// 		} else {
+// 			if (val > 99999) {
+// 				ctx.addIssue({
+// 					code: z.ZodIssueCode.custom,
+// 					message: 'Amount cannot exceed 99,999',
+// 					path: ['amount'],
+// 				});
+// 			}
+// 		}
+// 	}
+// });
 export type FeeGroupPayload = z.infer<typeof feeGroupFormSchema>;
-
 
 // Fee Discount Schema
 // --------------------------------------------------------------------------------------------
@@ -188,3 +187,102 @@ export const constantFormSchema = z.object({
 });
 
 export type ConstantPayload = z.infer<typeof constantFormSchema>;
+
+// Fee Master Schema
+// --------------------------------------------------------------------------------------------
+export const FINE_TYPES = ['None', 'Fix', 'Percentage', 'Cumulative'] as const;
+
+export const feeMasterFormSchema = z
+	.object({
+		feeGroupId: z.string().min(1, 'Fee group is required'),
+		feeTypeId: z.string().min(1, 'Fee type is required'),
+		amount: z
+			.union([
+				z.string().min(1, 'Amount is required'), // Handles empty string case
+				z.number(),
+			])
+			.transform((val) => {
+				// Convert string to number if possible
+				if (typeof val === 'string') {
+					const num = parseFloat(val);
+					return isNaN(num) ? val : num;
+				}
+				return val;
+			}),
+		dueDate: z
+			.string()
+			.min(1, 'Due date is required'),
+			// .refine((val) => !isNaN(Date.parse(val)), {
+			// 	message: 'Invalid date format',
+			// }),
+		fineType: z.enum(FINE_TYPES).default('None'),
+		fineValue: z.number().min(0).optional(),
+		perDay: z.boolean().optional().default(false),
+		active: z.boolean().optional().default(true),
+	})
+	.superRefine((data, ctx) => {
+		// Conditional validation for fineValue
+		if (data.fineType !== 'None' && !data.fineValue) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: 'Fine value is required when fine type is selected',
+				path: ['fineValue'],
+			});
+		}
+
+		// Validate fineValue based on type
+		if (data.fineType === 'Percentage' && data.fineValue && data.fineValue > 100) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: 'Percentage cannot exceed 100%',
+				path: ['fineValue'],
+			});
+		}
+
+		// Validate perDay only applies to Fix/Percentage
+		if (data.perDay && !['Fix', 'Percentage'].includes(data.fineType)) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: 'Per day only applies to Fixed or Percentage fines',
+				path: ['perDay'],
+			});
+		}
+	});
+
+export type FeeMasterPayload = z.infer<typeof feeMasterFormSchema>;
+
+
+// Fee Assignment Schema
+// --------------------------------------------------------------------------------------------
+export const createFeeAssignmentSchema = z.object({
+	studentId: z.string().min(1, 'Student is required'),
+	feeMasterId: z.string().min(1, 'Fee master is required'),
+	amount: z
+		.union([
+			z.string().min(1, 'Amount is required'), // Handles empty string case
+			z.number(),
+		])
+		.transform((val) => {
+			// Convert string to number if possible
+			if (typeof val === 'string') {
+				const num = parseFloat(val);
+				return isNaN(num) ? val : num;
+			}
+			return val;
+		}),
+	isPaid: z.boolean().optional().default(false),
+	dueDate: z
+		.string()
+		.min(1, 'Due date is required')
+		.refine((val) => !isNaN(Date.parse(val)), {
+			message: 'Invalid date format',
+		}),
+	paidDate: z
+		.string()
+		.transform((val) => (val === '' ? '' : new Date(val)))
+		.optional(),
+	fineApplied: z.number().min(0).optional().default(0),
+	academicYear: z.string().min(1, 'Academic year is required'),
+});
+
+export type FeeAssignmentPayload = z.infer<typeof createFeeAssignmentSchema>;

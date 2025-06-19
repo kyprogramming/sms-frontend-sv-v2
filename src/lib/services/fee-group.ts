@@ -1,13 +1,8 @@
 import { API_BASE_URL } from '$lib/utils/env.config';
 import { fetchWrapper } from '$lib/utils/fetchWrapper';
+import type { FeeGroupPayload } from '$lib/utils/schemas';
 import { handleResponse, JSON_HEADERS } from '$lib/utils/utils';
 
-export interface FeeGroupPayload {
-	name: string;
-	categoryId: string;
-	amount: number | string;
-	description?: string;
-}
 
 export async function createFeeGroup(data: FeeGroupPayload) {
 	const res = await fetchWrapper(`${API_BASE_URL}/fee-group`, {

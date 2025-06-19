@@ -1,34 +1,42 @@
 <script lang="ts">
 	import { env } from '$env/dynamic/public';
-	import { formatDate } from '$lib/utils/formatDate';
 	import ModalDelete from '$lib/components/common/ModalDelete.svelte';
-	import FeeDiscountForm from './FeeDiscountForm.svelte';
 	import { Pencil, Eye, Trash2, Plus, Search, RefreshCw } from '@lucide/svelte';
 	import type { ColumnConfig } from '$lib/interfaces/table.interface';
 	import { showSnackbar } from '$lib/components/snackbar/store';
-	import { deleteFeeDiscountById, fetchFeeDiscountById, fetchFeeDiscounts } from '$lib/services/fee-discount';
+	import { deleteFeeMasterById, fetchFeeMasterById, fetchFeeMasters } from '$lib/services/fee-master';
 	import { currentPage, rowsPerPage, totalItems, totalPages } from '$lib/stores/paginationStore';
 	import DataTable from '$lib/components/common/DataTable.svelte';
 	import Modal from '$lib/components/common/Modal.svelte';
+	import FeeMasterForm from './FeeMasterForm.svelte';
+	import { page } from '$app/state';
+	import ToggleSwitch from '$lib/components/common/ToggleSwitch.svelte';
 
 	let { response } = $props();
+	// console.log("response", response);
+
 	let searchText = $state('');
-	let feeDiscountData: any | null = $state(null);
+	let feeMasterData: any | null = $state(null);
 	let isModalOpen = $state(false);
 	let isDeleteModalOpen = $state(false);
 	let isUpdate = $state(false);
 	let selectedId = $state('');
 	let selectedName = $state('');
+	let selectedFeeGroup = $state('');
+	let selectedFeeType = $state('');
 
+	let feeGroups = page.data?.feeGroups?.data || [];
+	let feeTypes = page.data?.feeTypes?.data || [];
+	// let feeMasters = page.data?.feeMasters || [];
+	// console.log(feeMasters, feeGroups, feeTypes);
 	const columns: ColumnConfig[] = [
 		{ key: '_id', label: 'ID', visible: false },
-		{ key: 'serialNo', label: 'Sr #', width: '80px', sortable: true, align: 'center' },
-		{ key: 'name', label: 'Name', width: 'auto', sortable: true, align: 'center' },
-		{ key: 'discountType', label: 'Type', width: 'auto', sortable: true, align: 'center', format: (val) => val.charAt(0).toUpperCase() + val.slice(1) },
-		{ key: 'value', label: 'Value', width: 'auto', sortable: true, align: 'center'},
-		{ key: 'applicableTo', label: 'Applicable To', width: 'auto', sortable: true, align: 'center', format: (val) => val.charAt(0).toUpperCase() + val.slice(1) },
-        { key: 'expiryDate', label: 'Expiry Date', width: 'auto', sortable: true, align: 'center', format: formatDate },
-        { key: 'createdAt', label: 'Created', width: 'auto', sortable: true, align: 'center', format: formatDate },
+		{ key: 'serialNo', label: 'Sr #', width: '80px', sortable: true },
+		{ key: 'feeGroupId.name', label: 'Fee Group', sortable: true },
+		{ key: 'feeTypeId.name', label: 'Fee Type', sortable: true },
+		{ key: 'amount', label: 'Amount', format: (val) => `₹ ${val.toFixed(2)}`, sortable: true },
+		{ key: 'dueDate', label: 'Due Date', format: (val) => new Date(val).toLocaleDateString(), sortable: true },
+		{ key: 'fineType', label: 'Fine Type', sortable: true },
 		{
 			key: 'active',
 			label: 'Status',
@@ -39,7 +47,6 @@
 				return value ? '<span class=active-status>Active</span>' : '<span class=inactive-status>Inactive</span>';
 			},
 		},
-		
 	];
 
 	const actions = {
@@ -66,9 +73,9 @@
 				icon: Trash2,
 				class: 'delete',
 				show: true,
-				action: (item: { _id: string; name: string }) => {
+				action: (item: { _id: string }) => {
 					selectedId = item._id;
-					selectedName = item.name;
+					selectedName = selectedId;
 					isDeleteModalOpen = true;
 				},
 			},
@@ -87,7 +94,7 @@
 	}
 
 	function handleAdd() {
-		feeDiscountData = null;
+		feeMasterData = null;
 		isUpdate = false;
 		isModalOpen = true;
 	}
@@ -97,14 +104,14 @@
 	}
 
 	async function updateAction(id: string) {
-		feeDiscountData = null;
-		const res = await fetchFeeDiscountById(id);
-		feeDiscountData = res.data;
+		feeMasterData = null;
+		const res = await fetchFeeMasterById(id);
+		feeMasterData = res.data;
 		isModalOpen = true;
 	}
 
 	async function deleteAction(id: string) {
-		const json = await deleteFeeDiscountById(id);
+		const json = await deleteFeeMasterById(id);
 		if (json.success) {
 			showSnackbar({ message: json.message, type: 'success' });
 			isDeleteModalOpen = false;
@@ -116,11 +123,13 @@
 
 	async function searchAction() {
 		const params = new URLSearchParams({
+			feeGroupId: selectedFeeGroup,
+			feeTypeId: selectedFeeType,
 			search: searchText,
 			page: String($currentPage),
 			limit: String($rowsPerPage),
 		});
-		const json = await fetchFeeDiscounts(params);
+		const json = await fetchFeeMasters(params);
 		response = { ...json };
 	}
 
@@ -130,8 +139,9 @@
 			page: String($currentPage),
 			limit: String($rowsPerPage),
 		});
-		const json = await fetchFeeDiscounts(params);
+		const json = await fetchFeeMasters(params);
 		isModalOpen = false;
+		selectedName = selectedFeeGroup = selectedFeeType = '';
 		response = { ...json };
 	}
 
@@ -145,12 +155,26 @@
 </script>
 
 <svelte:head>
-	<title>{env.PUBLIC_SCHOOL_NAME} - Fee Discount</title>
+	<title>{env.PUBLIC_SCHOOL_NAME} - Fee Master</title>
 </svelte:head>
 
 <div class="class-container">
 	<div class="search-container">
-		<input name="search" type="text" placeholder="Search fee discounts..." bind:value={searchText} onkeydown={(e) => e.key === 'Enter' && handleSearch()} />
+		<select id="role" style="width:200px;" bind:value={selectedFeeGroup} onchange={(e) => (selectedFeeGroup = (e.target as HTMLSelectElement).value || '')}>
+			<option value="" selected>Select fee group</option>
+			{#each feeGroups as group}
+				<option value={group._id}>{group.name}</option>
+			{/each}
+		</select>
+
+		<select id="role" style="width:200px;" bind:value={selectedFeeType} onchange={(e) => (selectedFeeType = (e.target as HTMLSelectElement).value || '')}>
+			<option value="" selected>Select fee type</option>
+			{#each feeTypes as type}
+				<option value={type._id}>{type.name}</option>
+			{/each}
+		</select>
+
+		<input name="search" type="text" placeholder="Search fee masters..." bind:value={searchText} onkeydown={(e) => e.key === 'Enter' && handleSearch()} />
 		<button type="button" class="btn ripple" onclick={handleSearch}>
 			<Search />
 			<span>Search</span>
@@ -163,16 +187,18 @@
 	<div class="action-buttons">
 		<button type="button" class="btn ripple" onclick={handleAdd}>
 			<Plus size={16} />
-			<span>Add Discount</span>
+			<span>Add Master</span>
 		</button>
 	</div>
 </div>
 
 <DataTable {response} {columns} {actions} onPaginationChange={handlePaginationChange} onPageLimitChange={handlePageLimitChange} />
 
+
+
 {#if isModalOpen}
 	<Modal
-		title={isUpdate ? 'Update Fee Discount' : 'Add Fee Discount'}
+		title={isUpdate ? 'Update Fee Master' : 'Add Fee Master'}
 		size="lg"
 		onClose={() => {
 			isModalOpen = false;
@@ -180,16 +206,12 @@
 		onCancel={() => {
 			isModalOpen = false;
 		}}>
-		<FeeDiscountForm onRefreshPage={refreshAction} {feeDiscountData} action={isUpdate ? 'update' : 'create'} />
+		<FeeMasterForm onRefreshPage={refreshAction} {feeMasterData} action={isUpdate ? 'update' : 'create'} />
 	</Modal>
 {/if}
 
 {#if isDeleteModalOpen}
-	<ModalDelete title="Delete Fee Discount" size="md" selectedName={`Name: ${selectedName}`} onDelete={handleDelete} onCancel={() => (isDeleteModalOpen = false)} />
+	<ModalDelete title="Delete Fee Master" size="md" selectedName={`Name: ${selectedName}`} onDelete={handleDelete} onCancel={() => (isDeleteModalOpen = false)} />
 {/if}
 
-<!-- <style>
-    .search-container {display: flex; align-items: center; gap: 8px}
-	.search-container input {padding: 6px 10px; font-size: 14px; flex: 1}
-	input[name='search'] {width: 300px}
-</style> -->
+<!-- Add modal for create/edit as needed -->

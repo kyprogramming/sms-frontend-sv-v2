@@ -12,6 +12,7 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "npx prettier --write .",
 		"format:css": "node format-css.mjs",
+		"format:css-only": "node format-css-only.mjs",
 		"format-all": "npx prettier --write . && npm run format:css"
 	},
 	"devDependencies": {

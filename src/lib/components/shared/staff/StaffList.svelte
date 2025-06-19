@@ -147,7 +147,14 @@
 
 	async function searchAction() {
 		// if (selectedRole == "" && selectedDepartment == "" && searchText === "") return;
-		const params = new URLSearchParams({ role: selectedRole, department: selectedDepartment, designation: selectedDesignation, search: searchText, page: String($currentPage), limit: String($rowsPerPage) });
+		const params = new URLSearchParams({
+			role: selectedRole,
+			department: selectedDepartment,
+			designation: selectedDesignation,
+			search: searchText,
+			page: String($currentPage),
+			limit: String($rowsPerPage),
+		});
 		const json = await fetchStaffList(params);
 		response = { ...json };
 		formattedStaff = formattedStaffs(response);
@@ -155,7 +162,14 @@
 
 	async function refreshAction() {
 		selectedRole = selectedDepartment = selectedDesignation = searchText = '';
-		const params = new URLSearchParams({ role: selectedRole, department: selectedDepartment, designation: selectedDesignation, search: searchText, page: String($currentPage), limit: String($rowsPerPage) });
+		const params = new URLSearchParams({
+			role: selectedRole,
+			department: selectedDepartment,
+			designation: selectedDesignation,
+			search: searchText,
+			page: String($currentPage),
+			limit: String($rowsPerPage),
+		});
 		const json = await fetchStaffList(params);
 		response = { ...json };
 		formattedStaff = formattedStaffs(response);
@@ -219,8 +233,7 @@
 				if (e.key === 'Enter') {
 					handleSearch();
 				}
-			}}
-		/>
+			}} />
 
 		<button type="button" class="btn ripple" onclick={handleSearch}>
 			<Search />
@@ -253,8 +266,7 @@
 		onDelete={handleDelete}
 		onCancel={() => {
 			isDeleteModalOpen = false;
-		}}
-	/>
+		}} />
 {/if}
 
 <!-- prettier-ignore -->

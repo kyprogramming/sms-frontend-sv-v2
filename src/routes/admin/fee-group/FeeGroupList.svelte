@@ -25,19 +25,20 @@
 		{ key: '_id', label: 'ID', visible: false },
 		{ key: 'serialNo', label: 'Sr #', width: '80px', sortable: true, align: 'center' },
 		{ key: 'name', label: 'Name', width: 'auto', sortable: true, align: 'center' },
-		{ key: 'categoryId.name', label: 'Category Name', width: 'auto', sortable: true, align: 'center' },
-		{ key: 'amount', label: 'Amount', width: 'auto', sortable: true, align: 'center', format: (val) => `$${val.toFixed(2)}` },
+		{ key: 'code', label: 'Code', width: 'auto', sortable: true, align: 'center' },
+		// { key: 'categoryId.name', label: 'Category Name', width: 'auto', sortable: true, align: 'center' },
+		// { key: 'amount', label: 'Amount', width: 'auto', sortable: true, align: 'center', format: (val) => `$${val.toFixed(2)}` },
 		{
 			key: 'active',
 			label: 'Status',
-			width: 'auto',
+			width: '150px',
 			sortable: true,
 			align: 'center',
 			format: (value) => {
-				return value ? '<span class=active>Active</span>' : '<span class=inactive>Inactive</span>';
+				return value ? '<span class=active-status>Active</span>' : '<span class=inactive-status>Inactive</span>';
 			},
 		},
-		{ key: 'createdAt', label: 'Created', width: 'auto', sortable: true, align: 'center', format: formatDate },
+		// { key: 'createdAt', label: 'Created', width: 'auto', sortable: true, align: 'center', format: formatDate },
 	];
 
 	const actions = {

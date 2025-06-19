@@ -48,7 +48,7 @@
 		{
 			key: 'active',
 			label: 'Status',
-			width: '100px',
+			width: '150px',
 			sortable: true,
 			align: 'center',
 			format: (value) => {

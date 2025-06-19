@@ -18,7 +18,11 @@ export const load: LayoutServerLoad = async ({ locals, cookies }) => {
 		Cookie: `session_token=${authToken}`,
 	};
 
-	const [resClasses, resSections, resFeeTypes] = await Promise.all([fetch(`${url}/class/list`, { method: 'GET', headers }), fetch(`${url}/section/list`, { method: 'GET', headers }), fetch(`${url}/fee-type/list`, { method: 'GET', headers })]);
+    const [resClasses, resSections, resFeeTypes] =
+        await Promise.all([
+            fetch(`${url}/class/list`, { method: 'GET', headers }),
+            fetch(`${url}/section/list`, { method: 'GET', headers }),
+            fetch(`${url}/fee-type/list`, { method: 'GET', headers })]);
 
 	if (resClasses.status === 401 || resSections.status === 401) {
 		console.error('Unauthorized request');

@@ -14,4 +14,4 @@ node_modules
 src/app.css
 # Ignore files for PNPM, NPM
 package-lock.json
-
+src/*.css

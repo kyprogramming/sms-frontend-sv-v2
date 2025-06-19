@@ -16,7 +16,7 @@
 	let feeTypeData = page.data?.feeTypeData || [];
 
 	export function initializeFeeGroupFormData(): FeeGroupPayload {
-		return { name: '', categoryId: '', amount: '', description: '', active: true };
+		return { name: '', code: '', description: '', active: true };
 	}
 
 	let formData: FeeGroupPayload = $state(initializeFeeGroupFormData());
@@ -77,14 +77,18 @@
 
 <form onsubmit={onSubmit}>
 	<div class="grid-12">
-		<div class="col-12">
+		<div class="col-6">
 			<label for="name">Name <span class="required">*</span></label>
-			<input id="name" type="text" name="name" placeholder="Fee head name" class={`w-full ${$formErrors.name && (touched.name || formSubmitted) ? 'input-error' : ''}`} bind:value={formData.name} oninput={(e) => handleChange('name', (e.target as HTMLInputElement).value)} onblur={() => handleChange('name', formData.name)} />
+			<input id="name" type="text" name="name" placeholder="Fee group name" class={`w-full ${$formErrors.name && (touched.name || formSubmitted) ? 'input-error' : ''}`} bind:value={formData.name} oninput={(e) => handleChange('name', (e.target as HTMLInputElement).value)} onblur={() => handleChange('name', formData.name)} />
 			{#if $formErrors.name && (touched.name || formSubmitted)}
 				<p class="error-text">{$formErrors.name}</p>
 			{/if}
 		</div>
-		<div class="col-6">
+        <div class="col-6">
+			<label for="code">Code</label>
+			<input id="code" type="text" name="code" placeholder="Fee group code"  bind:value={formData.code} oninput={(e) => handleChange('code', (e.target as HTMLInputElement).value)} />
+		</div>
+		<!-- <div class="col-6">
 			<label for="categoryId">Category <span class="required">*</span></label>
 			<select id="categoryId" name="categoryId" class={`w-full ${$formErrors.categoryId && (touched.categoryId || formSubmitted) ? 'input-error' : ''}`} bind:value={formData.categoryId} onchange={(e) => handleChange('categoryId', (e.target as HTMLInputElement).value)} onblur={() => handleChange('categoryId', formData.categoryId)}>
 				<option value="" selected>Select Category</option>
@@ -95,8 +99,8 @@
 			{#if $formErrors.categoryId && (touched.categoryId || formSubmitted)}
 				<p class="error-text">{$formErrors.categoryId}</p>
 			{/if}
-		</div>
-		<div class="col-6">
+		</div> -->
+		<!-- <div class="col-6">
 			<label for="value">Amount <span class="required">*</span></label>
 			<input
 				id="amount"
@@ -116,7 +120,7 @@
 			{#if $formErrors.amount && (touched.amount || formSubmitted)}
 				<p class="error-text">{$formErrors.amount}</p>
 			{/if}
-		</div>
+		</div> -->
 		<div class="col-12">
 			<label for="description">Description</label>
 			<textarea id="description" name="description" class="w-full" placeholder="Optional description" bind:value={formData.description} oninput={(e) => handleChange('description', (e.target as HTMLInputElement).value)}></textarea>

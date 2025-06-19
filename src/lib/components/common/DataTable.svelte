@@ -83,7 +83,7 @@
 			<thead>
 				<tr>
 					{#each columns as column}
-						<th onclick={() => column.sortable && sortBy(column.key)} class:sortable={column.sortable} style={`width: ${column.width || 'auto'}; text-align: ${column.align || 'left'}; display: ${column.visible === false ? 'none' : 'table-cell'};`}>
+						<th onclick={() => column.sortable && sortBy(column.key)} class:sortable={column.sortable} style={`width: ${column.width || 'auto'}; text-align: ${column.align || 'center'}; display: ${column.visible === false ? 'none' : 'table-cell'};`}>
 							{column.label}
 							{#if column.sortable && sortColumn === column.key}
 								<span>{sortDirection === 1 ? '▲' : '▼'}</span>
@@ -99,7 +99,7 @@
 				{#each visibleData as item}
 					<tr>
 						{#each columns as column}
-							<td style={`width: ${column.width || 'auto'}; text-align: ${column.align || 'left'}; display: ${column?.visible === false ? 'none' : 'table-cell'};`}>
+							<td style={`width: ${column.width || 'auto'}; text-align: ${column.align || 'center'}; display: ${column?.visible === false ? 'none' : 'table-cell'};`}>
 								{#if column.format}
 									{@html column.format(getNestedValue(item, column.key))}
 								{:else}
