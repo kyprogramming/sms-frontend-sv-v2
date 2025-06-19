@@ -199,6 +199,25 @@ export const feeMasterFormSchema = z
 		amount: z
 			.union([
 				z.string().min(1, 'Amount is required'), // Handles empty string case
+				z.number().min(0, 'Amount is required'),
+			])
+			.transform((val) => {
+				// Convert string to number if possible
+				if (typeof val === 'string') {
+					const num = parseFloat(val);
+					return isNaN(num) ? val : num;
+				}
+				return val;
+			}),
+		dueDate: z.string().min(1, 'Due date is required'),
+		// .refine((val) => !isNaN(Date.parse(val)), {
+		// 	message: 'Invalid date format',
+		// }),
+		fineType: z.enum(FINE_TYPES).default('None'),
+		// fineValue: z.number().min(0).optional(),
+		fineValue: z
+			.union([
+				z.string().min(1, 'Fine value is required'), // Handles empty string case
 				z.number(),
 			])
 			.transform((val) => {
@@ -209,14 +228,6 @@ export const feeMasterFormSchema = z
 				}
 				return val;
 			}),
-		dueDate: z
-			.string()
-			.min(1, 'Due date is required'),
-			// .refine((val) => !isNaN(Date.parse(val)), {
-			// 	message: 'Invalid date format',
-			// }),
-		fineType: z.enum(FINE_TYPES).default('None'),
-		fineValue: z.number().min(0).optional(),
 		perDay: z.boolean().optional().default(false),
 		active: z.boolean().optional().default(true),
 	})
@@ -229,9 +240,8 @@ export const feeMasterFormSchema = z
 				path: ['fineValue'],
 			});
 		}
-
 		// Validate fineValue based on type
-		if (data.fineType === 'Percentage' && data.fineValue && data.fineValue > 100) {
+		if (data.fineType === 'Percentage' && data.fineValue !== '' && data.fineValue !== null && data.fineValue !== undefined && typeof data.fineValue !== 'string' && data.fineValue > 100) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
 				message: 'Percentage cannot exceed 100%',
@@ -240,13 +250,13 @@ export const feeMasterFormSchema = z
 		}
 
 		// Validate perDay only applies to Fix/Percentage
-		if (data.perDay && !['Fix', 'Percentage'].includes(data.fineType)) {
-			ctx.addIssue({
-				code: z.ZodIssueCode.custom,
-				message: 'Per day only applies to Fixed or Percentage fines',
-				path: ['perDay'],
-			});
-		}
+		// if (data.perDay && !['Fix', 'Percentage'].includes(data.fineType)) {
+		// 	ctx.addIssue({
+		// 		code: z.ZodIssueCode.custom,
+		// 		message: 'Per day only applies to Fixed or Percentage fines',
+		// 		path: ['perDay'],
+		// 	});
+		// }
 	});
 
 export type FeeMasterPayload = z.infer<typeof feeMasterFormSchema>;

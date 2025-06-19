@@ -26,7 +26,7 @@
 			amount: '',
 			dueDate: '',
 			fineType: 'None',
-			fineValue: undefined,
+			fineValue: '',
 			perDay: false,
 			active: true,
 		};
@@ -85,8 +85,9 @@
 	async function onSubmit(event: Event) {
 		event.preventDefault();
 		formSubmitted = true;
-		// console.log("formData:", formData);
 		const isValid = validateForm(feeMasterFormSchema, formData);
+		// console.log("isValid:", isValid);
+		// console.log("formData:", formData);
 		if (!isValid) return;
 
 		try {
@@ -210,30 +211,22 @@
 								id="fineValue"
 								type="number"
 								min="0"
-								step={formData.fineType === 'Percentage' ? '1' : '0.01'}
+								step={formData.fineType === 'Percentage' ? '0.01' : '0.01'}
+                                placeholder={'0.00'}
 								bind:value={formData.fineValue}
 								class={`w-full ${$formErrors.fineValue && (touched.fineValue || formSubmitted) ? 'input-error' : ''}`}
-								oninput={(e) => handleChange('fineValue', parseFloat((e.target as HTMLInputElement).value) || 0)} />
+								oninput={(e) => handleChange('fineValue', parseFloat((e.target as HTMLInputElement).value) || '')} />
 							{#if $formErrors.fineValue && (touched.fineValue || formSubmitted)}
 								<p class="error-text">{$formErrors.fineValue}</p>
 							{/if}
 						</div>
 					</div>
 					<div class="col-6">
-						<!-- Per Day Checkbox (Conditional) -->
+						<!-- Apply Per Day Switch (Conditional) -->
 						{#if formData.fineType === 'Fix' || formData.fineType === 'Percentage'}
-							
-								<label for="applyPerDay">Apply Per Day</label>
-								<!-- <label class="checkbox-label" style="margin-top:12px;">
-									<input type="checkbox" class="checkbox-input" bind:checked={formData.perDay} onchange={(e) => handleChange('perDay', (e.target as HTMLInputElement).checked)} />
-									<span class="checkbox-custom"></span>
-								</label> -->
-								<ToggleSwitch id="per-day" checked={true} onToggle={(state:boolean) => formData.perDay = state}/>
-                                    <!-- <Dropdown 
-                                    options={["Basic", "Premium", "VIP"]} 
-                                    bind:selectedOption={selectedPlan}
-                                  /> -->
-							
+							<label for="perDay">Apply Per Day</label>
+							<!-- <ToggleSwitch bind:checked={formData.perDay} onchange={(e) => handleChange('perDay', formData.perDay)}  required/> -->
+							<ToggleSwitch bind:checked={formData.perDay} />
 						{/if}
 					</div>
 				</div>

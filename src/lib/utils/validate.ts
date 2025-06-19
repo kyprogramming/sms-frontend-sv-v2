@@ -9,10 +9,11 @@ export function validateForm<T>(schema: ZodSchema<T>, data: T): boolean {
 	if (!result.success) {
 		const mapped = flattenErrors(result.error.format());
 		formErrors.set(mapped);
-		// Optional: log all field names with errors
+        // Optional: log all field names with errors
+        
 		// formErrors.subscribe(($formErrors) => {
 		// 	const errorKeys = Object.keys($formErrors);
-		// console.log("Fields with errors:", errorKeys);
+		// 	console.log('Fields with errors:', errorKeys);
 		// })();
 		return false;
 	}

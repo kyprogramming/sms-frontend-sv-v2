@@ -4,16 +4,30 @@
 		label?: string;
 		checked?: boolean;
 		required?: boolean;
-		onToggle?: (state: boolean) => void;
+		name?: string;
+		onchange?: (event: Event) => void;
 	}
 
-	let { id = '', label = '', checked = $bindable(false), required = false, onToggle = () => {} }: Props = $props();
+	let { id = '', label = '', checked = $bindable(false), required = false, name = '', onchange = (e: Event) => {} }: Props = $props();
 
-	function toggleSwitch(event: MouseEvent | KeyboardEvent) {
+	function handleToggle(event: MouseEvent | KeyboardEvent) {
 		event.preventDefault();
 		checked = !checked;
-		onToggle(checked);
+		// Create a new change event to mimic native checkbox behavior
+		const changeEvent = new Event('change', { bubbles: true });
+		if (onchange) {
+			onchange(changeEvent);
+		}
 	}
+
+	// Forward the native change event
+	// function handleInputChange(e: Event) {
+	// 	checked = (e.target as HTMLInputElement).checked;
+	// 	console.log('Checkbox changed:', checked);
+	// 	if (onchange) {
+	// 		onchange(e);
+	// 	}
+	// }
 </script>
 
 <div class="switch-container">
@@ -25,8 +39,8 @@
 		role="switch"
 		aria-label={label || 'Toggle switch'}
 		aria-checked={checked}
-		onclick={toggleSwitch}
-		onkeydown={(e) => e.key === ' ' && toggleSwitch(e)}>
+		onclick={handleToggle}
+		onkeydown={(e) => e.key === ' ' && handleToggle(e)}>
 		<span class="track"></span>
 		<span class="slider {checked ? 'on' : ''}">
 			<svg class="checkmark" viewBox="0 0 24 24" fill="none">
@@ -34,6 +48,7 @@
 			</svg>
 		</span>
 	</button>
+	<!-- <input type="checkbox" class="checkbox-input" {name} bind:checked {required} onchange={handleInputChange} aria-hidden="true" style="display: none;" /> -->
 </div>
 
 <style>
@@ -41,9 +56,9 @@
 		--parrot-green: #099f3e;
 		--parrot-green-dark: #30b360;
 		--parrot-green-light: rgba(15, 140, 59, 0.3);
-		--track-width: 4.25rem; /* Background length */
-		--slider-size: 2.25rem; /* Circle size */
-		--error-red: #ee8f8f;
+		--track-width: 4.25rem;
+		--slider-size: 2.25rem;
+		--error-red: #e53e3e;
 	}
 
 	.switch-container {
@@ -55,6 +70,8 @@
 			sans-serif;
 		margin-right: auto;
 		margin-top: 6px;
+		position: relative;
+		margin-right: auto;
 	}
 
 	.switch-label {
