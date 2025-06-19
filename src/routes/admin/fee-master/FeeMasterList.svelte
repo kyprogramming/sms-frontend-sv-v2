@@ -11,6 +11,7 @@
 	import FeeMasterForm from './FeeMasterForm.svelte';
 	import { page } from '$app/state';
 	import ToggleSwitch from '$lib/components/common/ToggleSwitch.svelte';
+	import Dropdown from '$lib/components/common/Dropdown.svelte';
 
 	let { response } = $props();
 	// console.log("response", response);
@@ -152,6 +153,21 @@
 	async function handlePageLimitChange() {
 		await refreshAction();
 	}
+
+	const options = [
+		{ value: 'daily', label: 'Daily' },
+		{ value: 'weekly', label: 'Weekly' },
+		{ value: 'monthly', label: 'Monthly', disabled: true },
+		{ value: 'yearly', label: 'Yearly' },
+	];
+
+	let selectedFrequency = 'weekly';
+
+	let selectedValue = 'opt1';
+
+	function handleChange(e: CustomEvent<{ value: string }>) {
+		selectedValue = e.detail.value;
+	}
 </script>
 
 <svelte:head>
@@ -193,7 +209,6 @@
 </div>
 
 <DataTable {response} {columns} {actions} onPaginationChange={handlePaginationChange} onPageLimitChange={handlePageLimitChange} />
-
 
 
 {#if isModalOpen}

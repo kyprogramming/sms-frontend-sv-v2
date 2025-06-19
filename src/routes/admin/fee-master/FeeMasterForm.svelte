@@ -14,6 +14,7 @@
 	import { feeMasterFormSchema, type FeeMasterPayload } from '$lib/utils/schemas';
 	import DatePicker2 from '$lib/components/common/DatePicker2.svelte';
 	import ToggleSwitch from '$lib/components/common/ToggleSwitch.svelte';
+	import Dropdown from '$lib/components/common/Dropdown.svelte';
 
 	let { onRefreshPage, feeMasterData = null, action } = $props();
 	let feeGroups = page.data?.feeGroups?.data || [];
@@ -113,8 +114,9 @@
 <form onsubmit={onSubmit}>
 	<div class="grid-12">
 		<!-- Fee Group Dropdown -->
-		<div class="col-6">
+		<div class="col-6" style="justify-content: flex-start;">
 			<label for="feeGroupId">Fee Group <span class="required">*</span></label>
+            <Dropdown items={feeGroups} selectedValue={formData.feeGroupId} />
 			<select
 				id="feeGroupId"
 				bind:value={formData.feeGroupId}
