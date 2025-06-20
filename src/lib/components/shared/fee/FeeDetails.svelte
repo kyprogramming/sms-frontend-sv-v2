@@ -1,233 +1,253 @@
 <script lang="ts">
-    type FeeType = {
-        id: string;
-        name: string;
-        amount: number;
-        dueDate: string;
-        selected: boolean;
-    };
+	import { page } from '$app/state';
+	import { slide } from 'svelte/transition';
 
-    type FeeGroup = {
-        id: string;
-        name: string;
-        selected: boolean;
-        expanded: boolean;
-        feeTypes: FeeType[];
-        price: number;
-    };
+	// Group the fee data
+	interface FeeType {
+		_id: string;
+		feeGroupId: {
+			_id: string;
+			name: string;
+		};
+		feeTypeId: {
+			_id: string;
+			name: string;
+		};
+		amount: number;
+		dueDate: string;
+		fineType: string;
+		selected: boolean;
+	}
 
-    let feeGroups = $state<FeeGroup[]>([
-        {
-            id: 'class1',
-            name: 'Class 1 General',
-            selected: false,
-            expanded: false,
-            price: 0,
-            feeTypes: [
-                { id: 'tuition', name: 'Tuition Fee', amount: 5000, dueDate: '2025-10-11', selected: true },
-                { id: 'exam', name: 'Exam Fee', amount: 250, dueDate: '2025-09-09', selected: true },
-                { id: 'library', name: 'Library Fee', amount: 300, dueDate: '2025-08-15', selected: false },
-                { id: 'sports', name: 'Sports Fee', amount: 500, dueDate: '2025-07-20', selected: true },
-            ],
-        },
-        {
-            id: 'class5',
-            name: 'Class 5 General',
-            selected: false,
-            expanded: false,
-            price: 0,
-            feeTypes: [
-                { id: 'tuition', name: 'Tuition Fee', amount: 6500, dueDate: '2025-10-11', selected: false },
-                { id: 'exam', name: 'Exam Fee', amount: 300, dueDate: '2025-09-09', selected: false },
-                { id: 'lab', name: 'Lab Fee', amount: 1200, dueDate: '2025-08-01', selected: false },
-            ],
-        },
-        {
-            id: 'class4',
-            name: 'Class 4 General',
-            selected: false,
-            expanded: false,
-            price: 0,
-            feeTypes: [
-                { id: 'tuition', name: 'Tuition Fee', amount: 6000, dueDate: '2025-10-11', selected: false },
-                { id: 'activity', name: 'Activity Fee', amount: 800, dueDate: '2025-09-01', selected: false },
-            ],
-        },
-    ]);
+	interface FeeGroup {
+		id: string;
+		groupName: string;
+		selected: boolean;
+		expanded: boolean;
+		fees: FeeType[];
+	}
 
+	// Define the structure of our fee groups object
+	type FeeGroups = Record<string, FeeGroup>;
 
-    // Reactive function to update group prices and selection status
-    function updateGroupCalculations() {
-        feeGroups = feeGroups.map((group) => {
-            const price = group.feeTypes.reduce((sum, fee) => (fee.selected ? sum + fee.amount : sum), 0);
-            // Changed this line to only unselect group if ALL fee types are unselected
-            const anySelected = group.feeTypes.length > 0 
-                ? group.feeTypes.some((fee) => fee.selected)
-                : group.selected;
-            
-            return {
-                ...group,
-                price,
-                selected: anySelected, // Group selected if any fee type is selected
-            };
-        });
-    }
+	// Initialize with the correct type
+	let feeGroups: FeeGroups = groupByFeeGroup(page.data.feeMasters?.data || []);
 
-    // Calculate total price reactively
-    let totalPrice = $derived(
-        feeGroups.reduce((sum, group) => (group.selected ? sum + group.price : sum), 0)
-    );
+	// Update the groupByFeeGroup function to return properly typed data
+	function groupByFeeGroup(data: any[]): FeeGroups {
+		return data.reduce((acc: FeeGroups, item: any) => {
+			const groupId = item.feeGroupId._id;
 
-    function toggleGroupExpand(groupId: string) {
-        feeGroups = feeGroups.map((group) =>
-            group.id === groupId ? { ...group, expanded: !group.expanded } : group
-        );
-    }
+			if (!acc[groupId]) {
+				acc[groupId] = {
+					id: groupId,
+					groupName: item.feeGroupId.name,
+					selected: false,
+					expanded: false,
+					fees: [],
+				};
+			}
 
-    function toggleGroupSelect(groupId: string) {
-        feeGroups = feeGroups.map((group) => {
-            if (group.id === groupId) {
-                const newSelected = !group.selected;
-                return {
-                    ...group,
-                    selected: newSelected,
-                    feeTypes: group.feeTypes.map((fee) => ({
-                        ...fee,
-                        selected: newSelected,
-                    })),
-                };
-            }
-            return group;
-        });
-        updateGroupCalculations();
-    }
+			acc[groupId].fees.push({
+				...item,
+				selected: false
+			});
+			return acc;
+		}, {} as FeeGroups);
+	}
 
-    function toggleFeeTypeSelect(groupId: string, feeTypeId: string) {
-        feeGroups = feeGroups.map((group) => {
-            if (group.id === groupId) {
-                const updatedFeeTypes = group.feeTypes.map((fee) =>
-                    fee.id === feeTypeId ? { ...fee, selected: !fee.selected } : fee
-                );
+	// Helper function to group fees by their group
+	// function groupByFeeGroup(data: any[]) {
+	// 	return data.reduce((acc, item) => {
+	// 		const groupId = item.feeGroupId._id;
 
-                return {
-                    ...group,
-                    feeTypes: updatedFeeTypes,
-                };
-            }
-            return group;
-        });
-        updateGroupCalculations();
-    }
+	// 		if (!acc[groupId]) {
+	// 			acc[groupId] = {
+	// 				id: groupId,
+	// 				groupName: item.feeGroupId.name,
+	// 				selected: false,
+	// 				expanded: false,
+	// 				fees: [],
+	// 			};
+	// 		}
 
-    // Initialize calculations
-    updateGroupCalculations();
+	// 		acc[groupId].fees.push({
+	// 			...item,
+	// 			selected: false // Add selected property to each fee
+	// 		});
+	// 		return acc;
+	// 	}, {} as Record<string, any>);
+	// }
 
-    function formatDate(dateString: string): string {
-        const options: Intl.DateTimeFormatOptions = {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-        };
-        return new Date(dateString).toLocaleDateString(undefined, options);
-    }
+	// Toggle group expansion
+	function toggleGroupExpand(groupId: string) {
+		feeGroups = {
+			...feeGroups,
+			[groupId]: {
+				...feeGroups[groupId],
+				expanded: !feeGroups[groupId].expanded
+			}
+		};
+	}
+
+	// Toggle group selection (and all its fees)
+	function toggleGroupSelect(groupId: string) {
+		const newSelected = !feeGroups[groupId].selected;
+		
+		feeGroups = {
+			...feeGroups,
+			[groupId]: {
+				...feeGroups[groupId],
+				selected: newSelected,
+				fees: feeGroups[groupId].fees.map(fee => ({
+					...fee,
+					selected: newSelected
+				}))
+			}
+		};
+	}
+
+	// Toggle individual fee selection
+	function toggleFeeSelect(groupId: string, feeId: string) {
+		const updatedFees = feeGroups[groupId].fees.map(fee => 
+			fee._id === feeId ? { ...fee, selected: !fee.selected } : fee
+		);
+		
+		const anySelected = updatedFees.some(fee => fee.selected);
+		
+		feeGroups = {
+			...feeGroups,
+			[groupId]: {
+				...feeGroups[groupId],
+				fees: updatedFees,
+				selected: anySelected
+			}
+		};
+	}
+
+	// Calculate total for a group
+	function calculateGroupTotal(group: any) {
+		return group.fees.reduce((total: number, fee: any) => 
+			fee.selected ? total + fee.amount : total, 0);
+	}
+
+	// Calculate overall total
+	function calculateTotalPrice() {
+		return Object.values(feeGroups).reduce((total: number, group: any) => 
+			group.selected ? total + calculateGroupTotal(group) : total, 0);
+	}
+
+	// Format date
+	function formatDate(dateString: string) {
+		const date = new Date(dateString);
+		return date.toLocaleDateString('en-US', { 
+			year: 'numeric', 
+			month: 'short', 
+			day: 'numeric' 
+		});
+	}
 </script>
+
 <div class="fee-container">
-	{#each feeGroups as group (group.id)}
+    
+	<div class="total-box">
+		<div class="total-label">Total Amount</div>
+		<div class="total-amount">{calculateTotalPrice().toFixed(2)}</div>
+	</div>
+
+	{#each Object.entries(feeGroups) as [id, group](id)}
 		<div class="fee-group {group.selected ? 'selected' : ''} {group.expanded ? 'expanded' : ''}">
-			<div class="fee-group-header" role="button" tabindex="0" onclick={() => toggleGroupExpand(group.id)} onkeydown={() => toggleGroupExpand(group.id)}>
-				<input
-					type="checkbox"
-					class="checkbox"
-					checked={group.selected}
-					onclick={(e) => {
-						e.stopPropagation();
-						toggleGroupSelect(group.id);
-					}}
-					onkeydown={(e) => {
-						if (e.key === 'Enter' || e.key === ' ') {
-							e.stopPropagation();
-							toggleGroupSelect(group.id);
-						}
-					}} />
-
-				<div class="fee-group-title">
-					{group.name}
-				</div>
-
-				<div class="fee-group-price">
-					{group.price.toFixed(2)}
-				</div>
-
+			<div
+				class="fee-group-header"
+				role="button"
+				tabindex="0"
+				on:click={() => toggleGroupExpand(id)}
+				on:keydown={(e) => e.key === 'Enter' && toggleGroupExpand(id)}>
 				<svg
 					class="expand-icon"
 					width="14"
 					height="14"
+					style="margin-right: 10px;"
 					viewBox="0 0 24 24"
 					fill="none"
 					stroke="currentColor">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
 				</svg>
+
+				<input
+					type="checkbox"
+					class="checkbox"
+					checked={group.selected}
+					on:click|stopPropagation={() => toggleGroupSelect(id)}
+					on:keydown={(e) => {
+						if (e.key === 'Enter' || e.key === ' ') {
+							e.stopPropagation();
+							toggleGroupSelect(id);
+						}
+					}} />
+
+				<div class="fee-group-title">
+					{group.groupName}
+				</div>
+
+				<div class="fee-group-price">
+					{calculateGroupTotal(group).toFixed(2)}
+				</div>
 			</div>
 
 			{#if group.expanded}
-				<table>
-					<thead>
-						<tr>
-							<th>Fee Type</th>
-							<th>Due Date</th>
-							<th class="amount-cell">Amount</th>
-						</tr>
-					</thead>
-					<tbody>
-						{#each group.feeTypes as fee (fee.id)}
+				<div transition:slide>
+					<table>
+						<thead>
 							<tr>
-								<td>
-									<div class="fee-type-name">
-										<input
-											type="checkbox"
-											class="checkbox"
-											checked={fee.selected}
-											onclick={(e: Event) => {
-												e.stopPropagation();
-												toggleFeeTypeSelect(group.id, fee.id);
-											}} />
-										{fee.name}
-									</div>
-								</td>
-								<td>
-									<div class="meta-icon">
-										<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-											<path
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												stroke-width="2"
-												d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-										</svg>
-										{formatDate(fee.dueDate)}
-									</div>
-								</td>
-								<td class="amount-cell">
-									{fee.amount.toFixed(2)}
-								</td>
+								<th>Fee Type</th>
+								<th>Due Date</th>
+								<th class="amount-cell">Amount</th>
 							</tr>
-						{/each}
-					</tbody>
-				</table>
+						</thead>
+						<tbody>
+							{#each group.fees as fee (fee._id)}
+								<tr class="{fee.selected ? 'selected' : ''}">
+									<td>
+										<div class="fee-type-name">
+											<!-- <input
+												type="checkbox"
+												class="checkbox"
+												checked={fee.selected}
+												on:click|stopPropagation={() => toggleFeeSelect(id, fee._id)} /> -->
+											{fee.feeTypeId.name}
+										</div>
+									</td>
+									<td>
+										<div class="meta-icon">
+											<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+											</svg>
+											{formatDate(fee.dueDate)}
+										</div>
+									</td>
+									<td class="amount-cell">
+										{fee.amount.toFixed(2)}
+									</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</div>
 			{/if}
 		</div>
 	{/each}
 
-	<div class="total-box">
-		<div class="total-label">Total Amount</div>
-		<div class="total-amount">{totalPrice.toFixed(2)}</div>
-	</div>
 </div>
 
 <style>
 	.fee-container {
 		width: 100%;
 		max-width: 100%;
-		margin: 0.5rem auto;
 		font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 	}
 
@@ -240,7 +260,6 @@
 
 	.fee-group.selected {
 		border-color: #4299e1;
-		/* background-color: #f0f9ff; */
 	}
 
 	.fee-group-header {
@@ -279,6 +298,7 @@
 		margin-right: 0.75rem;
 		cursor: pointer;
 	}
+
 	table {
 		width: 100%;
 		border-collapse: collapse;
@@ -303,6 +323,10 @@
 		border-bottom: none;
 	}
 
+	tr.selected {
+		background-color: #f0f9ff;
+	}
+
 	.fee-type-name {
 		display: flex;
 		align-items: center;
@@ -312,14 +336,16 @@
 	.amount-cell {
 		text-align: right;
 	}
+
 	.total-box {
-		/* background-color: #f8fafc; */
 		padding: 0.5rem;
 		border-radius: 6px;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		/* border: 1px solid #e2e8f0; */
+		margin-top: 1rem;
+		margin-bottom: 0.5rem;
+		background-color: #f8fafc;
 	}
 
 	.total-label {
@@ -331,7 +357,7 @@
 		font-weight: 700;
 		color: #2b6cb0;
 		font-size: 1.2rem;
-        margin-right: 0.5rem;
+		margin-right: 0.5rem;
 	}
 
 	.meta-icon {

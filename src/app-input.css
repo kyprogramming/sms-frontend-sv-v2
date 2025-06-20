@@ -63,7 +63,7 @@ textarea:disabled {background-color: #e0e0e0; cursor: not-allowed}
 /* checkbox */
 input[type='checkbox'] {width: 1rem; height: 1rem; accent-color: #3b82f6; cursor: pointer; transition: all 0.1s ease}
 label.checkbox-label {display: flex; align-items: center; gap: 0.5rem; font-weight: 500; color: var(--text)}
-input[type='checkbox']:focus {outline: 2px solid #a7c1eb; outline-offset: 1px}
+/* input[type='checkbox']:focus {outline: 1px solid #a7c1eb; outline-offset: 0px} */
 input[type='checkbox']:disabled {cursor: not-allowed; opacity: 0.6}
 
 /* error css */

@@ -14,7 +14,7 @@ export const load: PageLoad = async ({ fetch }) => {
 			throw error(res.status, message || 'Failed to fetch data from server');
 		}
 		const data = await res.json();
-		// console.log("Data from Server:", data);
+		console.log("Server: Students List By Query:", data);
 		return { data };
 	} catch (error) {
 		throw error;

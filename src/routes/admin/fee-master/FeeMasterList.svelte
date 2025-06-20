@@ -210,7 +210,7 @@
 </div>
 
 <DataTable {response} {columns} {actions} onPaginationChange={handlePaginationChange} onPageLimitChange={handlePageLimitChange} />
-<FeeDetails />
+
 
 
 {#if isModalOpen}

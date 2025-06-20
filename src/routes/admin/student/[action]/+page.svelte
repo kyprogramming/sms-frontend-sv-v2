@@ -7,14 +7,25 @@
 	import { page } from '$app/state';
 	const action = $derived(page.params.action);
 	const studentData = page.data.studentData;
-	const breadcrumbItems = [{ label: 'Dashboard', href: '/admin/dashboard' }, { label: 'Student Registration' }];
+	// const feeMasters = page.data.feeMasters || [];
+	// console.log('Client: feeMasters: ', feeMasters);
+	// Transform the data into the structure your component expects
+
+	const breadcrumbItems = [
+		{ label: 'Dashboard', href: '/admin/dashboard' },
+		{ label: 'Student Registration' },
+	];
+
+
 </script>
 
 <svelte:head>
 	<title>{schoolName} - Registration</title>
 </svelte:head>
 
-<Breadcrumb title={action === 'create' ? 'Student Registration - New' : 'Student Registration - Update'} items={breadcrumbItems} />
+<Breadcrumb
+	title={action === 'create' ? 'Student Registration - New' : 'Student Registration - Update'}
+	items={breadcrumbItems} />
 
 {#if action === 'update'}
 	<StudentForm {action} {studentData} />
