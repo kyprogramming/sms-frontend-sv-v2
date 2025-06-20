@@ -217,8 +217,13 @@ export const feeMasterFormSchema = z
 		// fineValue: z.number().min(0).optional(),
 		fineValue: z
 			.union([
-				z.string().min(1, 'Fine value is required'), // Handles empty string case
-				z.number(),
+				z.number().min(0), // Valid number (≥0)
+				z.string().transform((val) => {
+					// Handle empty string → undefined
+					return val === '' ? undefined : val;
+				}),
+				z.undefined(), // Explicitly allow undefined
+				z.null(), // Optional: allow null
 			])
 			.transform((val) => {
 				// Convert string to number if possible
@@ -227,7 +232,22 @@ export const feeMasterFormSchema = z
 					return isNaN(num) ? val : num;
 				}
 				return val;
-			}),
+			})
+			.optional(),
+
+		// fineValue: z
+		// 	.union([
+		// 		z.string(), // Handles empty string case
+		// 		z.number(),
+		// 	])
+		// 	.transform((val) => {
+		// 		// Convert string to number if possible
+		// 		if (typeof val === 'string') {
+		// 			const num = parseFloat(val);
+		// 			return isNaN(num) ? val : num;
+		// 		}
+		// 		return val;
+		// 	}),
 		perDay: z.boolean().optional().default(false),
 		active: z.boolean().optional().default(true),
 	})
@@ -241,7 +261,14 @@ export const feeMasterFormSchema = z
 			});
 		}
 		// Validate fineValue based on type
-		if (data.fineType === 'Percentage' && data.fineValue !== '' && data.fineValue !== null && data.fineValue !== undefined && typeof data.fineValue !== 'string' && data.fineValue > 100) {
+		if (
+			data.fineType === 'Percentage' &&
+			data.fineValue !== '' &&
+			data.fineValue !== null &&
+			data.fineValue !== undefined &&
+			typeof data.fineValue !== 'string' &&
+			data.fineValue > 100
+		) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
 				message: 'Percentage cannot exceed 100%',

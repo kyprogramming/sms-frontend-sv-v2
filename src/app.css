@@ -284,13 +284,7 @@ tr:hover {background-color: #eeeeee}
 .header_logo a {color: #000; font-weight: 700; text-decoration: none; text-transform: uppercase}
 .menu_list a {margin: 2rem; font-weight: 500; color: rgb(87, 86, 86); text-decoration: none}
 /* user-profile */
-.user-profile {display: flex; align-items: center; cursor: pointer; padding: 4px 8px; border-radius: var(--radius); transition: var(--transition); margin-left: 10px}
-.user-profile:hover {/* background-color: rgba(67, 97, 238, 0.11); */ background-color: var(--clr-bg-2)}
-.profile-img {width: 35px; height: 35px; border-radius: 50%; background: linear-gradient(135deg, var(--clr-sec), var(--clr-pri)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; margin-right: 12px; box-shadow: 0 3px 8px rgba(67, 97, 238, 0.2)}
-.user-info {display: flex; flex-direction: column}
-.user-name {font-weight: 600}
-.user-role {color: var(--text-light)}
-.dropdown {position: absolute; right: 0; margin-top: 13.5rem; margin-right: 1rem; background: white; border-radius: 0.5rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); width: 200px; z-index: 10}
+
 /* .menu-item {padding: 0.75rem 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem}
 .menu-item:hover {background-color: #f3f4f6}
  */
@@ -357,7 +351,7 @@ button:disabled {opacity: 0.6; cursor: not-allowed}
 .col-3 {grid-column: span 3; align-items: flex-start}
 .col-4 {grid-column: span 4; align-items: flex-start}
 .col-5 {grid-column: span 5; align-items: flex-start}
-.col-6 {grid-column: span 6; align-items: flex-start}
+.col-6 {grid-column: span 6; align-items: flex-start;}
 .col-7 {grid-column: span 7; align-items: flex-start}
 .col-8 {grid-column: span 8; align-items: flex-start}
 .col-9 {grid-column: span 9; align-items: flex-start}

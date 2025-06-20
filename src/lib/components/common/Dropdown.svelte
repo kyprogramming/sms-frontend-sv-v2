@@ -1,23 +1,23 @@
 <script lang="ts">
-	import type { DropdownItem } from "$lib/utils/interfaces";
+	import type { DropdownItem } from '$lib/utils/interfaces';
 
 	let {
 		id = `dropdown-${Math.random().toString(36).substring(2, 9)}`,
 		label = '',
 		items = [],
-		selectedValue = '',
-		required = false,
+		selectedValue = $bindable(''),
 		placeholder = 'Select an option',
-		disabled = false
+		disabled = false,
+		cls = '',
+		onSelect = (item: DropdownItem) => {},
+		onBlur = () => {},
 	} = $props();
 
 	let isOpen = $state(false);
 
 	const displayValue = $derived(
-		items.find((item) => item._id === selectedValue)?.name || placeholder
+		items.find((item) => item._id === selectedValue)?.name || placeholder,
 	);
-
-	const hasError = $derived(required && !selectedValue);
 
 	function toggleDropdown() {
 		if (!disabled) isOpen = !isOpen;
@@ -27,17 +27,15 @@
 		if (item.disabled) return;
 		selectedValue = item._id;
 		isOpen = false;
-
-		const changeEvent = new CustomEvent('change', {
-			detail: { value: item._id },
-			bubbles: true,
-			composed: true
-		});
-		dispatchEvent(changeEvent);
+		onSelect?.(item);
 	}
 
 	function handleBlur() {
-		setTimeout(() => (isOpen = false), 150);
+        alert('blur');
+		setTimeout(() => {
+			isOpen = false;
+			onBlur?.();
+		}, 150);
 	}
 </script>
 
@@ -46,24 +44,35 @@
 		<label for={id} class="dropdown-label">{label}</label>
 	{/if}
 
-	<div class="dropdown" class:open={isOpen} class:error={hasError} class:disabled={disabled}>
+	<div class={`dropdown ${cls}`} class:open={isOpen} class:disabled>
 		<button
-			id={id}
+			{id}
 			class="dropdown-toggle"
 			onclick={toggleDropdown}
-			onblur={handleBlur}
-			disabled={disabled}
+			{disabled}
 			aria-haspopup="listbox"
-			aria-expanded={isOpen}
-		>
+			aria-expanded={isOpen}>
 			<span class="dropdown-value">{displayValue}</span>
 			<svg class="dropdown-icon" viewBox="0 0 24 24" fill="none">
-				<path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+				<path
+					d="M6 9L12 15L18 9"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round" />
 			</svg>
 		</button>
 
 		{#if isOpen}
 			<ul class="dropdown-menu" role="listbox">
+				<li
+					tabindex={0}
+					role="option"
+					aria-selected={true}
+					class="dropdown-item"
+					onmousedown={(e) => e.preventDefault()}>
+					<span class:dropdown-item-disabled={true}>{placeholder}</span>
+				</li>
 				{#each items as item}
 					<li
 						tabindex={item.disabled ? undefined : 0}
@@ -80,13 +89,9 @@
 								selectItem(item);
 							}
 						}}
-						onmousedown={(e) => e.preventDefault()}
-					>
-						{#if item.disabled}
-							<span class="dropdown-item-disabled">{item.name}</span>
-						{:else}
-							<span class="dropdown-item-label">{item.name}</span>
-						{/if}
+                        onblur={handleBlur}
+						onmousedown={(e) => e.preventDefault()}>
+						<span class:dropdown-item-disabled={item.disabled}>{item.name}</span>
 					</li>
 				{/each}
 			</ul>
@@ -96,8 +101,8 @@
 
 <style>
 	:global(:root) {
-		--primary-color: #099f3e;
-		--primary-light: rgba(15, 140, 59, 0.1);
+		--primary-color: var(--info);
+		--primary-light: #e4f1ff;
 		--error-color: #e53e3e;
 		--text-color: #2d3748;
 		--border-color: #e2e8f0;
@@ -108,7 +113,6 @@
 	.dropdown-container {
 		position: relative;
 		width: 100%;
-		margin-bottom:0.5rem;
 	}
 
 	.dropdown-label {
@@ -121,13 +125,15 @@
 
 	.dropdown {
 		position: relative;
+		border-radius: 6px;
 		width: 100%;
 	}
 
 	.dropdown-toggle {
 		width: 100%;
-		padding: 0.60rem 0.75rem;
-		font-size: 0.8375rem;
+		padding: 4px 8px;
+		height: 35px;
+		font-size: 0.875rem;
 		color: var(--text-color);
 		background: white;
 		border: 1px solid var(--border-color);
@@ -137,21 +143,18 @@
 		justify-content: space-between;
 		cursor: pointer;
 		transition: all 0.2s ease;
+		background-color: #f5f5f5;
+		border: 1px solid #ccc;
 	}
 
 	.dropdown-toggle:hover:not(:disabled) {
 		border-color: #cbd5e0;
 	}
 
-	.dropdown-toggle:focus {
-		outline: none;
-		border-color: var(--primary-color);
-		box-shadow: 0 0 0 2px var(--primary-light);
-	}
-
 	.dropdown.open .dropdown-toggle {
-		border-color: var(--primary-color);
-		box-shadow: 0 0 0 2px var(--primary-light);
+		/* textarea:focus {outline: none; border-color: var(--info); box-shadow: 0 0 0 1.5px rgba(59, 130, 246, 0.2); background-color: #ffffff} */
+		border-color: var(--info);
+		box-shadow: 0 0 0 1.5px rgba(59, 130, 246, 0.2);
 	}
 
 	.dropdown.error .dropdown-toggle {
@@ -186,12 +189,12 @@
 		width: 100%;
 		max-height: 300px;
 		overflow-y: auto;
-		margin-top: 2px;
+		margin-top: 0.1rem;
 		padding: 0.25rem 0;
 		background: white;
 		border: 1px solid var(--border-color);
 		border-radius: 6px;
-		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 		z-index: 10;
 		list-style: none;
 	}
@@ -215,5 +218,9 @@
 	.dropdown-item.disabled {
 		color: var(--disabled-color);
 		cursor: not-allowed;
+	}
+
+	.dropdown-item-disabled {
+		opacity: 0.6;
 	}
 </style>

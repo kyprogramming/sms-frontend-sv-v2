@@ -12,6 +12,7 @@
 	import { page } from '$app/state';
 	import ToggleSwitch from '$lib/components/common/ToggleSwitch.svelte';
 	import Dropdown from '$lib/components/common/Dropdown.svelte';
+	import FeeDetails from '$lib/components/shared/fee/FeeDetails.svelte';
 
 	let { response } = $props();
 	// console.log("response", response);
@@ -209,6 +210,7 @@
 </div>
 
 <DataTable {response} {columns} {actions} onPaginationChange={handlePaginationChange} onPageLimitChange={handlePageLimitChange} />
+<FeeDetails />
 
 
 {#if isModalOpen}

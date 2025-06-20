@@ -27,7 +27,7 @@
 			amount: '',
 			dueDate: '',
 			fineType: 'None',
-			fineValue: '',
+			fineValue: undefined,
 			perDay: false,
 			active: true,
 		};
@@ -83,6 +83,12 @@
 		validateForm(feeMasterFormSchema, formData);
 	}
 
+	function handleBlur(field: keyof FeeMasterPayload) {
+		alert();
+		touched = { ...touched, [field]: true };
+		validateForm(feeMasterFormSchema, formData);
+	}
+
 	async function onSubmit(event: Event) {
 		event.preventDefault();
 		formSubmitted = true;
@@ -114,9 +120,15 @@
 <form onsubmit={onSubmit}>
 	<div class="grid-12">
 		<!-- Fee Group Dropdown -->
-		<div class="col-6" style="justify-content: flex-start;">
+		<div class="col-6">
 			<label for="feeGroupId">Fee Group <span class="required">*</span></label>
-            <Dropdown items={feeGroups} selectedValue={formData.feeGroupId} />
+			<!-- <Dropdown
+				items={feeGroups}
+				selectedValue={formData.feeGroupId}
+				placeholder={'Select fee group'}
+				cls={`w-full ${$formErrors.feeGroupId && (touched.feeGroupId || formSubmitted) ? 'input-error' : ''}`}
+				onSelect={(item:any) => handleChange('feeGroupId', item._id)} 
+                onBlur={()=>handleBlur('feeGroupId')}/> -->
 			<select
 				id="feeGroupId"
 				bind:value={formData.feeGroupId}
@@ -163,7 +175,8 @@
 				placeholder={'0.00'}
 				bind:value={formData.amount}
 				class={`w-full ${$formErrors.amount && (touched.amount || formSubmitted) ? 'input-error' : ''}`}
-				oninput={(e) => handleChange('amount', parseFloat((e.target as HTMLInputElement).value) || '')}
+				oninput={(e) =>
+					handleChange('amount', parseFloat((e.target as HTMLInputElement).value) || '')}
 				onblur={() => handleChange('amount', formData.amount)} />
 			{#if $formErrors.amount && (touched.amount || formSubmitted)}
 				<p class="error-text">{$formErrors.amount}</p>
@@ -214,10 +227,14 @@
 								type="number"
 								min="0"
 								step={formData.fineType === 'Percentage' ? '0.01' : '0.01'}
-                                placeholder={'0.00'}
+								placeholder={'0.00'}
 								bind:value={formData.fineValue}
 								class={`w-full ${$formErrors.fineValue && (touched.fineValue || formSubmitted) ? 'input-error' : ''}`}
-								oninput={(e) => handleChange('fineValue', parseFloat((e.target as HTMLInputElement).value) || '')} />
+								oninput={(e) =>
+									handleChange(
+										'fineValue',
+										parseFloat((e.target as HTMLInputElement).value) || '',
+									)} />
 							{#if $formErrors.fineValue && (touched.fineValue || formSubmitted)}
 								<p class="error-text">{$formErrors.fineValue}</p>
 							{/if}
@@ -236,14 +253,22 @@
 		</div>
 		<div class="col-6">
 			<label class="checkbox-container">
-				<input type="checkbox" class="checkbox-input" bind:checked={formData.active} onchange={(e) => handleChange('active', e.currentTarget.checked)} />
+				<input
+					type="checkbox"
+					class="checkbox-input"
+					bind:checked={formData.active}
+					onchange={(e) => handleChange('active', e.currentTarget.checked)} />
 				<span class="checkbox-custom"></span>
 				<span class="checkbox-text">Active</span>
 			</label>
 		</div>
 		<div class="col-6">
 			<div class="form-actions">
-				<button type="button" class="btn ripple btn-secondary" onclick={handleResetForm} disabled={$isLoading}>
+				<button
+					type="button"
+					class="btn ripple btn-secondary"
+					onclick={handleResetForm}
+					disabled={$isLoading}>
 					<BrushCleaning />
 					<span>Reset Form</span>
 				</button>
@@ -262,11 +287,4 @@
 			</div>
 		</div>
 	</div>
-
-	<!-- Form Actions -->
 </form>
-
-<!-- prettier-ignore -->
-<style>
-
-</style>
