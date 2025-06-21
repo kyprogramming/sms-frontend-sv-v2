@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { feeGroupFormSchema, type FeeGroupPayload } from '$lib/utils/schemas';
 	import { formErrors } from '$lib/stores/formStore';
 	import { validateForm } from '$lib/utils/validate';
 	import { showSnackbar } from '$lib/components/snackbar/store';
@@ -11,6 +10,7 @@
 	import { BrushCleaning, Save } from '@lucide/svelte';
 	import LoaderIcon from '$lib/components/common/LoaderIcon.svelte';
 	import { page } from '$app/state';
+	import { feeGroupFormSchema, type FeeGroupPayload } from '$lib/schemas/fee-group.schema';
 
 	let { onRefreshPage, feeGroupData = null, action } = $props();
 	let feeTypeData = page.data?.feeTypeData || [];

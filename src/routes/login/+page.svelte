@@ -8,8 +8,8 @@
 	import { API_BASE_URL } from '$lib/utils/env.config';
 	import LoaderIcon from '$lib/components/common/LoaderIcon.svelte';
 	import { Eye, EyeOff } from '@lucide/svelte';
-	import { loginFormSchema, type LoginFormDataType } from '$lib/utils/schemas';
 	import { formErrors } from '$lib/stores/formStore';
+	import { loginFormSchema, type LoginFormDataType } from '$lib/schemas/login.schema';
 
 	formErrors.set({ email: '', password: '' });
 	let formData: LoginFormDataType = $state({ email: 'username1@xyz.com', password: 'password1' });

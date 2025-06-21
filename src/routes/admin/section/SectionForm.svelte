@@ -5,12 +5,12 @@
 	import { closeModal } from '$lib/stores/modalStore';
 	import { createSection, updateSection } from '$lib/services/section';
 	import { BrushCleaning, Save } from '@lucide/svelte';
-	import { sectionFormSchema, type SectionFormPayload } from '$lib/utils/schemas';
 	import { formErrors } from '$lib/stores/formStore';
 	import LoaderIcon from '$lib/components/common/LoaderIcon.svelte';
 	import { onMount } from 'svelte';
 	import { areFieldsUnchanged, isEqual } from '$lib/utils/utils';
 	import { MESSAGES } from '$lib/utils/messages';
+	import { sectionFormSchema, type SectionFormPayload } from '$lib/schemas/section.schema';
 
 	let { onRefreshPage, sectionData = null, action } = $props();
 
@@ -40,8 +40,7 @@
 		touched = { name: false };
 	}
 
-	// Field change handler
-	function handleChange(field: keyof SectionFormPayload, value: string): void {
+	function handleChange<K extends keyof SectionFormPayload>(field: K, value: SectionFormPayload[K]): void {
 		formData[field] = value;
 		touched = { ...touched, [field]: true };
 		validateForm(sectionFormSchema, formData);

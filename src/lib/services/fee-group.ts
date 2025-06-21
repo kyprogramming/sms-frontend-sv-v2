@@ -1,6 +1,6 @@
+import type { FeeGroupPayload } from '$lib/schemas/fee-group.schema';
 import { API_BASE_URL } from '$lib/utils/env.config';
 import { fetchWrapper } from '$lib/utils/fetchWrapper';
-import type { FeeGroupPayload } from '$lib/utils/schemas';
 import { handleResponse, JSON_HEADERS } from '$lib/utils/utils';
 
 

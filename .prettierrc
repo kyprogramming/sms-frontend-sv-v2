@@ -7,7 +7,7 @@
 	"svelteBracketNewLine": false,
 	"svelteAllowShorthand": true,
 	"svelteIndentScriptAndStyle": true,
-	"printWidth": 100,
+	"printWidth": 400,
 	"overrides": [
 		{
 			"files": "*.svelte",

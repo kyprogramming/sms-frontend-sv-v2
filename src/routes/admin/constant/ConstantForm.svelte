@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { constantFormSchema, type ConstantPayload } from '$lib/utils/schemas';
 	import { formErrors } from '$lib/stores/formStore';
 	import { validateForm } from '$lib/utils/validate';
 	import { showSnackbar } from '$lib/components/snackbar/store';
@@ -12,6 +11,7 @@
 	import { BrushCleaning, Save } from '@lucide/svelte';
 	import LoaderIcon from '$lib/components/common/LoaderIcon.svelte';
 	import { CONSTANT_CATEGORIES } from '$lib/utils/constants';
+	import { constantFormSchema, type ConstantPayload } from '$lib/schemas/constant.schema';
 
 	let { onRefreshPage, constantData = null, action } = $props();
 

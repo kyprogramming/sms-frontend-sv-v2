@@ -1,6 +1,6 @@
+import type { FeeAssignmentPayload } from '$lib/schemas/fee-assignment.schema';
 import { API_BASE_URL } from '$lib/utils/env.config';
 import { fetchWrapper } from '$lib/utils/fetchWrapper';
-import type { FeeAssignmentPayload } from '$lib/utils/schemas';
 import { handleResponse, JSON_HEADERS } from '$lib/utils/utils';
 
 export async function createFeeAssignment(data: FeeAssignmentPayload) {

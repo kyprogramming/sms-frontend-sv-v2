@@ -13,7 +13,7 @@
 	import { page } from '$app/state';
 
 	import DatePicker2 from '$lib/components/common/DatePicker2.svelte';
-	import { createFeeAssignmentSchema, type FeeAssignmentPayload } from '$lib/utils/schemas';
+	import { createFeeAssignmentSchema } from '$lib/schemas/fee-assignment.schema';
 
 	let { onRefreshPage, assignmentData = null, action } = $props();
 	let students = page.data?.students?.data || [];

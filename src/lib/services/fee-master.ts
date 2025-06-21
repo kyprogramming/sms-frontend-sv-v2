@@ -1,6 +1,7 @@
+import type { FeeMasterPayload } from '$lib/schemas/fee-master.schema';
 import { API_BASE_URL } from '$lib/utils/env.config';
 import { fetchWrapper } from '$lib/utils/fetchWrapper';
-import type { FeeMasterPayload } from '$lib/utils/schemas';
+
 import { handleResponse, JSON_HEADERS } from '$lib/utils/utils';
 
 

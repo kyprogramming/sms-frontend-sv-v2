@@ -11,10 +11,10 @@
 	import { BrushCleaning, Save } from '@lucide/svelte';
 	import LoaderIcon from '$lib/components/common/LoaderIcon.svelte';
 	import { page } from '$app/state';
-	import { feeMasterFormSchema, type FeeMasterPayload } from '$lib/utils/schemas';
 	import DatePicker2 from '$lib/components/common/DatePicker2.svelte';
 	import ToggleSwitch from '$lib/components/common/ToggleSwitch.svelte';
 	import Dropdown from '$lib/components/common/Dropdown.svelte';
+	import { feeMasterFormSchema, type FeeMasterPayload } from '$lib/schemas/fee-master.schema';
 
 	let { onRefreshPage, feeMasterData = null, action } = $props();
 	let feeGroups = page.data?.feeGroups?.data || [];

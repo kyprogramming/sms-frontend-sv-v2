@@ -9,11 +9,11 @@
 	import { BrushCleaning, Save } from '@lucide/svelte';
 	import LoaderIcon from '$lib/components/common/LoaderIcon.svelte';
 
-	import { classFormSchema, type ClassFormPayload } from '$lib/utils/schemas';
 	import { formErrors } from '$lib/stores/formStore';
 	import { onMount } from 'svelte';
 	import { isEqual } from '$lib/utils/utils';
 	import { MESSAGES } from '$lib/utils/messages';
+	import { classFormSchema, type ClassFormPayload } from '$lib/schemas/class.schema';
 
 	let allSections = page.data?.sectionData || [];
 

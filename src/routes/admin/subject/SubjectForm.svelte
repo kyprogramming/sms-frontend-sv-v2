@@ -8,17 +8,17 @@
 	import { BrushCleaning, Save } from '@lucide/svelte';
 	import LoaderIcon from '$lib/components/common/LoaderIcon.svelte';
 
-	import { subjectFormSchema, type SubjectFormPayload } from '$lib/utils/schemas';
 	import { formErrors } from '$lib/stores/formStore';
 	import { onMount } from 'svelte';
 	import { isEqual } from '$lib/utils/utils';
 	import { MESSAGES } from '$lib/utils/messages';
 	import { SUBJECT_TYPE } from '$lib/utils/constants';
+	import { subjectFormSchema, type SubjectFormPayload } from '$lib/schemas/subject.schema';
 
 	let { onRefreshPage, subjectData = null, action } = $props();
 
 	export function initializeSubjectFormData(): SubjectFormPayload {
-		return { name: '', code: '', type: '' };
+		return { name: '', code: '', type: '', active: true };
 	}
 	// Reactive form state
 	let formData: SubjectFormPayload = $state(initializeSubjectFormData());
@@ -49,7 +49,10 @@
 	}
 
 	// Handle field changes
-	function handleChange(field: keyof SubjectFormPayload, value: string): void {
+	function handleChange<K extends keyof SubjectFormPayload>(
+		field: K,
+		value: SubjectFormPayload[K],
+	): void {
 		formData[field] = value;
 		touched = { ...touched, [field]: true };
 		validateForm(subjectFormSchema, formData);
@@ -83,11 +86,20 @@
 <form onsubmit={onSubmit}>
 	<div class="input-wrapper">
 		<label for="radio-item">Subject Type <span class="required">*</span></label>
-		<div class="radio-section" class:has-error={$formErrors.type && (touched.type || formSubmitted)}>
+		<div
+			class="radio-section"
+			class:has-error={$formErrors.type && (touched.type || formSubmitted)}>
 			{#each SUBJECT_TYPE as type}
 				<div class="radio-item">
 					<label class="radio-label">
-						<input name="type" type="radio" class="radio-input" value={type.name} checked={formData.type === type.name} onchange={() => handleChange('type', type.name)} onblur={() => handleChange('type', formData.type)} />
+						<input
+							name="type"
+							type="radio"
+							class="radio-input"
+							value={type.name}
+							checked={formData.type === type.name}
+							onchange={() => handleChange('type', type.name)}
+							onblur={() => handleChange('type', formData.type)} />
 						<span class="radio-custom"></span>
 						<span class="radio-text">{type.name}</span>
 					</label>
@@ -101,7 +113,15 @@
 
 	<div class="input-wrapper">
 		<label for="name">Subject Name <span class="required">*</span></label>
-		<input id="name" type="text" name="name" placeholder="Subject name" class={`w-full ${$formErrors.name && (touched.name || formSubmitted) ? 'input-error' : ''}`} bind:value={formData.name} oninput={(e) => handleChange('name', (e.target as HTMLInputElement).value)} onblur={() => handleChange('name', formData.name)} />
+		<input
+			id="name"
+			type="text"
+			name="name"
+			placeholder="Subject name"
+			class={`w-full ${$formErrors.name && (touched.name || formSubmitted) ? 'input-error' : ''}`}
+			bind:value={formData.name}
+			oninput={(e) => handleChange('name', (e.target as HTMLInputElement).value)}
+			onblur={() => handleChange('name', formData.name)} />
 		{#if $formErrors.name && (touched.name || formSubmitted)}
 			<p class="error-text">{$formErrors.name}</p>
 		{/if}
@@ -109,11 +129,23 @@
 
 	<div class="input-wrapper">
 		<label for="code">Subject Code</label>
-		<input id="code" type="text" name="code" class={`w-full`} placeholder="Subject code" bind:value={formData.code} oninput={(e) => handleChange('code', (e.target as HTMLInputElement).value)} onblur={() => handleChange('code', String(formData.code))} />
+		<input
+			id="code"
+			type="text"
+			name="code"
+			class={`w-full`}
+			placeholder="Subject code"
+			bind:value={formData.code}
+			oninput={(e) => handleChange('code', (e.target as HTMLInputElement).value)}
+			onblur={() => handleChange('code', String(formData.code))} />
 	</div>
 
 	<div class="form-actions">
-		<button type="button" class="btn ripple btn-secondary" onclick={handleResetForm} disabled={$isLoading}>
+		<button
+			type="button"
+			class="btn ripple btn-secondary"
+			onclick={handleResetForm}
+			disabled={$isLoading}>
 			<BrushCleaning />
 			<span>Reset Form</span>
 		</button>

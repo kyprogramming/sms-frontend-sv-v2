@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { feeDiscountFormSchema, type FeeDiscountPayload } from '$lib/utils/schemas';
 	import { formErrors } from '$lib/stores/formStore';
 	import { validateForm } from '$lib/utils/validate';
 	import { showSnackbar } from '$lib/components/snackbar/store';
@@ -11,6 +10,7 @@
 	import { BrushCleaning, Save } from '@lucide/svelte';
 	import LoaderIcon from '$lib/components/common/LoaderIcon.svelte';
 	import DatePicker2 from '$lib/components/common/DatePicker2.svelte';
+	import { feeDiscountFormSchema, type FeeDiscountPayload } from '$lib/schemas/fee-discount.schema';
 
 	let { onRefreshPage, feeDiscountData = null, action } = $props();
 

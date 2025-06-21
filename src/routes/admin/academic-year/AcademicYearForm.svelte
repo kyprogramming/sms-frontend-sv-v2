@@ -9,12 +9,13 @@
 	import LoaderIcon from '$lib/components/common/LoaderIcon.svelte';
 	import { createAcademicYear, updateAcademicYear } from '$lib/services/academic-year';
 
-	import { academicYearFormSchema, type AcademicYearPayload } from '$lib/utils/schemas';
+
 	import { formErrors } from '$lib/stores/formStore';
 	import { onMount } from 'svelte';
 	import { isEqual } from '$lib/utils/utils';
 	import { MESSAGES } from '$lib/utils/messages';
 	import DatePicker2 from '$lib/components/common/DatePicker2.svelte';
+	import { academicYearFormSchema, type AcademicYearPayload } from '$lib/schemas/academic-year.schema';
 
 	let { onRefreshPage, academicYearData = null, action } = $props();
 
