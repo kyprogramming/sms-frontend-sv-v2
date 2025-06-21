@@ -13,7 +13,7 @@
 	import { slide } from 'svelte/transition';
 	import { createStudent, updateStudent } from '$lib/services/student';
 	import FileUpload from '$lib/components/common/FileUpload.svelte';
-	import { BrushCleaning, Save } from '@lucide/svelte';
+	import { BrushCleaning, PlusCircle, Save } from '@lucide/svelte';
 	import { page } from '$app/state';
 	import { showSnackbar } from '$lib/components/snackbar/store';
 	import { goto } from '$app/navigation';
@@ -26,13 +26,13 @@
 	import { formatLocalDate } from '$lib/utils/formatDate';
 	import DatePicker2 from '$lib/components/common/DatePicker2.svelte';
 	import FeeDetails from '../fee/FeeDetails.svelte';
+	import ImageUploader from '$lib/components/common/ImageUploader.svelte';
+	import UploadDocument from '$lib/components/common/UploadDocument.svelte';
 
 	// Props
 	let { studentData = null, action } = $props();
 	const schoolName = env.PUBLIC_SCHOOL_NAME || 'Default School';
 	const pageTitle = `${schoolName} - Student Registration - ${action === 'update' ? ' Update' : 'New'}`;
-
-
 
 	let classData = page.data?.classData || [];
 	let classSections: { _id: string; name: string }[] = $state([]);
@@ -41,6 +41,7 @@
 	formErrors.set({});
 	let touched: any = $state({});
 	let formSubmitted: boolean = $state(false);
+	let selectedFile: File | null = $state(null);
 
 	// console.log("studentData:", action, studentData);
 
@@ -132,6 +133,11 @@
 		}, 100);
 	}
 
+	function handleImageSelect(file: File | null) {
+		selectedFile = file;
+		console.log('Selected file object:', file);
+	}
+
 	async function onSubmit(event: Event) {
 		event.preventDefault();
 		formSubmitted = true;
@@ -161,12 +167,22 @@
 		{ id: 3, title: 'Birth Certificate', file: null },
 	];
 
-	// function handleFileChange(event: Event, index: number) {
-	// 	const target = event.target as HTMLInputElement;
-	// 	if (target.files && target.filsScriptPath > 0) {
-	// 		// documents[index].file = target.files[0];
-	// 	}
-	// }
+	function removeDocument(index: number) {
+		formData.studentData.documents = formData.studentData.documents?.filter((_, i) => i !== index);
+	}
+
+	function updateDocument(index: number, data: { category: string; photoUrl: string }) {
+		formData.studentData.documents = formData.studentData.documents?.map((section, i) => (i === index ? data : section));
+	}
+
+	function addNewDocument(e: MouseEvent) {
+		if (formData.studentData.documents?.length! < 12) {
+			formData.studentData.documents = [...(formData.studentData.documents ?? []), { title: '', category: '', url: '' }];
+			console.log('uploadSections', formData.studentData.documents);
+		} else {
+			showSnackbar({ message: 'Can not add more than 12 documents', type: 'info' });
+		}
+	}
 </script>
 
 <svelte:head>
@@ -908,12 +924,12 @@
 	</div>
 
 	<!-- Upload Photo -->
-	<div class="card-wrapper">
+	<!-- <div class="card-wrapper">
 		<h1>Upload Photos</h1>
 		<div class="grid-12">
 			<div class="col-3">
 				<label for="street">Student Photo</label>
-				<FileUpload id="studentPhoto" />
+				<FileUpload id="photo" />
 			</div>
 
 			<div class="col-3">
@@ -930,6 +946,59 @@
 				<label for="city">Guardian Photo</label>
 				<FileUpload id="guardianPhoto" />
 			</div>
+		</div>
+	</div> -->
+
+	<!-- Upload Photo -->
+	<div class="card-wrapper">
+		<h1>Upload Photo</h1>
+		<div class="grid-12">
+			<div class="col-2">
+				<ImageUploader
+					label="Student Photo"
+					title={''}
+					bind:url={formData.studentData.profile.photo}
+					onSelect={handleImageSelect} />
+			</div>
+			<div class="col-2">
+				<ImageUploader
+					label="Father Photo"
+					title={''}
+					bind:url={formData.studentData.parentGuardianDetails.fatherDetails.fatherPhoto}
+					onSelect={handleImageSelect} />
+			</div>
+			<div class="col-2">
+				<ImageUploader
+					label="Mother Photo"
+					title={''}
+					bind:url={formData.studentData.parentGuardianDetails.motherDetails.motherPhoto}
+					onSelect={handleImageSelect} />
+			</div>
+
+			{#if formData.studentData.parentGuardianDetails?.primaryGuardian === 'Other'}
+				<div class="col-2">
+					<ImageUploader
+						label="Guardian Photo"
+						title={''}
+						bind:url={formData.studentData.parentGuardianDetails.guardianDetails.guardianPhoto}
+						onSelect={handleImageSelect} />
+				</div>
+			{/if}
+		</div>
+	</div>
+
+	<!-- Upload Documents -->
+	<div class="card-wrapper">
+		<div class="header-bar">
+			<h1>Upload Documents</h1>
+			<button class="plus-button" type="button" onclick={addNewDocument}>
+				<PlusCircle />
+			</button>
+		</div>
+		<div class="grid-12">
+			{#each formData.studentData.documents! as document, index (`${index}_${document.title}`)}
+				<UploadDocument {index} {document} onRemove={removeDocument} onUpdate={updateDocument} />
+			{/each}
 		</div>
 	</div>
 
@@ -953,7 +1022,7 @@
 								<td>{index + 1}</td>
 								<td><input id="" type="text" /></td>
 								<td>
-									<FileUpload id="studentPhoto" />
+									<FileUpload id="photo" />
 								</td>
 								<td>{doc.title}</td>
 							</tr>
@@ -1088,4 +1157,12 @@
 	.radio-input:checked + .radio-custom::after {content: ''; width: 0.6rem; height: 0.6rem; background: #007bff; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);}
 	.has-error .radio-custom {border-color: red;}
 	.placeholder-gray {color: gray;}
+
+    .plus-button,
+	.remove-button {color: green; background-color: rgb(238, 237, 237); border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: start; align-self: center; padding: 9px; margin: 0px;}
+	.remove-button {color: red;}
+	.plus-button:hover,
+	.remove-button:hover {background-color: rgb(204, 202, 202);}
+	.header-bar {display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 1rem;}
+	.header-bar h1 {margin: 0;}
 </style>

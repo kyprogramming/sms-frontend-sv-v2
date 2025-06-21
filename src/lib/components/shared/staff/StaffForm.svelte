@@ -373,6 +373,7 @@
 			</div>
 		</div>
 	</div>
+    
 	<!-- Upload Photo -->
 	<div class="card-wrapper">
 		<h1>Upload Photo</h1>

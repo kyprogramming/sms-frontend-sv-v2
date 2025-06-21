@@ -3,6 +3,7 @@ import { formatDate, formatLocalDate } from '$lib/utils/formatDate';
 import { generateAdmissionNo, getCurrentAcademicYear } from '$lib/utils/utils';
 import { writable } from 'svelte/store';
 import { z } from 'zod';
+import { documentSchema } from '../staff/staffValidation';
 
 export const studentSchema = z.object({
 	userData: z.object({
@@ -29,7 +30,7 @@ export const studentSchema = z.object({
 			category: z.string().optional(),
 			religion: z.string().optional(),
 			caste: z.string().optional(),
-			studentPhoto: z.any().optional(),
+			photo: z.any().optional(),
 			address: z.object({
 				street: z.string().min(1, 'House No/Street is required'),
 				city: z.string().min(1, 'City is required'),
@@ -83,7 +84,8 @@ export const studentSchema = z.object({
 				guardianOccupation: z.string().optional(),
 				guardianEducation: z.string().optional(),
 				guardianRelation: z.string().min(1, 'Guardian relation is required'),
-				guardianEmail: z.string().email('Invalid email format').optional(),
+                guardianEmail: z.string().email('Invalid email format').optional(),
+                guardianPhoto: z.any().optional(),
 				guardianCurrentAddress: z.string().min(1, 'Guardian current address is required'),
 				guardianPermanentAddress: z.string().optional(),
 			}),
@@ -92,7 +94,8 @@ export const studentSchema = z.object({
 			}),
 			parentCurrentAddress: z.string().min(1, 'Parent current address is required'),
 			parentPermanentAddress: z.string().optional(),
-		}),
+        }),
+        documents: z.array(documentSchema).optional(),
 	}),
 });
 
@@ -122,7 +125,7 @@ export function initializeStudentFormData(): StudentFormData {
 				category: '',
 				religion: '',
 				caste: '',
-				studentPhoto: null,
+				photo: null,
 				address: {
 					street: '',
 					city: '',
@@ -167,6 +170,7 @@ export function initializeStudentFormData(): StudentFormData {
 					guardianEducation: '',
 					guardianRelation: '',
 					guardianEmail: '',
+					guardianPhoto: '',
 					guardianCurrentAddress: '',
 					guardianPermanentAddress: '',
 				},
@@ -174,6 +178,7 @@ export function initializeStudentFormData(): StudentFormData {
 				parentCurrentAddress: '',
 				parentPermanentAddress: '',
 			},
+			documents: [],
 		},
 	};
 }
@@ -225,6 +230,7 @@ export function validateStudentForm(formData: StudentFormData) {
 				guardianEducation: '',
 				guardianRelation: '',
 				guardianEmail: '',
+				guardianPhoto: '',
 				guardianCurrentAddress: '',
 				guardianPermanentAddress: '',
 			};
@@ -240,6 +246,7 @@ export function validateStudentForm(formData: StudentFormData) {
 				guardianEducation: '',
 				guardianRelation: '',
 				guardianEmail: '',
+				guardianPhoto: '',
 				guardianCurrentAddress: '',
 				guardianPermanentAddress: '',
 			};
