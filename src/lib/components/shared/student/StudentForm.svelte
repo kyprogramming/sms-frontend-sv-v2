@@ -1,48 +1,59 @@
 <script lang="ts">
-	import DatePicker from '$lib/components/common/DatePicker.svelte';
-	import TagInput from '$lib/components/common/TagInput.svelte';
-	import { BLOOD_GROUPS, CASTE_CATEGORIES, GENDERS, GUARDIAN_TYPE } from '$lib/utils/constants';
-	import { isLoading } from '$lib/stores/loading';
+    // Import statements grouped by type
+    import { onMount } from 'svelte';
+    import { slide } from 'svelte/transition';
 
-	import { initializeStudentFormPayload, validateStudentForm} from './studentValidation';
-	import { slide } from 'svelte/transition';
-	import { createStudent, updateStudent } from '$lib/services/student';
-	import FileUpload from '$lib/components/common/FileUpload.svelte';
-	import { BrushCleaning, PlusCircle, Save } from '@lucide/svelte';
+    import { goto } from '$app/navigation';
+    import { env } from '$env/dynamic/public';
+
+    // UI Components
+    import DatePicker from '$lib/components/common/DatePicker.svelte';
+    import DatePicker2 from '$lib/components/common/DatePicker2.svelte';
+    import TagInput from '$lib/components/common/TagInput.svelte';
+    import LoaderIcon from '$lib/components/common/LoaderIcon.svelte';
+    import ImageUploader from '$lib/components/common/ImageUploader.svelte';
+    import UploadDocument from '$lib/components/common/UploadDocument.svelte';
+    import FeeDetails from '../fee/FeeDetails.svelte';
+    
+    // Icons
+    import { BrushCleaning, PlusCircle, Save } from '@lucide/svelte';
+    
+    // Constants and Config
+    import { BLOOD_GROUPS, CASTE_CATEGORIES, GENDERS, GUARDIAN_TYPE } from '$lib/utils/constants';
+    import { MESSAGES } from '$lib/utils/messages';
+    
+    // Services and Utilities
+    import { createStudent, updateStudent } from '$lib/services/student';
+    import { initializeStudentFormPayload, validateStudentForm } from './studentValidation';
+    import { isEqual } from '$lib/utils/utils';
+    
+    // Stores
+    import { isLoading } from '$lib/stores/loading';
+    import { formErrors } from '$lib/stores/formStore';
+    import { showSnackbar } from '$lib/components/snackbar/store';
+    
+    // Types
+    import type { StudentFormPayload } from '$lib/schemas/student.schema';
 	import { page } from '$app/state';
-	import { showSnackbar } from '$lib/components/snackbar/store';
-	import { goto } from '$app/navigation';
-	import LoaderIcon from '$lib/components/common/LoaderIcon.svelte';
-	import { formErrors } from '$lib/stores/formStore';
-	import { onMount } from 'svelte';
-	import { env } from '$env/dynamic/public';
-	import { isEqual } from '$lib/utils/utils';
-	import { MESSAGES } from '$lib/utils/messages';
-	import { formatLocalDate } from '$lib/utils/formatDate';
-	import DatePicker2 from '$lib/components/common/DatePicker2.svelte';
-	import FeeDetails from '../fee/FeeDetails.svelte';
-	import ImageUploader from '$lib/components/common/ImageUploader.svelte';
-	import UploadDocument from '$lib/components/common/UploadDocument.svelte';
-	import type { StudentFormPayload } from '$lib/schemas/student.schema';
 
-	// Props
-	let { action } = $props();
-	// const action = $derived(page.params.action);
-	const studentData = page.data.studentData || null;
+    // Component Props
+    let { action } = $props();
+
+    // Derived Data
 	const schoolName = env.PUBLIC_SCHOOL_NAME || 'Default School';
 	const pageTitle = `${schoolName} - Student Registration - ${action === 'update' ? ' Update' : 'New'}`;
 
-	let classData = page.data?.classData || [];
-	let classSections: { _id: string; name: string }[] = $state([]);
-
-	let formData: StudentFormPayload = $state(initializeStudentFormPayload());
-	formErrors.set({});
-	let touched: any = $state({});
-	let formSubmitted: boolean = $state(false);
-	let selectedFile: File | null = $state(null);
-
-	// console.log("studentData:", action, studentData);
-
+    // State Management
+    const studentData = page.data.studentData || null;
+    let classData = page.data?.classData || [];
+    let classSections: { _id: string; name: string }[] = $state([]);
+    
+    let selectedFile: File | null = $state(null);
+    
+    let formData: StudentFormPayload = $state(initializeStudentFormPayload());
+    let touched: Record<string, boolean> = $state({});
+    let formSubmitted = $state(false);
+    
 	onMount(() => {
 		formErrors.set({});
 		// Initialize form data based on action
@@ -65,29 +76,6 @@
 		formErrors.set({});
 		formSubmitted = false;
 		touched = {};
-	}
-
-	function handleAdmissionDateChange(date: Date | null) {
-		if (!date) {
-			formData.studentData.admissionDate = '';
-			return;
-		}
-		formData.studentData.admissionDate = formatLocalDate(date);
-	}
-	function handleBirthDateChange(date: Date | null) {
-		if (date) {
-			const year = date.getFullYear();
-			const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-			const day = String(date.getDate()).padStart(2, '0');
-			formData.studentData.profile.dob = `${year}-${month}-${day}`;
-		} else {
-			formData.studentData.profile.dob = '';
-		}
-		validateStudentForm(formData);
-	}
-
-	function handleOnClear(date: Date | null) {
-		formData.studentData.profile.dob = '';
 	}
 
 	function handleGuardianTypeChange(type: any) {
@@ -155,12 +143,6 @@
 		}
 	}
 
-	let documents = [
-		{ id: 1, title: 'ID Proof', file: null },
-		{ id: 2, title: 'Address Proof', file: null },
-		{ id: 3, title: 'Birth Certificate', file: null },
-	];
-
 	function removeDocument(index: number) {
 		formData.studentData.documents = formData.studentData.documents?.filter((_, i) => i !== index);
 	}
@@ -200,9 +182,6 @@
 			</div>
 			<!-- Admission Date -->
 			<div class="col-2">
-				<!-- <label for="admissionDate">Admission Date</label>
-				<DatePicker bind:value={formData.studentData.admissionDate} onChange={handleAdmissionDateChange} defaultToday={true} /> -->
-
 				<label for="studentData.admissionDate">Admission Date</label>
 				<DatePicker2 id="studentData.admissionDate" title="date of joining" bind:value={formData.studentData.admissionDate} onBlur={(isOpen) => handleDatePickerBlur('staffData.profile.dateOfJoining', isOpen)} defaultToday={true} />
 			</div>
@@ -270,14 +249,6 @@
 			</div>
 			<!-- Date of Birth -->
 			<div class="col-2">
-				<!-- <label for="dob">Date of Birth <span class="required">*</span></label>
-				<DatePicker bind:value={formData.studentData.profile.dob} onChange={handleBirthDateChange}  
-                onBlur={() => handleBlur("studentData.profile.dob")}
-                 onClear={handleOnClear} cls={`w-full ${$formErrors["studentData.profile.dob"] && (touched["studentData.profile.dob"] || formSubmitted) ? "input-error" : ""}`} />
-				{#if $formErrors["studentData.profile.dob"] && (touched["studentData.profile.dob"] || formSubmitted)}
-					<p class="error-text">{$formErrors["studentData.profile.dob"]}</p>
-				{/if} -->
-
 				<label for="studentData.profile.dob">Date of Birth <span class="required">*</span></label>
 				<DatePicker2 id="studentData.profile.dob" title="date of birth" bind:value={formData.studentData.profile.dob} onBlur={(isOpen) => handleDatePickerBlur('studentData.profile.dob', isOpen)} cls={`w-full ${$formErrors['studentData.profile.dob'] && (touched['studentData.profile.dob'] || formSubmitted) ? 'input-error' : ''}`} />
 				{#if $formErrors['studentData.profile.dob'] && (touched['studentData.profile.dob'] || formSubmitted)}
@@ -530,32 +501,6 @@
 	</div>
 
 	<!-- Upload Photo -->
-	<!-- <div class="card-wrapper">
-		<h1>Upload Photos</h1>
-		<div class="grid-12">
-			<div class="col-3">
-				<label for="street">Student Photo</label>
-				<FileUpload id="photo" />
-			</div>
-
-			<div class="col-3">
-				<label for="city">Father Photo</label>
-				<FileUpload id="fatherPhoto" />
-			</div>
-
-			<div class="col-3">
-				<label for="city">Mother Photo</label>
-				<FileUpload id="motherPhoto" />
-			</div>
-
-			<div class="col-3">
-				<label for="city">Guardian Photo</label>
-				<FileUpload id="guardianPhoto" />
-			</div>
-		</div>
-	</div> -->
-
-	<!-- Upload Photo -->
 	<div class="card-wrapper">
 		<h1>Upload Photo</h1>
 		<div class="grid-12">
@@ -591,37 +536,6 @@
 			{/each}
 		</div>
 	</div>
-
-	<!-- Upload Documents -->
-	<!-- <div class="card-wrapper">
-		<h1>Upload Documents</h1>
-		<div class="grid-12">
-			<div class="col-12">
-				<table>
-					<thead>
-						<tr>
-                                    <th style="width:5%;">#</th>
-                                    <th style="width:20%;">Title</th>
-                                    <th style="width:25%;">Document</th>
-                                    <th>Url</th>
-						</tr>
-					</thead>
-					<tbody>
-						{#each documents as doc, index}
-							<tr>
-								<td>{index + 1}</td>
-								<td><input id="" type="text" /></td>
-								<td>
-									<FileUpload id="photo" />
-								</td>
-								<td>{doc.title}</td>
-							</tr>
-						{/each}
-					</tbody>
-				</table>
-			</div>
-		</div>
-	</div> -->
 
 	<!-- Form Actions -->
 	<div class="form-actions">
@@ -706,17 +620,6 @@
 	/* Grid layout */
 	.grid-5 {display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.5rem;}
 
-	/* Responsive styles */
-	@media (max-width: 1024px) {.grid-5 { grid-template-columns: repeat(3, 1fr);}}
-
-	@media (max-width: 768px) {.grid-5 { grid-template-columns: repeat(2, 1fr);}}
-
-	@media (max-width: 480px) {
-        .grid-5 { grid-template-columns: 1fr;}
-		.form-actions {flex-direction: column;}
-		.btn {width: 100%;}
-	}
-
 	.card-wrapper {padding: 15px; background-color: #ffffff; border-radius: 10px; box-shadow: var(--shadow-sm); margin-bottom: 10px;}
 	.radio-group {display: flex; flex-direction: row; gap: 1rem;}
 	input[type='radio'] {cursor: pointer;}
@@ -736,4 +639,10 @@
 	.remove-button:hover {background-color: rgb(204, 202, 202);}
 	.header-bar {display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 1rem;}
 	.header-bar h1 {margin: 0;}
+
+    /* Responsive styles */
+    @media (max-width: 1024px) {.grid-5 { grid-template-columns: repeat(3, 1fr);}}
+    @media (max-width: 768px) {.grid-5 { grid-template-columns: repeat(2, 1fr);}}
+    @media (max-width: 480px) { .grid-5 { grid-template-columns: 1fr;} .form-actions {flex-direction: column;} .btn {width: 100%;}
+    }
 </style>

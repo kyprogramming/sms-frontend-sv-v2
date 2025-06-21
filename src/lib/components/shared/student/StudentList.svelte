@@ -1,9 +1,9 @@
 <script lang="ts">
 	// Imports
 	import { env } from '$env/dynamic/public';
-	import { currentPage, rowsPerPage, totalItems, totalPages } from '$lib/stores/paginationStore';
-	import { deleteSectionById, fetchSectionById, fetchSections } from '$lib/services/section';
-	import { formatDate, formatLocalDate } from '$lib/utils/formatDate';
+	import { currentPage, rowsPerPage, totalItems } from '$lib/stores/paginationStore';
+	import { deleteSectionById, fetchSectionById } from '$lib/services/section';
+	import { formatDate } from '$lib/utils/formatDate';
 
 	import DataTable from '$lib/components/common/DataTable.svelte';
 	import ModalDelete from '$lib/components/common/ModalDelete.svelte';
@@ -18,9 +18,9 @@
 
 	// Props
 	const schoolName = env.PUBLIC_SCHOOL_NAME || 'Default School';
-	// let { response } = $props();
+	// let { studentList } = $props();
 
-    let response: any = $state(page.data.studentList);
+    let studentList: any = $state(page.data.studentList);
 
 	// States
 	let searchText = $state('');
@@ -36,7 +36,7 @@
 	let classSections: { _id: string; name: string }[] = $state([]);
 	let selectedClassId = $state('');
 	let selectedSectionId = $state('');
-	let formattedStudent = $state(formattedStudents(response));
+	let formattedStudent = $state(formattedStudents(studentList));
 
 	// Column configuration
 	const columns: ColumnConfig[] = [
@@ -122,8 +122,8 @@
 		await deleteAction(selectedId);
 	}
 
-	function formattedStudents(response: any) {
-		const formattedStudentList = response.data.data.map((student: any) => {
+	function formattedStudents(studentList: any) {
+		const formattedStudentList = studentList.data.data.map((student: any) => {
 			const foundClass = classData.find((cls: any) => cls._id === student.classId);
 			const className = foundClass?.name || null;
 
@@ -137,13 +137,13 @@
 			};
 		});
 
-		// Return full formatted response with pagination
+		// Return full formatted studentList with pagination
 		return {
-			success: response.success,
-			message: response.message,
+			success: studentList.success,
+			message: studentList.message,
 			data: {
 				data: formattedStudentList,
-				pagination: response.data.pagination,
+				pagination: studentList.data.pagination,
 			},
 		};
 	}
@@ -152,16 +152,16 @@
 		// if (selectedClassId == "" && selectedSectionId == "" && searchText === "") return;
 		const params = new URLSearchParams({ classId: selectedClassId, sectionId: selectedSectionId, search: searchText, page: String($currentPage), limit: String($rowsPerPage) });
 		const json = await fetchStudentList(params);
-		response = { ...json };
-		formattedStudent = formattedStudents(response);
+		studentList = { ...json };
+		formattedStudent = formattedStudents(studentList);
 	}
 
 	async function refreshAction() {
 		selectedClassId = selectedSectionId = searchText = '';
 		const params = new URLSearchParams({ classId: selectedClassId, sectionId: selectedSectionId, search: searchText, page: String($currentPage), limit: String($rowsPerPage) });
 		const json = await fetchStudentList(params);
-		response = { ...json };
-		formattedStudent = formattedStudents(response);
+		studentList = { ...json };
+		formattedStudent = formattedStudents(studentList);
 	}
 
 	async function updateAction(id: string) {
@@ -237,7 +237,7 @@
 	</div>
 </div>
 
-{#key formattedStudent || response}
+{#key formattedStudent || studentList}
 	<DataTable response={formattedStudent} {columns} {actions} onPaginationChange={handlePaginationChange} onPageLimitChange={handlePageLimitChange} />
 {/key}
 

@@ -1,8 +1,8 @@
+import { z } from 'zod';
 import { formErrors } from '$lib/stores/formStore';
 import { formatDate } from '$lib/utils/formatDate';
-import { generateAdmissionNo, getCurrentAcademicYear } from '$lib/utils/utils';
-import { z } from 'zod';
 import { flattenErrors } from '$lib/utils/validateHelper';
+import { generateAdmissionNo, getCurrentAcademicYear } from '$lib/utils/utils';
 import { studentSchema, type StudentFormPayload } from '$lib/schemas/student.schema';
 
 formErrors.set({});

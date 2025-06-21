@@ -41,15 +41,24 @@
 	// Define the structure of our fee groups object
 	type FeeGroups = Record<string, FeeGroup>;
 
+	let discountsExpanded = $state(false);
+
 	// Initialize with the correct type
-	let feeGroups: FeeGroups = groupByFeeGroup(page.data.feeMasters?.data || []);
-	let feeDiscounts: Discount[] = (page.data.feeDiscounts?.data || []).map((d:any) => ({
-		...d,
-		selected: false,
-	}));
+	let feeGroups: FeeGroups = $state(groupByFeeGroup(page.data.feeMasters?.data || []));
+	let feeDiscounts: Discount[] = $state(
+		(page.data.feeDiscounts?.data || []).map((d: any) => ({
+			...d,
+			selected: false,
+		})),
+	);
 
 	console.log('Client Component - feeGroups', feeGroups);
 	console.log('Client Component - feeDiscounts', feeDiscounts);
+
+	// Replace the toggleGroupExpand call for discounts with this
+	function toggleDiscountsExpand() {
+		discountsExpanded = !discountsExpanded;
+	}
 
 	// Update the groupByFeeGroup function to return properly typed data
 	function groupByFeeGroup(data: any[]): FeeGroups {
@@ -104,9 +113,7 @@
 
 	// Toggle individual fee selection
 	function toggleFeeSelect(groupId: string, feeId: string) {
-		const updatedFees = feeGroups[groupId].fees.map((fee) =>
-			fee._id === feeId ? { ...fee, selected: !fee.selected } : fee,
-		);
+		const updatedFees = feeGroups[groupId].fees.map((fee) => (fee._id === feeId ? { ...fee, selected: !fee.selected } : fee));
 
 		const anySelected = updatedFees.some((fee) => fee.selected);
 
@@ -122,25 +129,17 @@
 
 	// Toggle discount selection
 	function toggleDiscountSelect(discountId: string) {
-		feeDiscounts = feeDiscounts.map((discount) =>
-			discount._id === discountId ? { ...discount, selected: !discount.selected } : discount,
-		);
+		feeDiscounts = feeDiscounts.map((discount) => (discount._id === discountId ? { ...discount, selected: !discount.selected } : discount));
 	}
 
 	// Calculate total for a group
 	function calculateGroupTotal(group: any) {
-		return group.fees.reduce(
-			(total: number, fee: any) => (fee.selected ? total + fee.amount : total),
-			0,
-		);
+		return group.fees.reduce((total: number, fee: any) => (fee.selected ? total + fee.amount : total), 0);
 	}
 
 	// Calculate subtotal (before discounts)
 	function calculateSubTotal() {
-		return Object.values(feeGroups).reduce(
-			(total: number, group: any) => (group.selected ? total + calculateGroupTotal(group) : total),
-			0,
-		);
+		return Object.values(feeGroups).reduce((total: number, group: any) => (group.selected ? total + calculateGroupTotal(group) : total), 0);
 	}
 
 	// Calculate total discount amount
@@ -182,23 +181,10 @@
 </script>
 
 <div class="fee-container">
-   
 	{#each Object.entries(feeGroups) as [id, group] (id)}
 		<div class="fee-group {group.selected ? 'selected' : ''} {group.expanded ? 'expanded' : ''}">
-			<div
-				class="fee-group-header"
-				role="button"
-				tabindex="0"
-				on:click={() => toggleGroupExpand(id)}
-				on:keydown={(e) => e.key === 'Enter' && toggleGroupExpand(id)}>
-				<svg
-					class="expand-icon"
-					width="14"
-					height="14"
-					style="margin-right: 10px;"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor">
+			<div class="fee-group-header" role="button" tabindex="0" onclick={() => toggleGroupExpand(id)} onkeydown={(e) => e.key === 'Enter' && toggleGroupExpand(id)}>
+				<svg class="expand-icon" width="14" height="14" style="margin-right: 10px;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
 				</svg>
 
@@ -206,8 +192,11 @@
 					type="checkbox"
 					class="checkbox"
 					checked={group.selected}
-					on:click|stopPropagation={() => toggleGroupSelect(id)}
-					on:keydown={(e) => {
+					onclick={(e) => {
+						e.stopPropagation();
+						toggleGroupSelect(id);
+					}}
+					onkeydown={(e) => {
 						if (e.key === 'Enter' || e.key === ' ') {
 							e.stopPropagation();
 							toggleGroupSelect(id);
@@ -244,11 +233,7 @@
 									<td>
 										<div class="meta-icon">
 											<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-												<path
-													stroke-linecap="round"
-													stroke-linejoin="round"
-													stroke-width="2"
-													d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
 											</svg>
 											{formatDate(fee.dueDate)}
 										</div>
@@ -266,21 +251,9 @@
 	{/each}
 
 	{#if feeDiscounts.length > 0}
-		<div class="discount-group">
-			<div
-				class="fee-group-header"
-				role="button"
-				tabindex="0"
-				on:click={() => toggleGroupExpand('discounts')}
-				on:keydown={(e) => e.key === 'Enter' && toggleGroupExpand('discounts')}>
-				<svg
-					class="expand-icon"
-					width="14"
-					height="14"
-					style="margin-right: 10px;"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor">
+		<div class="discount-group {discountsExpanded ? 'expanded' : ''}">
+			<div class="fee-group-header" role="button" tabindex="0" onclick={toggleDiscountsExpand} onkeydown={(e) => e.key === 'Enter' && toggleDiscountsExpand()}>
+				<svg class="expand-icon" width="14" height="14" style="margin-right: 10px;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
 				</svg>
 
@@ -291,64 +264,60 @@
 				</div>
 			</div>
 
-			<div class="discount-table" transition:slide>
-				<table>
-					<thead>
-						<tr>
-							<th>Discount Name</th>
-							<th>Code</th>
-							<th>Type</th>
-							<th>Amount</th>
-							<th>Applicable To</th>
-							<th>Expiry Date</th>
-						</tr>
-					</thead>
-					<tbody>
-						{#each feeDiscounts as discount (discount._id)}
-							<tr class={discount.selected ? 'selected' : ''}>
-								<td class="cell-content">
-									<input
-										type="checkbox"
-										checked={discount.selected}
-										on:click={() => toggleDiscountSelect(discount._id)} />
-									<span>{discount.name}</span>
-								</td>
-								<td>{discount.code}</td>
-								<td>{discount.discountType}</td>
-								<td>
-									{discount.discountType === 'fixed'
-										? `₹${discount.amount.toFixed(2)}`
-										: `${discount.amount}%`}
-								</td>
-								<td>{discount.applicableTo}</td>
-								<td>{formatDate(discount.expiryDate)}</td>
+			{#if discountsExpanded}
+				<div class="discount-table" transition:slide>
+					<table>
+						<thead>
+							<tr>
+								<th>Discount Name</th>
+								<th>Code</th>
+								<th>Type</th>
+								<th>Amount</th>
+								<th>Applicable To</th>
+								<th>Expiry Date</th>
 							</tr>
-						{/each}
-					</tbody>
-				</table>
-			</div>
+						</thead>
+						<tbody>
+							{#each feeDiscounts as discount (discount._id)}
+								<tr class={discount.selected ? 'selected' : ''}>
+									<td class="cell-content">
+										<input type="checkbox" checked={discount.selected} onclick={() => toggleDiscountSelect(discount._id)} />
+										<span>{discount.name}</span>
+									</td>
+									<td>{discount.code}</td>
+									<td>{discount.discountType}</td>
+									<td>
+										{discount.discountType === 'fixed' ? `₹${discount.amount.toFixed(2)}` : `${discount.amount}%`}
+									</td>
+									<td>{discount.applicableTo}</td>
+									<td>{formatDate(discount.expiryDate)}</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</div>
+			{/if}
 		</div>
 	{/if}
 
-    <div class="combined-total-box">
-        <div class="total-row">
-            <div class="total-label">Subtotal:</div>
-            <div class="total-amount">{calculateSubTotal().toFixed(2)}</div>
-        </div>
-    
-        {#if getSelectedDiscounts().length > 0}
-            <div class="total-row discount-row">
-                <div class="total-label">Discounts:</div>
-                <div class="total-amount">-{calculateTotalDiscount().toFixed(2)}</div>
-            </div>
-        {/if}
-    
-        <div class="total-row final-row">
-            <div class="total-label">Total Amount to be paid:</div>
-            <div class="total-amount">{calculateTotalPrice().toFixed(2)}</div>
-        </div>
-    </div>
+	<div class="combined-total-box">
+		<div class="total-row">
+			<div class="total-label">Subtotal:</div>
+			<div class="total-amount">{calculateSubTotal().toFixed(2)}</div>
+		</div>
 
+		{#if getSelectedDiscounts().length > 0}
+			<div class="total-row discount-row">
+				<div class="total-label">Discounts:</div>
+				<div class="total-amount">-{calculateTotalDiscount().toFixed(2)}</div>
+			</div>
+		{/if}
+
+		<div class="total-row final-row">
+			<div class="total-label">Total Amount to be paid:</div>
+			<div class="total-amount">{calculateTotalPrice().toFixed(2)}</div>
+		</div>
+	</div>
 </div>
 
 <style>
@@ -513,79 +482,79 @@
 		gap: 0.5rem;
 	}
 
-    .totals-container {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-        margin: 1rem 0 1.5rem 0;
-    }
+	.totals-container {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		margin: 1rem 0 1.5rem 0;
+	}
 
-    .total-box {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.75rem 1rem;
-        border-radius: 6px;
-        background-color: #f8fafc;
-    }
+	.total-box {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0.75rem 1rem;
+		border-radius: 6px;
+		background-color: #f8fafc;
+	}
 
-    .total-label {
-        font-weight: 600;
-        color: #4a5568;
-    }
+	.total-label {
+		font-weight: 600;
+		color: #4a5568;
+	}
 
-    .total-amount {
-        font-weight: 700;
-        color: #2b6cb0;
-        font-size: 1.1rem;
-    }
+	.total-amount {
+		font-weight: 700;
+		color: #2b6cb0;
+		font-size: 1.1rem;
+	}
 
-    .discount-total {
-        background-color: #ebf8ff;
-        border: 1px solid #bee3f8;
-    }
+	.discount-total {
+		background-color: #ebf8ff;
+		border: 1px solid #bee3f8;
+	}
 
-    .final-total {
-        background-color: #e6f7ff;
-        border: 1px solid #b3e0ff;
-    }
+	.final-total {
+		background-color: #e6f7ff;
+		border: 1px solid #b3e0ff;
+	}
 
-    .combined-total-box {
-        border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        padding: 0.5rem;
-        margin: 0.5rem 0;
-        background: #f8fafc;
-    }
+	.combined-total-box {
+		border: 1px solid #e2e8f0;
+		border-radius: 8px;
+		padding: 0.5rem;
+		margin: 0.5rem 0;
+		background: #f8fafc;
+	}
 
-    .total-row {
-        display: flex;
-        justify-content: space-between;
-        padding: 0.25rem 0;
-    }
+	.total-row {
+		display: flex;
+		justify-content: space-between;
+		padding: 0.25rem 0;
+	}
 
-    .discount-row {
-        border-top: 1px dashed #cbd5e0;
-        border-bottom: 1px dashed #cbd5e0;
-        margin: 0.25rem 0;
-    }
+	.discount-row {
+		border-top: 1px dashed #cbd5e0;
+		border-bottom: 1px dashed #cbd5e0;
+		margin: 0.25rem 0;
+	}
 
-    .final-row {
-        padding-top: 0.75rem;
-        font-weight: bold;
-    }
+	.final-row {
+		padding-top: 0.75rem;
+		font-weight: bold;
+	}
 
-    .total-label {
-        color: #4a5568;
-    }
+	.total-label {
+		color: #4a5568;
+	}
 
-    .total-amount {
-        color: #2b6cb0;
-        font-weight: 600;
-    }
+	.total-amount {
+		color: #2b6cb0;
+		font-weight: 600;
+	}
 
-    .final-row .total-amount {
-        font-size: 1.2em;
-        color: #2c5282;
-    }
+	.final-row .total-amount {
+		font-size: 1.2em;
+		color: #2c5282;
+	}
 </style>
