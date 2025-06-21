@@ -14,7 +14,7 @@
 	import { isEqual } from '$lib/utils/utils';
 	import { MESSAGES } from '$lib/utils/messages';
 	import { formatLocalDate } from '$lib/utils/formatDate';
-	import { validateForm } from '$lib/utils/validate';
+	import { validateForm } from '$lib/utils/validateHelper';
 	import ImageUploader from '$lib/components/common/ImageUploader.svelte';
 	import FileUpload from '$lib/components/common/FileUpload.svelte';
 	import UploadDocument from '$lib/components/common/UploadDocument.svelte';

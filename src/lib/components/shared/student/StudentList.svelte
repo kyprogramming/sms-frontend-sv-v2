@@ -18,7 +18,9 @@
 
 	// Props
 	const schoolName = env.PUBLIC_SCHOOL_NAME || 'Default School';
-	let { response } = $props();
+	// let { response } = $props();
+
+    let response: any = $state(page.data.studentList);
 
 	// States
 	let searchText = $state('');

@@ -1,4 +1,7 @@
 // src/lib/constants.ts
+import { env } from '$env/dynamic/public';
+
+export const SCHOOL_NAME = env.PUBLIC_SCHOOL_NAME || 'Default School';
 export const COOKIE_OPTIONS = {
 	path: '/',
 	httpOnly: true,

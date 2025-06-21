@@ -4,6 +4,7 @@ import { generateAdmissionNo, getCurrentAcademicYear } from '$lib/utils/utils';
 import { writable } from 'svelte/store';
 import { z } from 'zod';
 import { documentSchema } from '../staff/staffValidation';
+import { flattenErrors } from '$lib/utils/validateHelper';
 
 export const studentSchema = z.object({
 	userData: z.object({
@@ -100,7 +101,7 @@ export const studentSchema = z.object({
 });
 
 formErrors.set({});
-export type FormErrors = Partial<Record<any, any>>;
+
 export type StudentFormData = z.infer<typeof studentSchema>;
 
 export function initializeStudentFormData(): StudentFormData {
@@ -183,28 +184,6 @@ export function initializeStudentFormData(): StudentFormData {
 	};
 }
 
-export function flattenErrors<T>(error: z.ZodFormattedError<T>): FormErrors {
-	const result: FormErrors = {};
-
-	function recurse(err: z.ZodFormattedError<any> | { _errors: any[] }, path: any[] = []) {
-		// Only proceed with objects
-		if (typeof err !== 'object' || err === null) return;
-
-		for (const key in err) {
-			if (key === '_errors') {
-				const messages = (err as { _errors: any[] })._errors;
-				if (messages.length > 0) {
-					const fullPath = path.join('.');
-					result[fullPath] = messages[0];
-				}
-			} else {
-				recurse((err as Record<string, any>)[key], [...path, key]);
-			}
-		}
-	}
-	recurse(error);
-	return result;
-}
 
 export function validateStudentForm(formData: StudentFormData) {
 	let schema;

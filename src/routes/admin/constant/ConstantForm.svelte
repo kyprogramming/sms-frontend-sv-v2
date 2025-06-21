@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { formErrors } from '$lib/stores/formStore';
-	import { validateForm } from '$lib/utils/validate';
+	import { validateForm } from '$lib/utils/validateHelper';
 	import { showSnackbar } from '$lib/components/snackbar/store';
 	import { closeModal } from '$lib/stores/modalStore';
 	import { createConstant, updateConstant } from '$lib/services/constant';

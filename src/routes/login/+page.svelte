@@ -2,7 +2,7 @@
 	import Header from '$lib/components/layouts/Header.svelte';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { isLoading } from '$lib/stores/loading';
-	import { validateForm } from '$lib/utils/validate';
+	import { validateForm } from '$lib/utils/validateHelper';
 	import { apiRequest } from '$lib/utils/api';
 	import { showSnackbar } from '$lib/components/snackbar/store';
 	import { API_BASE_URL } from '$lib/utils/env.config';

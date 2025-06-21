@@ -1,13 +1,15 @@
 <script lang="ts">
 	import Breadcrumb from '$lib/components/common/Breadcrumb.svelte';
 	import StudentList from '$lib/components/shared/student/StudentList.svelte';
+	import { SCHOOL_NAME } from '$lib/utils/constants';
 
-	let { data } = $props();
-	let response: any = $state(data.data);
-
-	const breadcrumbItems = [{ label: 'Dashboard', href: '/admin/dashboard' }, { label: 'Student List' }];
+	const pageTitle = 'Student List';
+	const breadcrumbItems = [{ label: 'Dashboard', href: '/admin/dashboard' }, { label: pageTitle }];
 </script>
 
-<Breadcrumb title="Student List" items={breadcrumbItems} />
+<svelte:head>
+	<title>{SCHOOL_NAME} - {pageTitle}</title>
+</svelte:head>
 
-<StudentList {response} />
+<Breadcrumb title={pageTitle} items={breadcrumbItems} />
+<StudentList />

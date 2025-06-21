@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { formErrors } from '$lib/stores/formStore';
-	import { validateForm } from '$lib/utils/validate';
+	import { validateForm } from '$lib/utils/validateHelper';
 	import { showSnackbar } from '$lib/components/snackbar/store';
 	import { createFeeDiscount, updateFeeDiscount } from '$lib/services/fee-discount';
 	import { onMount } from 'svelte';

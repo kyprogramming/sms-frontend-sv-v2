@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { formErrors } from '$lib/stores/formStore';
 	import { slide } from 'svelte/transition';
-	import { validateForm } from '$lib/utils/validate';
+	import { validateForm } from '$lib/utils/validateHelper';
 	import { showSnackbar } from '$lib/components/snackbar/store';
 	import { createFeeMaster, updateFeeMaster } from '$lib/services/fee-master';
 	import { onMount } from 'svelte';

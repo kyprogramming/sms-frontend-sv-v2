@@ -1,7 +1,7 @@
 <!-- console.log("academicYearData", $state.snapshot(academicYearData)); -->
 <script lang="ts">
 	import { isLoading } from '$lib/stores/loading';
-	import { validateForm } from '$lib/utils/validate';
+	import { validateForm } from '$lib/utils/validateHelper';
 	import { showSnackbar } from '$lib/components/snackbar/store';
 	import { closeModal } from '$lib/stores/modalStore';
 
