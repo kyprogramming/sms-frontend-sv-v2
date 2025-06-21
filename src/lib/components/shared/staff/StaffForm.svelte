@@ -2,7 +2,7 @@
 	import DatePicker from '$lib/components/common/DatePicker.svelte';
 	import { CONTRACT_TYPE, GENDERS, MARITAL_STATUS, SHIFT, STAFF_DEPARTMENTS, STAFF_DESIGNATIONS, STAFF_ROLES } from '$lib/utils/constants';
 	import { isLoading } from '$lib/stores/loading';
-	import { initializeStaffFormData, staffSchema, type StaffFormData } from './staffValidation';
+	import { initializeStaffFormPayload} from './staffValidation';
 	import { createStaff, updateStaff } from '$lib/services/staff';
 	import { BrushCleaning, PlusCircle, Save } from '@lucide/svelte';
 	import { showSnackbar } from '$lib/components/snackbar/store';
@@ -19,13 +19,14 @@
 	import FileUpload from '$lib/components/common/FileUpload.svelte';
 	import UploadDocument from '$lib/components/common/UploadDocument.svelte';
 	import DatePicker2 from '$lib/components/common/DatePicker2.svelte';
+	import { staffSchema, type StaffFormPayload } from '$lib/schemas/staff.schema';
 
 	// Props
 	let { staffData = null, action } = $props();
 	const schoolName = env.PUBLIC_SCHOOL_NAME || 'Default School';
 	const pageTitle = `${schoolName} - Staff Registration - ${action === 'update' ? ' Update' : 'New'}`;
 
-	let formData: StaffFormData = $state(initializeStaffFormData());
+	let formData: StaffFormPayload = $state(initializeStaffFormPayload());
 	formErrors.set({});
 	let touched: any = $state({});
 	let formSubmitted: boolean = $state(false);
@@ -51,7 +52,7 @@
 				userData: { ...staffData.data.userId },
 			};
 		} else {
-			formData = initializeStaffFormData();
+			formData = initializeStaffFormPayload();
 		}
 
 		formErrors.set({});
@@ -373,7 +374,7 @@
 			</div>
 		</div>
 	</div>
-    
+
 	<!-- Upload Photo -->
 	<div class="card-wrapper">
 		<h1>Upload Photo</h1>
@@ -439,8 +440,7 @@
 		}}
 		onblur={() => handleBlur(fieldName)}
 		maxLength={length}
-		placeholder="Enter {title.toLowerCase()}"
-	/>
+		placeholder="Enter {title.toLowerCase()}" />
 
 	{#if $formErrors[fieldName] && (touched[fieldName] || formSubmitted)}
 		<p class="error-text">{$formErrors[fieldName]}</p>
@@ -463,8 +463,7 @@
 		}}
 		onblur={() => handleBlur(fieldName)}
 		maxLength={length}
-		placeholder="Enter {title.toLowerCase()}"
-	></textarea>
+		placeholder="Enter {title.toLowerCase()}"></textarea>
 
 	{#if $formErrors[fieldName] && (touched[fieldName] || formSubmitted)}
 		<p class="error-text">{$formErrors[fieldName]}</p>
@@ -485,8 +484,7 @@
 			onChange((e.target as HTMLSelectElement).value);
 			validateForm(staffSchema, formData);
 		}}
-		onblur={() => handleBlur(fieldName)}
-	>
+		onblur={() => handleBlur(fieldName)}>
 		<option value="" selected>Select {title.toLowerCase()}</option>
 		{#each options as opt}
 			<option value={opt.name}>{opt.name}</option>
