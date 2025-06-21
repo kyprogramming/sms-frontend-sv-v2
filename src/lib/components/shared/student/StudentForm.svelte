@@ -30,7 +30,9 @@
 	import UploadDocument from '$lib/components/common/UploadDocument.svelte';
 
 	// Props
-	let { studentData = null, action } = $props();
+	let { action } = $props();
+    // const action = $derived(page.params.action);
+    const studentData = page.data.studentData || null;
 	const schoolName = env.PUBLIC_SCHOOL_NAME || 'Default School';
 	const pageTitle = `${schoolName} - Student Registration - ${action === 'update' ? ' Update' : 'New'}`;
 
