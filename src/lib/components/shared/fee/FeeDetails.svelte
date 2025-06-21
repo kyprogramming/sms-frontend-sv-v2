@@ -32,6 +32,9 @@
 
 	// Initialize with the correct type
 	let feeGroups: FeeGroups = groupByFeeGroup(page.data.feeMasters?.data || []);
+	let feeDiscounts: any = page.data.feeDiscounts?.data;
+    console.log("Client Component - feeGroups", feeGroups);
+    console.log("Client Component - feeDiscounts", feeDiscounts);
 
 	// Update the groupByFeeGroup function to return properly typed data
 	function groupByFeeGroup(data: any[]): FeeGroups {

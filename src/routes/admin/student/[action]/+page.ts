@@ -23,13 +23,13 @@ const api_base_url = ENV === 'development' ? `${API_BASE_URL}` : `${UI_BASE_URL}
 // };
 
 export const load: PageLoad = async ({ url, fetch }) => {
-    const id = url.searchParams.get('id');
-    console.log('ID:',id);
+	const id = url.searchParams.get('id');
+	// console.log('ID:', id);
 	let studentRes = null;
 	try {
 		isLoading.set(true);
 		// Fetch student data if ID is provided
-        if (id) {
+		if (id) {
 			studentRes = await fetch(`${api_base_url}/student/${id}`, {
 				method: 'GET',
 				headers: { 'Content-Type': 'application/json' },
@@ -39,7 +39,7 @@ export const load: PageLoad = async ({ url, fetch }) => {
 				const message = await studentRes.text();
 				throw error(studentRes.status, message || 'Failed to fetch student data');
 			}
-        }
+		}
 
 		// Fetch fee masters
 		const feeMasterRes = await fetch(`${API_BASE_URL}/fee-master/list`, {
@@ -51,6 +51,18 @@ export const load: PageLoad = async ({ url, fetch }) => {
 		if (!feeMasterRes.ok) {
 			const message = await feeMasterRes.text();
 			throw error(feeMasterRes.status, message || 'Failed to fetch fee masters');
+		}
+
+		// Fetch fee masters
+		const feeDiscountRes = await fetch(`${API_BASE_URL}/fee-discount/list`, {
+			method: 'GET',
+			headers: { 'Content-Type': 'application/json' },
+			credentials: 'include',
+		});
+
+		if (!feeDiscountRes.ok) {
+			const message = await feeDiscountRes.text();
+			throw error(feeDiscountRes.status, message || 'Failed to fetch fee discounts');
 		}
 
 		// // Fetch fee groups
@@ -78,14 +90,20 @@ export const load: PageLoad = async ({ url, fetch }) => {
 		// }
 
 		// Parse all responses
-		const [studentData, feeMasters] = await Promise.all([studentRes?.json(), feeMasterRes.json()]);
+		const [studentData, feeMasters, feeDiscounts] = await Promise.all([
+			studentRes?.json(),
+			feeMasterRes.json(),
+			feeDiscountRes.json(),
+		]);
 
-        console.log('Server: Student data By findById:', studentData);
-        console.log('Server: FeeMaster data By list:', feeMasters);
+		console.log('Server: Student data By findById:', studentData);
+		console.log('Server: FeeMaster data By list:', feeMasters);
+		console.log('Server: FeeMaster data By list:', feeDiscounts);
 
 		return {
 			studentData,
-			feeMasters
+			feeMasters,
+			feeDiscounts,
 		};
 	} catch (err) {
 		throw error(500, err instanceof Error ? err.message : 'An unknown error occurred');

@@ -11,7 +11,6 @@
 	import { BrushCleaning, Save } from '@lucide/svelte';
 	import LoaderIcon from '$lib/components/common/LoaderIcon.svelte';
 	import DatePicker2 from '$lib/components/common/DatePicker2.svelte';
-	import { formatDate, formatLocalDate } from '$lib/utils/formatDate';
 
 	let { onRefreshPage, feeDiscountData = null, action } = $props();
 
@@ -19,7 +18,7 @@
 		return {
 			name: '',
 			code: '',
-			value: '',
+			amount: '',
 			discountType: '',
 			applicableTo: '',
 			expiryDate: '',
@@ -49,10 +48,7 @@
             const expiry = feeDiscountData.expiryDate
 			? new Date(feeDiscountData.expiryDate)
 			: null;
-			formData = {
-				...feeDiscountData,
-				expiryDate: expiry ? formatLocalDate(expiry) : '',
-			};
+			formData = {...feeDiscountData};
 		} else {
 			formData = initializeFeeDiscountFormData();
 		}
@@ -93,8 +89,12 @@
 
 		try {
 			if (action === 'update' && feeDiscountData) {
+
 				const isUnChanged = isEqual(feeDiscountData, formData);
-				if (isUnChanged) {
+				console.log('isUnChanged', isUnChanged);
+                console.log('feeDiscountData', feeDiscountData);
+                console.log('formData', formData);
+                if (isUnChanged) {
 					showSnackbar({ message: MESSAGES.FORM.NO_CHANGES, type: 'warning' });
 					return;
 				}
@@ -139,24 +139,24 @@
 			{/if}
 		</div>
 		<div class="col-6">
-			<label for="value">Value <span class="required">*</span></label>
+			<label for="amount">Amount <span class="required">*</span></label>
 			<input
-				id="value"
+				id="amount"
 				type="number"
-				name="value"
+				name="amount"
 				placeholder={formData.discountType === 'percentage' ? '0-100' : '0.00'}
 				min="0"
 				step={formData.discountType === 'percentage' ? '1' : '0.01'}
 				inputmode="decimal"
-				class={`w-full ${$formErrors.value && (touched.value || formSubmitted) ? 'input-error' : ''}`}
-				bind:value={formData.value}
+				class={`w-full ${$formErrors.value && (touched.amount || formSubmitted) ? 'input-error' : ''}`}
+				bind:value={formData.amount}
 				oninput={(e) => {
 					const value = (e.target as HTMLInputElement).value;
-					handleChange('value', value === '' ? '' : parseFloat(value));
+					handleChange('amount', value === '' ? '' : parseFloat(value));
 				}}
-				onblur={() => handleChange('value', formData.value)} />
-			{#if $formErrors.value && (touched.value || formSubmitted)}
-				<p class="error-text">{$formErrors.value}</p>
+				onblur={() => handleChange('amount', formData.amount)} />
+			{#if $formErrors.amount && (touched.amount || formSubmitted)}
+				<p class="error-text">{$formErrors.amount}</p>
 			{/if}
 		</div>
 

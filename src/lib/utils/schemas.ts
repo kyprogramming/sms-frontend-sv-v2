@@ -111,9 +111,9 @@ export const feeDiscountFormSchema = z
 	.object({
 		name: z.string().min(1, 'Discount name is required'),
 		code: z.string().optional(),
-		value: z
+		amount: z
 			.union([
-				z.string().min(1, 'Value is required'), // Handles empty string case
+				z.string().min(1, 'Amount is required'),
 				z.number(),
 			])
 			.transform((val) => {
@@ -130,13 +130,13 @@ export const feeDiscountFormSchema = z
 		active: z.boolean().optional().default(true),
 	})
 	.superRefine((data, ctx) => {
-		const val = data.value;
+		const val = data.amount;
 		const discountType = data.discountType;
 		if (val === '') {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
-				message: 'Value is required',
-				path: ['value'],
+				message: 'Amount is required',
+				path: ['amount'],
 			});
 			return;
 		}
@@ -146,8 +146,8 @@ export const feeDiscountFormSchema = z
 			if (val <= 0) {
 				ctx.addIssue({
 					code: z.ZodIssueCode.custom,
-					message: 'Value must be positive',
-					path: ['value'],
+					message: 'Amount must be positive',
+					path: ['amount'],
 				});
 			}
 
@@ -157,7 +157,7 @@ export const feeDiscountFormSchema = z
 					ctx.addIssue({
 						code: z.ZodIssueCode.custom,
 						message: 'Percentage cannot exceed 100%',
-						path: ['value'],
+						path: ['amount'],
 					});
 				}
 			}
@@ -167,7 +167,7 @@ export const feeDiscountFormSchema = z
 					ctx.addIssue({
 						code: z.ZodIssueCode.custom,
 						message: 'Amount cannot exceed 99,999',
-						path: ['value'],
+						path: ['amount'],
 					});
 				}
 			}
@@ -180,7 +180,7 @@ export type FeeDiscountPayload = z.infer<typeof feeDiscountFormSchema>;
 // --------------------------------------------------------------------------------------------
 export const constantFormSchema = z.object({
 	key: z.string().min(1, 'Key is required'),
-	value: z.union([z.string().min(1, 'Value is required'), z.number().min(0), z.boolean(), z.record(z.any())]),
+	value: z.union([z.string().min(1, 'Amount is required'), z.number().min(0), z.boolean(), z.record(z.any())]),
 	type: z.enum(['string', 'number', 'boolean', 'json']),
 	category: z.string().optional(),
 	description: z.string().optional(),
