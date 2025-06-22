@@ -16,7 +16,8 @@
 	import { classFormSchema, type ClassFormPayload } from '$lib/schemas/class.schema';
 	import { invalidateAll } from '$app/navigation';
 
-	let allSections = page.data?.sectionData || [];
+	let allSections = page.data.sectionList || [];
+    console.log("All sections:", allSections);  
 
 	let { onRefreshPage, classList = null, action } = $props();
 

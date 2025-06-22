@@ -29,7 +29,7 @@
 
 	// States
 	let searchText = $state('');
-	let sectionData: any | null = $state(null);
+	let sectionList: any | null = $state(null);
 
 	let isModalOpen = $state(false);
 	let isDeleteModalOpen = $state(false);
@@ -38,7 +38,7 @@
 	let selectedName = $state('');
 
 	let classList = page.data?.classList || [];
-    console.log('classList on StudentList page', classList);
+	console.log('classList on StudentList page', classList);
 	let classSections: { _id: string; name: string }[] = $state([]);
 	let selectedClassId = $state('');
 	let selectedSectionId = $state('');
@@ -171,17 +171,17 @@
 	}
 
 	async function updateAction(id: string) {
-		sectionData = null;
+		sectionList = null;
 		const res = await fetchSectionById(id);
 		const { data } = res;
-		sectionData = data;
+		sectionList = data;
 		if (res.success) isModalOpen = true;
 	}
 
 	async function deleteAction(id: string) {
 		const json = await deleteSectionById(id);
 		if (json.success) {
-            await invalidateAll();
+			await invalidateAll();
 			showSnackbar({ message: `Section ${json.message}`, type: 'success' });
 			isDeleteModalOpen = false;
 		} else showSnackbar({ message: `${json.message}`, type: 'error' });

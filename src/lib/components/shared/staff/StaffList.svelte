@@ -23,7 +23,7 @@
 
 	// States
 	let searchText = $state('');
-	let sectionData: any | null = $state(null);
+	let sectionList: any | null = $state(null);
 
 	let isModalOpen = $state(false);
 	let isDeleteModalOpen = $state(false);
@@ -176,10 +176,10 @@
 	}
 
 	async function updateAction(id: string) {
-		sectionData = null;
+		sectionList = null;
 		const res = await fetchSectionById(id);
 		const { data } = res;
-		sectionData = data;
+		sectionList = data;
 		if (res.success) isModalOpen = true;
 	}
 

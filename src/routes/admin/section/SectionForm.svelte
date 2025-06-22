@@ -12,7 +12,7 @@
 	import { MESSAGES } from '$lib/utils/messages';
 	import { sectionFormSchema, type SectionFormPayload } from '$lib/schemas/section.schema';
 
-	let { onRefreshPage, sectionData = null, action } = $props();
+	let { onRefreshPage, sectionList = null, action } = $props();
 
 	// Reactive form state
 	let formData: SectionFormPayload = $state({ name: '' });
@@ -22,8 +22,8 @@
 	onMount(() => {
 		formErrors.set({ name: '' });
 		// Initialize form data based on action
-		if (action === 'update' && sectionData) {
-			formData = { name: sectionData.name };
+		if (action === 'update' && sectionList) {
+			formData = { name: sectionList.name };
 		} else {
 			formData = { name: '' };
 		}
@@ -32,7 +32,7 @@
 
 	// Form reset handler
 	function handleResetForm() {
-		if (action === 'update') formData = { name: sectionData.name };
+		if (action === 'update') formData = { name: sectionList.name };
 		else formData = { name: '' };
 
 		formErrors.set({});
@@ -53,14 +53,14 @@
 		const isValid = validateForm(sectionFormSchema, formData);
 		if (!isValid) return;
 
-		if (action === 'update' && sectionData) {
+		if (action === 'update' && sectionList) {
 			// Check if the form data is unchanged before updating
-			const isUnChanged = isEqual(sectionData, formData);
+			const isUnChanged = isEqual(sectionList, formData);
 			if (isUnChanged) {
 				showSnackbar({ message: MESSAGES.FORM.NO_CHANGES, type: 'warning' });
 				return;
 			}
-			await updateSection(sectionData._id, formData);
+			await updateSection(sectionList._id, formData);
 			showSnackbar({ message: MESSAGES.SECTION.UPDATED, type: 'success' });
 		} else {
 			await createSection(formData);
