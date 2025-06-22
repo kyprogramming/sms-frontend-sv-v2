@@ -16,7 +16,7 @@
 	<nav class="breadcrumb">
 		{#each items as item, i}
 			{#if item.href}
-				<a href={item.href}>{item.label}</a>
+				<a href={item.href} data-sveltekit-preload-data="tap">{item.label}</a>
 				{#if i < items.length - 1}
 					<span class="separator">
 						<ChevronRight />

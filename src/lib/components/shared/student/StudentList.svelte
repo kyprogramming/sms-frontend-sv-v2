@@ -12,15 +12,20 @@
 
 	import type { ColumnConfig } from '$lib/interfaces/table.interface';
 	import { page } from '$app/state';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { fetchStudentList } from '$lib/services/student';
 	import { showSnackbar } from '$lib/components/snackbar/store';
+	import { onMount } from 'svelte';
+
+	// onMount(() => {
+	// 	invalidateAll();
+	// });
 
 	// Props
 	const schoolName = env.PUBLIC_SCHOOL_NAME || 'Default School';
 	// let { studentList } = $props();
 
-    let studentList: any = $state(page.data.studentList);
+	let studentList: any = $state(page.data.studentList);
 
 	// States
 	let searchText = $state('');
@@ -32,7 +37,8 @@
 	let selectedId = $state('');
 	let selectedName = $state('');
 
-	let classData = page.data?.classData || [];
+	let classList = page.data?.classList || [];
+    console.log('classList on StudentList page', classList);
 	let classSections: { _id: string; name: string }[] = $state([]);
 	let selectedClassId = $state('');
 	let selectedSectionId = $state('');
@@ -114,7 +120,7 @@
 	function handleClassChange(e: Event) {
 		selectedSectionId = '';
 		const selected = (e.target as HTMLSelectElement).value || '';
-		const selectedClass = classData.find((cls: any) => cls._id === selected);
+		const selectedClass = classList.find((cls: any) => cls._id === selected);
 		classSections = selectedClass?.sectionIds || [];
 	}
 
@@ -124,7 +130,7 @@
 
 	function formattedStudents(studentList: any) {
 		const formattedStudentList = studentList.data.data.map((student: any) => {
-			const foundClass = classData.find((cls: any) => cls._id === student.classId);
+			const foundClass = classList.find((cls: any) => cls._id === student.classId);
 			const className = foundClass?.name || null;
 
 			const foundSection = foundClass?.sectionIds.find((sec: any) => sec._id === student.sectionId);
@@ -175,6 +181,7 @@
 	async function deleteAction(id: string) {
 		const json = await deleteSectionById(id);
 		if (json.success) {
+            await invalidateAll();
 			showSnackbar({ message: `Section ${json.message}`, type: 'success' });
 			isDeleteModalOpen = false;
 		} else showSnackbar({ message: `${json.message}`, type: 'error' });
@@ -194,7 +201,7 @@
 	<div class="search-container">
 		<select id="classId" style="width:150px;" bind:value={selectedClassId} onchange={handleClassChange}>
 			<option value="" selected>Select Class</option>
-			{#each classData as cls}
+			{#each classList as cls}
 				<option value={cls._id}>{cls.name}</option>
 			{/each}
 		</select>
@@ -215,8 +222,7 @@
 				if (e.key === 'Enter') {
 					handleSearch();
 				}
-			}}
-		/>
+			}} />
 
 		<button type="button" class="btn ripple" onclick={handleSearch}>
 			<Search />
@@ -249,8 +255,7 @@
 		onDelete={handleDelete}
 		onCancel={() => {
 			isDeleteModalOpen = false;
-		}}
-	/>
+		}} />
 {/if}
 
 <!-- prettier-ignore -->

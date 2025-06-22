@@ -7,7 +7,7 @@
 	const schoolName = env.PUBLIC_SCHOOL_NAME || 'Default School';
 	const pageTitle = 'Student Registration';
 	const action = $derived(page.params.action);
-	const breadcrumbItems = [{ label: 'Dashboard', href: '/admin/dashboard' }, { label: pageTitle }];
+	const breadcrumbItems = [{ label: 'Dashboard', href: '/admin/dashboard' },{ label: 'Student List', href: '/admin/student/list' }, { label: action === 'create' ? `${pageTitle} - New` : `${pageTitle} - Update`}];
 </script>
 
 <svelte:head>

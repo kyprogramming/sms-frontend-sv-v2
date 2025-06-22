@@ -14,6 +14,7 @@
 	import type { ColumnConfig } from '$lib/interfaces/table.interface';
 	import { showSnackbar } from '$lib/components/snackbar/store';
 	import { deleteClassById, fetchClassById, fetchClasses } from '$lib/services/class';
+	import { invalidateAll } from '$app/navigation';
 
 	// Props
 	const schoolName = env.PUBLIC_SCHOOL_NAME || 'Default School';
@@ -21,7 +22,7 @@
 
 	// States
 	let searchText = $state('');
-	let classData: any | null = $state(null);
+	let classList: any | null = $state(null);
 
 	let isModalOpen = $state(false);
 	let isDeleteModalOpen = $state(false);
@@ -92,13 +93,14 @@
 	}
 
 	function handleAdd() {
-		classData = null;
+		classList = null;
 		isUpdate = false;
 		isModalOpen = true;
 	}
 
 	async function handleDelete() {
 		await deleteAction(selectedId);
+        await invalidateAll();
 	}
 
 	async function handlePaginationChange() {
@@ -111,10 +113,10 @@
 
 	// Server actions
 	async function updateAction(id: string) {
-		classData = null;
+		classList = null;
 		const res = await fetchClassById(id);
 		const { data } = res;
-		classData = data;
+		classList = data;
 		if (res.success) isModalOpen = true;
 	}
 
@@ -161,8 +163,7 @@
 				if (e.key === 'Enter') {
 					handleSearch();
 				}
-			}}
-		/>
+			}} />
 
 		<button type="button" class="btn ripple" onclick={handleSearch}>
 			<Search />
@@ -193,9 +194,8 @@
 		}}
 		onCancel={() => {
 			isModalOpen = false;
-		}}
-	>
-		<ClassForm onRefreshPage={refreshAction} {classData} action={isUpdate ? 'update' : 'create'} />
+		}}>
+		<ClassForm onRefreshPage={refreshAction} {classList} action={isUpdate ? 'update' : 'create'} />
 	</Modal>
 {/if}
 
@@ -207,8 +207,7 @@
 		onDelete={handleDelete}
 		onCancel={() => {
 			isDeleteModalOpen = false;
-		}}
-	/>
+		}} />
 {/if}
 
 <!-- prettier-ignore -->

@@ -14,10 +14,11 @@
 	import { isEqual } from '$lib/utils/utils';
 	import { MESSAGES } from '$lib/utils/messages';
 	import { classFormSchema, type ClassFormPayload } from '$lib/schemas/class.schema';
+	import { invalidateAll } from '$app/navigation';
 
 	let allSections = page.data?.sectionData || [];
 
-	let { onRefreshPage, classData = null, action } = $props();
+	let { onRefreshPage, classList = null, action } = $props();
 
 	// Reactive form state
 	let formData: ClassFormPayload = $state(initializeClassFormData());
@@ -50,7 +51,7 @@
 	// Populate form data based on action
 	function populateFormData() {
 		if (action === 'update') {
-			formData = { ...classData };
+			formData = { ...classList };
 		}
 	}
 
@@ -73,17 +74,19 @@
 		const isValid = validateForm(classFormSchema, formData);
 		if (!isValid) return;
 
-		if (action === 'update' && classData) {
+		if (action === 'update' && classList) {
 			// Check if the form data is unchanged before updating
-			const isUnChanged = isEqual(classData, formData);
+			const isUnChanged = isEqual(classList, formData);
 			if (isUnChanged) {
 				showSnackbar({ message: MESSAGES.FORM.NO_CHANGES, type: 'warning' });
 				return;
 			}
-			await updateClass(classData._id, formData);
+			await updateClass(classList._id, formData);
+			await invalidateAll();
 			showSnackbar({ message: MESSAGES.CLASS.UPDATED, type: 'success' });
 		} else {
 			await createClass(formData);
+			await invalidateAll();
 			showSnackbar({ message: MESSAGES.CLASS.CREATED, type: 'success' });
 		}
 
@@ -120,7 +123,7 @@
 									} else {
 										formData.sectionIds = formData.sectionIds.filter((id) => id !== section._id);
 									}
-                                    formData.sectionIds.length > 0 ? $formErrors.sectionIds = '' :  $formErrors.sectionIds = 'Please select at least one section'
+									formData.sectionIds.length > 0 ? ($formErrors.sectionIds = '') : ($formErrors.sectionIds = 'Please select at least one section');
 								}} />
 							<span class="checkbox-custom"></span>
 							<span class="checkbox-text">{section.name}</span>

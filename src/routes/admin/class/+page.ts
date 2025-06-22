@@ -2,6 +2,7 @@ import { API_BASE_URL, DEFAULT_PAGE_LIMIT } from '$lib/utils/env.config';
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 import { isLoading } from '$lib/stores/loading';
+import { invalidateAll } from '$app/navigation';
 
 export const load: PageLoad = async ({ fetch }) => {
 	try {
@@ -14,7 +15,8 @@ export const load: PageLoad = async ({ fetch }) => {
 			throw error(res.status, message || 'Failed to fetch data from server');
 		}
 
-		const data = await res.json();
+        const data = await res.json();
+        
 		// console.log("Data from Server:", data);
 		return { data };
 	} catch (error) {

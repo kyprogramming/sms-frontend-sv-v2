@@ -1,42 +1,38 @@
+import { error } from '@sveltejs/kit';
 import { API_BASE_URL, ENV, UI_BASE_URL } from '$lib/utils/env.config';
-import { classList } from '$lib/stores/masterData';
 import type { LayoutServerLoad } from './$types';
+import { fetchWithErrorHandling } from '$lib/utils/helper';
 
-const url = import.meta.env.SSR && ENV === 'development' ? `${API_BASE_URL}` : `${UI_BASE_URL}${API_BASE_URL}`;
-export const load: LayoutServerLoad = async ({ locals, cookies }) => {
+const apiBaseUrl = import.meta.env.SSR && ENV === 'development' ? API_BASE_URL : `${UI_BASE_URL}${API_BASE_URL}`;
+
+export const load: LayoutServerLoad = async ({ locals, cookies, fetch }) => {
 	if (!locals.user) {
 		return {
 			user: null,
 			role: null,
+			classList: [],
+			sectionData: [],
+			feeTypeData: [],
 		};
 	}
 
-	const authToken = cookies.get('session_token'); // replace with actual cookie name
+	try {
+        const [classesRes, sectionsRes, feeTypesRes] = await Promise.all(
+            [
+                fetchWithErrorHandling(fetch, `${apiBaseUrl}/class/list`, 'Failed to fetch class list'),
+                fetchWithErrorHandling(fetch, `${apiBaseUrl}/section/list`, 'Failed to fetch section list'),
+                fetchWithErrorHandling(fetch, `${apiBaseUrl}/fee-type/list`, 'Failed to fetch fee types')
+            ]);
+		const [classList, sectionData, feeTypeData] = await Promise.all([classesRes.json(), sectionsRes.json(), feeTypesRes.json()]);
 
-	const headers = {
-		'Content-Type': 'application/json',
-		Cookie: `session_token=${authToken}`,
-	};
-
-    const [resClasses, resSections, resFeeTypes] =
-        await Promise.all([
-            fetch(`${url}/class/list`, { method: 'GET', headers }),
-            fetch(`${url}/section/list`, { method: 'GET', headers }),
-            fetch(`${url}/fee-type/list`, { method: 'GET', headers })]);
-
-	if (resClasses.status === 401 || resSections.status === 401) {
-		console.error('Unauthorized request');
+		return {
+			user: locals.user,
+			role: locals.user.role,
+			classList: classList?.data || [],
+			sectionData: sectionData?.data || [],
+			feeTypeData: feeTypeData?.data || [],
+		};
+	} catch (err) {
+		throw error(500, err instanceof Error ? err.message : 'An unknown error occurred');
 	}
-
-	const classData = await resClasses.json();
-	const sectionData = await resSections.json();
-	const feeTypeData = await resFeeTypes.json();
-
-	return {
-		user: locals.user,
-		role: locals.user.role,
-		classData: classData?.data || [],
-		sectionData: sectionData?.data || [],
-		feeTypeData: feeTypeData?.data || [],
-	};
 };

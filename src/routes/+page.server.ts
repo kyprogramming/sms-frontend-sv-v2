@@ -9,10 +9,10 @@ export const load: PageServerLoad = async ({ locals }) => {
 	}
 
 	// const [resClasses] = await Promise.all([fetch(`${API_BASE_URL}/class/list`, { method: "GET", headers: { "Content-Type": "application/json" }, credentials: "include" })]);
-	// const [classData] = await Promise.all([resClasses.json()]);
+	// const [classList] = await Promise.all([resClasses.json()]);
 
-	// console.log("classData for store:", classData);
+	// console.log("classList for store:", classList);
 	// // Save to store
-	// classList.set(classData);
+	// classList.set(classList);
 	return {};
 };

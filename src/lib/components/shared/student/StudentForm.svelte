@@ -1,65 +1,65 @@
 <script lang="ts">
-    // Import statements grouped by type
-    import { onMount } from 'svelte';
-    import { slide } from 'svelte/transition';
+	// Import statements grouped by type
+	import { onMount } from 'svelte';
+	import { slide } from 'svelte/transition';
 
-    import { goto } from '$app/navigation';
-    import { env } from '$env/dynamic/public';
+	import { goto } from '$app/navigation';
+	import { env } from '$env/dynamic/public';
 
-    // UI Components
-    import DatePicker from '$lib/components/common/DatePicker.svelte';
-    import DatePicker2 from '$lib/components/common/DatePicker2.svelte';
-    import TagInput from '$lib/components/common/TagInput.svelte';
-    import LoaderIcon from '$lib/components/common/LoaderIcon.svelte';
-    import ImageUploader from '$lib/components/common/ImageUploader.svelte';
-    import UploadDocument from '$lib/components/common/UploadDocument.svelte';
-    import FeeDetails from '../fee/FeeDetails.svelte';
-    
-    // Icons
-    import { BrushCleaning, PlusCircle, Save } from '@lucide/svelte';
-    
-    // Constants and Config
-    import { BLOOD_GROUPS, CASTE_CATEGORIES, GENDERS, GUARDIAN_TYPE } from '$lib/utils/constants';
-    import { MESSAGES } from '$lib/utils/messages';
-    
-    // Services and Utilities
-    import { createStudent, updateStudent } from '$lib/services/student';
-    import { initializeStudentFormPayload, validateStudentForm } from './studentValidation';
-    import { isEqual } from '$lib/utils/utils';
-    
-    // Stores
-    import { isLoading } from '$lib/stores/loading';
-    import { formErrors } from '$lib/stores/formStore';
-    import { showSnackbar } from '$lib/components/snackbar/store';
-    
-    // Types
-    import type { StudentFormPayload } from '$lib/schemas/student.schema';
+	// UI Components
+	import DatePicker from '$lib/components/common/DatePicker.svelte';
+	import DatePicker2 from '$lib/components/common/DatePicker2.svelte';
+	import TagInput from '$lib/components/common/TagInput.svelte';
+	import LoaderIcon from '$lib/components/common/LoaderIcon.svelte';
+	import ImageUploader from '$lib/components/common/ImageUploader.svelte';
+	import UploadDocument from '$lib/components/common/UploadDocument.svelte';
+	import FeeDetails from '../fee/FeeDetails.svelte';
+
+	// Icons
+	import { BrushCleaning, PlusCircle, Save } from '@lucide/svelte';
+
+	// Constants and Config
+	import { BLOOD_GROUPS, CASTE_CATEGORIES, GENDERS, GUARDIAN_TYPE } from '$lib/utils/constants';
+	import { MESSAGES } from '$lib/utils/messages';
+
+	// Services and Utilities
+	import { createStudent, updateStudent } from '$lib/services/student';
+	import { initializeStudentFormPayload, validateStudentForm } from './studentValidation';
+	import { isEqual } from '$lib/utils/utils';
+
+	// Stores
+	import { isLoading } from '$lib/stores/loading';
+	import { formErrors } from '$lib/stores/formStore';
+	import { showSnackbar } from '$lib/components/snackbar/store';
+
+	// Types
+	import type { StudentFormPayload } from '$lib/schemas/student.schema';
 	import { page } from '$app/state';
 
-    // Component Props
-    let { action } = $props();
+	// Component Props
+	let { action } = $props();
 
-    // Derived Data
+	// Derived Data
 	const schoolName = env.PUBLIC_SCHOOL_NAME || 'Default School';
 	const pageTitle = `${schoolName} - Student Registration - ${action === 'update' ? ' Update' : 'New'}`;
 
-    // State Management
-    const studentData = page.data.studentData || null;
-    let classData = page.data?.classData || [];
-    let classSections: { _id: string; name: string }[] = $state([]);
-    
-    let selectedFile: File | null = $state(null);
-    
-    let formData: StudentFormPayload = $state(initializeStudentFormPayload());
-    let touched: Record<string, boolean> = $state({});
-    let formSubmitted = $state(false);
-    
+	// State Management
+	const studentData = page.data.studentData || null;
+	let classList = page.data?.classList || [];
+	let classSections: { _id: string; name: string }[] = $state([]);
+
+	let selectedFile: File | null = $state(null);
+
+	let formData: StudentFormPayload = $state(initializeStudentFormPayload());
+	let touched: Record<string, boolean> = $state({});
+	let formSubmitted = $state(false);
+
 	onMount(() => {
 		formErrors.set({});
 		// Initialize form data based on action
 		if (action === 'update' && studentData) {
 			formData = { studentData: { ...studentData.data }, userData: { ...studentData.data.userId } };
-			classSections = studentData.data.classId ? classData.find((cls: any) => cls._id === studentData.data.classId)?.sectionIds || [] : [];
+			classSections = studentData.data.classId ? classList.find((cls: any) => cls._id === studentData.data.classId)?.sectionIds || [] : [];
 		}
 		touched = {};
 	});
@@ -67,7 +67,7 @@
 	function handleResetForm() {
 		if (action === 'update' && studentData) {
 			formData = { studentData: { ...studentData.data }, userData: { ...studentData.data.userId } };
-			classSections = studentData.data.classId ? classData.find((cls: any) => cls._id === studentData.data.classId)?.sectionIds || [] : [];
+			classSections = studentData.data.classId ? classList.find((cls: any) => cls._id === studentData.data.classId)?.sectionIds || [] : [];
 		} else {
 			formData = initializeStudentFormPayload();
 			classSections = [];
@@ -91,7 +91,7 @@
 		const selected = (e.target as HTMLSelectElement).value || '';
 		formData.studentData.classId = selected;
 		formData.studentData.sectionId = '';
-		const selectedClass = classData.find((cls: any) => cls._id === selected);
+		const selectedClass = classList.find((cls: any) => cls._id === selected);
 		classSections = selectedClass?.sectionIds || [];
 		handleBlur('studentData.classId');
 	}
@@ -190,7 +190,7 @@
 				<label for="classId">Class <span class="required">*</span></label>
 				<select id="classId" class={`w-full ${formData.studentData.classId === '' ? 'placeholder-gray' : ''} ${$formErrors['studentData.classId'] && (touched['studentData.classId'] || formSubmitted) ? 'input-error' : ''}`} bind:value={formData.studentData.classId} onchange={handleClassChange} onblur={handleClassChange}>
 					<option value="" selected>Select class</option>
-					{#each classData as cls}
+					{#each classList as cls}
 						<option value={cls._id}>{cls.name}</option>
 					{/each}
 				</select>

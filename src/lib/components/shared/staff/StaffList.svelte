@@ -31,7 +31,7 @@
 	let selectedId = $state('');
 	let selectedName = $state('');
 
-	let classData = page.data?.classData || [];
+	let classList = page.data?.classList || [];
 	let classSections: { _id: string; name: string }[] = $state([]);
 	let selectedRole = $state('');
 	let selectedDepartment = $state('');
@@ -121,7 +121,7 @@
 
 	function formattedStaffs(response: any) {
 		const formattedStaffList = response.data.data.map((staff: any) => {
-			const foundClass = classData.find((cls: any) => cls._id === staff.classId);
+			const foundClass = classList.find((cls: any) => cls._id === staff.classId);
 			const className = foundClass?.name || null;
 
 			const foundSection = foundClass?.sectionIds.find((sec: any) => sec._id === staff.sectionId);
