@@ -14,7 +14,7 @@
 	import { createFeeType, updateFeeType } from '$lib/services/fee-type.service';
 	import { feeTypeFormSchema, type FeeTypePayload } from '$lib/schemas/academic-year.schema';
 
-	let { onRefreshPage, feeTypeData = null, action } = $props();
+	let { onRefreshPage, feeTypeList = null, action } = $props();
 
 	export function initializeFeeTypeFormData(): FeeTypePayload {
 		return { name: '', code: '', description: '', active: true };
@@ -40,8 +40,8 @@
 
 	// Populate form data based on action
 	function populateFormData() {
-		if (action === 'update' && feeTypeData) {
-			formData = { ...feeTypeData };
+		if (action === 'update' && feeTypeList) {
+			formData = { ...feeTypeList };
 		} else {
 			formData = initializeFeeTypeFormData();
 		}
@@ -62,13 +62,13 @@
 		const isValid = validateForm(feeTypeFormSchema, formData);
 		if (!isValid) return;
 
-		if (action === 'update' && feeTypeData) {
-			const isUnChanged = isEqual(feeTypeData, formData);
+		if (action === 'update' && feeTypeList) {
+			const isUnChanged = isEqual(feeTypeList, formData);
 			if (isUnChanged) {
 				showSnackbar({ message: MESSAGES.FORM.NO_CHANGES, type: 'warning' });
 				return;
 			}
-			await updateFeeType(feeTypeData._id, formData);
+			await updateFeeType(feeTypeList._id, formData);
 			showSnackbar({ message: 'Fee Type updated successfully', type: 'success' });
 		} else {
 			await createFeeType(formData);
@@ -82,7 +82,7 @@
 	<div class="grid-12">
 		<div class="col-6">
 			<label for="name">Name <span class="required">*</span></label>
-			<input id="name" type="text"  name="name" maxlength="50" placeholder="Fee Type name" class={`w-full ${$formErrors.name && (touched.name || formSubmitted) ? 'input-error' : ''}`} bind:value={formData.name} oninput={(e) => handleChange('name', (e.target as HTMLInputElement).value)} onblur={() => handleChange('name', formData.name)} />
+			<input id="name" type="text" name="name" maxlength="50" placeholder="Fee Type name" class={`w-full ${$formErrors.name && (touched.name || formSubmitted) ? 'input-error' : ''}`} bind:value={formData.name} oninput={(e) => handleChange('name', (e.target as HTMLInputElement).value)} onblur={() => handleChange('name', formData.name)} />
 			{#if $formErrors.name && (touched.name || formSubmitted)}
 				<p class="error-text">{$formErrors.name}</p>
 			{/if}

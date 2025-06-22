@@ -13,7 +13,7 @@
 	import { feeGroupFormSchema, type FeeGroupPayload } from '$lib/schemas/fee-group.schema';
 
 	let { onRefreshPage, feeGroupData = null, action } = $props();
-	let feeTypeData = page.data?.feeTypeData || [];
+	let feeTypeList = page.data?.feeTypeList || [];
 
 	export function initializeFeeGroupFormData(): FeeGroupPayload {
 		return { name: '', code: '', description: '', active: true };
@@ -84,15 +84,15 @@
 				<p class="error-text">{$formErrors.name}</p>
 			{/if}
 		</div>
-        <div class="col-6">
+		<div class="col-6">
 			<label for="code">Code</label>
-			<input id="code" type="text" name="code" placeholder="Fee group code"  bind:value={formData.code} oninput={(e) => handleChange('code', (e.target as HTMLInputElement).value)} />
+			<input id="code" type="text" name="code" placeholder="Fee group code" bind:value={formData.code} oninput={(e) => handleChange('code', (e.target as HTMLInputElement).value)} />
 		</div>
 		<!-- <div class="col-6">
 			<label for="categoryId">Category <span class="required">*</span></label>
 			<select id="categoryId" name="categoryId" class={`w-full ${$formErrors.categoryId && (touched.categoryId || formSubmitted) ? 'input-error' : ''}`} bind:value={formData.categoryId} onchange={(e) => handleChange('categoryId', (e.target as HTMLInputElement).value)} onblur={() => handleChange('categoryId', formData.categoryId)}>
 				<option value="" selected>Select Category</option>
-				{#each feeTypeData as feeType}
+				{#each feeTypeList as feeType}
 					<option value={feeType._id}>{feeType.name}</option>
 				{/each}
 			</select>

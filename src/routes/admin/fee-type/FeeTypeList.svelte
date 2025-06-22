@@ -21,7 +21,7 @@
 
 	// States
 	let searchText = $state('');
-	let feeTypeData: any | null = $state(null);
+	let feeTypeList: any | null = $state(null);
 
 	let isModalOpen = $state(false);
 	let isDeleteModalOpen = $state(false);
@@ -103,7 +103,7 @@
 	}
 
 	function handleAdd() {
-		feeTypeData = null;
+		feeTypeList = null;
 		isUpdate = false;
 		isModalOpen = true;
 	}
@@ -122,10 +122,10 @@
 
 	// Server actions
 	async function updateAction(id: string) {
-		feeTypeData = null;
+		feeTypeList = null;
 		const res = await fetchFeeTypeById(id);
 		const { data } = res;
-		feeTypeData = data;
+		feeTypeList = data;
 		if (res.success) isModalOpen = true;
 	}
 
@@ -211,7 +211,7 @@
 		onCancel={() => {
 			isModalOpen = false;
 		}}>
-		<FeeTypeForm onRefreshPage={refreshAction} {feeTypeData} action={isUpdate ? 'update' : 'create'} />
+		<FeeTypeForm onRefreshPage={refreshAction} {feeTypeList} action={isUpdate ? 'update' : 'create'} />
 	</Modal>
 {/if}
 

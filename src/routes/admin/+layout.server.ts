@@ -12,7 +12,7 @@ export const load: LayoutServerLoad = async ({ locals, cookies, fetch }) => {
 			role: null,
 			classList: [],
 			sectionData: [],
-			feeTypeData: [],
+			feeTypeList: [],
 		};
 	}
 
@@ -23,14 +23,14 @@ export const load: LayoutServerLoad = async ({ locals, cookies, fetch }) => {
                 fetchWithErrorHandling(fetch, `${apiBaseUrl}/section/list`, 'Failed to fetch section list'),
                 fetchWithErrorHandling(fetch, `${apiBaseUrl}/fee-type/list`, 'Failed to fetch fee types')
             ]);
-		const [classList, sectionData, feeTypeData] = await Promise.all([classesRes.json(), sectionsRes.json(), feeTypesRes.json()]);
+		const [classList, sectionData, feeTypeList] = await Promise.all([classesRes.json(), sectionsRes.json(), feeTypesRes.json()]);
 
 		return {
 			user: locals.user,
 			role: locals.user.role,
 			classList: classList?.data || [],
 			sectionData: sectionData?.data || [],
-			feeTypeData: feeTypeData?.data || [],
+			feeTypeList: feeTypeList?.data || [],
 		};
 	} catch (err) {
 		throw error(500, err instanceof Error ? err.message : 'An unknown error occurred');
