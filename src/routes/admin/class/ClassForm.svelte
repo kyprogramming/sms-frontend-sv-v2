@@ -14,12 +14,12 @@
 	import { isEqual } from '$lib/utils/utils';
 	import { MESSAGES } from '$lib/utils/messages';
 	import { classFormSchema, type ClassFormPayload } from '$lib/schemas/class.schema';
-	import { invalidateAll } from '$app/navigation';
+	import { invalidate, invalidateAll } from '$app/navigation';
 
-	let allSections = page.data.sectionList || [];
-    console.log("All sections:", allSections);  
+	let sectionList = page.data.sectionList || [];
+    console.log("All sections:", page.data);  
 
-	let { onRefreshPage, classList = null, action } = $props();
+	let { onRefreshPage, classData, action } = $props();
 
 	// Reactive form state
 	let formData: ClassFormPayload = $state(initializeClassFormData());
@@ -52,7 +52,7 @@
 	// Populate form data based on action
 	function populateFormData() {
 		if (action === 'update') {
-			formData = { ...classList };
+			formData = { ...classData };
 		}
 	}
 
@@ -75,24 +75,23 @@
 		const isValid = validateForm(classFormSchema, formData);
 		if (!isValid) return;
 
-		if (action === 'update' && classList) {
+		if (action === 'update' && classData) {
 			// Check if the form data is unchanged before updating
-			const isUnChanged = isEqual(classList, formData);
+			const isUnChanged = isEqual(classData, formData);
 			if (isUnChanged) {
 				showSnackbar({ message: MESSAGES.FORM.NO_CHANGES, type: 'warning' });
 				return;
 			}
-			await updateClass(classList._id, formData);
-			await invalidateAll();
+			await updateClass(classData._id, formData);
 			showSnackbar({ message: MESSAGES.CLASS.UPDATED, type: 'success' });
 		} else {
 			await createClass(formData);
-			await invalidateAll();
 			showSnackbar({ message: MESSAGES.CLASS.CREATED, type: 'success' });
 		}
 
-		closeModal();
-		onRefreshPage();
+		// closeModal();
+		await onRefreshPage();
+        await invalidateAll();
 	}
 </script>
 
@@ -108,7 +107,7 @@
 		<div class="col-12">
 			<label for="checkbox-input">Sections<span class="required">*</span></label>
 			<div class="checkbox-section" class:has-error={$formErrors.sectionIds && formSubmitted}>
-				{#each allSections as section}
+				{#each sectionList as section}
 					<div class="checkbox-item">
 						<label class="checkbox-label">
 							<input

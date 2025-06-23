@@ -203,21 +203,21 @@
 
 <div class="class-container">
 	<div class="search-container">
-		<select id="role" style="width:150px;" bind:value={selectedRole} onchange={(e) => (selectedRole = (e.target as HTMLSelectElement).value || '')}>
+		<select id="role" style="width:180px;" bind:value={selectedRole} onchange={(e) => (selectedRole = (e.target as HTMLSelectElement).value || '')}>
 			<option value="" selected>Select Role</option>
 			{#each STAFF_ROLES as role}
 				<option value={role.name}>{role.name}</option>
 			{/each}
 		</select>
 
-		<select id="department" style="width:150px;" bind:value={selectedDepartment} onchange={(e) => (selectedDepartment = (e.target as HTMLSelectElement).value || '')}>
+		<select id="department" style="width:180px;" bind:value={selectedDepartment} onchange={(e) => (selectedDepartment = (e.target as HTMLSelectElement).value || '')}>
 			<option value="" selected>Select Department</option>
 			{#each STAFF_DEPARTMENTS as department}
 				<option value={department.name}>{department.name}</option>
 			{/each}
 		</select>
 
-		<select id="designation" style="width:150px;" bind:value={selectedDesignation} onchange={(e) => (selectedDesignation = (e.target as HTMLSelectElement).value || '')}>
+		<select id="designation" style="width:180px;" bind:value={selectedDesignation} onchange={(e) => (selectedDesignation = (e.target as HTMLSelectElement).value || '')}>
 			<option value="" selected>Select Designation</option>
 			{#each STAFF_DESIGNATIONS as designation}
 				<option value={designation.name}>{designation.name}</option>

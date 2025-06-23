@@ -15,6 +15,7 @@
 	import { showSnackbar } from '$lib/components/snackbar/store';
 	import { deleteClassById, fetchClassById, fetchClasses } from '$lib/services/class';
 	import { invalidateAll } from '$app/navigation';
+	import { page } from '$app/state';
 
 	// Props
 	const schoolName = env.PUBLIC_SCHOOL_NAME || 'Default School';
@@ -22,7 +23,8 @@
 
 	// States
 	let searchText = $state('');
-	let classList: any | null = $state(null);
+	// let classList: any | null = $state(null);
+	let classData: any | null = $state(null);
 
 	let isModalOpen = $state(false);
 	let isDeleteModalOpen = $state(false);
@@ -65,6 +67,9 @@
 				action: async (item: { _id: any }) => {
 					isUpdate = true;
 					await updateAction(item._id);
+                    // await invalidateAll();
+                    // console.log('Refreshing class list in edit...', page.data.data);
+
 				},
 			},
 			{
@@ -93,7 +98,7 @@
 	}
 
 	function handleAdd() {
-		classList = null;
+		// classList = null;
 		isUpdate = false;
 		isModalOpen = true;
 	}
@@ -113,10 +118,10 @@
 
 	// Server actions
 	async function updateAction(id: string) {
-		classList = null;
+		classData = null;
 		const res = await fetchClassById(id);
 		const { data } = res;
-		classList = data;
+		classData = data;
 		if (res.success) isModalOpen = true;
 	}
 
@@ -141,10 +146,11 @@
 	}
 
 	async function refreshAction() {
+        isModalOpen = false;
 		const params = new URLSearchParams({ search: searchText || '', page: String($currentPage), limit: String($rowsPerPage) });
 		const json = await fetchClasses(params);
-		isModalOpen = false;
-		response = { ...json };
+        console.log('Refreshing class list...', page.data.data);
+        response = { ...json };
 	}
 </script>
 
@@ -195,7 +201,7 @@
 		onCancel={() => {
 			isModalOpen = false;
 		}}>
-		<ClassForm onRefreshPage={refreshAction} {classList} action={isUpdate ? 'update' : 'create'} />
+		<ClassForm onRefreshPage={refreshAction} classData={classData} action={isUpdate ? 'update' : 'create'} />
 	</Modal>
 {/if}
 

@@ -199,14 +199,14 @@
 
 <div class="class-container">
 	<div class="search-container">
-		<select id="classId" style="width:150px;" bind:value={selectedClassId} onchange={handleClassChange}>
+		<select id="classId" style="width:180px;" bind:value={selectedClassId} onchange={handleClassChange}>
 			<option value="" selected>Select Class</option>
 			{#each classList as cls}
 				<option value={cls._id}>{cls.name}</option>
 			{/each}
 		</select>
 
-		<select id="sectionId" style="width:150px;" bind:value={selectedSectionId} disabled={selectedClassId === ''}>
+		<select id="sectionId" style="width:180px;" bind:value={selectedSectionId} disabled={selectedClassId === ''}>
 			<option value="" disabled selected>Select Section</option>
 			{#each classSections as section}
 				<option value={section._id}>{section.name}</option>
