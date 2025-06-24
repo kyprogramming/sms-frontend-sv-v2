@@ -39,12 +39,12 @@
 		{ key: 'endDate', label: 'End Date', width: 'auto', sortable: true, align: 'center', format: formatDate },
 		{
 			key: 'active',
-			label: 'Active',
-			width: 'auto',
+			label: 'Status',
+			width: '150px',
 			sortable: true,
 			align: 'center',
 			format: (value) => {
-				return value ? '<span class=active>Active</span>' : '<span class=inactive>Inactive</span>';
+				return value ? '<span class=active-status>Active</span>' : '<span class=inactive-status>Inactive</span>';
 			},
 		},
 	];

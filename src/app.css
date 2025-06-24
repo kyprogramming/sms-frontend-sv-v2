@@ -408,12 +408,12 @@ button {font-family: 'Roboto', sans-serif; font-size: 13px; padding: 10px}
 .checkbox-input:checked+.checkbox-custom {box-shadow: 0 0 0 2px rgba(0, 189, 35, 0.3); border-color: #00bd23; animation: pulse 0.5s ease}
 /* Checkmark */
 .checkbox-input:checked+.checkbox-custom::after {content: '✓'; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: #00bd23; font-size: 14px}
+.checkbox-text {pointer-events: none; user-select: none}
 /* Pulse animation */
 @keyframes pulse {0% {box-shadow: 0 0 0 0 rgba(0, 189, 35, 0.7)}
     70% {box-shadow: 0 0 0 6px rgba(0, 189, 35, 0)}
     100% {box-shadow: 0 0 0 0 rgba(0, 189, 35, 0)}
 }
-.checkbox-text {pointer-events: none; user-select: none}
 /* SEARCH CONTAINER FOR LIST PAGE */
 .search-container {display: flex; align-items: center; gap: 8px}
 .search-container input[name='search'] {padding: 6px 10px; font-size: 14px; flex: 1; width: 300px}

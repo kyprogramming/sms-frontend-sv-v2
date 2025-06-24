@@ -39,12 +39,14 @@
 		{ key: 'serialNo', label: 'Sr #', width: '80px', sortable: true, align: 'center' },
 		{ key: 'name', label: 'Name', sortable: true, width: 'auto', align: 'center' },
 		{
-			key: 'createdAt',
-			label: 'Created At',
-			width: '15%',
+			key: 'active',
+			label: 'Status',
+			width: '150px',
 			sortable: true,
-			format: formatDate,
 			align: 'center',
+			format: (value) => {
+				return value ? '<span class=active-status>Active</span>' : '<span class=inactive-status>Inactive</span>';
+			},
 		},
 	];
 

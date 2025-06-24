@@ -539,8 +539,6 @@
 	.radio-label {display: flex; align-items: center; cursor: pointer;}
 	.radio-input {display: none;}
 	.radio-custom {width: 1rem; height: 1rem; border: 2px solid #ccc; border-radius: 50%; margin-right: 0.5rem; position: relative;}
-	.radio-input:checked + .radio-custom::after {content: ''; width: 0.6rem; height: 0.6rem; background: #007bff; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);}
-	.has-error .radio-custom {border-color: red;}
 	.placeholder-gray {color: gray;}
 
 	.plus-button,
@@ -548,7 +546,7 @@
 	.remove-button {color: red;}
 	.plus-button:hover,
 	.remove-button:hover {background-color: rgb(204, 202, 202);}
-	.header-bar {display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 1rem;}
+	.header-bar {display: flex; justify-content: space-between; align-items: center; gap: 1rem;}
 	.header-bar h1 {margin: 0;}
 
 </style>

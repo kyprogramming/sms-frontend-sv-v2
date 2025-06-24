@@ -637,7 +637,7 @@
 	.remove-button {color: red;}
 	.plus-button:hover,
 	.remove-button:hover {background-color: rgb(204, 202, 202);}
-	.header-bar {display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 1rem;}
+	.header-bar {display: flex; justify-content: space-between; align-items: center; gap: 1rem;}
 	.header-bar h1 {margin: 0;}
 
     /* Responsive styles */

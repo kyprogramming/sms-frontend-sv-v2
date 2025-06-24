@@ -9,7 +9,6 @@
 	import LoaderIcon from '$lib/components/common/LoaderIcon.svelte';
 	import { createAcademicYear, updateAcademicYear } from '$lib/services/academic-year';
 
-
 	import { formErrors } from '$lib/stores/formStore';
 	import { onMount } from 'svelte';
 	import { isEqual } from '$lib/utils/utils';
@@ -20,7 +19,7 @@
 	let { onRefreshPage, academicYearData = null, action } = $props();
 
 	export function initializeAcademicYearFormData(): AcademicYearPayload {
-		return { name: '', startDate: '', endDate: '' };
+		return { name: '', startDate: '', endDate: '' , active: true};
 	}
 	// Reactive form state
 	let formData: AcademicYearPayload = $state(initializeAcademicYearFormData());
@@ -108,16 +107,16 @@
 </script>
 
 <form onsubmit={onSubmit}>
-	<div class="input-wrapper">
-		<label for="name">Academic Year Name <span class="required"> *</span></label>
-		<input id="name" type="text" name="name" placeholder="Academic year name" class={`w-full ${$formErrors.name && (touched.name || formSubmitted) ? 'input-error' : ''}`} bind:value={formData.name} oninput={(e) => handleChange('name', (e.target as HTMLInputElement).value)} onblur={() => handleBlur('name')} />
-		{#if $formErrors.name && (touched.name || formSubmitted)}
-			<p class="error-text">{$formErrors.name}</p>
-		{/if}
-	</div>
+	<div class="grid-12">
+		<div class="col-12">
+			<label for="name">Academic Year Name <span class="required"> *</span></label>
+			<input id="name" type="text" name="name" placeholder="Academic year name" class={`w-full ${$formErrors.name && (touched.name || formSubmitted) ? 'input-error' : ''}`} bind:value={formData.name} oninput={(e) => handleChange('name', (e.target as HTMLInputElement).value)} onblur={() => handleBlur('name')} />
+			{#if $formErrors.name && (touched.name || formSubmitted)}
+				<p class="error-text">{$formErrors.name}</p>
+			{/if}
+		</div>
 
-	<div class="form-row">
-		<div class="input-wrapper">
+		<div class="col-6">
 			<label for="startDate">Start Date<span class="required"> *</span></label>
 			<DatePicker2 id="startDate" title="Start Date" bind:value={formData.startDate} onDateSelect={handleStartDateChange} onBlur={(isOpen) => handleDatePickerBlur('startDate', isOpen)} cls={`w-full ${$formErrors.startDate && (touched.startDate || formSubmitted) ? 'input-error' : ''}`} />
 			{#if $formErrors['startDate'] && (touched['startDate'] || formSubmitted)}
@@ -125,32 +124,41 @@
 			{/if}
 		</div>
 
-		<div class="input-wrapper">
+		<div class="col-6">
 			<label for="endDate">End Date<span class="required"> *</span></label>
 			<DatePicker2 id="endDate" title="Start Date" bind:value={formData.endDate} onDateSelect={handleEndDateChange} onBlur={(isOpen) => handleDatePickerBlur('endDate', isOpen)} cls={`w-full ${$formErrors.endDate && (touched.endDate || formSubmitted) ? 'input-error' : ''}`} />
 			{#if $formErrors['endDate'] && (touched['endDate'] || formSubmitted)}
 				<p class="error-text">{$formErrors['endDate']}</p>
 			{/if}
 		</div>
-	</div>
 
-	<div class="form-actions">
-		<button type="button" class="btn ripple btn-secondary" onclick={handleResetForm} disabled={$isLoading}>
-			<BrushCleaning />
-			<span>Reset Form</span>
-		</button>
+		<div class="col-6">
+			<label class="checkbox-container">
+				<input type="checkbox" class="checkbox-input" bind:checked={formData.active} onchange={(e) => handleChange('active', e.currentTarget.checked)} />
+				<span class="checkbox-custom"></span>
+				<span class="checkbox-text">Active</span>
+			</label>
+		</div>
+		<div class="col-6">
+			<div class="form-actions">
+				<button type="button" class="btn ripple btn-secondary" onclick={handleResetForm} disabled={$isLoading}>
+					<BrushCleaning />
+					<span>Reset Form</span>
+				</button>
 
-		<button class="btn ripple" type="submit" disabled={$isLoading}>
-			<LoaderIcon />
-			{#if !$isLoading}
-				<Save />
-			{/if}
-			{#if action === 'update'}
-				Update Academic Year
-			{:else}
-				Save Academic Year
-			{/if}
-		</button>
+				<button class="btn ripple" type="submit" disabled={$isLoading}>
+					<LoaderIcon />
+					{#if !$isLoading}
+						<Save />
+					{/if}
+					{#if action === 'update'}
+						Update Academic Year
+					{:else}
+						Save Academic Year
+					{/if}
+				</button>
+			</div>
+		</div>
 	</div>
 </form>
 

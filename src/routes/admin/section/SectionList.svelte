@@ -43,6 +43,16 @@
 			width: '250px',
 			align: 'center',
 		},
+        {
+			key: 'active',
+			label: 'Status',
+			width: '150px',
+			sortable: true,
+			align: 'center',
+			format: (value) => {
+				return value ? '<span class=active-status>Active</span>' : '<span class=inactive-status>Inactive</span>';
+			},
+		},
 	];
 
 	// Actions configuration

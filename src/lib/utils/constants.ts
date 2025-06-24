@@ -128,8 +128,8 @@ export const MENU_GROUPS = [
 		title: 'Fees Collection',
 		icon: 'IndianRupee',
 		items: [
-			{ title: 'Fee Group', link: '/admin/fee-group' },
 			{ title: 'Fee Type', link: '/admin/fee-type' },
+			{ title: 'Fee Group', link: '/admin/fee-group' },
 			{ title: 'Fee Master', link: '/admin/fee-master' },
 			{ title: 'Fee Assignment', link: '/admin/fee-assignment' },
 			{ title: 'Fee Discount', link: '/admin/fee-discount' },

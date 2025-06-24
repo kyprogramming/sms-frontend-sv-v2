@@ -49,10 +49,7 @@
 	}
 
 	// Handle field changes
-	function handleChange<K extends keyof SubjectFormPayload>(
-		field: K,
-		value: SubjectFormPayload[K],
-	): void {
+	function handleChange<K extends keyof SubjectFormPayload>(field: K, value: SubjectFormPayload[K]): void {
 		formData[field] = value;
 		touched = { ...touched, [field]: true };
 		validateForm(subjectFormSchema, formData);
@@ -84,97 +81,70 @@
 </script>
 
 <form onsubmit={onSubmit}>
-	<div class="input-wrapper">
-		<label for="radio-item">Subject Type <span class="required">*</span></label>
-		<div
-			class="radio-section"
-			class:has-error={$formErrors.type && (touched.type || formSubmitted)}>
-			{#each SUBJECT_TYPE as type}
-				<div class="radio-item">
-					<label class="radio-label">
-						<input
-							name="type"
-							type="radio"
-							class="radio-input"
-							value={type.name}
-							checked={formData.type === type.name}
-							onchange={() => handleChange('type', type.name)}
-							onblur={() => handleChange('type', formData.type)} />
-						<span class="radio-custom"></span>
-						<span class="radio-text">{type.name}</span>
-					</label>
-				</div>
-			{/each}
+	<div class="grid-12">
+		<div class="col-12">
+			<label for="radio-item">Subject Type <span class="required">*</span></label>
+			<div class="radio-section" class:has-error={$formErrors.type && (touched.type || formSubmitted)}>
+				{#each SUBJECT_TYPE as type}
+					<div class="radio-item">
+						<label class="radio-label">
+							<input name="type" type="radio" class="radio-input" value={type.name} checked={formData.type === type.name} onchange={() => handleChange('type', type.name)} onblur={() => handleChange('type', formData.type)} />
+							<span class="radio-custom"></span>
+							<span class="radio-text">{type.name}</span>
+						</label>
+					</div>
+				{/each}
+			</div>
+			{#if $formErrors.type && (touched.type || formSubmitted)}
+				<p class="error-text">{$formErrors.type}</p>
+			{/if}
 		</div>
-		{#if $formErrors.type && (touched.type || formSubmitted)}
-			<p class="error-text">{$formErrors.type}</p>
-		{/if}
-	</div>
 
-	<div class="input-wrapper">
-		<label for="name">Subject Name <span class="required">*</span></label>
-		<input
-			id="name"
-			type="text"
-			name="name"
-			placeholder="Subject name"
-			class={`w-full ${$formErrors.name && (touched.name || formSubmitted) ? 'input-error' : ''}`}
-			bind:value={formData.name}
-			oninput={(e) => handleChange('name', (e.target as HTMLInputElement).value)}
-			onblur={() => handleChange('name', formData.name)} />
-		{#if $formErrors.name && (touched.name || formSubmitted)}
-			<p class="error-text">{$formErrors.name}</p>
-		{/if}
-	</div>
-
-	<div class="input-wrapper">
-		<label for="code">Subject Code</label>
-		<input
-			id="code"
-			type="text"
-			name="code"
-			class={`w-full`}
-			placeholder="Subject code"
-			bind:value={formData.code}
-			oninput={(e) => handleChange('code', (e.target as HTMLInputElement).value)}
-			onblur={() => handleChange('code', String(formData.code))} />
-	</div>
-
-	<div class="form-actions">
-		<button
-			type="button"
-			class="btn ripple btn-secondary"
-			onclick={handleResetForm}
-			disabled={$isLoading}>
-			<BrushCleaning />
-			<span>Reset Form</span>
-		</button>
-
-		<button class="btn ripple" type="submit" disabled={$isLoading}>
-			<LoaderIcon />
-			{#if !$isLoading}
-				<Save />
+		<div class="col-6">
+			<label for="name">Subject Name <span class="required">*</span></label>
+			<input id="name" type="text" name="name" placeholder="Subject name" class={`w-full ${$formErrors.name && (touched.name || formSubmitted) ? 'input-error' : ''}`} bind:value={formData.name} oninput={(e) => handleChange('name', (e.target as HTMLInputElement).value)} onblur={() => handleChange('name', formData.name)} />
+			{#if $formErrors.name && (touched.name || formSubmitted)}
+				<p class="error-text">{$formErrors.name}</p>
 			{/if}
-			{#if action === 'update'}
-				Update Subject
-			{:else}
-				Save Subject
-			{/if}
-		</button>
+		</div>
+
+		<div class="col-6">
+			<label for="code">Subject Code</label>
+			<input id="code" type="text" name="code" class={`w-full`} placeholder="Subject code" bind:value={formData.code} oninput={(e) => handleChange('code', (e.target as HTMLInputElement).value)} onblur={() => handleChange('code', String(formData.code))} />
+		</div>
+
+		<div class="col-6">
+			<label class="checkbox-container">
+				<input type="checkbox" class="checkbox-input" bind:checked={formData.active} onchange={(e) => handleChange('active', e.currentTarget.checked)} />
+				<span class="checkbox-custom"></span>
+				<span class="checkbox-text">Active</span>
+			</label>
+		</div>
+
+		<div class="col-6">
+			<div class="form-actions">
+				<button type="button" class="btn ripple btn-secondary" onclick={handleResetForm} disabled={$isLoading}>
+					<BrushCleaning />
+					<span>Reset Form</span>
+				</button>
+
+				<button class="btn ripple" type="submit" disabled={$isLoading}>
+					<LoaderIcon />
+					{#if !$isLoading}
+						<Save />
+					{/if}
+					{#if action === 'update'}
+						Update Subject
+					{:else}
+						Save Subject
+					{/if}
+				</button>
+			</div>
+		</div>
 	</div>
 </form>
 
 <style>
-	label {
-		display: block;
-		font-weight: bold;
-		margin-bottom: 0.5rem;
-	}
-
-	.required {
-		color: red;
-	}
-
 	.radio-section {
 		display: flex;
 		flex-wrap: wrap;

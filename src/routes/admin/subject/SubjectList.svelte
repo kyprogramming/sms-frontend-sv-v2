@@ -38,12 +38,14 @@
 		{ key: 'code', label: 'Code', width: 'auto', sortable: true, align: 'center' },
 		{ key: 'type', label: 'Type', width: 'auto', sortable: true, align: 'center' },
 		{
-			key: 'createdAt',
-			label: 'Created At',
-			width: 'auto',
+			key: 'active',
+			label: 'Status',
+			width: '150px',
 			sortable: true,
-			format: formatDate,
 			align: 'center',
+			format: (value) => {
+				return value ? '<span class=active-status>Active</span>' : '<span class=inactive-status>Inactive</span>';
+			},
 		},
 	];
 

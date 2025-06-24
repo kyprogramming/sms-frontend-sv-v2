@@ -15,7 +15,7 @@
 	let { onRefreshPage, sectionList = null, action } = $props();
 
 	// Reactive form state
-	let formData: SectionFormPayload = $state({ name: '' });
+	let formData: SectionFormPayload = $state({ name: '', active: true });
 	let touched: Partial<Record<keyof SectionFormPayload, boolean>> = $state({});
 	let formSubmitted: boolean = $state(false);
 
@@ -23,16 +23,16 @@
 		formErrors.set({ name: '' });
 		// Initialize form data based on action
 		if (action === 'update' && sectionList) {
-			formData = { name: sectionList.name };
+			formData = { name: sectionList.name, active: sectionList.active };
 		} else {
-			formData = { name: '' };
+			formData = { name: '', active: true };
 		}
 		touched = { name: false };
 	});
 
 	// Form reset handler
 	function handleResetForm() {
-		if (action === 'update') formData = { name: sectionList.name };
+		if (action === 'update') formData = { name: sectionList.name, active: sectionList.active };
 		else formData = { name: '' };
 
 		formErrors.set({});
@@ -73,30 +73,41 @@
 </script>
 
 <form onsubmit={onSubmit}>
-	<div class="input-wrapper">
-		<label for="name">Section Name <span class="required">*</span></label>
-		<input id="name" type="text" name="name" placeholder="Enter section name" class={`w-full ${$formErrors.name && (touched.name || formSubmitted) ? 'input-error' : ''}`} bind:value={formData.name} oninput={(e) => handleChange('name', (e.target as HTMLInputElement).value)} onblur={(e) => handleChange('name', (e.target as HTMLInputElement).value)} />
-		{#if $formErrors.name && (touched.name || formSubmitted)}
-			<p class="error-text">{$formErrors.name}</p>
-		{/if}
-	</div>
-
-	<div class="form-actions">
-		<button type="button" class="btn ripple btn-secondary" onclick={handleResetForm} disabled={$isLoading}>
-			<BrushCleaning />
-			<span>Reset Form</span>
-		</button>
-
-		<button class="btn ripple" type="submit" disabled={$isLoading}>
-			<LoaderIcon />
-			{#if !$isLoading}
-				<Save />
-			{/if}
-			{#if action === 'update'}
-				Update Section
-			{:else}
-				Save Section
-			{/if}
-		</button>
-	</div>
+	<div class="grid-12">
+		<div class="col-12">
+            <label for="name">Section Name <span class="required">*</span></label>
+            <input id="name" type="text" name="name" placeholder="Enter section name" class={`w-full ${$formErrors.name && (touched.name || formSubmitted) ? 'input-error' : ''}`} bind:value={formData.name} oninput={(e) => handleChange('name', (e.target as HTMLInputElement).value)} onblur={(e) => handleChange('name', (e.target as HTMLInputElement).value)} />
+            {#if $formErrors.name && (touched.name || formSubmitted)}
+                <p class="error-text">{$formErrors.name}</p>
+            {/if}
+        </div>
+        <div class="col-6">
+			<label class="checkbox-container">
+				<input type="checkbox" class="checkbox-input" bind:checked={formData.active} onchange={(e) => handleChange('active', e.currentTarget.checked)} />
+				<span class="checkbox-custom"></span>
+				<span class="checkbox-text">Active</span>
+			</label>
+		</div>
+        <div class="col-6">
+            <div class="form-actions">
+                <button type="button" class="btn ripple btn-secondary" onclick={handleResetForm} disabled={$isLoading}>
+                    <BrushCleaning />
+                    <span>Reset Form</span>
+                </button>
+        
+                <button class="btn ripple" type="submit" disabled={$isLoading}>
+                    <LoaderIcon />
+                    {#if !$isLoading}
+                        <Save />
+                    {/if}
+                    {#if action === 'update'}
+                        Update Section
+                    {:else}
+                        Save Section
+                    {/if}
+                </button>
+            </div>
+        </div>
+    </div>
+	
 </form>
