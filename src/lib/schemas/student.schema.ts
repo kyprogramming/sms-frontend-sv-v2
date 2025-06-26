@@ -11,6 +11,7 @@ export const studentSchema = z.object({
 			.or(z.literal('')),
 	}),
 	studentData: z.object({
+		_id: z.string().optional(),
 		admissionNo: z.string().min(1, 'Admission number is required'),
 		admissionDate: z.string().min(1, 'Admission date is required'),
 		academicYear: z.string().min(1, 'Academic session is required'),
@@ -92,7 +93,44 @@ export const studentSchema = z.object({
 			parentPermanentAddress: z.string().optional(),
 		}),
 		documents: z.array(documentSchema).optional(),
+		selectedFeeDiscountIds: z.array(z.string()).optional(),
 	}),
+	feeMasterAssignments: z.array(
+		z.object({
+			studentId: z.string().optional(),
+			feeMasterId: z.string(),
+			amount: z.number().min(0, 'Amount must be a positive number'),
+			dueDate: z.string().min(1, 'Due date is required'),
+			isPaid: z.boolean().default(false),
+			paidDate: z.string().optional(),
+			fineApplied: z.number().optional(),
+			academicYear: z.string().optional(),
+		}),
+	),
+	// feeMasterAssignments: z.object({
+	//     feeGroups: z.array(z.object({
+	//         id: z.string(),
+	//         groupName: z.string(),
+	//         selected: z.boolean(),
+	//         expanded: z.boolean(),
+	//         fees: z.array(z.object({
+	//             _id: z.string(),
+	//             feeGroupId: z.object({
+	//                 _id: z.string(),
+	//                 name: z.string(),
+	//             }),
+	//             feeTypeId: z.object({
+	//                 _id: z.string(),
+	//                 name: z.string(),
+	//             }),
+	//             amount: z.number(),
+	//             dueDate: z.string(),
+
+	//             fineType: z.string(),
+	//             selected: z.boolean(),
+	//         })),
+	//     })),
+	// }),
 });
 
 export type StudentFormPayload = z.infer<typeof studentSchema>;

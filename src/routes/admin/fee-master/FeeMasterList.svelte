@@ -29,10 +29,13 @@
 
 	let feeGroups = page.data?.feeGroups?.data || [];
 	let feeTypes = page.data?.feeTypes?.data || [];
-	// let feeMasters = page.data?.feeMasters || [];
+
+    let feeMasterGroups: FeeGroups = $state(groupByFeeGroup(response.data?.data || []));
+	console.log("feeMasterGroups",feeMasterGroups);
+    // let feeMasters = page.data?.feeMasters || [];
 	// console.log(feeMasters, feeGroups, feeTypes);
 	const columns: ColumnConfig[] = [
-		{ key: '_id', label: 'ID', visible: false },
+		{ key: '_id', label: 'ID', visible: true },
 		{ key: 'serialNo', label: 'Sr #', width: '80px', sortable: true },
 		{ key: 'feeGroupId.name', label: 'Fee Group', sortable: true },
 		{ key: 'feeTypeId.name', label: 'Fee Type', sortable: true },
@@ -169,6 +172,30 @@
 	function handleChange(e: CustomEvent<{ value: string }>) {
 		selectedValue = e.detail.value;
 	}
+
+    function groupByFeeGroup(data: any[]): FeeGroups {
+    return data.reduce((acc: FeeGroups, item: any) => {
+        const groupId = item.feeGroupId._id;
+
+        if (!acc[groupId]) {
+            acc[groupId] = {
+                id: groupId,
+                groupName: item.feeGroupId.name,
+                selected: false,
+                expanded: false,
+                fees: [],
+            };
+        }
+
+        acc[groupId].fees.push({
+            ...item,
+            selected: false, // Add selected property for each fee
+        });
+
+        return acc;
+    }, {} as FeeGroups);
+}
+
 </script>
 
 <svelte:head>
@@ -210,8 +237,6 @@
 </div>
 
 <DataTable {response} {columns} {actions} onPaginationChange={handlePaginationChange} onPageLimitChange={handlePageLimitChange} />
-
-
 
 {#if isModalOpen}
 	<Modal

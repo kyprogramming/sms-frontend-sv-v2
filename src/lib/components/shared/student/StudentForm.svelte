@@ -45,8 +45,13 @@
 
 	// State Management
 	const studentData = page.data.studentData || null;
+	const feeMasterData = page.data.feeMasters?.data || [];
+
 	let classList = page.data?.classList || [];
 	let classSections: { _id: string; name: string }[] = $state([]);
+
+	let selectedFeeMasterIds: string[] = $state([]);
+	let selectedFeeDiscountIds: string[] = $state([]);
 
 	let selectedFile: File | null = $state(null);
 
@@ -58,16 +63,20 @@
 		formErrors.set({});
 		// Initialize form data based on action
 		if (action === 'update' && studentData) {
-			formData = { studentData: { ...studentData.data }, userData: { ...studentData.data.userId } };
+			formData = { studentData: { ...studentData.data }, userData: { ...studentData.data.userId }, feeMasterAssignments: studentData.data?.feeMasterAssignments || [] };
 			classSections = studentData.data.classId ? classList.find((cls: any) => cls._id === studentData.data.classId)?.sectionIds || [] : [];
+			selectedFeeDiscountIds = studentData.data.selectedFeeDiscountIds || [];
+			console.log('Form Data on Mount:', formData);
 		}
 		touched = {};
 	});
 
 	function handleResetForm() {
 		if (action === 'update' && studentData) {
-			formData = { studentData: { ...studentData.data }, userData: { ...studentData.data.userId } };
+			formData = { studentData: { ...studentData.data }, userData: { ...studentData.data.userId }, feeMasterAssignments: studentData.data?.feeMasterAssignments || [] };
 			classSections = studentData.data.classId ? classList.find((cls: any) => cls._id === studentData.data.classId)?.sectionIds || [] : [];
+			// selectedFeeDiscountIds = studentData.data.selectedFeeDiscountIds || [];
+			selectedFeeDiscountIds = studentData.data.selectedFeeDiscountIds || [];
 		} else {
 			formData = initializeStudentFormPayload();
 			classSections = [];
@@ -120,11 +129,44 @@
 		console.log('Selected file object:', file);
 	}
 
+	function generateFeeAssignments(selectedFeeMasterIds: string[], feeMastData: any[], options?: { studentId?: string; academicYear?: string }): FeeAssignment[] {
+		return selectedFeeMasterIds.map((id) => {
+			const matched = feeMastData.find((fee) => fee._id === id);
+
+			if (!matched) {
+				throw new Error(`FeeMaster with ID ${id} not found in feeMastData.`);
+			}
+
+			return {
+				studentId: options?.studentId,
+				feeMasterId: matched._id,
+				amount: matched.amount,
+				dueDate: matched.dueDate,
+				isPaid: false,
+				academicYear: options?.academicYear,
+			};
+		});
+	}
+
 	async function onSubmit(event: Event) {
 		event.preventDefault();
 		formSubmitted = true;
 
+		// console.log('feeMasterData on Student Form ::', feeMasterData);
+		// console.log('selectedFeeMasterIds', selectedFeeMasterIds);
+		console.log('selectedDiscountIds', formData.studentData.selectedFeeDiscountIds);
+		// console.log('feeMasterAssignments', feeMasterAssignments);
+
 		const isValid = validateStudentForm(formData);
+		const feeMasterAssignments = generateFeeAssignments(selectedFeeMasterIds, feeMasterData, {
+			studentId: formData.studentData._id || '',
+			academicYear: formData.studentData.academicYear,
+		});
+
+		// formData.studentData.selectedFeeDiscountIds = selectedDiscountIds;
+		formData.feeMasterAssignments = feeMasterAssignments;
+
+		console.log('formData', formData);
 		if (!isValid) return;
 
 		if (action === 'update' && studentData) {
@@ -183,12 +225,22 @@
 			<!-- Admission Date -->
 			<div class="col-2">
 				<label for="studentData.admissionDate">Admission Date</label>
-				<DatePicker2 id="studentData.admissionDate" title="date of joining" bind:value={formData.studentData.admissionDate} onBlur={(isOpen) => handleDatePickerBlur('staffData.profile.dateOfJoining', isOpen)} defaultToday={true} />
+				<DatePicker2
+					id="studentData.admissionDate"
+					title="date of joining"
+					bind:value={formData.studentData.admissionDate}
+					onBlur={(isOpen) => handleDatePickerBlur('staffData.profile.dateOfJoining', isOpen)}
+					defaultToday={true} />
 			</div>
 			<!-- Student Class -->
 			<div class="col-2">
 				<label for="classId">Class <span class="required">*</span></label>
-				<select id="classId" class={`w-full ${formData.studentData.classId === '' ? 'placeholder-gray' : ''} ${$formErrors['studentData.classId'] && (touched['studentData.classId'] || formSubmitted) ? 'input-error' : ''}`} bind:value={formData.studentData.classId} onchange={handleClassChange} onblur={handleClassChange}>
+				<select
+					id="classId"
+					class={`w-full ${formData.studentData.classId === '' ? 'placeholder-gray' : ''} ${$formErrors['studentData.classId'] && (touched['studentData.classId'] || formSubmitted) ? 'input-error' : ''}`}
+					bind:value={formData.studentData.classId}
+					onchange={handleClassChange}
+					onblur={handleClassChange}>
 					<option value="" selected>Select class</option>
 					{#each classList as cls}
 						<option value={cls._id}>{cls.name}</option>
@@ -201,7 +253,13 @@
 			<!-- Student Section -->
 			<div class="col-2">
 				<label for="sectionId">Section <span class="required">*</span></label>
-				<select id="sectionId" bind:value={formData.studentData.sectionId} disabled={!classSections.length} class={`w-full ${formData.studentData.sectionId === '' ? 'placeholder-gray' : ''} ${$formErrors['studentData.sectionId'] && (touched['studentData.sectionId'] || formSubmitted) ? 'input-error' : ''}`} onchange={handleSectionChange} onblur={() => handleBlur('studentData.sectionId')}>
+				<select
+					id="sectionId"
+					bind:value={formData.studentData.sectionId}
+					disabled={!classSections.length}
+					class={`w-full ${formData.studentData.sectionId === '' ? 'placeholder-gray' : ''} ${$formErrors['studentData.sectionId'] && (touched['studentData.sectionId'] || formSubmitted) ? 'input-error' : ''}`}
+					onchange={handleSectionChange}
+					onblur={() => handleBlur('studentData.sectionId')}>
 					<option value="" selected>Select section</option>
 					{#each classSections as section}
 						<option value={section._id}>{section.name}</option>
@@ -224,20 +282,48 @@
 		<div class="grid-12">
 			<!-- Student First Name-->
 			<div class="col-2">
-				{@render renderInput('studentData.profile.firstName', 'First Name', true, 'text', formData.studentData.profile.firstName, (val) => (formData.studentData.profile.firstName = val), 20)}
+				{@render renderInput(
+					'studentData.profile.firstName',
+					'First Name',
+					true,
+					'text',
+					formData.studentData.profile.firstName,
+					(val) => (formData.studentData.profile.firstName = val),
+					20,
+				)}
 			</div>
 			<!-- Student Middle Name-->
 			<div class="col-2">
-				{@render renderInput('studentData.profile.middleName', 'Middle Name', false, 'text', formData.studentData.profile.middleName ?? '', (val) => (formData.studentData.profile.middleName = val), 20)}
+				{@render renderInput(
+					'studentData.profile.middleName',
+					'Middle Name',
+					false,
+					'text',
+					formData.studentData.profile.middleName ?? '',
+					(val) => (formData.studentData.profile.middleName = val),
+					20,
+				)}
 			</div>
 			<!-- Student Last Name-->
 			<div class="col-2">
-				{@render renderInput('studentData.profile.lastName', 'Last Name', true, 'text', formData.studentData.profile.lastName ?? '', (val) => (formData.studentData.profile.lastName = val), 20)}
+				{@render renderInput(
+					'studentData.profile.lastName',
+					'Last Name',
+					true,
+					'text',
+					formData.studentData.profile.lastName ?? '',
+					(val) => (formData.studentData.profile.lastName = val),
+					20,
+				)}
 			</div>
 			<!-- Gender -->
 			<div class="col-2">
 				<label for="gender">Gender <span class="required">*</span></label>
-				<select class={`w-full ${formData.studentData.profile.gender === '' ? 'placeholder-gray' : ''} ${$formErrors['studentData.profile.gender'] && (touched['studentData.profile.gender'] || formSubmitted) ? 'input-error' : ''}`} bind:value={formData.studentData.profile.gender} onblur={() => handleBlur('studentData.profile.gender')} onchange={() => handleBlur('studentData.profile.gender')}>
+				<select
+					class={`w-full ${formData.studentData.profile.gender === '' ? 'placeholder-gray' : ''} ${$formErrors['studentData.profile.gender'] && (touched['studentData.profile.gender'] || formSubmitted) ? 'input-error' : ''}`}
+					bind:value={formData.studentData.profile.gender}
+					onblur={() => handleBlur('studentData.profile.gender')}
+					onchange={() => handleBlur('studentData.profile.gender')}>
 					<option value="" selected>Select gender</option>
 					{#each GENDERS as gender}
 						<option value={gender.name}>{gender.name}</option>
@@ -250,7 +336,12 @@
 			<!-- Date of Birth -->
 			<div class="col-2">
 				<label for="studentData.profile.dob">Date of Birth <span class="required">*</span></label>
-				<DatePicker2 id="studentData.profile.dob" title="date of birth" bind:value={formData.studentData.profile.dob} onBlur={(isOpen) => handleDatePickerBlur('studentData.profile.dob', isOpen)} cls={`w-full ${$formErrors['studentData.profile.dob'] && (touched['studentData.profile.dob'] || formSubmitted) ? 'input-error' : ''}`} />
+				<DatePicker2
+					id="studentData.profile.dob"
+					title="date of birth"
+					bind:value={formData.studentData.profile.dob}
+					onBlur={(isOpen) => handleDatePickerBlur('studentData.profile.dob', isOpen)}
+					cls={`w-full ${$formErrors['studentData.profile.dob'] && (touched['studentData.profile.dob'] || formSubmitted) ? 'input-error' : ''}`} />
 				{#if $formErrors['studentData.profile.dob'] && (touched['studentData.profile.dob'] || formSubmitted)}
 					<p class="error-text">{$formErrors['studentData.profile.dob']}</p>
 				{/if}
@@ -267,11 +358,27 @@
 			</div>
 			<!-- Religion -->
 			<div class="col-2">
-				{@render renderInput('studentData.profile.religion', 'Religion', false, 'text', formData.studentData.profile.religion ?? '', (val) => (formData.studentData.profile.religion = val), 20)}
+				{@render renderInput(
+					'studentData.profile.religion',
+					'Religion',
+					false,
+					'text',
+					formData.studentData.profile.religion ?? '',
+					(val) => (formData.studentData.profile.religion = val),
+					20,
+				)}
 			</div>
 			<!-- Caste -->
 			<div class="col-2">
-				{@render renderInput('studentData.profile.caste', 'Caste', false, 'text', formData.studentData.profile.caste ?? '', (val) => (formData.studentData.profile.caste = val), 20)}
+				{@render renderInput(
+					'studentData.profile.caste',
+					'Caste',
+					false,
+					'text',
+					formData.studentData.profile.caste ?? '',
+					(val) => (formData.studentData.profile.caste = val),
+					20,
+				)}
 			</div>
 			<!-- Mobile No -->
 			<div class="col-2">
@@ -290,23 +397,63 @@
 		<div class="grid-12">
 			<!-- House No/Street -->
 			<div class="col-4">
-				{@render renderInput('studentData.profile.address.street', 'House No/Street', true, 'text', formData.studentData.profile.address.street ?? '', (val) => (formData.studentData.profile.address.street = val), 100)}
+				{@render renderInput(
+					'studentData.profile.address.street',
+					'House No/Street',
+					true,
+					'text',
+					formData.studentData.profile.address.street ?? '',
+					(val) => (formData.studentData.profile.address.street = val),
+					100,
+				)}
 			</div>
 			<!-- City -->
 			<div class="col-2">
-				{@render renderInput('studentData.profile.address.city', 'City', true, 'text', formData.studentData.profile.address.city ?? '', (val) => (formData.studentData.profile.address.city = val), 20)}
+				{@render renderInput(
+					'studentData.profile.address.city',
+					'City',
+					true,
+					'text',
+					formData.studentData.profile.address.city ?? '',
+					(val) => (formData.studentData.profile.address.city = val),
+					20,
+				)}
 			</div>
 			<!-- State -->
 			<div class="col-2">
-				{@render renderInput('studentData.profile.address.state', 'State', true, 'text', formData.studentData.profile.address.state ?? '', (val) => (formData.studentData.profile.address.state = val), 20)}
+				{@render renderInput(
+					'studentData.profile.address.state',
+					'State',
+					true,
+					'text',
+					formData.studentData.profile.address.state ?? '',
+					(val) => (formData.studentData.profile.address.state = val),
+					20,
+				)}
 			</div>
 			<!-- Postal Code -->
 			<div class="col-2">
-				{@render renderInput('studentData.profile.address.postalCode', 'Postal Code', true, 'text', formData.studentData.profile.address.postalCode ?? '', (val) => (formData.studentData.profile.address.postalCode = val), 10)}
+				{@render renderInput(
+					'studentData.profile.address.postalCode',
+					'Postal Code',
+					true,
+					'text',
+					formData.studentData.profile.address.postalCode ?? '',
+					(val) => (formData.studentData.profile.address.postalCode = val),
+					10,
+				)}
 			</div>
 			<!-- Country -->
 			<div class="col-2">
-				{@render renderInput('studentData.profile.address.country', 'Country', true, 'text', formData.studentData.profile.address.country ?? '', (val) => (formData.studentData.profile.address.country = val), 20)}
+				{@render renderInput(
+					'studentData.profile.address.country',
+					'Country',
+					true,
+					'text',
+					formData.studentData.profile.address.country ?? '',
+					(val) => (formData.studentData.profile.address.country = val),
+					20,
+				)}
 			</div>
 		</div>
 	</div>
@@ -318,7 +465,10 @@
 			<!-- Blood Group -->
 			<div class="col-1">
 				<label for="bloodGroup">Blood Group</label>
-				<select id="bloodGroup" class={`w-full ${formData.studentData.medicalDetails.bloodGroup === '' ? 'placeholder-gray' : ''}`} bind:value={formData.studentData.medicalDetails.bloodGroup}>
+				<select
+					id="bloodGroup"
+					class={`w-full ${formData.studentData.medicalDetails.bloodGroup === '' ? 'placeholder-gray' : ''}`}
+					bind:value={formData.studentData.medicalDetails.bloodGroup}>
 					<option value="" selected>Select B/G</option>
 					{#each BLOOD_GROUPS as group}
 						<option value={group.name}>{group.name}</option>
@@ -327,15 +477,39 @@
 			</div>
 			<!-- Height (CM) -->
 			<div class="col-1">
-				{@render renderInput('studentData.medicalDetails.height', 'Height (CM)', false, 'text', formData.studentData.medicalDetails.height ?? '', (val) => (formData.studentData.medicalDetails.height = val), 3)}
+				{@render renderInput(
+					'studentData.medicalDetails.height',
+					'Height (CM)',
+					false,
+					'text',
+					formData.studentData.medicalDetails.height ?? '',
+					(val) => (formData.studentData.medicalDetails.height = val),
+					3,
+				)}
 			</div>
 			<!-- Weight (KG) -->
 			<div class="col-1">
-				{@render renderInput('studentData.medicalDetails.weight', 'Weight (KG)', false, 'text', formData.studentData.medicalDetails.weight ?? '', (val) => (formData.studentData.medicalDetails.weight = val), 3)}
+				{@render renderInput(
+					'studentData.medicalDetails.weight',
+					'Weight (KG)',
+					false,
+					'text',
+					formData.studentData.medicalDetails.weight ?? '',
+					(val) => (formData.studentData.medicalDetails.weight = val),
+					3,
+				)}
 			</div>
 			<!-- Eye Sight -->
 			<div class="col-1">
-				{@render renderInput('studentData.medicalDetails.eyeSight', 'Eye Sight', false, 'text', formData.studentData.medicalDetails.eyeSight ?? '', (val) => (formData.studentData.medicalDetails.eyeSight = val), 10)}
+				{@render renderInput(
+					'studentData.medicalDetails.eyeSight',
+					'Eye Sight',
+					false,
+					'text',
+					formData.studentData.medicalDetails.eyeSight ?? '',
+					(val) => (formData.studentData.medicalDetails.eyeSight = val),
+					10,
+				)}
 			</div>
 			<!-- Measurement Date -->
 			<div class="col-2">
@@ -349,7 +523,15 @@
 			</div>
 			<!-- Medical History -->
 			<div class="col-6">
-				{@render renderInput('studentData.medicalDetails.medicalHistory', 'Medical History', false, 'text', formData.studentData.medicalDetails.medicalHistory ?? '', (val) => (formData.studentData.medicalDetails.medicalHistory = val), 50)}
+				{@render renderInput(
+					'studentData.medicalDetails.medicalHistory',
+					'Medical History',
+					false,
+					'text',
+					formData.studentData.medicalDetails.medicalHistory ?? '',
+					(val) => (formData.studentData.medicalDetails.medicalHistory = val),
+					50,
+				)}
 			</div>
 			<!-- Allergies -->
 			<div class="col-6">
@@ -370,58 +552,168 @@
 		<div class="grid-12">
 			<!-- Father First Name -->
 			<div class="col-2">
-				{@render renderInput('studentData.parentGuardianDetails.fatherDetails.fatherFirstName', 'Father First Name', true, 'text', formData.studentData.parentGuardianDetails.fatherDetails.fatherFirstName ?? '', (val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherFirstName = val), 20)}
+				{@render renderInput(
+					'studentData.parentGuardianDetails.fatherDetails.fatherFirstName',
+					'Father First Name',
+					true,
+					'text',
+					formData.studentData.parentGuardianDetails.fatherDetails.fatherFirstName ?? '',
+					(val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherFirstName = val),
+					20,
+				)}
 			</div>
 			<!-- Father Last Name -->
 			<div class="col-2">
-				{@render renderInput('studentData.parentGuardianDetails.fatherDetails.fatherLastName', 'Father Last Name', true, 'text', formData.studentData.parentGuardianDetails.fatherDetails.fatherLastName ?? '', (val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherLastName = val), 20)}
+				{@render renderInput(
+					'studentData.parentGuardianDetails.fatherDetails.fatherLastName',
+					'Father Last Name',
+					true,
+					'text',
+					formData.studentData.parentGuardianDetails.fatherDetails.fatherLastName ?? '',
+					(val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherLastName = val),
+					20,
+				)}
 			</div>
 			<!-- Father Phone -->
 			<div class="col-2">
-				{@render renderInput('studentData.parentGuardianDetails.fatherDetails.fatherPhone', 'Father Phone', true, 'text', formData.studentData.parentGuardianDetails.fatherDetails.fatherPhone ?? '', (val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherPhone = val), 10)}
+				{@render renderInput(
+					'studentData.parentGuardianDetails.fatherDetails.fatherPhone',
+					'Father Phone',
+					true,
+					'text',
+					formData.studentData.parentGuardianDetails.fatherDetails.fatherPhone ?? '',
+					(val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherPhone = val),
+					10,
+				)}
 			</div>
 			<!-- Father Email -->
 			<div class="col-2">
-				{@render renderInput('studentData.parentGuardianDetails.fatherDetails.fatherEmail', 'Father Email', false, 'text', formData.studentData.parentGuardianDetails.fatherDetails.fatherEmail ?? '', (val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherEmail = val), 30)}
+				{@render renderInput(
+					'studentData.parentGuardianDetails.fatherDetails.fatherEmail',
+					'Father Email',
+					false,
+					'text',
+					formData.studentData.parentGuardianDetails.fatherDetails.fatherEmail ?? '',
+					(val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherEmail = val),
+					30,
+				)}
 			</div>
 			<!-- Father Occupation -->
 			<div class="col-2">
-				{@render renderInput('studentData.parentGuardianDetails.fatherDetails.fatherOccupation', 'Father Occupation', false, 'text', formData.studentData.parentGuardianDetails.fatherDetails.fatherOccupation ?? '', (val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherOccupation = val), 30)}
+				{@render renderInput(
+					'studentData.parentGuardianDetails.fatherDetails.fatherOccupation',
+					'Father Occupation',
+					false,
+					'text',
+					formData.studentData.parentGuardianDetails.fatherDetails.fatherOccupation ?? '',
+					(val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherOccupation = val),
+					30,
+				)}
 			</div>
 			<!-- Father Education -->
 			<div class="col-2">
-				{@render renderInput('studentData.parentGuardianDetails.fatherDetails.fatherEducation', 'Father Education', false, 'text', formData.studentData.parentGuardianDetails.fatherDetails.fatherEducation ?? '', (val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherEducation = val), 20)}
+				{@render renderInput(
+					'studentData.parentGuardianDetails.fatherDetails.fatherEducation',
+					'Father Education',
+					false,
+					'text',
+					formData.studentData.parentGuardianDetails.fatherDetails.fatherEducation ?? '',
+					(val) => (formData.studentData.parentGuardianDetails.fatherDetails.fatherEducation = val),
+					20,
+				)}
 			</div>
 			<!-- Mother First Name -->
 			<div class="col-2">
-				{@render renderInput('studentData.parentGuardianDetails.motherDetails.motherFirstName', 'Mother First Name', true, 'text', formData.studentData.parentGuardianDetails.motherDetails.motherFirstName ?? '', (val) => (formData.studentData.parentGuardianDetails.motherDetails.motherFirstName = val), 20)}
+				{@render renderInput(
+					'studentData.parentGuardianDetails.motherDetails.motherFirstName',
+					'Mother First Name',
+					true,
+					'text',
+					formData.studentData.parentGuardianDetails.motherDetails.motherFirstName ?? '',
+					(val) => (formData.studentData.parentGuardianDetails.motherDetails.motherFirstName = val),
+					20,
+				)}
 			</div>
 			<!-- Mother Last Name -->
 			<div class="col-2">
-				{@render renderInput('studentData.parentGuardianDetails.motherDetails.motherLastName', 'Mother Last Name', true, 'text', formData.studentData.parentGuardianDetails.motherDetails.motherLastName ?? '', (val) => (formData.studentData.parentGuardianDetails.motherDetails.motherLastName = val), 20)}
+				{@render renderInput(
+					'studentData.parentGuardianDetails.motherDetails.motherLastName',
+					'Mother Last Name',
+					true,
+					'text',
+					formData.studentData.parentGuardianDetails.motherDetails.motherLastName ?? '',
+					(val) => (formData.studentData.parentGuardianDetails.motherDetails.motherLastName = val),
+					20,
+				)}
 			</div>
 			<!-- Mother Phone -->
 			<div class="col-2">
-				{@render renderInput('studentData.parentGuardianDetails.motherDetails.motherPhone', 'Mother Phone', true, 'tel', formData.studentData.parentGuardianDetails.motherDetails.motherPhone ?? '', (val) => (formData.studentData.parentGuardianDetails.motherDetails.motherPhone = val), 10)}
+				{@render renderInput(
+					'studentData.parentGuardianDetails.motherDetails.motherPhone',
+					'Mother Phone',
+					true,
+					'tel',
+					formData.studentData.parentGuardianDetails.motherDetails.motherPhone ?? '',
+					(val) => (formData.studentData.parentGuardianDetails.motherDetails.motherPhone = val),
+					10,
+				)}
 			</div>
 			<!-- Mother Email -->
 			<div class="col-2">
-				{@render renderInput('studentData.parentGuardianDetails.motherDetails.motherEmail', 'Mother Email', false, 'email', formData.studentData.parentGuardianDetails.motherDetails.motherEmail ?? '', (val) => (formData.studentData.parentGuardianDetails.motherDetails.motherEmail = val), 30)}
+				{@render renderInput(
+					'studentData.parentGuardianDetails.motherDetails.motherEmail',
+					'Mother Email',
+					false,
+					'email',
+					formData.studentData.parentGuardianDetails.motherDetails.motherEmail ?? '',
+					(val) => (formData.studentData.parentGuardianDetails.motherDetails.motherEmail = val),
+					30,
+				)}
 			</div>
 			<!-- Mother Occupation -->
 			<div class="col-2">
-				{@render renderInput('studentData.parentGuardianDetails.motherDetails.motherEmail', 'Mother Occupation', false, 'text', formData.studentData.parentGuardianDetails.motherDetails.motherOccupation ?? '', (val) => (formData.studentData.parentGuardianDetails.motherDetails.motherOccupation = val), 20)}
+				{@render renderInput(
+					'studentData.parentGuardianDetails.motherDetails.motherEmail',
+					'Mother Occupation',
+					false,
+					'text',
+					formData.studentData.parentGuardianDetails.motherDetails.motherOccupation ?? '',
+					(val) => (formData.studentData.parentGuardianDetails.motherDetails.motherOccupation = val),
+					20,
+				)}
 			</div>
 			<!-- Mother Education -->
 			<div class="col-2">
-				{@render renderInput('studentData.parentGuardianDetails.motherDetails.motherEducation', 'Mother Education', false, 'text', formData.studentData.parentGuardianDetails.motherDetails.motherEducation ?? '', (val) => (formData.studentData.parentGuardianDetails.motherDetails.motherEducation = val), 20)}
+				{@render renderInput(
+					'studentData.parentGuardianDetails.motherDetails.motherEducation',
+					'Mother Education',
+					false,
+					'text',
+					formData.studentData.parentGuardianDetails.motherDetails.motherEducation ?? '',
+					(val) => (formData.studentData.parentGuardianDetails.motherDetails.motherEducation = val),
+					20,
+				)}
 			</div>
 			<!-- Parent Current Address -->
 			<div class="col-6">
-				{@render renderTextarea('studentData.parentGuardianDetails.parentCurrentAddress', 'Parent Current Address', true, formData.studentData.parentGuardianDetails.parentCurrentAddress ?? '', (val) => (formData.studentData.parentGuardianDetails.parentCurrentAddress = val), 300)}
+				{@render renderTextarea(
+					'studentData.parentGuardianDetails.parentCurrentAddress',
+					'Parent Current Address',
+					true,
+					formData.studentData.parentGuardianDetails.parentCurrentAddress ?? '',
+					(val) => (formData.studentData.parentGuardianDetails.parentCurrentAddress = val),
+					300,
+				)}
 			</div>
 			<div class="col-6">
-				{@render renderTextarea('studentData.parentGuardianDetails.parentPermanentAddress', 'Parent Permanent Address', false, formData.studentData.parentGuardianDetails.parentPermanentAddress ?? '', (val) => (formData.studentData.parentGuardianDetails.parentPermanentAddress = val), 300)}
+				{@render renderTextarea(
+					'studentData.parentGuardianDetails.parentPermanentAddress',
+					'Parent Permanent Address',
+					false,
+					formData.studentData.parentGuardianDetails.parentPermanentAddress ?? '',
+					(val) => (formData.studentData.parentGuardianDetails.parentPermanentAddress = val),
+					300,
+				)}
 			</div>
 
 			<!-- Primary Guardian Selection -->
@@ -431,7 +723,13 @@
 					{#each GUARDIAN_TYPE as type}
 						<div class="radio-item">
 							<label class="radio-label">
-								<input name="type" type="radio" class="radio-input" value={type.name} checked={formData?.studentData?.parentGuardianDetails?.primaryGuardian === type.name} onchange={() => handleGuardianTypeChange(type.name)} />
+								<input
+									name="type"
+									type="radio"
+									class="radio-input"
+									value={type.name}
+									checked={formData?.studentData?.parentGuardianDetails?.primaryGuardian === type.name}
+									onchange={() => handleGuardianTypeChange(type.name)} />
 								<span class="radio-custom"></span>
 								<span class="radio-text">{type.name}</span>
 							</label>
@@ -451,38 +749,108 @@
 					<div class="grid-12">
 						<!-- Guardian First Name -->
 						<div class="col-2">
-							{@render renderInput('studentData.parentGuardianDetails.guardianDetails.guardianFirstName', 'Guardian First Name', true, 'text', formData.studentData.parentGuardianDetails.guardianDetails.guardianFirstName ?? '', (val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianFirstName = val), 20)}
+							{@render renderInput(
+								'studentData.parentGuardianDetails.guardianDetails.guardianFirstName',
+								'Guardian First Name',
+								true,
+								'text',
+								formData.studentData.parentGuardianDetails.guardianDetails.guardianFirstName ?? '',
+								(val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianFirstName = val),
+								20,
+							)}
 						</div>
 						<!-- Guardian Last Name -->
 						<div class="col-2">
-							{@render renderInput('studentData.parentGuardianDetails.guardianDetails.guardianLastName', 'Guardian Last Name', true, 'text', formData.studentData.parentGuardianDetails.guardianDetails.guardianLastName ?? '', (val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianLastName = val), 20)}
+							{@render renderInput(
+								'studentData.parentGuardianDetails.guardianDetails.guardianLastName',
+								'Guardian Last Name',
+								true,
+								'text',
+								formData.studentData.parentGuardianDetails.guardianDetails.guardianLastName ?? '',
+								(val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianLastName = val),
+								20,
+							)}
 						</div>
 						<!-- Guardian Phone -->
 						<div class="col-2">
-							{@render renderInput('studentData.parentGuardianDetails.guardianDetails.guardianPhone', 'Guardian Phone', true, 'tel', formData.studentData.parentGuardianDetails.guardianDetails.guardianPhone ?? '', (val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianPhone = val), 10)}
+							{@render renderInput(
+								'studentData.parentGuardianDetails.guardianDetails.guardianPhone',
+								'Guardian Phone',
+								true,
+								'tel',
+								formData.studentData.parentGuardianDetails.guardianDetails.guardianPhone ?? '',
+								(val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianPhone = val),
+								10,
+							)}
 						</div>
 						<!-- Guardian Email -->
 						<div class="col-2">
-							{@render renderInput('studentData.parentGuardianDetails.guardianDetails.guardianEmail', 'Guardian Email', true, 'email', formData.studentData.parentGuardianDetails.guardianDetails.guardianEmail ?? '', (val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianEmail = val), 30)}
+							{@render renderInput(
+								'studentData.parentGuardianDetails.guardianDetails.guardianEmail',
+								'Guardian Email',
+								true,
+								'email',
+								formData.studentData.parentGuardianDetails.guardianDetails.guardianEmail ?? '',
+								(val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianEmail = val),
+								30,
+							)}
 						</div>
 						<!-- Guardian Relation -->
 						<div class="col-2">
-							{@render renderInput('studentData.parentGuardianDetails.guardianDetails.guardianRelation', 'Guardian Relation', true, 'text', formData.studentData.parentGuardianDetails.guardianDetails.guardianRelation ?? '', (val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianRelation = val), 20)}
+							{@render renderInput(
+								'studentData.parentGuardianDetails.guardianDetails.guardianRelation',
+								'Guardian Relation',
+								true,
+								'text',
+								formData.studentData.parentGuardianDetails.guardianDetails.guardianRelation ?? '',
+								(val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianRelation = val),
+								20,
+							)}
 						</div>
 						<!-- Guardian Occupation -->
 						<div class="col-1">
-							{@render renderInput('studentData.parentGuardianDetails.guardianDetails.guardianOccupation', 'Occupation', false, 'text', formData.studentData.parentGuardianDetails.guardianDetails.guardianOccupation ?? '', (val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianOccupation = val), 20)}
+							{@render renderInput(
+								'studentData.parentGuardianDetails.guardianDetails.guardianOccupation',
+								'Occupation',
+								false,
+								'text',
+								formData.studentData.parentGuardianDetails.guardianDetails.guardianOccupation ?? '',
+								(val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianOccupation = val),
+								20,
+							)}
 						</div>
 						<!-- Guardian Education -->
 						<div class="col-1">
-							{@render renderInput('studentData.parentGuardianDetails.guardianDetails.guardianEducation', 'Education', false, 'text', formData.studentData.parentGuardianDetails.guardianDetails.guardianEducation ?? '', (val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianEducation = val), 20)}
+							{@render renderInput(
+								'studentData.parentGuardianDetails.guardianDetails.guardianEducation',
+								'Education',
+								false,
+								'text',
+								formData.studentData.parentGuardianDetails.guardianDetails.guardianEducation ?? '',
+								(val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianEducation = val),
+								20,
+							)}
 						</div>
 						<!-- Guardian Current Address -->
 						<div class="col-6">
-							{@render renderTextarea('studentData.parentGuardianDetails.guardianDetails.guardianCurrentAddress', 'Guardian Current Address', true, formData.studentData.parentGuardianDetails.guardianDetails.guardianCurrentAddress ?? '', (val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianCurrentAddress = val), 300)}
+							{@render renderTextarea(
+								'studentData.parentGuardianDetails.guardianDetails.guardianCurrentAddress',
+								'Guardian Current Address',
+								true,
+								formData.studentData.parentGuardianDetails.guardianDetails.guardianCurrentAddress ?? '',
+								(val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianCurrentAddress = val),
+								300,
+							)}
 						</div>
 						<div class="col-6">
-							{@render renderTextarea('studentData.parentGuardianDetails.guardianDetails.guardianPermanentAddress', 'Guardian Permanent Address', false, formData.studentData.parentGuardianDetails.guardianDetails.guardianPermanentAddress ?? '', (val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianPermanentAddress = val), 300)}
+							{@render renderTextarea(
+								'studentData.parentGuardianDetails.guardianDetails.guardianPermanentAddress',
+								'Guardian Permanent Address',
+								false,
+								formData.studentData.parentGuardianDetails.guardianDetails.guardianPermanentAddress ?? '',
+								(val) => (formData.studentData.parentGuardianDetails.guardianDetails.guardianPermanentAddress = val),
+								300,
+							)}
 						</div>
 					</div>
 				</div>
@@ -495,7 +863,9 @@
 		<h1>Fee Details</h1>
 		<div class="grid-12">
 			<div class="col-12">
-				<FeeDetails />
+				<!-- {#key selectedFeeDiscountIds} -->
+					<FeeDetails bind:selectedFeeMasterIds bind:selectedFeeDiscountIds={formData.studentData.selectedFeeDiscountIds} selectedFields={selectedFeeDiscountIds} />
+				<!-- {/key} -->
 			</div>
 		</div>
 	</div>

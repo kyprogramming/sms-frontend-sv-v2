@@ -50,7 +50,7 @@ export const load: PageLoad = async ({ fetch }) => {
 
 		// Parse all responses
 		const [feeMasters, feeGroups, feeTypes] = await Promise.all([feeMasterRes.json(), feeGroupRes.json(), feeTypeRes.json()]);
-
+       console.log('Fee Masters:', feeMasters);
 		return {
 			data: feeMasters,
 			feeGroups,

@@ -25,6 +25,8 @@
     let students = page.data?.students?.data || [];
     let feeMasters = page.data?.feeMasters?.data || [];
 
+    // console.log("FeeAssignmentList.svelte - Students:", response);
+
     const columns: ColumnConfig[] = [
         { key: '_id', label: 'ID', visible: false },
         { key: 'serialNo', label: 'Sr #', width: '80px', sortable: true },

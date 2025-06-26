@@ -148,7 +148,7 @@ export const MENU_GROUPS = [
 		title: 'System Setting',
 		icon: 'Settings',
 		items: [
-			{ title: 'General Setting', link: '/admin/constant' },
+			{ title: 'Constant Setting', link: '/admin/constant' },
 			// { title: 'Session Setting', link: '/sessions' },.active
 			// { title: "Notification Setting", link: "/admin/notification/setting" },
 			// { title: "SMS Setting", link: "/smsconfig" },

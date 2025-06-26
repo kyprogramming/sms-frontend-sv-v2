@@ -83,7 +83,20 @@ export function initializeStudentFormPayload(): StudentFormPayload {
 				parentPermanentAddress: '',
 			},
 			documents: [],
+			selectedFeeDiscountIds: [],
 		},
+		feeMasterAssignments: [
+			{
+				studentId: '',
+				feeMasterId: '',
+				amount: 0,
+				dueDate: '',
+				isPaid: false,
+				paidDate: '',
+				fineApplied: 0,
+				academicYear: '',
+			},
+		],
 	};
 }
 

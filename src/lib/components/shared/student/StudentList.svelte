@@ -38,7 +38,7 @@
 	let selectedName = $state('');
 
 	let classList = page.data?.classList || [];
-	console.log('classList on StudentList page', classList);
+	// console.log('classList on StudentList page', classList);
 	let classSections: { _id: string; name: string }[] = $state([]);
 	let selectedClassId = $state('');
 	let selectedSectionId = $state('');
