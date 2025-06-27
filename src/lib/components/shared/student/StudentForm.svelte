@@ -13,7 +13,6 @@
 	import LoaderIcon from '$lib/components/common/LoaderIcon.svelte';
 	import ImageUploader from '$lib/components/common/ImageUploader.svelte';
 	import UploadDocument from '$lib/components/common/UploadDocument.svelte';
-	import FeeDetails from '../fee/FeeDetails.svelte';
 
 	// Icons
 	import { BrushCleaning, PlusCircle, Save } from '@lucide/svelte';
@@ -44,14 +43,14 @@
 	const pageTitle = `${schoolName} - Student Registration - ${action === 'update' ? ' Update' : 'New'}`;
 
 	// State Management
-	const studentData = page.data.studentData || null;
+	const studentData = page.data.studentData?.data.student || null;
+	const feeAssignments = page.data.studentData?.data.feeAssignments || null;
 	const feeMasterData = page.data.feeMasters?.data || [];
 
 	let classList = page.data?.classList || [];
 	let classSections: { _id: string; name: string }[] = $state([]);
 
-	let selectedFeeMasterIds: string[] = $state([]);
-	let selectedFeeDiscountIds: string[] = $state([]);
+	let selectedFeeMasterAssignmentIds: string[] = $state([]);
 
 	let selectedFile: File | null = $state(null);
 
@@ -63,20 +62,22 @@
 		formErrors.set({});
 		// Initialize form data based on action
 		if (action === 'update' && studentData) {
-			formData = { studentData: { ...studentData.data }, userData: { ...studentData.data.userId }, feeMasterAssignments: studentData.data?.feeMasterAssignments || [] };
-			classSections = studentData.data.classId ? classList.find((cls: any) => cls._id === studentData.data.classId)?.sectionIds || [] : [];
-			selectedFeeDiscountIds = studentData.data.selectedFeeDiscountIds || [];
-			console.log('Form Data on Mount:', formData);
+			formData = { studentData: { ...studentData }, userData: { ...studentData.userId }, feeMasterAssignments: studentData?.feeMasterAssignments || [] };
+			classSections = studentData.classId ? classList.find((cls: any) => cls._id === studentData.classId)?.sectionIds || [] : [];
+			formData.studentData.selectedFeeDiscountIds = studentData.selectedFeeDiscountIds || [];
+			formData.feeMasterAssignments = studentData.feeMasterAssignments || [];
+			selectedFeeMasterAssignmentIds = feeAssignments?.map((assignment: any) => assignment.feeMasterId._id) || [];
+			// console.log('Form Data on Mount:', formData);
 		}
 		touched = {};
 	});
 
 	function handleResetForm() {
 		if (action === 'update' && studentData) {
-			formData = { studentData: { ...studentData.data }, userData: { ...studentData.data.userId }, feeMasterAssignments: studentData.data?.feeMasterAssignments || [] };
-			classSections = studentData.data.classId ? classList.find((cls: any) => cls._id === studentData.data.classId)?.sectionIds || [] : [];
-			// selectedFeeDiscountIds = studentData.data.selectedFeeDiscountIds || [];
-			selectedFeeDiscountIds = studentData.data.selectedFeeDiscountIds || [];
+			formData = { studentData: { ...studentData }, userData: { ...studentData.userId }, feeMasterAssignments: studentData?.feeMasterAssignments || [] };
+			classSections = studentData.classId ? classList.find((cls: any) => cls._id === studentData.classId)?.sectionIds || [] : [];
+			formData.studentData.selectedFeeDiscountIds = studentData.selectedFeeDiscountIds || [];
+			selectedFeeMasterAssignmentIds = feeAssignments?.map((assignment: any) => assignment.feeMasterId._id) || [];
 		} else {
 			formData = initializeStudentFormPayload();
 			classSections = [];
@@ -91,7 +92,7 @@
 		formData.studentData.parentGuardianDetails.primaryGuardian = type;
 		$formErrors['studentData.parentGuardianDetails.primaryGuardian'] = '';
 		if (type === 'Other' && action === 'update') {
-			formData.studentData.parentGuardianDetails = studentData.data.parentGuardianDetails;
+			formData.studentData.parentGuardianDetails = studentData.parentGuardianDetails;
 		}
 		validateStudentForm(formData);
 	}
@@ -126,12 +127,11 @@
 
 	function handleImageSelect(file: File | null) {
 		selectedFile = file;
-		console.log('Selected file object:', file);
 	}
 
-	function generateFeeAssignments(selectedFeeMasterIds: string[], feeMastData: any[], options?: { studentId?: string; academicYear?: string }): FeeAssignment[] {
-		return selectedFeeMasterIds.map((id) => {
-			const matched = feeMastData.find((fee) => fee._id === id);
+	function generateFeeAssignments(options?: { studentId?: string; academicYear?: string }): FeeAssignment[] {
+        return selectedFeeMasterAssignmentIds.map((id) => {
+			const matched = feeMasterData.find((feeMaster:any) => feeMaster._id === id);
 
 			if (!matched) {
 				throw new Error(`FeeMaster with ID ${id} not found in feeMastData.`);
@@ -152,30 +152,23 @@
 		event.preventDefault();
 		formSubmitted = true;
 
-		// console.log('feeMasterData on Student Form ::', feeMasterData);
-		// console.log('selectedFeeMasterIds', selectedFeeMasterIds);
-		console.log('selectedDiscountIds', formData.studentData.selectedFeeDiscountIds);
-		// console.log('feeMasterAssignments', feeMasterAssignments);
-
-		const isValid = validateStudentForm(formData);
-		const feeMasterAssignments = generateFeeAssignments(selectedFeeMasterIds, feeMasterData, {
+        const isValid = validateStudentForm(formData);
+		const feeMasterAssignments = generateFeeAssignments( {
 			studentId: formData.studentData._id || '',
 			academicYear: formData.studentData.academicYear,
 		});
 
-		// formData.studentData.selectedFeeDiscountIds = selectedDiscountIds;
 		formData.feeMasterAssignments = feeMasterAssignments;
-
 		console.log('formData', formData);
 		if (!isValid) return;
 
 		if (action === 'update' && studentData) {
-			const isUnChanged = isEqual(studentData.data, formData.studentData);
+			const isUnChanged = isEqual(studentData, formData);
 			if (isUnChanged) {
 				showSnackbar({ message: MESSAGES.FORM.NO_CHANGES, type: 'warning' });
 				return;
 			}
-			await updateStudent(studentData.data._id, formData);
+			await updateStudent(studentData._id, formData);
 			showSnackbar({ message: 'Student updated successfully', type: 'success' });
 			await goto('/admin/student/list');
 		} else {
@@ -196,7 +189,6 @@
 	function addNewDocument(e: MouseEvent) {
 		if (formData.studentData.documents?.length! < 12) {
 			formData.studentData.documents = [...(formData.studentData.documents ?? []), { title: '', category: '', url: '' }];
-			console.log('uploadSections', formData.studentData.documents);
 		} else {
 			showSnackbar({ message: 'Can not add more than 12 documents', type: 'info' });
 		}
@@ -863,9 +855,9 @@
 		<h1>Fee Details</h1>
 		<div class="grid-12">
 			<div class="col-12">
-				<!-- {#key selectedFeeDiscountIds} -->
-					<FeeDetails bind:selectedFeeMasterIds bind:selectedFeeDiscountIds={formData.studentData.selectedFeeDiscountIds} selectedFields={selectedFeeDiscountIds} />
-				<!-- {/key} -->
+				{#await import('../fee/FeeDetails.svelte') then { default: FeeDetails }}
+					<FeeDetails bind:selectedFeeMasterAssignmentIds bind:selectedFeeDiscountIds={formData.studentData.selectedFeeDiscountIds} />
+				{/await}
 			</div>
 		</div>
 	</div>

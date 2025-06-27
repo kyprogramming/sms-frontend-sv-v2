@@ -1,59 +1,19 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { onMount } from 'svelte';
 	import { slide } from 'svelte/transition';
 
-	// Group the fee data
-	interface FeeType {
-		_id: string;
-		feeGroupId: {
-			_id: string;
-			name: string;
-		};
-		feeTypeId: {
-			_id: string;
-			name: string;
-		};
-		amount: number;
-		dueDate: string;
-		fineType: string;
-		selected: boolean;
-	}
+	let { selectedFeeMasterAssignmentIds = $bindable([]), selectedFeeDiscountIds = $bindable([]) } = $props();
 
-	interface FeeGroup {
-		id: string;
-		groupName: string;
-		selected: boolean;
-		expanded: boolean;
-		fees: FeeType[];
-	}
-
-	interface Discount {
-		_id: string;
-		name: string;
-		code: string;
-		discountType: 'fixed' | 'percentage';
-		amount: number;
-		applicableTo: string;
-		expiryDate: string;
-		selected: boolean;
-	}
-
-	// Define the structure of our fee groups object
-	type FeeGroups = Record<string, FeeGroup>;
-
-	let discountsExpanded = $state(false);
+	let discountsExpanded = $state(true);
 
 	// Initialize with the correct type
 	let feeGroups: FeeGroups = $state(groupByFeeGroup(page.data.feeMasters?.data || []));
-	let feeDiscounts: Discount[] = $state(
-		(page.data.feeDiscounts?.data || []).map((d: any) => ({
-			...d,
-			selected: false,
-		})),
-	);
+	let feeDiscounts: Discount[] = $state([]);
 
-	console.log('Client Component - feeGroups', feeGroups);
-	console.log('Client Component - feeDiscounts', feeDiscounts);
+	onMount(() => {
+		feeDiscounts = (page.data.feeDiscounts?.data || []).map((d: any) => ({ ...d, selected: selectedFeeDiscountIds.includes(d._id) }));
+	});
 
 	// Replace the toggleGroupExpand call for discounts with this
 	function toggleDiscountsExpand() {
@@ -75,10 +35,15 @@
 				};
 			}
 
+			const feeSelected = selectedFeeMasterAssignmentIds.includes(item._id);
 			acc[groupId].fees.push({
 				...item,
-				selected: false,
+				selected: feeSelected,
 			});
+			// Mark the group as selected if any fee in it is selected
+			if (feeSelected) {
+				acc[groupId].selected = true;
+			}
 			return acc;
 		}, {} as FeeGroups);
 	}
@@ -97,7 +62,6 @@
 	// Toggle group selection (and all its fees)
 	function toggleGroupSelect(groupId: string) {
 		const newSelected = !feeGroups[groupId].selected;
-
 		feeGroups = {
 			...feeGroups,
 			[groupId]: {
@@ -109,6 +73,11 @@
 				})),
 			},
 		};
+
+        selectedFeeMasterAssignmentIds = newSelected
+			? [...selectedFeeMasterAssignmentIds, ...feeGroups[groupId].fees.map((fee) => fee._id)]
+			: selectedFeeMasterAssignmentIds.filter((id) => !feeGroups[groupId].fees.some((fee) => fee._id === id));
+
 	}
 
 	// Toggle individual fee selection
@@ -130,6 +99,8 @@
 	// Toggle discount selection
 	function toggleDiscountSelect(discountId: string) {
 		feeDiscounts = feeDiscounts.map((discount) => (discount._id === discountId ? { ...discount, selected: !discount.selected } : discount));
+		// Update the bound prop
+		selectedFeeDiscountIds = feeDiscounts.filter((d) => d.selected).map((d) => d._id);
 	}
 
 	// Calculate total for a group
@@ -176,7 +147,11 @@
 
 	// Get selected discounts
 	function getSelectedDiscounts() {
-		return feeDiscounts.filter((d) => d.selected);
+		const discountsWithSelection = feeDiscounts.map((d) => ({
+			...d,
+			selected: selectedFeeDiscountIds.includes(d._id),
+		}));
+		return discountsWithSelection.filter((d) => d.selected);
 	}
 </script>
 
@@ -233,7 +208,11 @@
 									<td>
 										<div class="meta-icon">
 											<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
 											</svg>
 											{formatDate(fee.dueDate)}
 										</div>
@@ -260,7 +239,7 @@
 				<div class="fee-group-title">Available Discounts</div>
 
 				<div class="fee-group-price">
-					{getSelectedDiscounts().length} selected
+					{getSelectedDiscounts().length} discount(s) selected
 				</div>
 			</div>
 
@@ -301,21 +280,18 @@
 	{/if}
 
 	<div class="combined-total-box">
-		<div class="total-row">
-			<div class="total-label">Subtotal:</div>
-			<div class="total-amount">{calculateSubTotal().toFixed(2)}</div>
-		</div>
-
-		{#if getSelectedDiscounts().length > 0}
-			<div class="total-row discount-row">
-				<div class="total-label">Discounts:</div>
-				<div class="total-amount">-{calculateTotalDiscount().toFixed(2)}</div>
+		<div class="total-row single-line">
+			<div class="left-section">
+				<span class="total-label">Subtotal:</span>
+				<span class="total-amount">{calculateSubTotal().toFixed(2)}</span>
+				<span class="total-label">Discounts:</span>
+				<span class="total-amount total-discount">-{calculateTotalDiscount().toFixed(2)}</span>
 			</div>
-		{/if}
 
-		<div class="total-row final-row">
-			<div class="total-label">Total Amount to be paid:</div>
-			<div class="total-amount">{calculateTotalPrice().toFixed(2)}</div>
+			<div class="right-section">
+				<span class="total-label">Total Amount to be paid:</span>
+				<span class="total-amount">{calculateTotalPrice().toFixed(2)}</span>
+			</div>
 		</div>
 	</div>
 </div>
@@ -403,50 +379,6 @@
 	tr.selected {
 		background-color: #f0f9ff;
 	}
-
-	.fee-type-name {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-	}
-
-	.amount-cell {
-		text-align: right;
-	}
-
-	.total-box {
-		padding: 0.5rem;
-		border-radius: 6px;
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-top: 1rem;
-		margin-bottom: 0.5rem;
-		background-color: #f8fafc;
-	}
-
-	.final-total {
-		background-color: #e6f7ff;
-		margin-bottom: 1.5rem;
-	}
-
-	.discount-total {
-		background-color: #ebf8ff;
-		border: 1px solid #bee3f8;
-	}
-
-	.total-label {
-		font-weight: 600;
-		color: #4a5568;
-	}
-
-	.total-amount {
-		font-weight: 700;
-		color: #2b6cb0;
-		font-size: 1.2rem;
-		margin-right: 0.5rem;
-	}
-
 	.meta-icon {
 		display: inline-flex;
 		align-items: center;
@@ -460,17 +392,6 @@
 		opacity: 0.7;
 	}
 
-	.discount-group {
-		border: 1px solid #e2e8f0;
-		border-radius: 6px;
-		margin-bottom: 0.5rem;
-		overflow: hidden;
-	}
-
-	.discount-group.expanded {
-		border-color: #4299e1;
-	}
-
 	.discount-table {
 		padding-top: 0.25rem;
 	}
@@ -482,79 +403,39 @@
 		gap: 0.5rem;
 	}
 
-	.totals-container {
-		display: flex;
-		flex-direction: column;
-		gap: 0.25rem;
-		margin: 1rem 0 1.5rem 0;
+	.total-label {
+		font-weight: 600;
+		color: #4a5568;
 	}
 
-	.total-box {
+	.combined-total-box .total-row.single-line {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 0.75rem 1rem;
-		border-radius: 6px;
-		background-color: #f8fafc;
+		width: 100%;
 	}
 
-	.total-label {
-		font-weight: 600;
-		color: #4a5568;
-	}
-
-	.total-amount {
-		font-weight: 700;
-		color: #2b6cb0;
-		font-size: 1.1rem;
-	}
-
-	.discount-total {
-		background-color: #ebf8ff;
-		border: 1px solid #bee3f8;
-	}
-
-	.final-total {
-		background-color: #e6f7ff;
-		border: 1px solid #b3e0ff;
-	}
-
-	.combined-total-box {
-		border: 1px solid #e2e8f0;
-		border-radius: 8px;
-		padding: 0.5rem;
-		margin: 0.5rem 0;
-		background: #f8fafc;
-	}
-
-	.total-row {
+	.left-section,
+	.right-section {
 		display: flex;
-		justify-content: space-between;
-		padding: 0.25rem 0;
-	}
-
-	.discount-row {
-		border-top: 1px dashed #cbd5e0;
-		border-bottom: 1px dashed #cbd5e0;
-		margin: 0.25rem 0;
-	}
-
-	.final-row {
-		padding-top: 0.75rem;
-		font-weight: bold;
+		align-items: center;
+		gap: 6px;
+		margin-left: 5px;
 	}
 
 	.total-label {
-		color: #4a5568;
+		font-weight: bold;
+		color: #555555;
 	}
 
 	.total-amount {
 		color: #2b6cb0;
 		font-weight: 600;
+		margin-right: 15px;
+		font-weight: 700;
+		font-size: 1rem;
 	}
-
-	.final-row .total-amount {
-		font-size: 1.2em;
-		color: #2c5282;
+	.total-discount {
+		color: #01ac0f;
 	}
 </style>

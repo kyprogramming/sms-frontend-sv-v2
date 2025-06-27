@@ -28,7 +28,7 @@
     // console.log("FeeAssignmentList.svelte - Students:", response);
 
     const columns: ColumnConfig[] = [
-        { key: '_id', label: 'ID', visible: false },
+        { key: '_id', label: 'ID', visible: true },
         { key: 'serialNo', label: 'Sr #', width: '80px', sortable: true },
         // { key: 'studentId.firstName', label: 'Student', format: (val, row) => `${row.studentId?.firstName} ${row.studentId?.lastName}`, sortable: true },
         { key: 'feeMasterId.feeTypeId.name', label: 'Fee Type', sortable: true },

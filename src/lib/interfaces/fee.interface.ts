@@ -49,3 +49,4 @@ type FeeAssignment = {
 
 // Define the structure of our fee groups object
 type FeeGroups = Record<string, FeeGroup>;
+
