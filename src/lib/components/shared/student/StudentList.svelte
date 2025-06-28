@@ -66,7 +66,8 @@
 				class: 'view',
 				show: true,
 				action: (item: { _id: any }) => {
-					alert(`View ${item._id}`);
+					// alert(`View ${item._id}`);
+                    handleView(item._id);
 				},
 			},
 			{
@@ -113,6 +114,9 @@
 		await goto('/admin/student/create');
 	}
 
+    async function handleView(id: string) {
+		await goto(`/admin/student/view?id=${id}`);
+	}
 	async function handleUpdate(id: string) {
 		await goto(`/admin/student/update?id=${id}`);
 	}
