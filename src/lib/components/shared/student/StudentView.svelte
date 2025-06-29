@@ -16,6 +16,7 @@
 
 	// Icons
 	import { BrushCleaning, PlusCircle, Save } from '@lucide/svelte';
+	import { Printer, Pencil, IndianRupee, Search, ThumbsDown, MoreVertical } from '@lucide/svelte';
 
 	// Constants and Config
 	import { BLOOD_GROUPS, CASTE_CATEGORIES, GENDERS, GUARDIAN_TYPE } from '$lib/utils/constants';
@@ -35,6 +36,8 @@
 	import type { StudentFormPayload } from '$lib/schemas/student.schema';
 	import { page } from '$app/state';
 
+	import StudentTabs from './StudentTabs.svelte';
+
 	// Component Props
 	let { action } = $props();
 
@@ -53,7 +56,7 @@
 	let selectedFeeMasterAssignmentIds: string[] = $state([]);
 
 	let student = {
-		name: 'Emma Thomas',
+		name: 'Emmaniasdfa Thomas Kumari yadav',
 		admissionNo: '0202',
 		rollNumber: '2150',
 		class: 'Class 3 (2025-26)',
@@ -120,12 +123,37 @@
                     <button title="More"><i class="icon">⋮</i></button>
                 </div>
             </div> -->
-			<div class="flex-items-center">
-				<div class="profile-pic"></div>
-				<div>
+			<div class="student-header">
+				<div class="info">
 					<h2>{student.name}</h2>
-					<p><strong>Class:</strong> <span class="link">{student.class}</span></p>
-					<p><strong>Section:</strong> <span class="link">{student.section}</span></p>
+				</div>
+				<div class="top">
+					<div class="profile-pic"></div>
+					<div class="info-class">
+						<p><strong>Class:</strong> <span class="link">{student.class}</span></p>
+						<p><strong>Section:</strong> <span class="link">{student.section}</span></p>
+					</div>
+				</div>
+
+				<div class="actions">
+					<button title="Print" class="action-btn">
+						<Printer class="icon" size={20} />
+					</button>
+					<button title="Edit" class="action-btn">
+						<Pencil class="icon" size={20} />
+					</button>
+					<button title="Fee" class="action-btn">
+						<IndianRupee class="icon" size={20} />
+					</button>
+					<button title="View" class="action-btn">
+						<Search class="icon" size={20} />
+					</button>
+					<button title="Deactivate" class="action-btn warning">
+						<ThumbsDown class="icon" size={20} />
+					</button>
+					<button title="More" class="action-btn more">
+						<MoreVertical class="icon" size={20} />
+					</button>
 				</div>
 			</div>
 
@@ -143,105 +171,15 @@
 		</div>
 
 		<div class="main-content">
-			<div class="tabs">
+			<StudentTabs />
+			<!-- <div class="tabs">
 				<div class="tab active">Profile</div>
 				<div class="tab">Fees</div>
 				<div class="tab">Exam</div>
 				<div class="tab">Attendance</div>
 				<div class="tab">Documents</div>
 				<div class="tab">Timeline</div>
-			</div>
-
-			<div class="section">
-				<h3>Basic Information</h3>
-				<div class="info-pair">
-					<span class="label">Admission Date</span>
-					<span class="colon">:</span>
-					<span class="value">{student.admissionDate}</span>
-				</div>
-
-				<div class="info-pair">
-					<span class="label">Date of Birth</span>
-					<span class="colon">:</span>
-					<span class="value">{student.dob}</span>
-				</div>
-
-				<div class="info-pair">
-					<span class="label">Category</span>
-					<span class="colon">:</span>
-					<span class="value">{student.category}</span>
-				</div>
-
-				<div class="info-pair">
-					<span class="label">Mobile Number</span>
-					<span class="colon">:</span>
-					<span class="value">{student.mobile}</span>
-				</div>
-
-				<div class="info-pair">
-					<span class="label">Caste</span>
-					<span class="colon">:</span>
-					<span class="value">{student.caste}</span>
-				</div>
-
-				<div class="info-pair">
-					<span class="label">Religion</span>
-					<span class="colon">:</span>
-					<span class="value">{student.religion}</span>
-				</div>
-
-				<div class="info-pair">
-					<span class="label">Email</span>
-					<span class="colon">:</span>
-					<span class="value">{student.email}</span>
-				</div>
-
-				<div class="info-pair">
-					<span class="label">Medical History</span>
-					<span class="colon">:</span>
-					<span class="value">{student.medical}</span>
-				</div>
-
-				<div class="info-pair">
-					<span class="label">Note</span>
-					<span class="colon">:</span>
-					<span class="value">{student.note}</span>
-				</div>
-			</div>
-
-			<div class="section">
-				<h3>Address</h3>
-
-				<div class="info-pair">
-					<span class="label">Current Address</span>
-					<span class="colon">:</span>
-					<span class="value">{student.address}</span>
-				</div>
-
-				<div class="info-pair">
-					<span class="label">Permanent Address</span>
-					<span class="colon">:</span>
-					<span class="value">{student.address}</span>
-				</div>
-			</div>
-
-			<div class="section">
-				<h3>Parent Guardian Detail</h3>
-				<div class="info-pair">
-					<span class="label">Name</span>
-					<span class="colon">:</span>
-					<span class="value">{student.parentGuardian.name}</span>
-				</div>
-			</div>
-
-			<div class="section">
-				<h3>Parent Guardian Detail</h3>
-				<div class="info-pair">
-					<span class="label">Name</span>
-					<span class="colon">:</span>
-					<span class="value">{student.parentGuardian.name}</span>
-				</div>
-			</div>
+			</div> -->
 		</div>
 	</div>
 </div>
@@ -254,6 +192,25 @@
 		margin-top: 6px;
 		margin-bottom: 10px;
 	}
+
+	.student-header {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		padding: 0.5rem;
+		padding-top: 0;
+		border: 1px solid #ccc;
+		border-radius: 8px;
+		background: #f8f8f8;
+        margin-bottom: 1rem;
+	}
+
+	.top {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+	}
+
 	.flex-items-center {
 		display: flex;
 		flex-direction: row;
@@ -270,11 +227,10 @@
 	}
 
 	.sidebar-info {
-		width: 350px;
-
-		padding: 10px;
+		width: 360px;
+		padding: 0.5rem;
+		padding-top: 0;
 		border-right: 1px solid #ccc;
-		border-radius: 8px;
 	}
 
 	.profile-pic {
@@ -283,6 +239,11 @@
 		background: #ddd;
 		border-radius: 50%;
 		margin-bottom: 10px;
+	}
+
+	.info-class {
+		margin-top: 0px;
+		justify-content: start;
 	}
 
 	.sidebar-info h2 {
@@ -295,7 +256,7 @@
 	}
 
 	.info {
-		margin-top: 20px;
+		margin-top: 0.5rem;
 		font-size: 14px;
 	}
 
@@ -331,71 +292,44 @@
 	.main-content {
 		flex: 1;
 		padding: 15px;
-		padding-top: 5px;
+		padding-top: 0px;
 	}
 
-	.tabs {
+	.actions {
 		display: flex;
-		gap: 16px;
-		border-bottom: 2px solid #f0f0f0;
-		margin-bottom: 20px;
+		justify-content: space-between;
+		gap: 8px;
 	}
 
-	.tab {
-		padding: 10px;
-		cursor: pointer;
-		border-bottom: 2px solid transparent;
-	}
-
-	.tab.active {
-		border-bottom-color: #ffc107;
-		font-weight: bold;
-	}
-
-	.section {
-		margin-bottom: 20px;
-	}
-
-	.section h3 {
-		font-size: 16px;
-		margin-bottom: 10px;
-		border-bottom: 1px solid #eee;
-		padding-bottom: 5px;
-        color: #696969;
-	}
-
-	.row {
-		margin: 5px 0;
-	}
-
-	.info-pair {
+	.action-btn {
+		background: none;
+		border: none;
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
 		display: flex;
 		align-items: center;
-		font-size: 14px;
-		color: #444;
-		padding: 0.5rem 0;
+		justify-content: center;
+		cursor: pointer;
+		color: #64748b;
+		transition: all 0.2s ease;
+	}
+
+	.action-btn:hover,
+	.action-btn.more:hover {
+		background-color: #cbd1d6;
+		color: #3b82f6;
+	}
+
+	.action-btn.warning:hover {
+		color: #ef4444;
+	}
+
+	.action-btn.more {
+		background-color: #ececec;
 	}
 
 	.icon {
-		width: 20px;
-		display: inline-block;
-		text-align: center;
-		margin-right: 6px;
-		color: #555;
-	}
-
-	.label {
-		min-width: 150px;
-		font-weight: 500;
-        color: #747373;
-	}
-
-	.colon {
-		margin: 0 15px;
-	}
-
-	.value {
-		font-weight: 400;
-		color: #222;
+		stroke-width: 1.5;
 	}
 </style>
