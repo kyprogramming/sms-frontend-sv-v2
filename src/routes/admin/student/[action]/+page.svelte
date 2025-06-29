@@ -7,21 +7,19 @@
 
 	const schoolName = env.PUBLIC_SCHOOL_NAME || 'Default School';
 	const pageTitle = 'Student Registration';
-	//TODO: do not change from derived to state
+	
+    //TODO: do not change from derived to state
 	const action = $derived(page.params.action);
-	// svelte-ignore state_referenced_locally
 	const actionLabel = $derived(action === 'create' ? 'New' : action === 'update' ? 'Update' : 'View');
-	// svelte-ignore state_referenced_locally
-	const breadcrumbItems = $derived([{ label: 'Dashboard', href: '/admin/dashboard' }, { label: 'Student List', href: '/admin/student/list' }, { label: `Student ${actionLabel}`}]);
+	const breadcrumbItems = $derived([{ label: 'Dashboard', href: '/admin/dashboard' }, { label: 'Student List', href: '/admin/student/list' }, { label: `Student ${actionLabel}` }]);
 </script>
 
 <svelte:head>
 	<title>{schoolName} - {pageTitle}</title>
 </svelte:head>
 
-
 {#key actionLabel}
-<Breadcrumb title={action === 'create' ? `${pageTitle} - New` : `${pageTitle} - Update`} items={breadcrumbItems} />
+	<Breadcrumb title={`${pageTitle} - ${actionLabel}`} items={breadcrumbItems} />
 {/key}
 {#key action}
 	{#if action === 'create' || action === 'update'}

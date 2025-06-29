@@ -39,8 +39,8 @@
 	let { action } = $props();
 
 	// Derived Data
-	const schoolName = env.PUBLIC_SCHOOL_NAME || 'Default School';
-	const pageTitle = `${schoolName} - Student Details - ${action === 'view' ? ' View' : 'New'}`;
+	// const schoolName = env.PUBLIC_SCHOOL_NAME || 'Default School';
+	// const pageTitle = `${schoolName} - Student Details - ${action === 'view' ? ' View' : 'New'}`;
 
 	// State Management
 	const studentData = page.data.studentData?.data.student || null;
@@ -93,14 +93,14 @@
 	// });
 </script>
 
-<svelte:head>
+<!-- <svelte:head>
 	<title>{pageTitle}</title>
-</svelte:head>
+</svelte:head> -->
 
 <div class="card-wrapper">
-    <div class="class-container">
-        <div class="sidebar-info">
-            <!-- <div class="student-card">
+	<div class="class-container">
+		<div class="sidebar-info">
+			<!-- <div class="student-card">
                 <div class="profile-pic"></div>
                 <div class="top-section">
                     <img src="/default-avatar.png" alt="Profile" class="avatar" />
@@ -120,139 +120,140 @@
                     <button title="More"><i class="icon">⋮</i></button>
                 </div>
             </div> -->
-            <div class="flex-items-center">
-                <div class="profile-pic"></div>
-                <div>
-                    <h2>{student.name}</h2>
-                    <p><strong>Class:</strong> <span class="link">{student.class}</span></p>
-                    <p><strong>Section:</strong> <span class="link">{student.section}</span></p>
-                </div>
-            </div>
-    
-            <div class="info">
-                <p class="info-row"><strong>Admission No</strong><span class="link">{student.admissionNo}</span></p>
-                <p class="info-row"><strong>Roll Number</strong><span class="link">{student.rollNumber}</span></p>
-                <p class="info-row"><strong>Class</strong><span class="link">{student.class}</span></p>
-                <p class="info-row"><strong>Section</strong><span>{student.section}</span></p>
-                <p class="info-row"><strong>Gender</strong><span>{student.gender}</span></p>
-                <p class="info-row"><strong>RTE</strong><span>{student.rte}</span></p>
-                <p class="info-row"><strong>Barcode</strong> <span class="barcode">|| ||| | |||</span></p>
-                <p class="info-row"><strong>QR Code</strong><span> <img class="qr-code" src={student.qrCode} alt="QR Code" /></span></p>
-                <p class="info-row"><strong>Behavior Score</strong><span>{student.behaviorScore}</span></p>
-            </div>
-        </div>
-    
-        <div class="main-content">
-            <div class="tabs">
-                <div class="tab active">Profile</div>
-                <div class="tab">Fees</div>
-                <div class="tab">Exam</div>
-                <div class="tab">CBSE Examination</div>
-                <div class="tab">Attendance</div>
-                <div class="tab">Documents</div>
-                <div class="tab">Timeline</div>
-                <div class="tab">Student Behaviour</div>
-            </div>
-    
-            <div class="section">
-                <h3>Basic Information</h3>
-                <div class="info-pair">
-                    <span class="label">Admission Date</span>
-                    <span class="colon">:</span>
-                    <span class="value">{student.admissionDate}</span>
-                </div>
-    
-                <div class="info-pair">
-                    <span class="label">Date of Birth</span>
-                    <span class="colon">:</span>
-                    <span class="value">{student.dob}</span>
-                </div>
-    
-                <div class="info-pair">
-                    <span class="label">Category</span>
-                    <span class="colon">:</span>
-                    <span class="value">{student.category}</span>
-                </div>
-    
-                <div class="info-pair">
-                    <span class="label">Mobile Number</span>
-                    <span class="colon">:</span>
-                    <span class="value">{student.mobile}</span>
-                </div>
-    
-                <div class="info-pair">
-                    <span class="label">Caste</span>
-                    <span class="colon">:</span>
-                    <span class="value">{student.caste}</span>
-                </div>
-    
-                <div class="info-pair">
-                    <span class="label">Religion</span>
-                    <span class="colon">:</span>
-                    <span class="value">{student.religion}</span>
-                </div>
-    
-                <div class="info-pair">
-                    <span class="label">Email</span>
-                    <span class="colon">:</span>
-                    <span class="value">{student.email}</span>
-                </div>
-    
-                <div class="info-pair">
-                    <span class="label">Medical History</span>
-                    <span class="colon">:</span>
-                    <span class="value">{student.medical}</span>
-                </div>
-    
-                <div class="info-pair">
-                    <span class="label">Note</span>
-                    <span class="colon">:</span>
-                    <span class="value">{student.note}</span>
-                </div>
-            </div>
-    
-            <div class="section">
-                <h3>Address</h3>
-    
-                <div class="info-pair">
-                    <span class="label">Current Address</span>
-                    <span class="colon">:</span>
-                    <span class="value">{student.address}</span>
-                </div>
-    
-                <div class="info-pair">
-                    <span class="label">Permanent Address</span>
-                    <span class="colon">:</span>
-                    <span class="value">{student.address}</span>
-                </div>
-            </div>
-    
-            <div class="section">
-                <h3>Parent Guardian Detail</h3>
-                <div class="info-pair">
-                    <span class="label">Name</span>
-                    <span class="colon">:</span>
-                    <span class="value">{student.parentGuardian.name}</span>
-                </div>
-            </div>
-    
-            <div class="section">
-                <h3>Parent Guardian Detail</h3>
-                <div class="info-pair">
-                    <span class="label">Name</span>
-                    <span class="colon">:</span>
-                    <span class="value">{student.parentGuardian.name}</span>
-                </div>
-            </div>
-    
-    
-        </div>
-    </div>
+			<div class="flex-items-center">
+				<div class="profile-pic"></div>
+				<div>
+					<h2>{student.name}</h2>
+					<p><strong>Class:</strong> <span class="link">{student.class}</span></p>
+					<p><strong>Section:</strong> <span class="link">{student.section}</span></p>
+				</div>
+			</div>
+
+			<div class="info">
+				<p class="info-row"><strong>Admission No</strong><span class="link">{student.admissionNo}</span></p>
+				<p class="info-row"><strong>Roll Number</strong><span class="link">{student.rollNumber}</span></p>
+				<p class="info-row"><strong>Class</strong><span class="link">{student.class}</span></p>
+				<p class="info-row"><strong>Section</strong><span>{student.section}</span></p>
+				<p class="info-row"><strong>Gender</strong><span>{student.gender}</span></p>
+				<p class="info-row"><strong>RTE</strong><span>{student.rte}</span></p>
+				<p class="info-row"><strong>Barcode</strong> <span class="barcode">|| ||| | |||</span></p>
+				<p class="info-row"><strong>QR Code</strong><span> <img class="qr-code" src={student.qrCode} alt="QR Code" /></span></p>
+				<p class="info-row"><strong>Behavior Score</strong><span>{student.behaviorScore}</span></p>
+			</div>
+		</div>
+
+		<div class="main-content">
+			<div class="tabs">
+				<div class="tab active">Profile</div>
+				<div class="tab">Fees</div>
+				<div class="tab">Exam</div>
+				<div class="tab">Attendance</div>
+				<div class="tab">Documents</div>
+				<div class="tab">Timeline</div>
+			</div>
+
+			<div class="section">
+				<h3>Basic Information</h3>
+				<div class="info-pair">
+					<span class="label">Admission Date</span>
+					<span class="colon">:</span>
+					<span class="value">{student.admissionDate}</span>
+				</div>
+
+				<div class="info-pair">
+					<span class="label">Date of Birth</span>
+					<span class="colon">:</span>
+					<span class="value">{student.dob}</span>
+				</div>
+
+				<div class="info-pair">
+					<span class="label">Category</span>
+					<span class="colon">:</span>
+					<span class="value">{student.category}</span>
+				</div>
+
+				<div class="info-pair">
+					<span class="label">Mobile Number</span>
+					<span class="colon">:</span>
+					<span class="value">{student.mobile}</span>
+				</div>
+
+				<div class="info-pair">
+					<span class="label">Caste</span>
+					<span class="colon">:</span>
+					<span class="value">{student.caste}</span>
+				</div>
+
+				<div class="info-pair">
+					<span class="label">Religion</span>
+					<span class="colon">:</span>
+					<span class="value">{student.religion}</span>
+				</div>
+
+				<div class="info-pair">
+					<span class="label">Email</span>
+					<span class="colon">:</span>
+					<span class="value">{student.email}</span>
+				</div>
+
+				<div class="info-pair">
+					<span class="label">Medical History</span>
+					<span class="colon">:</span>
+					<span class="value">{student.medical}</span>
+				</div>
+
+				<div class="info-pair">
+					<span class="label">Note</span>
+					<span class="colon">:</span>
+					<span class="value">{student.note}</span>
+				</div>
+			</div>
+
+			<div class="section">
+				<h3>Address</h3>
+
+				<div class="info-pair">
+					<span class="label">Current Address</span>
+					<span class="colon">:</span>
+					<span class="value">{student.address}</span>
+				</div>
+
+				<div class="info-pair">
+					<span class="label">Permanent Address</span>
+					<span class="colon">:</span>
+					<span class="value">{student.address}</span>
+				</div>
+			</div>
+
+			<div class="section">
+				<h3>Parent Guardian Detail</h3>
+				<div class="info-pair">
+					<span class="label">Name</span>
+					<span class="colon">:</span>
+					<span class="value">{student.parentGuardian.name}</span>
+				</div>
+			</div>
+
+			<div class="section">
+				<h3>Parent Guardian Detail</h3>
+				<div class="info-pair">
+					<span class="label">Name</span>
+					<span class="colon">:</span>
+					<span class="value">{student.parentGuardian.name}</span>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
-
 <style>
-    	.card-wrapper {background-color: #ffffff; border-radius: 10px; box-shadow: var(--shadow-sm); margin-top: 6px; margin-bottom: 10px; }
+	.card-wrapper {
+		background-color: #ffffff;
+		border-radius: 10px;
+		box-shadow: var(--shadow-sm);
+		margin-top: 6px;
+		margin-bottom: 10px;
+	}
 	.flex-items-center {
 		display: flex;
 		flex-direction: row;
@@ -360,11 +361,11 @@
 		margin-bottom: 10px;
 		border-bottom: 1px solid #eee;
 		padding-bottom: 5px;
+        color: #696969;
 	}
 
 	.row {
 		margin: 5px 0;
-
 	}
 
 	.info-pair {
@@ -386,6 +387,7 @@
 	.label {
 		min-width: 150px;
 		font-weight: 500;
+        color: #747373;
 	}
 
 	.colon {

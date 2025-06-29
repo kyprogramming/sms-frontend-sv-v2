@@ -70,7 +70,7 @@
 	.modal-content.full { width: 95%; height: 95vh; max-width: none; }
 	.modal-header { display: flex; padding: 5px; background-color: var(--clr-bg-2); display: flex; justify-content: space-between; align-items: center; }
 	.modal-body { padding: 1rem; }
-	.modal-body h1 { font-size: 15px; padding-bottom: 0; /* margin-bottom: 1rem; */ font-weight: 500; }
+
 	.modal-body h2 { font-size: 14px; font-weight: 600; opacity: 0.7; }
 	.modal-header h2 { margin: 0; font-size: 1rem; font-weight: 600; padding: 0; margin-left: 15px; align-items: center; justify-content: center; }
 	.close-button { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6b7280; border-radius: 50%; width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
