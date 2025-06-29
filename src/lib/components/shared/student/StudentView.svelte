@@ -37,6 +37,7 @@
 	import { page } from '$app/state';
 
 	import StudentTabs from './StudentTabs.svelte';
+	import { formatDate } from '$lib/utils/formatDate';
 
 	// Component Props
 	let { action } = $props();
@@ -46,40 +47,41 @@
 	// const pageTitle = `${schoolName} - Student Details - ${action === 'view' ? ' View' : 'New'}`;
 
 	// State Management
-	const studentData = page.data.studentData?.data.student || null;
+	const student = page.data.studentData?.data.student || null;
 	const feeAssignments = page.data.studentData?.data.feeAssignments || null;
 	const feeMasterData = page.data.feeMasters?.data || [];
 
+    console.log('StudentView - studentData:', student);
 	let classList = page.data?.classList || [];
 	let classSections: { _id: string; name: string }[] = $state([]);
 
 	let selectedFeeMasterAssignmentIds: string[] = $state([]);
 
-	let student = {
-		name: 'Emmaniasdfa Thomas Kumari yadav',
-		admissionNo: '0202',
-		rollNumber: '2150',
-		class: 'Class 3 (2025-26)',
-		section: 'B',
-		gender: 'Female',
-		rte: 'No',
-		barcode: '0202',
-		qrCode: 'sample-qr.png',
-		behaviorScore: 10,
-		admissionDate: '04/05/2024',
-		dob: '07/14/2016',
-		category: 'General',
-		mobile: '6881016512',
-		caste: 'Thomas',
-		religion: 'Christen',
-		email: 'thomas01@gmail.com',
-		medical: '',
-		note: '',
-		address: '56 Main Street, Suite 3, Brooklyn, NY 11210-0000',
-		parentGuardian: {
-			name: 'N/A',
-		},
-	};
+	// let student = {
+	// 	name: 'Emmaniasdfa Thomas Kumari yadav',
+	// 	admissionNo: '0202',
+	// 	rollNumber: '2150',
+	// 	class: 'Class 3 (2025-26)',
+	// 	section: 'B',
+	// 	gender: 'Female',
+	// 	rte: 'No',
+	// 	barcode: '0202',
+	// 	qrCode: 'sample-qr.png',
+	// 	behaviorScore: 10,
+	// 	admissionDate: '04/05/2024',
+	// 	dob: '07/14/2016',
+	// 	category: 'General',
+	// 	mobile: '6881016512',
+	// 	caste: 'Thomas',
+	// 	religion: 'Christen',
+	// 	email: 'thomas01@gmail.com',
+	// 	medical: '',
+	// 	note: '',
+	// 	address: '56 Main Street, Suite 3, Brooklyn, NY 11210-0000',
+	// 	parentGuardian: {
+	// 		name: 'N/A',
+	// 	},
+	// };
 
 	// onMount(() => {
 	// 	formErrors.set({});
@@ -103,35 +105,16 @@
 <div class="card-wrapper">
 	<div class="class-container">
 		<div class="sidebar-info">
-			<!-- <div class="student-card">
-                <div class="profile-pic"></div>
-                <div class="top-section">
-                    <img src="/default-avatar.png" alt="Profile" class="avatar" />
-                    <div class="info">
-                        <h2>{name}</h2>
-                        <p>Admission No <span class="blue">234245234</span></p>
-                        <p>Roll Number <span class="blue">456457</span></p>
-                    </div>
-                </div>
-        
-                <div class="actions">
-                    <button title="Print"><i class="icon">🖨️</i></button>
-                    <button title="Edit"><i class="icon">✏️</i></button>
-                    <button title="Fee"><i class="icon">₹</i></button>
-                    <button title="View"><i class="icon">🔍</i></button>
-                    <button title="Deactivate"><i class="icon">👎</i></button>
-                    <button title="More"><i class="icon">⋮</i></button>
-                </div>
-            </div> -->
 			<div class="student-header">
 				<div class="info">
-					<h2>{student.name}</h2>
+					<h2>{student.profile.fullName}</h2>
 				</div>
 				<div class="top">
 					<div class="profile-pic"></div>
 					<div class="info-class">
-						<p><strong>Class:</strong> <span class="link">{student.class}</span></p>
-						<p><strong>Section:</strong> <span class="link">{student.section}</span></p>
+						<p><strong>Class:</strong> <span class="link">{student.classId.name}</span></p>
+						<p><strong>Section:</strong> <span class="link">{student.sectionId.name}</span></p>
+                        <p><strong>Roll Number:</strong> <span class="link">{student.rollNo}</span></p>
 					</div>
 				</div>
 
@@ -159,27 +142,23 @@
 
 			<div class="info">
 				<p class="info-row"><strong>Admission No</strong><span class="link">{student.admissionNo}</span></p>
-				<p class="info-row"><strong>Roll Number</strong><span class="link">{student.rollNumber}</span></p>
-				<p class="info-row"><strong>Class</strong><span class="link">{student.class}</span></p>
-				<p class="info-row"><strong>Section</strong><span>{student.section}</span></p>
-				<p class="info-row"><strong>Gender</strong><span>{student.gender}</span></p>
-				<p class="info-row"><strong>RTE</strong><span>{student.rte}</span></p>
+				 <p class="info-row"><strong>Roll Number</strong><span class="link">{student.rollNo}</span></p>
+				<p class="info-row"><strong>Class</strong><span class="link">{student.classId.name}</span></p>
+				<p class="info-row"><strong>Section</strong><span  class="link">{student.sectionId.name}</span></p>
+				<p class="info-row"><strong>Gender</strong><span  class="link">{student.profile.gender}</span></p>
+				<p class="info-row"><strong>Caste</strong><span  class="link">{student.profile.caste}</span></p>
+				<p class="info-row"><strong>Category</strong><span  class="link">{student.profile.category}</span></p>
+				<p class="info-row"><strong>DOB</strong><span  class="link">{formatDate(student.profile.dob)}</span></p>
+				<p class="info-row"><strong>Religion</strong><span  class="link">{student.profile.religion}</span></p>
+				<!-- <p class="info-row"><strong>RTE</strong><span>{student.rte}</span></p> -->
 				<p class="info-row"><strong>Barcode</strong> <span class="barcode">|| ||| | |||</span></p>
-				<p class="info-row"><strong>QR Code</strong><span> <img class="qr-code" src={student.qrCode} alt="QR Code" /></span></p>
-				<p class="info-row"><strong>Behavior Score</strong><span>{student.behaviorScore}</span></p>
+				<!--<p class="info-row"><strong>QR Code</strong><span> <img class="qr-code" src={student.qrCode} alt="QR Code" /></span></p>
+				<p class="info-row"><strong>Behavior Score</strong><span>{student.behaviorScore}</span></p> -->
 			</div>
 		</div>
 
 		<div class="main-content">
 			<StudentTabs />
-			<!-- <div class="tabs">
-				<div class="tab active">Profile</div>
-				<div class="tab">Fees</div>
-				<div class="tab">Exam</div>
-				<div class="tab">Attendance</div>
-				<div class="tab">Documents</div>
-				<div class="tab">Timeline</div>
-			</div> -->
 		</div>
 	</div>
 </div>
