@@ -33,7 +33,7 @@
 <!-- prettier-ignore -->
 <style>
 	.container-breadcrumb { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; background-color: #ffffff; border-radius: var(--radius-sm); box-shadow: var(--shadow-sm); }
-	.heading { margin: 0; color: var(--clr-bg-5); font-size: 17px; }
+	.heading { margin: 0; color: var(--clr-bg-5); font-size: 16px; }
 	.breadcrumb { display: flex; align-items: center; gap: 0.4rem; }
 	.breadcrumb a { color: #1e90ff; text-decoration: none; }
 	.breadcrumb a:hover { text-decoration: underline; }

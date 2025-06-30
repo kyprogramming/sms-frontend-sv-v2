@@ -1,12 +1,44 @@
 <script lang="ts">
-	import { env } from '$env/dynamic/public';
-	const schoolName = env.PUBLIC_SCHOOL_NAME || 'Default School';
+
+	import Breadcrumb from '$lib/components/common/Breadcrumb.svelte';
+	import Chart from '$lib/components/common/Chart.svelte';
+	import FeeExpenseChart from '$lib/components/common/FeeExpenseChart.svelte';
+	import { SCHOOL_NAME } from '$lib/utils/constants';
+
+	const pageTitle = 'Admin Dashboard';
+	const breadcrumbItems = [{ label: 'Dashboard', href: '/admin/dashboard' }];
+
+
+const chartData = {
+  labels: ['Math', 'Science', 'History', 'English'],
+  datasets: [
+    {
+      label: 'Scores',
+      data: [85, 90, 78, 88],
+      backgroundColor: ['#4e79a7', '#f28e2c', '#e15759', '#76b7b2'],
+    }
+  ]
+};
+
+const chartOptions:any = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: 'top',
+    },
+  },
+};
+
 </script>
 
 <svelte:head>
-	<title>{schoolName} - Dashboard</title>
+	<title>{SCHOOL_NAME} - {pageTitle}</title>
 </svelte:head>
 
-<div class="container">
-	<h1>Admin Dashboard</h1>
+<Breadcrumb title={pageTitle} items={breadcrumbItems} />
+<div class='grid-12' style='margin-top:30px;'>
+    <div class="col-6"><FeeExpenseChart /></div>
+    <div class="col-6"><Chart type="bar" data={chartData} options={chartOptions} /></div>
 </div>
+
+
