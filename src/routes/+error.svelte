@@ -49,7 +49,6 @@
 		text-align: center;
 		padding: 2rem;
 		box-sizing: border-box;
-		font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 	}
 
 	.title {

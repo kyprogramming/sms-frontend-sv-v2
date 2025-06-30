@@ -421,7 +421,7 @@
 
 <!-- prettier-ignore -->
 <style>
-	.daterangepicker { position: relative; display: inline-block; font-family: inherit; }
+	.daterangepicker { position: relative; display: inline-block;  }
 	.daterangepicker-input { padding: 6px 12px; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; width: 100%; box-sizing: border-box; }
 	.daterangepicker-dropdown { position: absolute; z-index: 3001; background: #fff; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175); padding: 10px; margin-top: 5px; display: flex; flex-direction: column; }
 	.calendar-container { display: flex; gap: 20px; }

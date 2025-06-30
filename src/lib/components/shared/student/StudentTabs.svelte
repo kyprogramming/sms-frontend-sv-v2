@@ -317,7 +317,6 @@
    
     /* documents */
     .documents-container {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0 auto;
     padding: 20px;
   }

@@ -64,10 +64,6 @@
 	.switch-container {
 		align-items: center;
 		gap: 1rem;
-		font-family:
-			'Inter',
-			-apple-system,
-			sans-serif;
 		margin-right: auto;
 		margin-top: 6px;
 		position: relative;

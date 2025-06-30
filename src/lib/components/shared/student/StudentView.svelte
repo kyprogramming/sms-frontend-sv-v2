@@ -212,7 +212,6 @@
 	}
 	.student-view {
 		display: flex;
-		font-family: Arial, sans-serif;
 		color: #333;
 	}
 

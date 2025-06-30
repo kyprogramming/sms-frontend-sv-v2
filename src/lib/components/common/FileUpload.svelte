@@ -87,7 +87,7 @@
 
 <!-- prettier-ignore -->
 <style>
-	.form-group { font-family: sans-serif; font-size: 13px; margin-bottom: 1rem; }
+	.form-group {  font-size: 13px; margin-bottom: 1rem; }
 	.custom-file-input { width: 100%; height: 35px; border: 1px solid #ccc; border-radius: 0.3rem; background-color: var(--clr-bg-1); transition: all 0.1s ease; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 	.custom-file-input:focus { outline: none; border-color: var(--info); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
 	/* Style the Choose File button (Chrome/Edge/Firefox) */

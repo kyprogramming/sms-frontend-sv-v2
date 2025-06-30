@@ -300,7 +300,6 @@
 	.fee-container {
 		width: 100%;
 		max-width: 100%;
-		font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 	}
 
 	.fee-group,

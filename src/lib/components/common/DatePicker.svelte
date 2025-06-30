@@ -139,7 +139,16 @@
 	<div class="input-container">
 		<input {id} type="text" readonly onclick={toggleCalendar} value={value ? formatDate(new Date(value)) : ''} onblur={onBlur} class={cls} placeholder="Select date" />
 		<button class="calendar-icon" type="button" onclick={toggleCalendar} aria-label="Toggle calendar">
-			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="16"
+				height="16"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round">
 				<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
 				<line x1="16" y1="2" x2="16" y2="6"></line>
 				<line x1="8" y1="2" x2="8" y2="6"></line>
@@ -179,8 +188,7 @@
 													currentYear = today.getFullYear() - i;
 													showYearPicker = false;
 												}
-											}}
-										>
+											}}>
 											{today.getFullYear() - i}
 										</div>
 									{/each}
@@ -213,8 +221,7 @@
 								if (e.key === 'Enter' || e.key === ' ') {
 									handleDayClick(i + 1, e);
 								}
-							}}
-						>
+							}}>
 							{i + 1}
 						</div>
 					{/each}
@@ -226,8 +233,7 @@
 						onclick={(e) => {
 							e.preventDefault();
 							selectToday();
-						}}
-					>
+						}}>
 						Today
 					</button>
 				</div>
@@ -238,7 +244,7 @@
 
 <!-- prettier-ignore -->
 <style>
-	.datepicker-wrapper { position: relative; width: 100%; font-family: sans-serif; }
+	.datepicker-wrapper { position: relative; width: 100%;  }
 	.input-container { position: relative; display: flex; align-items: center; }
 	.input-container input { width: 100%; padding: 0.5rem 2rem 0.5rem 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 0.875rem; }
 	.calendar-icon { position: absolute; right: 0.75rem; background: none; border: none; cursor: pointer; padding: 0.25rem; color: #666; display: flex; align-items: center; justify-content: center; }

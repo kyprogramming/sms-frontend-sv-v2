@@ -386,7 +386,7 @@
 <!-- Your existing styles remain exactly the same -->
 <!-- prettier-ignore -->
 <style>
-	.date-picker-container { position: relative; width: 100%; /* min-width: 300px; */ font-family: Arial, sans-serif; }
+	.date-picker-container { position: relative; width: 100%; /* min-width: 300px; */  }
 	.calendar-container { display: flex; flex-direction: column; gap: 8px; }
 	.input-container { position: relative; display: flex; align-items: center; }
 	input { width: 100%; padding: 10px 40px 10px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; cursor: pointer; }
