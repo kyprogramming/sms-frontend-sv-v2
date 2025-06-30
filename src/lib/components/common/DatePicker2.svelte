@@ -259,10 +259,19 @@
 			}}
 			class={cls}
 			placeholder={title ? `Select ${title}` : 'Select date'}
-			aria-label={title ? `${title} date picker` : 'Date picker'}
-		/>
+			aria-label={title ? `${title} date picker` : 'Date picker'} />
 		<button type="button" class="calendar-button" onclick={toggleDatePicker} aria-label="Open calendar">
-			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="16"
+				height="16"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				aria-hidden="true">
 				<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
 				<line x1="16" y1="2" x2="16" y2="6"></line>
 				<line x1="8" y1="2" x2="8" y2="6"></line>
@@ -280,11 +289,21 @@
 						<div>
 							<!-- <span onclick={navigateToMonthView}>{MONTHS[currentMonth]}</span>
 							<span onclick={navigateToYearView}>{currentYear}</span> -->
-							<button type="button" class="date-navigation-button" onclick={navigateToMonthView} onkeydown={handleMonthKeyDown} aria-label={`Change month view, current month: ${MONTHS[currentMonth]}`}>
+							<button
+								type="button"
+								class="date-navigation-button"
+								onclick={navigateToMonthView}
+								onkeydown={handleMonthKeyDown}
+								aria-label={`Change month view, current month: ${MONTHS[currentMonth]}`}>
 								{MONTHS[currentMonth]}
 							</button>
 
-							<button type="button" class="date-navigation-button" onclick={navigateToYearView} onkeydown={handleYearKeyDown} aria-label={`Change year view, current year: ${currentYear}`}>
+							<button
+								type="button"
+								class="date-navigation-button"
+								onclick={navigateToYearView}
+								onkeydown={handleYearKeyDown}
+								aria-label={`Change year view, current year: ${currentYear}`}>
 								{currentYear}
 							</button>
 						</div>
@@ -302,7 +321,11 @@
 							{#each generateMonthDays(currentYear, currentMonth) as week}
 								<div class="week">
 									{#each week as day}
-										<button type="button" class:current-month={day !== null} class:selected={day !== null && dateValue?.getDate() === day && dateValue?.getMonth() === currentMonth && dateValue?.getFullYear() === currentYear} onclick={(e) => day !== null && selectDay(day, e)}>
+										<button
+											type="button"
+											class:current-month={day !== null}
+											class:selected={day !== null && dateValue?.getDate() === day && dateValue?.getMonth() === currentMonth && dateValue?.getFullYear() === currentYear}
+											onclick={(e) => day !== null && selectDay(day, e)}>
 											{day}
 										</button>
 									{/each}
@@ -318,7 +341,12 @@
 				{:else if currentView === 'month'}
 					<div class="header-date">
 						<button type="button" onclick={() => (currentYear -= 1)}>‹</button>
-						<button type="button" class="date-navigation-button" onclick={navigateToYearView} onkeydown={handleYearKeyDown} aria-label={`Change year view, current year: ${currentYear}`}>
+						<button
+							type="button"
+							class="date-navigation-button"
+							onclick={navigateToYearView}
+							onkeydown={handleYearKeyDown}
+							aria-label={`Change year view, current year: ${currentYear}`}>
 							{currentYear}
 						</button>
 						<button type="button" onclick={() => (currentYear += 1)}>›</button>
@@ -361,16 +389,16 @@
 	.date-picker-container { position: relative; width: 100%; /* min-width: 300px; */ font-family: Arial, sans-serif; }
 	.calendar-container { display: flex; flex-direction: column; gap: 8px; }
 	.input-container { position: relative; display: flex; align-items: center; }
-	input { width: 100%; padding: 10px 40px 10px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; cursor: pointer; }
+	input { width: 100%; padding: 10px 40px 10px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; cursor: pointer; }
 	input.error { border-color: #ff4444; }
-	.calendar-button { position: absolute; right: 8px; background: none; border: none; cursor: pointer; font-size: 16px; padding: 4px; color: #666; }
+	.calendar-button { position: absolute; right: 8px; background: none; border: none; cursor: pointer; font-size: 13px; padding: 4px; color: #666; }
 	.error-message { color: #ff4444; font-size: 12px; margin-top: 4px; }
 	.date-picker-popup { position: absolute; z-index: 1000; margin-top: 2px; }
 	.date-picker { background: white; border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); padding: 12px; padding-top: 0; width: 100%; }
 	.header-date { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; margin-bottom: 6px; }
 	.header-date > div { display: flex; /* gap: px; */ }
 	.header-date span { cursor: pointer; font-weight: bold; /* margin-right: 10px; */ }
-	.header-date button { background: none; border: none; cursor: pointer; font-size: 16px; padding: 0px 10px; }
+	.header-date button { background: none; border: none; cursor: pointer; font-size: 13px; padding: 0px 10px; }
 	.header-date button.navigate { border: none; cursor: pointer; font-size: 25px; border-radius: 8px; }
 	.header-date button.navigate:hover { background-color: #f0f0f0; outline: none; }
 	.day-names { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: bold; font-size: 12px; margin-bottom: 8px; }
@@ -393,7 +421,7 @@
 	.quick-selection { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; }
 	.quick-selection button { flex: 1; padding: 6px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; font-size: 12px; aspect-ratio: 0; }
 	.quick-selection button:hover { background: #f0f0f0; }
-	.date-navigation-button { background: none; border: none; padding: 6px 0.5rem !important; cursor: pointer; font: inherit; color: inherit; font-size: 14px !important; font-weight: bold; border-radius: 4px; }
+	.date-navigation-button { background: none; border: none; padding: 6px 0.5rem !important; cursor: pointer; font: inherit; color: inherit; font-size: 13px !important; font-weight: bold; border-radius: 4px; }
 	.date-navigation-button:hover,
 	.date-navigation-button:focus { background-color: #f0f0f0; outline: none; }
 	.date-navigation-button:active { background-color: #e0e0e0; }

@@ -26,10 +26,10 @@
 		{ key: 'name', label: 'Name', width: 'auto', sortable: true, align: 'center' },
 		{ key: 'code', label: 'Code', width: 'auto', sortable: true, align: 'center' },
 		{ key: 'discountType', label: 'Type', width: 'auto', sortable: true, align: 'center', format: (val) => val.charAt(0).toUpperCase() + val.slice(1) },
-		{ key: 'amount', label: 'Amount', width: 'auto', sortable: true, align: 'center'},
+		{ key: 'amount', label: 'Amount', width: 'auto', sortable: true, align: 'center' },
 		{ key: 'applicableTo', label: 'Applicable To', width: 'auto', sortable: true, align: 'center', format: (val) => val.charAt(0).toUpperCase() + val.slice(1) },
-        { key: 'expiryDate', label: 'Expiry Date', width: 'auto', sortable: true, align: 'center', format: formatDate },
-        // { key: 'createdAt', label: 'Created', width: 'auto', sortable: true, align: 'center', format: formatDate },
+		{ key: 'expiryDate', label: 'Expiry Date', width: 'auto', sortable: true, align: 'center', format: formatDate },
+		// { key: 'createdAt', label: 'Created', width: 'auto', sortable: true, align: 'center', format: formatDate },
 		{
 			key: 'active',
 			label: 'Status',
@@ -40,7 +40,6 @@
 				return value ? '<span class=active-status>Active</span>' : '<span class=inactive-status>Inactive</span>';
 			},
 		},
-		
 	];
 
 	const actions = {
@@ -191,6 +190,6 @@
 
 <!-- <style>
     .search-container {display: flex; align-items: center; gap: 8px}
-	.search-container input {padding: 6px 10px; font-size: 14px; flex: 1}
+	.search-container input {padding: 6px 10px; font-size: 13px; flex: 1}
 	input[name='search'] {width: 300px}
 </style> -->

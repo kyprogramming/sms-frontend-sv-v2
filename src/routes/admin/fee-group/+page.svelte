@@ -5,7 +5,7 @@
 	let { data } = $props();
 	let response: any = $state(data.data);
 
-	const breadcrumbItems = [{ label: 'Dashboard', href: '/admin/dashboard' }, { label: 'Fee Management' }, { label: 'Fee Groups' }];
+	const breadcrumbItems = [{ label: 'Dashboard', href: '/admin/dashboard' }, { label: 'Fee Collection' }, { label: 'Fee Groups' }];
 </script>
 
 <Breadcrumb title="Fee Group List" items={breadcrumbItems} />

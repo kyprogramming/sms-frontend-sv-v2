@@ -44,8 +44,8 @@
 <!-- prettier-ignore -->
 <style>
 	.tag-input-wrapper { display: flex; flex-wrap: wrap; align-items: center; border-radius: 6px; gap: 0.5rem; }
-	.tag { display: flex; align-items: center; background-color: #f0f0f0; border-radius: 6px; padding-left: 6px; /* padding: 4px 8px; */ font-size: 14px; }
-	.close-btn { background: none; border: none; margin-left: 6px; font-size: 14px; cursor: pointer; color: #666; }
+	.tag { display: flex; align-items: center; background-color: #f0f0f0; border-radius: 6px; padding-left: 6px; /* padding: 4px 8px; */ font-size: 13px; }
+	.close-btn { background: none; border: none; margin-left: 6px; font-size: 13px; cursor: pointer; color: #666; }
 	.close-btn:hover { color: #000; }
-	.tag-input { flex: 1; min-width: 100px; font-size: 14px; padding: 4px; border: 1px solid #ccc; }
+	.tag-input { flex: 1; min-width: 100px; font-size: 13px; padding: 4px; border: 1px solid #ccc; }
 </style>

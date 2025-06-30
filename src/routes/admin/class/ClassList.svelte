@@ -69,9 +69,8 @@
 				action: async (item: { _id: any }) => {
 					isUpdate = true;
 					await updateAction(item._id);
-                    // await invalidateAll();
-                    // console.log('Refreshing class list in edit...', page.data.data);
-
+					// await invalidateAll();
+					// console.log('Refreshing class list in edit...', page.data.data);
 				},
 			},
 			{
@@ -107,7 +106,7 @@
 
 	async function handleDelete() {
 		await deleteAction(selectedId);
-        await invalidateAll();
+		await invalidateAll();
 	}
 
 	async function handlePaginationChange() {
@@ -148,11 +147,11 @@
 	}
 
 	async function refreshAction() {
-        isModalOpen = false;
+		isModalOpen = false;
 		const params = new URLSearchParams({ search: searchText || '', page: String($currentPage), limit: String($rowsPerPage) });
 		const json = await fetchClasses(params);
-        console.log('Refreshing class list...', page.data.data);
-        response = { ...json };
+		console.log('Refreshing class list...', page.data.data);
+		response = { ...json };
 	}
 </script>
 
@@ -203,7 +202,7 @@
 		onCancel={() => {
 			isModalOpen = false;
 		}}>
-		<ClassForm onRefreshPage={refreshAction} classData={classData} action={isUpdate ? 'update' : 'create'} />
+		<ClassForm onRefreshPage={refreshAction} {classData} action={isUpdate ? 'update' : 'create'} />
 	</Modal>
 {/if}
 
@@ -221,6 +220,6 @@
 <!-- prettier-ignore -->
 <style>
     .search-container {display: flex; align-items: center; gap: 8px}
-	.search-container input {padding: 6px 10px; font-size: 14px; flex: 1}
+	.search-container input {padding: 6px 10px; font-size: 13px; flex: 1}
 	input[name='search'] {width: 300px}
 </style>

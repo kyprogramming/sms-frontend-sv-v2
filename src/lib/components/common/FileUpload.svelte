@@ -78,8 +78,8 @@
 		<div class="preview-container">
 			<img src={previewUrl} alt="Preview" class="preview-img" />
 			<div class="file-info">
-				<p style="font-size: 11px;"><strong>Name:</strong> {file?.name.substring(0, 35)}</p>
-				<p style="font-size: 11px;"><strong>Size:</strong> {file ? (file.size / 1024).toFixed(2) + ' KB' : ''}</p>
+				<p style="font-size: 13px;"><strong>Name:</strong> {file?.name.substring(0, 35)}</p>
+				<p style="font-size: 13px;"><strong>Size:</strong> {file ? (file.size / 1024).toFixed(2) + ' KB' : ''}</p>
 			</div>
 		</div>
 	{/if}
@@ -87,7 +87,7 @@
 
 <!-- prettier-ignore -->
 <style>
-	.form-group { font-family: sans-serif; font-size: 14px; margin-bottom: 1rem; }
+	.form-group { font-family: sans-serif; font-size: 13px; margin-bottom: 1rem; }
 	.custom-file-input { width: 100%; height: 35px; border: 1px solid #ccc; border-radius: 0.3rem; background-color: var(--clr-bg-1); transition: all 0.1s ease; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 	.custom-file-input:focus { outline: none; border-color: var(--info); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
 	/* Style the Choose File button (Chrome/Edge/Firefox) */
@@ -97,5 +97,5 @@
 	.custom-file-input::file-selector-button:hover { background-color: #334155; }
 	.preview-container { display: flex; align-items: center; gap: 1rem; margin-top: 10px; background-color: #f8f8f8; padding: 10px; border-radius: 12px; /* width: fit-content; */ box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1); width: 100%; }
 	.preview-img { max-height: 100px; border-radius: 12px; object-fit: cover; }
-	.file-info { font-size: 10px; color: #333; }
+	.file-info { font-size: 13px; color: #333; }
 </style>

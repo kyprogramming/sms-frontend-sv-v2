@@ -164,8 +164,7 @@
 				if (e.key === 'Enter') {
 					handleSearch();
 				}
-			}}
-		/>
+			}} />
 
 		<button type="button" class="btn ripple" onclick={handleSearch}>
 			<Search />
@@ -196,8 +195,7 @@
 		}}
 		onCancel={() => {
 			isModalOpen = false;
-		}}
-	>
+		}}>
 		<SubjectForm onRefreshPage={refreshAction} {subjectData} action={isUpdate ? 'update' : 'create'} />
 	</Modal>
 {/if}
@@ -210,8 +208,7 @@
 		onDelete={handleDelete}
 		onCancel={() => {
 			isDeleteModalOpen = false;
-		}}
-	/>
+		}} />
 {/if}
 
 <style>
@@ -223,7 +220,7 @@
 
 	.search-container input {
 		padding: 6px 10px;
-		font-size: 14px;
+		font-size: 13px;
 		flex: 1;
 	}
 

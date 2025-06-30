@@ -8,7 +8,7 @@
   
     const breadcrumbItems = [
       { label: 'Dashboard', href: '/admin/dashboard' },
-      { label: 'Fee Management' },
+      { label: 'Fee Collection' },
       { label: 'Fee Assignment' }
     ];
 </script>

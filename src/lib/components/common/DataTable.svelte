@@ -83,7 +83,10 @@
 			<thead>
 				<tr>
 					{#each columns as column}
-						<th onclick={() => column.sortable && sortBy(column.key)} class:sortable={column.sortable} style={`width: ${column.width || 'auto'}; text-align: ${column.align || 'center'}; display: ${column.visible === false ? 'none' : 'table-cell'};`}>
+						<th
+							onclick={() => column.sortable && sortBy(column.key)}
+							class:sortable={column.sortable}
+							style={`width: ${column.width || 'auto'}; text-align: ${column.align || 'center'}; display: ${column.visible === false ? 'none' : 'table-cell'};`}>
 							{column.label}
 							{#if column.sortable && sortColumn === column.key}
 								<span>{sortDirection === 1 ? '▲' : '▼'}</span>
@@ -124,8 +127,7 @@
 															e.preventDefault();
 															action?.action(item);
 														}
-													}}
-												>
+													}}>
 													<action.icon />
 												</span>
 											{/if}
@@ -143,7 +145,7 @@
 						<!-- <p>{columns.length + (actions?.show ? 2 : 1)}</p> -->
 						{#if $totalItems > 0}
 							<div style="display: flex; justify-content: space-between; align-items: center; margin: 5px;">
-								<p style="margin: 0; font-weight: bold;">Total <b style="font-size: 15px; color: var(--clr-pri);">{$totalItems}</b> record(s) found on {$totalPages} page(s)</p>
+								<p style="margin: 0; font-weight: bold;">Total <b style="font-size: 13px; color: var(--clr-pri);">{$totalItems}</b> record(s) found on {$totalPages} page(s)</p>
 								{#if $totalItems > Number(DEFAULT_PAGE_LIMIT)}
 									<Pagination {onPaginationChange} {onPageLimitChange} />
 								{/if}

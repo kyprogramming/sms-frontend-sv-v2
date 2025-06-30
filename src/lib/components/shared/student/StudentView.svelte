@@ -261,7 +261,7 @@
 
 	.info {
 		margin-top: 0.5rem;
-		font-size: 14px;
+		font-size: 13px;
 	}
 
 	.info-row {

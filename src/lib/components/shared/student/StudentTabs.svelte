@@ -199,8 +199,7 @@
 		</div>
 	{:else if activeTab === 'tab2'}
 		<!-- <FeeDetails /> -->
-        <FeeTable {assignments} />
-
+		<FeeTable {assignments} />
 	{:else if activeTab === 'tab3'}
 		<p>This is the Exam content.</p>
 	{:else if activeTab === 'tab4'}
@@ -268,7 +267,7 @@
 	}
 
 	.section h3 {
-		font-size: 16px;
+		font-size: 13px;
 		margin-bottom: 10px;
 		border-bottom: 1px solid #eee;
 		padding-bottom: 5px;
@@ -282,7 +281,7 @@
 	.info-pair {
 		display: flex;
 		align-items: center;
-		font-size: 14px;
+		font-size: 13px;
 		color: #444;
 		padding: 0.5rem 0;
 	}
