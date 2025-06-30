@@ -17,7 +17,7 @@
 			<XCircle color="red" />
 		</button>
 	</div>
-	<ImageUploader label="" title={document.title} bind:url={document.url} onSelect={handleImageSelect} />
+	<ImageUploader label="" title={document.title} bind:url={document.url} onSelect={handleImageSelect} action/>
 	<span class="doc-title">
 		{document.title?.split('.')[0]}
 		<!-- {document.title} -->

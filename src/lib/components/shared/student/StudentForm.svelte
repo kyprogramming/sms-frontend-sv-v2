@@ -52,6 +52,8 @@
 
 	let selectedFeeMasterAssignmentIds: string[] = $state([]);
 
+    // console.log('StudentForm - studentData:', $state.snapshot(studentData));
+
 	let selectedFile: File | null = $state(null);
 
 	let formData: StudentFormPayload = $state(initializeStudentFormPayload());
@@ -63,8 +65,9 @@
 		// Initialize form data based on action
 		if (action === 'update' && studentData) {
 			formData = { studentData: { ...studentData }, userData: { ...studentData.userId }, feeMasterAssignments: studentData?.feeMasterAssignments || [] };
-			classSections = studentData.classId ? classList.find((cls: any) => cls._id === studentData.classId)?.sectionIds || [] : [];
-			formData.studentData.selectedFeeDiscountIds = studentData.selectedFeeDiscountIds || [];
+			classSections = studentData.classId ? classList.find((cls: any) => cls._id === studentData.classId._id)?.sectionIds || [] : [];
+            formData.studentData.classId = studentData.classId._id || '';
+            formData.studentData.sectionId = studentData.sectionId._id || '';
 			formData.feeMasterAssignments = studentData.feeMasterAssignments || [];
 			selectedFeeMasterAssignmentIds = feeAssignments?.map((assignment: any) => assignment.feeMasterId._id) || [];
 			// console.log('Form Data on Mount:', formData);
@@ -75,7 +78,7 @@
 	function handleResetForm() {
 		if (action === 'update' && studentData) {
 			formData = { studentData: { ...studentData }, userData: { ...studentData.userId }, feeMasterAssignments: studentData?.feeMasterAssignments || [] };
-			classSections = studentData.classId ? classList.find((cls: any) => cls._id === studentData.classId)?.sectionIds || [] : [];
+			classSections = studentData.classId ? classList.find((cls: any) => cls._id === studentData.classId._id)?.sectionIds || [] : [];
 			formData.studentData.selectedFeeDiscountIds = studentData.selectedFeeDiscountIds || [];
 			selectedFeeMasterAssignmentIds = feeAssignments?.map((assignment: any) => assignment.feeMasterId._id) || [];
 		} else {
@@ -867,18 +870,18 @@
 		<h1>Upload Photo</h1>
 		<div class="grid-12">
 			<div class="col-2">
-				<ImageUploader label="Student Photo" title={''} bind:url={formData.studentData.profile.photo} onSelect={handleImageSelect} />
+				<ImageUploader label="Student Photo" title={''} bind:url={formData.studentData.profile.photo} onSelect={handleImageSelect} action/>
 			</div>
 			<div class="col-2">
-				<ImageUploader label="Father Photo" title={''} bind:url={formData.studentData.parentGuardianDetails.fatherDetails.fatherPhoto} onSelect={handleImageSelect} />
+				<ImageUploader label="Father Photo" title={''} bind:url={formData.studentData.parentGuardianDetails.fatherDetails.fatherPhoto} onSelect={handleImageSelect}  action/>
 			</div>
 			<div class="col-2">
-				<ImageUploader label="Mother Photo" title={''} bind:url={formData.studentData.parentGuardianDetails.motherDetails.motherPhoto} onSelect={handleImageSelect} />
+				<ImageUploader label="Mother Photo" title={''} bind:url={formData.studentData.parentGuardianDetails.motherDetails.motherPhoto} onSelect={handleImageSelect}  action/>
 			</div>
 
 			{#if formData.studentData.parentGuardianDetails?.primaryGuardian === 'Other'}
 				<div class="col-2">
-					<ImageUploader label="Guardian Photo" title={''} bind:url={formData.studentData.parentGuardianDetails.guardianDetails.guardianPhoto} onSelect={handleImageSelect} />
+					<ImageUploader label="Guardian Photo" title={''} bind:url={formData.studentData.parentGuardianDetails.guardianDetails.guardianPhoto} onSelect={handleImageSelect}  action/>
 				</div>
 			{/if}
 		</div>
@@ -999,7 +1002,7 @@
 	.remove-button {color: red;}
 	.plus-button:hover,
 	.remove-button:hover {background-color: rgb(204, 202, 202);}
-	.header-bar {display: flex; justify-content: space-between; align-items: center; gap: 1rem;}
+	.header-bar {display: flex; justify-content: flex-start; align-items: center; gap: 1rem; margin:0px 0px 15px 0px}
 	.header-bar h1 {margin: 0;}
 
     /* Responsive styles */

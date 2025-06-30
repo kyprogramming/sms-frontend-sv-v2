@@ -15,7 +15,7 @@
 	import UploadDocument from '$lib/components/common/UploadDocument.svelte';
 
 	// Icons
-	import { BrushCleaning, PlusCircle, Save } from '@lucide/svelte';
+	import { BrushCleaning, CameraOff, PlusCircle, Save } from '@lucide/svelte';
 	import { Printer, Pencil, IndianRupee, Search, ThumbsDown, MoreVertical } from '@lucide/svelte';
 
 	// Constants and Config
@@ -51,7 +51,10 @@
 	const feeAssignments = page.data.studentData?.data.feeAssignments || null;
 	const feeMasterData = page.data.feeMasters?.data || [];
 
-    console.log('StudentView - studentData:', student);
+	console.log('StudentView - studentData:', $state.snapshot(student));
+	console.log('StudentView - feeAssignments:', $state.snapshot(feeAssignments));
+	console.log('StudentView - feeMasterData:', $state.snapshot(feeMasterData));
+
 	let classList = page.data?.classList || [];
 	let classSections: { _id: string; name: string }[] = $state([]);
 
@@ -110,11 +113,19 @@
 					<h2>{student.profile.fullName}</h2>
 				</div>
 				<div class="top">
-					<div class="profile-pic"></div>
+					<div class="profile-pic">
+						{#if student.profile.photo}
+							<img src={student.profile.photo} alt="" />
+						{:else}
+							<div class="icon-wrapper">
+								<CameraOff />
+							</div>
+						{/if}
+					</div>
 					<div class="info-class">
 						<p><strong>Class:</strong> <span class="link">{student.classId.name}</span></p>
 						<p><strong>Section:</strong> <span class="link">{student.sectionId.name}</span></p>
-                        <p><strong>Roll Number:</strong> <span class="link">{student.rollNo}</span></p>
+						<p><strong>Roll Number:</strong> <span class="link">{student.rollNo}</span></p>
 					</div>
 				</div>
 
@@ -142,14 +153,14 @@
 
 			<div class="info">
 				<p class="info-row"><strong>Admission No</strong><span class="link">{student.admissionNo}</span></p>
-				 <p class="info-row"><strong>Roll Number</strong><span class="link">{student.rollNo}</span></p>
+				<p class="info-row"><strong>Roll Number</strong><span class="link">{student.rollNo}</span></p>
 				<p class="info-row"><strong>Class</strong><span class="link">{student.classId.name}</span></p>
-				<p class="info-row"><strong>Section</strong><span  class="link">{student.sectionId.name}</span></p>
-				<p class="info-row"><strong>Gender</strong><span  class="link">{student.profile.gender}</span></p>
-				<p class="info-row"><strong>Caste</strong><span  class="link">{student.profile.caste}</span></p>
-				<p class="info-row"><strong>Category</strong><span  class="link">{student.profile.category}</span></p>
-				<p class="info-row"><strong>DOB</strong><span  class="link">{formatDate(student.profile.dob)}</span></p>
-				<p class="info-row"><strong>Religion</strong><span  class="link">{student.profile.religion}</span></p>
+				<p class="info-row"><strong>Section</strong><span class="link">{student.sectionId.name}</span></p>
+				<p class="info-row"><strong>Gender</strong><span class="link">{student.profile.gender}</span></p>
+				<p class="info-row"><strong>Caste</strong><span class="link">{student.profile.caste}</span></p>
+				<p class="info-row"><strong>Category</strong><span class="link">{student.profile.category}</span></p>
+				<p class="info-row"><strong>DOB</strong><span class="link">{formatDate(student.profile.dob)}</span></p>
+				<p class="info-row"><strong>Religion</strong><span class="link">{student.profile.religion}</span></p>
 				<!-- <p class="info-row"><strong>RTE</strong><span>{student.rte}</span></p> -->
 				<p class="info-row"><strong>Barcode</strong> <span class="barcode">|| ||| | |||</span></p>
 				<!--<p class="info-row"><strong>QR Code</strong><span> <img class="qr-code" src={student.qrCode} alt="QR Code" /></span></p>
@@ -181,7 +192,7 @@
 		border: 1px solid #ccc;
 		border-radius: 8px;
 		background: #f8f8f8;
-        margin-bottom: 1rem;
+		margin-bottom: 1rem;
 	}
 
 	.top {
@@ -207,17 +218,31 @@
 
 	.sidebar-info {
 		width: 360px;
+		min-height: 83vh;
 		padding: 0.5rem;
 		padding-top: 0;
 		border-right: 1px solid #ccc;
 	}
 
 	.profile-pic {
-		width: 90px;
-		height: 90px;
+		width: 120px;
+		height: 120px;
 		background: #ddd;
 		border-radius: 50%;
+		overflow: hidden;
 		margin-bottom: 10px;
+	}
+
+	.profile-pic img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.icon-wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.info-class {

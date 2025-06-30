@@ -1,8 +1,15 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import UploadDocument from '$lib/components/common/UploadDocument.svelte';
 	import { formatDate } from '$lib/utils/formatDate';
+	import { any } from 'zod';
+	import FeeDetails from '../fee/FeeDetails.svelte';
+	import DropdownCategory from '$lib/components/common/DropdownCategory.svelte';
+	import ImageUploader from '$lib/components/common/ImageUploader.svelte';
+	import FeeTable from '../fee/FeeTable.svelte';
 
 	const student = page.data.studentData?.data.student || null;
+	const assignments = page.data.studentData?.data.feeAssignments || null;
 	console.log('StudentTabs - studentData:', student);
 
 	let activeTab: string = $state('tab1');
@@ -22,31 +29,18 @@
 		activeTab = id;
 	}
 
-	// let student = {
-	// 	name: 'Emmartinses Thomas Kumar Yadav',
-	// 	admissionNo: '0202',
-	// 	rollNumber: '2150',
-	// 	class: 'Class 3 (2025-26)',
-	// 	section: 'B',
-	// 	gender: 'Female',
-	// 	rte: 'No',
-	// 	barcode: '0202',
-	// 	qrCode: 'sample-qr.png',
-	// 	behaviorScore: 10,
-	// 	admissionDate: '04/05/2024',
-	// 	dob: '07/14/2016',
-	// 	category: 'General',
-	// 	mobile: '6881016512',
-	// 	caste: 'Thomas',
-	// 	religion: 'Christen',
-	// 	email: 'thomas01@gmail.com',
-	// 	medical: '',
-	// 	note: '',
-	// 	address: '56 Main Street, Suite 3, Brooklyn, NY 11210-0000',
-	// 	parentGuardian: {
-	// 		name: 'N/A',
-	// 	},
-	// };
+	const groupedDocuments = student.documents.reduce((acc: any, doc: any) => {
+		if (!acc[doc.category]) {
+			acc[doc.category] = [];
+		}
+		acc[doc.category].push(doc);
+		return acc;
+	}, {});
+
+	// Check if file is an image
+	function isImage(fileName: any) {
+		return /\.(jpg|jpeg|png|gif|webp)$/i.test(fileName);
+	}
 </script>
 
 <div class="tab-header">
@@ -86,8 +80,8 @@
 				<div class="col-7">
 					<div class="section">
 						<h3>Contact Details</h3>
-						{@render renderInfo('Email', student.userId.email, false)}
-						{@render renderInfo('Mobile Number', student.userId.mobile)}
+						{@render renderInfo('Student Email', student.userId.email, false)}
+						{@render renderInfo('Student Mobile Number', student.userId.mobile)}
 						{@render renderInfo('Father Email', student.parentGuardianDetails.fatherDetails.fatherEmail, false)}
 						{@render renderInfo('Father Mobile Number', student.parentGuardianDetails.fatherDetails.fatherPhone)}
 						{@render renderInfo('Mother Email', student.parentGuardianDetails.motherDetails.motherEmail, false)}
@@ -204,13 +198,34 @@
 			</div> -->
 		</div>
 	{:else if activeTab === 'tab2'}
-		<p>This is the Fees content.</p>
+		<!-- <FeeDetails /> -->
+        <FeeTable {assignments} />
+
 	{:else if activeTab === 'tab3'}
 		<p>This is the Exam content.</p>
 	{:else if activeTab === 'tab4'}
 		<p>This is the Attendance content.</p>
 	{:else if activeTab === 'tab5'}
-		<p>This is the Documents content.</p>
+		<div class="documents-container">
+			{#if student.documents.length > 0}
+				<div class="grid-12">
+					{#each student.documents! as document, index (`${index}_${document.title}`)}
+						<div class="col-2">
+							<div class="header-bar">
+								{document.category}
+							</div>
+							<ImageUploader label="" title={document.title} bind:url={document.url} action={'view'} />
+							<span class="doc-title">
+								{document.title?.split('.')[0]}
+								<!-- {document.title} -->
+							</span>
+						</div>
+					{/each}
+				</div>
+			{:else}
+				<p>This is the Documents content.</p>
+			{/if}
+		</div>
 	{:else if activeTab === 'tab6'}
 		<p>This is the Timeline content.</p>
 	{/if}
@@ -300,4 +315,134 @@
     .capitalize {
         text-transform: capitalize;
     }
+   
+    /* documents */
+    .documents-container {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .category-section {
+    margin-bottom: 30px;
+  }
+
+  .category-title {
+    font-size: 1.5rem;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e0e0e0;
+  }
+
+  .documents-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+
+  .document-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    background: white;
+  }
+
+  .document-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .document-preview {
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f5f5;
+    position: relative;
+  }
+
+  .document-preview img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .pdf-icon {
+    font-size: 4rem;
+    color: #e74c3c;
+  }
+
+  .document-info {
+    padding: 15px;
+  }
+
+  .document-title {
+    font-weight: 600;
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .document-meta {
+    font-size: 0.85rem;
+    color: #7f8c8d;
+  }
+
+  .document-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+  }
+
+  .action-button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background 0.2s;
+  }
+
+  .view-button {
+    background: #3498db;
+    color: white;
+  }
+
+  .view-button:hover {
+    background: #2980b9;
+  }
+
+  .download-button {
+    background: #2ecc71;
+    color: white;
+  }
+
+  .download-button:hover {
+    background: #27ae60;
+  }
+
+  .file-type-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+  }
+
+
+
+
+
+
+
+
 </style>

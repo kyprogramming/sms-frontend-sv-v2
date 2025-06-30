@@ -4,7 +4,7 @@
 	export const { uploadFiles } = genUploader<any>({
 		url: 'http://localhost:5000/api/upload',
 	});
-	let { label = 'Upload Image', required = false, title = '', url = $bindable(''), onSelect = () => {} } = $props();
+	let { label = 'Upload Image', required = false, title = '', url = $bindable(''), onSelect = () => {}, action } = $props();
 
 	let fileInput: HTMLInputElement | null = null;
 	let showModal = $state(false);
@@ -102,9 +102,11 @@
 				</div>
 			{/if}
 
-			<button type="button" class="remove-btn" onclick={removeImage}>
-				<Trash2 color="red" />
-			</button>
+			{#if action !== 'view'}
+				<button type="button" class="remove-btn" onclick={removeImage}>
+					<Trash2 color="red" />
+				</button>
+			{/if}
 
 			{#if isUploading}
 				<div class="progress-overlay">
@@ -125,7 +127,9 @@
 			<CameraOff />
 		{/if}
 	</div>
-	<input type="file" accept="image/*,application/pdf" bind:this={fileInput} class="custom-file-input" onchange={handleFileChange} />
+	{#if action !== 'view'}
+		<input type="file" accept="image/*,application/pdf" bind:this={fileInput} class="custom-file-input" onchange={handleFileChange} />
+	{/if}
 </div>
 
 {#if showModal && (fileName || url)}
@@ -138,8 +142,7 @@
 			if (e.key === 'Enter' || e.key === ' ') {
 				toggleModal();
 			}
-		}}
-	>
+		}}>
 		<div class="modal-content">
 			{#if fileName.toLowerCase().endsWith('.pdf')}
 				<!-- <iframe src={url} width="800px" height="700px"></iframe> -->
