@@ -6,7 +6,7 @@ pipeline {
     }
 
     tools {
-        nodejs 'Node18' // Jenkins → Global Tools Configuration → Node.js named "Node18"
+        nodejs 'Node20'
     }
 
     stages {
