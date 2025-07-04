@@ -4,11 +4,12 @@
 
 	export let type: string = 'bar'; // bar, line, pie, etc.
 	export let data: any;
+	export let options: any;
 
 	let canvas: HTMLCanvasElement;
 	let chart: Chart;
 
-    const options:any = {
+    options = {
       responsive: true,
       plugins: {
         title: {
