@@ -16,15 +16,21 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Clean Workspace') {
             steps {
-                sh 'npm install'
+                deleteDir()
             }
         }
 
-        stage('Build Project') {
+        stage('Install Dependencies') {
             steps {
-                sh 'npx vite build'
+                sh 'npm ci'
+            }
+        }
+
+         stage('Build') {
+            steps {
+                sh 'npm run build'
             }
         }
 
