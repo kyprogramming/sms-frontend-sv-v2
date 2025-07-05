@@ -19,12 +19,15 @@ pipeline {
         stage('Clean Workspace') {
             steps {
                 deleteDir()
+                checkout scm
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm ci'
+                sh 'ls -la'      // 👀 verify files exist
+                sh 'cat package-lock.json'
+                sh 'npm ci'      // ✅ clean install
             }
         }
 
