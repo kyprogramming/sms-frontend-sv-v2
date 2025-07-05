@@ -24,19 +24,19 @@ pipeline {
 
         stage('Build Project') {
             steps {
-                sh 'npm run build'
+                sh 'npx vite build'
             }
         }
 
-        stage('Deploy (optional)') {
-            when {
-                branch 'main'
-            }
-            steps {
-                echo 'You can add your deploy script here.'
-                // For example: scp or rsync to EC2
-            }
-        }
+        // stage('Deploy (optional)') {
+        //     when {
+        //         branch 'main'
+        //     }
+        //     steps {
+        //         echo 'You can add your deploy script here.'
+        //         // For example: scp or rsync to EC2
+        //     }
+        // }
     }
 
     post {
