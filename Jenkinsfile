@@ -27,14 +27,15 @@ pipeline {
             steps {
                 sh 'ls -la' 
                 // sh 'cat package-lock.json'
-                sh 'npm ci'
+                // sh 'npm ci'
+                sh 'npm ci --include=dev'
             }
         }
 
          stage('Build') {
             steps {
-                // sh 'npm run build'
-                 sh 'npx vite build'
+                sh 'npm run build'
+                //  sh 'npx vite build'
             }
         }
 
