@@ -25,15 +25,16 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'ls -la'      // 👀 verify files exist
-                sh 'cat package-lock.json'
-                sh 'npm ci'      // ✅ clean install
+                sh 'ls -la' 
+                // sh 'cat package-lock.json'
+                sh 'npm ci'
             }
         }
 
          stage('Build') {
             steps {
-                sh 'npm run build'
+                // sh 'npm run build'
+                 sh 'npx vite build'
             }
         }
 
